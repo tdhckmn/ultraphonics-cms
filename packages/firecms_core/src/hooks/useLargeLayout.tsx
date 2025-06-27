@@ -9,8 +9,8 @@ const breakpoints = {
     lg: 1024,
     xl: 1280,
     "2xl": 1536,
-    "3xl": 1920
-}
+    "3xl": 1920,
+};
 
 // Global state and listeners array
 let isLargeLayoutGlobal = checkLargeLayout("lg"); // Default value
@@ -18,7 +18,7 @@ const listeners: LayoutListener[] = [];
 
 // Utility to notify all listeners
 const notifyListeners = () => {
-    listeners.forEach(listener => listener(isLargeLayoutGlobal));
+    listeners.forEach((listener) => listener(isLargeLayoutGlobal));
 };
 
 // Listen to resize events once, at a global level
@@ -58,8 +58,9 @@ export const useLargeLayout = () => {
     return isLargeLayout;
 };
 
-function checkLargeLayout(breakpoint: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" = "lg"): boolean {
-    if (typeof window === "undefined")
-        return false;
+function checkLargeLayout(
+    breakpoint: "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" = "lg"
+): boolean {
+    if (typeof window === "undefined") return false;
     return window.matchMedia(`(min-width: ${breakpoints[breakpoint] + 1}px)`).matches;
 }

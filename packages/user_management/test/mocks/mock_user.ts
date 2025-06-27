@@ -28,6 +28,6 @@ export function createMockUser() {
         phoneNumber: null,
         photoURL: null,
         providerId: "",
-        uid: "mock_uid"
+        uid: "mock_uid",
     };
 }

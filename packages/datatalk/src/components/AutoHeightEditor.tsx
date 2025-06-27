@@ -12,12 +12,12 @@ export type AutoHeightEditorProps = {
 };
 
 export function AutoHeightEditor({
-                                     value,
-                                     onChange,
-                                     maxWidth,
-                                     loading,
-                                     ...props
-                                 }: AutoHeightEditorProps): JSX.Element {
+    value,
+    onChange,
+    maxWidth,
+    loading,
+    ...props
+}: AutoHeightEditorProps): JSX.Element {
     const editorRef = useRef<any>(null);
 
     function handleEditorDidMount(editor: any, monaco: any) {
@@ -32,30 +32,31 @@ export function AutoHeightEditor({
         if (editorRef.current && maxWidth) {
             editorRef.current.layout({
                 width: maxWidth,
-                height: height
-            })
+                height: height,
+            });
         }
     }, [maxWidth, height]);
 
-
-    return <Editor
-        height={height + "px"}
-        theme={mode === "dark" ? "vs-dark" : "light"}
-        className={"rounded-lg flex-1 border dark:border-surface-800"}
-        defaultLanguage="javascript"
-        value={value}
-        onChange={onChange}
-        onMount={handleEditorDidMount}
-        options={{
-            scrollBeyondLastLine: false,
-            minimap: { enabled: false },
-            readOnly: loading,
-            // automaticLayout: true,
-            scrollbar: {
-                vertical: "hidden",
-                alwaysConsumeMouseWheel: false
-            },
-        }}
-        {...props}
-    />;
+    return (
+        <Editor
+            height={height + "px"}
+            theme={mode === "dark" ? "vs-dark" : "light"}
+            className={"rounded-lg flex-1 border dark:border-surface-800"}
+            defaultLanguage="javascript"
+            value={value}
+            onChange={onChange}
+            onMount={handleEditorDidMount}
+            options={{
+                scrollBeyondLastLine: false,
+                minimap: { enabled: false },
+                readOnly: loading,
+                // automaticLayout: true,
+                scrollbar: {
+                    vertical: "hidden",
+                    alwaysConsumeMouseWheel: false,
+                },
+            }}
+            {...props}
+        />
+    );
 }

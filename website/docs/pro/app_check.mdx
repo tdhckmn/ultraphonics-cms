@@ -33,6 +33,7 @@ may occur during initialization.
 ### Return Value
 
 Returns an object that includes:
+
 - `loading`: A boolean indicating whether the initialization is in progress.
 - `appCheckVerified` (optional): A boolean indicating whether the app has been verified by App Check.
 - `error` (optional): Any error encountered during the initialization process.
@@ -40,21 +41,16 @@ Returns an object that includes:
 ### Example
 
 ```tsx
-import {useAppCheck} from "@firecms/firebase";
-import {ReCaptchaEnterpriseProvider} from "@firebase/app-check";
+import { useAppCheck } from "@firecms/firebase";
+import { ReCaptchaEnterpriseProvider } from "@firebase/app-check";
 
-const {
-    loading,
-    error,
-    appCheckVerified
-} = useAppCheck({
+const { loading, error, appCheckVerified } = useAppCheck({
     options: {
         provider: new ReCaptchaEnterpriseProvider(process.env.VITE_RECAPTCHA_SITE_KEY as string),
         isTokenAutoRefreshEnabled: true,
-    }
+    },
 });
 ```
-
 
 ## Providers
 
@@ -71,18 +67,14 @@ Make sure you have added the domain `app.firecms.co` to the list of allowed doma
 :::
 
 ```tsx
-import {useAppCheck} from "@firecms/firebase";
-import {ReCaptchaEnterpriseProvider} from "@firebase/app-check";
+import { useAppCheck } from "@firecms/firebase";
+import { ReCaptchaEnterpriseProvider } from "@firebase/app-check";
 
-const {
-    loading,
-    error,
-    appCheckVerified
-} = useAppCheck({
+const { loading, error, appCheckVerified } = useAppCheck({
     options: {
         provider: new ReCaptchaEnterpriseProvider("your-site-key"),
         isTokenAutoRefreshEnabled: true,
-    }
+    },
 });
 ```
 

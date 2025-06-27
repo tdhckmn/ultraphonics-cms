@@ -14,7 +14,7 @@ import {
     CTAButtonMixin,
     CTACaret,
     CTAOutlinedButtonWhiteMixin,
-    defaultBorderMixin
+    defaultBorderMixin,
 } from "../styles";
 
 // developer features:
@@ -24,22 +24,30 @@ import {
 // - use all the internal plugins
 // - use custom data sources, storage and auth
 export function ProDeveloperFeatures() {
-
-    return (<>
-
-            <Panel color={"gray"} includeMargin={false} includePadding={false}
-                   header={<p
-                       className={clsx("text-center text-secondary uppercase font-mono font-bold border-0 border-b", ContainerInnerPaddingMixin, defaultBorderMixin)}>
-                       For developers
-                   </p>}>
-
-
+    return (
+        <>
+            <Panel
+                color={"gray"}
+                includeMargin={false}
+                includePadding={false}
+                header={
+                    <p
+                        className={clsx(
+                            "text-center text-secondary uppercase font-mono font-bold border-0 border-b",
+                            ContainerInnerPaddingMixin,
+                            defaultBorderMixin
+                        )}
+                    >
+                        For developers
+                    </p>
+                }
+            >
                 <div
-                    className={"max-w-6xl w-full mx-auto md:col-span-9 md:pr-8 flex justify-center flex-col h-full mb-16"}>
-
-
+                    className={
+                        "max-w-6xl w-full mx-auto md:col-span-9 md:pr-8 flex justify-center flex-col h-full mb-16"
+                    }
+                >
                     <div className={"flex items-center mb-4 mt-16"}>
-
                         {/*<div*/}
                         {/*    className="flex items-center justify-center text-white w-10 h-10 bg-gray-900 rounded-full shadow flex-shrink-0 mr-3">*/}
                         {/*    <LightingIcon height={12} width={12}/>*/}
@@ -48,16 +56,17 @@ export function ProDeveloperFeatures() {
                         <h3 className="m-0 uppercase font-mono">
                             No config, just React components
                         </h3>
-
                     </div>
                     <p className="text-xl md:text-2xl ">
-                        FireCMS is simply a set of React components and hooks. You can use them to build your own
-                        back-office applications, with your own authentication, data sources and storage.
+                        FireCMS is simply a set of React components and hooks. You can use them to
+                        build your own back-office applications, with your own authentication, data
+                        sources and storage.
                     </p>
 
                     <p className="text-xl ">
-                        No need to learn a new framework or a new way of doing things. Just use the components and hooks
-                        you need. No magic, no hidden logic, no configuration. Get an admin panel up and running in minutes.
+                        No need to learn a new framework or a new way of doing things. Just use the
+                        components and hooks you need. No magic, no hidden logic, no configuration.
+                        Get an admin panel up and running in minutes.
                     </p>
 
                     <div className={"space-y-4 space-x-4"}>
@@ -68,7 +77,7 @@ export function ProDeveloperFeatures() {
                             target="_blank"
                         >
                             Try the demo
-                            <CTACaret/>
+                            <CTACaret />
                         </a>
 
                         <a
@@ -81,7 +90,10 @@ export function ProDeveloperFeatures() {
                         </a>
                     </div>
 
-                    <pre className={"bg-gray-900 mt-8 p-4 rounded"} dangerouslySetInnerHTML={{ __html: proExampleCode }}></pre>
+                    <pre
+                        className={"bg-gray-900 mt-8 p-4 rounded"}
+                        dangerouslySetInnerHTML={{ __html: proExampleCode }}
+                    ></pre>
 
                     {/*<SyntaxHighlighter*/}
                     {/*    className={clsx("mt-16 p-4 overflow-x-auto md:max-w-full overflow-y-hidden border border-solid", defaultBorderMixin)}*/}
@@ -91,10 +103,7 @@ export function ProDeveloperFeatures() {
                     {/*>*/}
                     {/*    {proExampleCode}*/}
                     {/*</SyntaxHighlighter>*/}
-
                 </div>
-
-
             </Panel>
         </>
     );
@@ -380,4 +389,3 @@ const proExampleCode = `<span class="token keyword">function</span> <span class=
 //     );
 //
 // }`;
-

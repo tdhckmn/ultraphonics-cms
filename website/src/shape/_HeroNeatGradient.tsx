@@ -3,7 +3,7 @@ import { NeatGradient } from "@firecms/neat";
 
 function getBrightnessFrom(scroll: number, isDark: boolean) {
     if (!isDark) return 1;
-    const min = .1;
+    const min = 0.1;
     const max = 2;
     return Math.min(max, Math.max(min, min + scroll / 1000));
 }
@@ -22,10 +22,11 @@ function getSaturation(scroll: number, isDark: boolean) {
     return Math.min(max, Math.max(min, min + scroll / 50));
 }
 
-export default function _HeroNeatGradient({ color }: {
-    color: "primary" | "secondary" | "dark" | "transparent",
+export default function _HeroNeatGradient({
+    color,
+}: {
+    color: "primary" | "secondary" | "dark" | "transparent";
 }) {
-
     const isDark = color === "dark";
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const gradientRef = useRef<NeatGradient | null>(null);
@@ -43,73 +44,64 @@ export default function _HeroNeatGradient({ color }: {
     useEffect(() => {
         const listener = () => {
             if (typeof window !== "undefined") {
-                onScrollUpdate(window?.scrollY ?? 0)
-
+                onScrollUpdate(window?.scrollY ?? 0);
             }
         };
         listener();
-        if (typeof window !== "undefined")
-            window.addEventListener("scroll", listener);
+        if (typeof window !== "undefined") window.addEventListener("scroll", listener);
         return () => {
-            if (typeof window !== "undefined")
-                window.removeEventListener("scroll", listener);
+            if (typeof window !== "undefined") window.removeEventListener("scroll", listener);
         };
     }, [window]);
 
     useEffect(() => {
-
-        if (!canvasRef.current)
-            return () => {
-
-            };
+        if (!canvasRef.current) return () => {};
 
         const config = {
-            "colors": [
+            colors: [
                 {
-                    "color": "#F53755",
-                    "enabled": true
+                    color: "#F53755",
+                    enabled: true,
                 },
                 {
-                    "color": "#FFC858",
-                    "enabled": true
+                    color: "#FFC858",
+                    enabled: true,
                 },
                 {
-                    "color": "#17E7FF",
-                    "enabled": true
+                    color: "#17E7FF",
+                    enabled: true,
                 },
                 {
-                    "color": "#6D3BFF",
-                    "enabled": true
+                    color: "#6D3BFF",
+                    enabled: true,
                 },
                 {
-                    "color": "#007CFD",
-                    "enabled": true
-                }
+                    color: "#007CFD",
+                    enabled: true,
+                },
             ],
-            "speed": 2,
-            "horizontalPressure": 4,
-            "verticalPressure": 8,
-            "waveFrequencyX": 2,
-            "waveFrequencyY": 3,
-            "shadows": 0,
-            "highlights": 2,
-            "wireframe": true,
-            "colorBlending": 10,
-            "backgroundAlpha": 0,
-            "resolution": .8,
-            "waveAmplitude": getAmplitude(scrollRef.current, isDark),
-            "colorSaturation": isDark ? getSaturation(scrollRef.current, isDark) : 1,
-            "colorBrightness": isDark ? getBrightnessFrom(scrollRef.current, isDark) : 1,
-
+            speed: 2,
+            horizontalPressure: 4,
+            verticalPressure: 8,
+            waveFrequencyX: 2,
+            waveFrequencyY: 3,
+            shadows: 0,
+            highlights: 2,
+            wireframe: true,
+            colorBlending: 10,
+            backgroundAlpha: 0,
+            resolution: 0.8,
+            waveAmplitude: getAmplitude(scrollRef.current, isDark),
+            colorSaturation: isDark ? getSaturation(scrollRef.current, isDark) : 1,
+            colorBrightness: isDark ? getBrightnessFrom(scrollRef.current, isDark) : 1,
         };
 
         gradientRef.current = new NeatGradient({
             ref: canvasRef.current,
-            ...config
+            ...config,
         });
 
         return gradientRef.current.destroy;
-
     }, [canvasRef.current]);
 
     let bgColor: string;
@@ -139,5 +131,4 @@ export default function _HeroNeatGradient({ color }: {
             ref={canvasRef}
         />
     );
-
 }

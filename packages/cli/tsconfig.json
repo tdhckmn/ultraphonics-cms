@@ -1,27 +1,22 @@
 {
-  "compilerOptions": {
-    "outDir": "dist",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
-    "module": "ESNEXT",
-    "target": "ESNEXT",
-    "moduleResolution": "node",
-    "declaration": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "experimentalDecorators": true,
-    "noFallthroughCasesInSwitch": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true
-  },
-  "ts-node": {
-    "esm": true
-  },
-  "compileOnSave": true,
-  "include": [
-    "src"
-  ]
+    "compilerOptions": {
+        "outDir": "dist",
+        "lib": ["dom", "esnext"],
+        "module": "ESNEXT",
+        "target": "ESNEXT",
+        "moduleResolution": "node",
+        "declaration": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "experimentalDecorators": true,
+        "noFallthroughCasesInSwitch": true,
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true
+    },
+    "ts-node": {
+        "esm": true
+    },
+    "compileOnSave": true,
+    "include": ["src"]
 }

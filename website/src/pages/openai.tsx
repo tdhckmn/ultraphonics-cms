@@ -11,17 +11,14 @@ import { Translations } from "../partials/data_enhancement/Translations";
 import { DataStructure } from "../partials/data_enhancement/DataStructure";
 
 function DataEnhancement() {
-
     return (
-        <Layout
-            title="CMS with ChatGPT Integration | Autofill Feature | Natural Language Processing | Customization Options">
+        <Layout title="CMS with ChatGPT Integration | Autofill Feature | Natural Language Processing | Customization Options">
+            <DataEnhancementHero />
 
-            <DataEnhancementHero/>
-
-            <DataEnhancementUseCases/>
-            <AutofillFeature/>
-            <DataStructure/>
-            <Translations/>
+            <DataEnhancementUseCases />
+            <AutofillFeature />
+            <DataStructure />
+            <Translations />
         </Layout>
     );
 }

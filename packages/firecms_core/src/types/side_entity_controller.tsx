@@ -9,7 +9,6 @@ import { EntityFormProps } from "../form";
  * @group Hooks and utilities
  */
 export interface EntitySidePanelProps<M extends Record<string, any> = any> {
-
     /**
      * Absolute path of the entity
      */

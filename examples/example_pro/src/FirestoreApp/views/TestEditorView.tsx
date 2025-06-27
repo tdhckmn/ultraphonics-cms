@@ -5,7 +5,6 @@ import { CircularProgressCenter, useAuthController, useStorageSource } from "@fi
 import { useEditorAIController } from "@firecms/data_enhancement";
 
 export function TestEditorView() {
-
     const [initialContent, setInitialContent] = useState<string | JSONContent | null>(null);
 
     const storageSource = useStorageSource();
@@ -25,40 +24,43 @@ export function TestEditorView() {
 
     return (
         <Container className={"md:p-8 bg-white dark:bg-surface-950 md:my-4"}>
-            {!initialContent && <CircularProgressCenter/>}
-            {initialContent && <FireCMSEditor
-                content={initialContent}
-                // onJsonContentChange={(content) => {
-                // }}
-                // onHtmlContentChange={(content) => {
-                //     console.log(content);
-                // }}
-                // onJsonContentChange={(content) => {
-                //     console.log("json content")
-                //     console.log(content);
-                //     // console.log(JSON.stringify(content));
-                //     // window.localStorage.setItem("editor-content", JSON.stringify(content));
-                // }}
-                onMarkdownContentChange={(content) => {
-                    // console.log("markdown content")
-                    // console.log(content);
-                    window.localStorage.setItem("editor-content", content);
-                }}
-                aiController={editorAIController}
-                handleImageUpload={async (file: File) => {
-                    const result = await storageSource.uploadFile({
-                        file,
-                        path: "editor_test"
-                    });
-                    const downloadConfig = await storageSource.getDownloadURL(result.path);
-                    const url = downloadConfig.url;
-                    if (!url) {
-                        throw new Error("Error uploading image");
-                    }
-                    return url;
-                }}/>}
+            {!initialContent && <CircularProgressCenter />}
+            {initialContent && (
+                <FireCMSEditor
+                    content={initialContent}
+                    // onJsonContentChange={(content) => {
+                    // }}
+                    // onHtmlContentChange={(content) => {
+                    //     console.log(content);
+                    // }}
+                    // onJsonContentChange={(content) => {
+                    //     console.log("json content")
+                    //     console.log(content);
+                    //     // console.log(JSON.stringify(content));
+                    //     // window.localStorage.setItem("editor-content", JSON.stringify(content));
+                    // }}
+                    onMarkdownContentChange={(content) => {
+                        // console.log("markdown content")
+                        // console.log(content);
+                        window.localStorage.setItem("editor-content", content);
+                    }}
+                    aiController={editorAIController}
+                    handleImageUpload={async (file: File) => {
+                        const result = await storageSource.uploadFile({
+                            file,
+                            path: "editor_test",
+                        });
+                        const downloadConfig = await storageSource.getDownloadURL(result.path);
+                        const url = downloadConfig.url;
+                        if (!url) {
+                            throw new Error("Error uploading image");
+                        }
+                        return url;
+                    }}
+                />
+            )}
         </Container>
-    )
+    );
 }
 
 const defaultEditorContent = `
@@ -88,4 +90,4 @@ This editor is in development and your **feedback** is very **valuable**. The co
 
 - [x] Star us on [GitHub](https://github.com/firecmsco/firecms)
 
-- [x] Leave us your comments on [Discord](https://discord.gg/fxy7xsQm3m)`
+- [x] Leave us your comments on [Discord](https://discord.gg/fxy7xsQm3m)`;

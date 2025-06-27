@@ -19,7 +19,7 @@ import {
     useBuildLocalConfigurationPersistence,
     useBuildModeController,
     useBuildNavigationController,
-    useValidateAuthenticator
+    useValidateAuthenticator,
 } from "@firecms/core";
 import {
     FirebaseAuthController,
@@ -32,7 +32,11 @@ import {
 } from "@firecms/firebase";
 import { useImportPlugin } from "@firecms/data_import";
 import { useExportPlugin } from "@firecms/data_export";
-import { useBuildUserManagement, userManagementAdminViews, useUserManagementPlugin } from "@firecms/user_management";
+import {
+    useBuildUserManagement,
+    userManagementAdminViews,
+    useUserManagementPlugin,
+} from "@firecms/user_management";
 import { useFirestoreCollectionsConfigController } from "@firecms/collection_editor_firebase";
 import { mergeCollections, useCollectionEditorPlugin } from "@firecms/collection_editor";
 
@@ -56,7 +60,7 @@ const categories = {
     science: "Science",
     medical: "Medical",
     cooking: "Cooking",
-    travel: "Travel"
+    travel: "Travel",
 };
 
 const booksCollection = buildCollection({
@@ -67,72 +71,68 @@ const booksCollection = buildCollection({
     icon: "MenuBook",
     group: "Content",
     textSearchEnabled: true,
-    description: "Example of a books collection that allows data enhancement through the use of the **OpenAI plugin**",
+    description:
+        "Example of a books collection that allows data enhancement through the use of the **OpenAI plugin**",
     properties: {
         title: {
             name: "Title",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         authors: {
             name: "Authors",
-            dataType: "string"
+            dataType: "string",
         },
         description: {
             name: "Description",
             dataType: "string",
-            multiline: true
+            multiline: true,
         },
         spanish_description: {
             name: "Spanish description",
             dataType: "string",
-            multiline: true
+            multiline: true,
         },
         thumbnail: {
             name: "Thumbnail",
             dataType: "string",
-            url: "image"
+            url: "image",
         },
         category: {
             name: "Category",
             dataType: "string",
-            enumValues: categories
+            enumValues: categories,
         },
         tags: {
             name: "Tags",
             dataType: "array",
             of: {
-                dataType: "string"
-            }
+                dataType: "string",
+            },
         },
         published_year: {
             name: "Published Year",
             dataType: "number",
             validation: {
                 integer: true,
-                min: 0
-            }
+                min: 0,
+            },
         },
         num_pages: {
             name: "Num pages",
-            dataType: "number"
+            dataType: "number",
         },
         created_at: {
             name: "Created at",
             dataType: "date",
-            autoValue: "on_create"
-        }
-    }
+            autoValue: "on_create",
+        },
+    },
 });
 
 export function FireCMSApp() {
-
-    const {
-        firebaseApp,
-        firebaseConfigLoading,
-        configError
-    } = useInitialiseFirebase({
-        firebaseConfig
+    const { firebaseApp, firebaseConfigLoading, configError } = useInitialiseFirebase({
+        firebaseConfig,
     });
 
     // Controller used to manage the dark or light color mode
@@ -145,16 +145,16 @@ export function FireCMSApp() {
 
     // Delegate used for fetching and saving data in Firestore
     const firestoreDelegate = useFirestoreDelegate({
-        firebaseApp
+        firebaseApp,
     });
 
     // Controller used for saving and fetching files in storage
     const storageSource = useFirebaseStorageSource({
-        firebaseApp
+        firebaseApp,
     });
 
     const collectionConfigController = useFirestoreCollectionsConfigController({
-        firebaseApp
+        firebaseApp,
     });
 
     // controller in charge of user management
@@ -167,20 +167,16 @@ export function FireCMSApp() {
         firebaseApp,
         signInOptions,
         loading: userManagement.loading,
-        defineRolesFor: userManagement.defineRolesFor
+        defineRolesFor: userManagement.defineRolesFor,
     });
 
-    const {
-        authLoading,
-        canAccessMainView,
-        notAllowedError
-    } = useValidateAuthenticator({
+    const { authLoading, canAccessMainView, notAllowedError } = useValidateAuthenticator({
         disabled: userManagement.loading,
         authenticator: userManagement.authenticator,
         authController,
         // authenticator: myAuthenticator,
         dataSourceDelegate: firestoreDelegate,
-        storageSource
+        storageSource,
     });
 
     const collectionsBuilder = useCallback(() => {
@@ -197,7 +193,7 @@ export function FireCMSApp() {
         collectionPermissions: userManagement.collectionPermissions,
         adminViews: userManagementAdminViews,
         authController,
-        dataSourceDelegate: firestoreDelegate
+        dataSourceDelegate: firestoreDelegate,
     });
 
     const userManagementPlugin = useUserManagementPlugin({ userManagement });
@@ -206,11 +202,15 @@ export function FireCMSApp() {
     const exportPlugin = useExportPlugin();
 
     const collectionEditorPlugin = useCollectionEditorPlugin({
-        collectionConfigController
+        collectionConfigController,
     });
 
     if (firebaseConfigLoading || !firebaseApp) {
-        return <><CircularProgressCenter/></>;
+        return (
+            <>
+                <CircularProgressCenter />
+            </>
+        );
     }
 
     if (configError) {
@@ -225,35 +225,39 @@ export function FireCMSApp() {
                     userConfigPersistence={userConfigPersistence}
                     dataSourceDelegate={firestoreDelegate}
                     storageSource={storageSource}
-                    plugins={[importPlugin, exportPlugin, userManagementPlugin, collectionEditorPlugin]}
+                    plugins={[
+                        importPlugin,
+                        exportPlugin,
+                        userManagementPlugin,
+                        collectionEditorPlugin,
+                    ]}
                 >
-                    {({
-                          context,
-                          loading
-                      }) => {
-
+                    {({ context, loading }) => {
                         if (loading || authLoading) {
-                            return <CircularProgressCenter size={"large"}/>;
+                            return <CircularProgressCenter size={"large"} />;
                         }
                         if (!canAccessMainView) {
-                            return <FirebaseLoginView authController={authController}
-                                                      firebaseApp={firebaseApp}
-                                                      signInOptions={signInOptions}
-                                                      notAllowedError={notAllowedError}/>;
+                            return (
+                                <FirebaseLoginView
+                                    authController={authController}
+                                    firebaseApp={firebaseApp}
+                                    signInOptions={signInOptions}
+                                    notAllowedError={notAllowedError}
+                                />
+                            );
                         }
 
-                        return <Scaffold
-                            autoOpenDrawer={false}>
-                            <AppBar title={"My demo app"}/>
-                            <Drawer/>
-                            <NavigationRoutes/>
-                            <SideDialogs/>
-                        </Scaffold>;
+                        return (
+                            <Scaffold autoOpenDrawer={false}>
+                                <AppBar title={"My demo app"} />
+                                <Drawer />
+                                <NavigationRoutes />
+                                <SideDialogs />
+                            </Scaffold>
+                        );
                     }}
                 </FireCMS>
             </ModeControllerProvider>
         </SnackbarProvider>
     );
-
 }
-

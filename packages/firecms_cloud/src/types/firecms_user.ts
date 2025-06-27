@@ -11,8 +11,8 @@ export type FireCMSCloudUser = {
     updated_on: Date;
     created_on: Date;
     firebase_uid: string;
-}
+};
 
 export type FireCMSCloudUserWithRoles = FireCMSCloudUser & {
     roles: Role[];
-}
+};

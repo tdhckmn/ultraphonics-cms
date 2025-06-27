@@ -9,9 +9,7 @@ export default function BadgeInvisibleDemo() {
                 <Chip>Content with Badge</Chip>
             </Badge>
 
-            <Button onClick={() => setVisible(!visible)}>
-                Toggle badge
-            </Button>
+            <Button onClick={() => setVisible(!visible)}>Toggle badge</Button>
         </>
     );
 }

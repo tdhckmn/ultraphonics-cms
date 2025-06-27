@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function CloudQueueIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"cloud_queue"}/>
+    return <Icon {...props} iconKey={"cloud_queue"} />;
 }

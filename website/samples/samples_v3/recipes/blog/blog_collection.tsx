@@ -6,16 +6,18 @@ export const blogCollection = buildCollection<BlogEntry>({
     name: "Blog entry",
     id: "blog",
     path: "blog",
-    entityViews: [{
-        key: "preview",
-        name: "Preview",
-        Builder: BlogEntryPreview
-    }],
+    entityViews: [
+        {
+            key: "preview",
+            name: "Preview",
+            Builder: BlogEntryPreview,
+        },
+    ],
     properties: {
         name: buildProperty({
             name: "Name",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         }),
         header_image: buildProperty({
             name: "Header image",
@@ -25,9 +27,9 @@ export const blogCollection = buildCollection<BlogEntry>({
                 storagePath: "images",
                 acceptedFiles: ["image/*"],
                 metadata: {
-                    cacheControl: "max-age=1000000"
-                }
-            }
+                    cacheControl: "max-age=1000000",
+                },
+            },
         }),
         content: buildProperty({
             name: "Content",
@@ -49,27 +51,28 @@ export const blogCollection = buildCollection<BlogEntry>({
                                 storagePath: "images",
                                 acceptedFiles: ["image/*"],
                                 metadata: {
-                                    cacheControl: "max-age=1000000"
-                                }
-                            }
+                                    cacheControl: "max-age=1000000",
+                                },
+                            },
                         }),
-                        description: "This fields allows uploading multiple images at once and reordering"
+                        description:
+                            "This fields allows uploading multiple images at once and reordering",
                     }),
                     text: buildProperty({
                         dataType: "string",
                         name: "Text",
-                        markdown: true
+                        markdown: true,
                     }),
                     products: buildProperty({
                         name: "Products",
                         dataType: "array",
                         of: {
                             dataType: "reference",
-                            path: "products" // you need to define a valid collection in this path
-                        }
-                    })
-                }
-            }
+                            path: "products", // you need to define a valid collection in this path
+                        },
+                    }),
+                },
+            },
         }),
         status: buildProperty(({ values }) => ({
             name: "Status",
@@ -80,16 +83,16 @@ export const blogCollection = buildCollection<BlogEntry>({
                 published: {
                     id: "published",
                     label: "Published",
-                    disabled: !values.header_image
+                    disabled: !values.header_image,
                 },
-                draft: "Draft"
+                draft: "Draft",
             },
-            defaultValue: "draft"
+            defaultValue: "draft",
         })),
         created_on: buildProperty({
             name: "Created on",
             dataType: "date",
-            autoValue: "on_create"
-        })
-    }
-})
+            autoValue: "on_create",
+        }),
+    },
+});

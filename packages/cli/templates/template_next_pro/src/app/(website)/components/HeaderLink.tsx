@@ -5,23 +5,23 @@ import { cls } from "@firecms/ui";
 import { usePathname } from "next/navigation";
 
 export type HeaderLinkProps = {
-    href: string,
-    children: React.ReactNode,
-    className?: string
-}
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+};
 
-export function HeaderLink({
-                               href,
-                               children,
-                               className
-                           }: HeaderLinkProps) {
+export function HeaderLink({ href, children, className }: HeaderLinkProps) {
     const pathname = usePathname();
     const isActive = pathname.startsWith(href);
     return (
-        <Link href={href}
-              className={cls("block uppercase py-2 text-sm font-semibold hover:text-secondary dark:text-surface-300",
-                  isActive ? "text-text-primary" : "text-text-secondary",
-                  className)}>
+        <Link
+            href={href}
+            className={cls(
+                "block uppercase py-2 text-sm font-semibold hover:text-secondary dark:text-surface-300",
+                isActive ? "text-text-primary" : "text-text-secondary",
+                className
+            )}
+        >
             {children}
         </Link>
     );

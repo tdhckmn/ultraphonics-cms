@@ -37,7 +37,6 @@ There are two ways to build top level views in FireCMS:
   internal components of the CMS as well as the provided hooks.
   Check [Custom top level views](custom_top_level_views.md) for more details
 
-
 :::note Custom backend
 FireCMS was built with Firebase/Firestore as the default backend, but nothing
 stops you from implementing your own `DataSource`, `AuthController` and
@@ -63,14 +62,14 @@ MUI theme, control the routes or replace the backend altogether
 Check the details in the [Custom CMSApp](custom_cms_app.md) section
 :::
 
-
 ## Firebase
 
 If Firebase is your chosen backend:
-* You need to enable the **Firestore** database in your Firebase project.
-* If you want to have  **authentication** enabled in your CMS config, you need to enable
+
+- You need to enable the **Firestore** database in your Firebase project.
+- If you want to have **authentication** enabled in your CMS config, you need to enable
   the corresponding auth method in your project.
-* Also, if you are using **storage** fields in your string properties, you need
+- Also, if you are using **storage** fields in your string properties, you need
   to enable Firebase Storage.
 
 More details in [Firebase setup section](firebase_setup.md).
@@ -82,7 +81,6 @@ linked to it, you can omit the `firebaseConfig` specification, since it gets
 picked up automatically.
 
 More details in [the deployment section](deployment.md)
-
 
 ## Features
 
@@ -106,11 +104,12 @@ if you are using Firestore), as well as **filtering and sorting** and
 **exporting** data
 
 ### ✨ Powerful forms
+
 ![fields](/img/form_editing.webp)
 
 When editing an entity, FireCMS offers a nested system of side dialogs that
 allow to navigate through **subcollections** and access custom views (such as a
-custom form, or a blog preview). 
+custom form, or a blog preview).
 
 FireCMS includes **more than 15 built-in fields** with hundreds of customization
 and validation options. The components have been meticulously crafted for a

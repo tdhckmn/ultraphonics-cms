@@ -5,7 +5,6 @@ import { FireCMSAppConfig } from "./types";
  * @group Firebase
  */
 export type FireCMSCloudAppProps = {
-
     /**
      * Firebase project id this CMS is connected to.
      */
@@ -35,5 +34,4 @@ export type FireCMSCloudAppProps = {
      * Backend API host. Only used internally for testing.
      */
     backendApiHost?: string;
-
 };

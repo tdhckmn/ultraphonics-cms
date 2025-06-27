@@ -137,6 +137,7 @@ project, no subscriptions required!
 https://youtube.com/shorts/WIfHyvDRam0
 
 ## Conclusion
+
 The integration of ChatGPT into CMS systems has the potential to **revolutionise
 content management**, making it more efficient, accurate, and versatile. By
 autofilling fields, completing missing data, providing translations, and
@@ -147,4 +148,3 @@ FireCMS showcases a successful approach to integrating ChatGPT into a CMS
 platform, setting the stage for other CMS systems to follow suit. As AI
 technology continues to advance, the potential for further improvements and
 innovations in content management is limitless.
-

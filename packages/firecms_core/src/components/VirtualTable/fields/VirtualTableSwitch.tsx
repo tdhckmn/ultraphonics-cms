@@ -6,13 +6,9 @@ export function VirtualTableSwitch(props: {
     internalValue?: boolean;
     focused: boolean;
     disabled: boolean;
-    updateValue: (newValue: (boolean | null)) => void;
+    updateValue: (newValue: boolean | null) => void;
 }) {
-    const {
-        internalValue,
-        updateValue,
-        focused
-    } = props;
+    const { internalValue, updateValue, focused } = props;
     const ref = React.useRef<HTMLButtonElement>(null);
 
     useEffect(() => {

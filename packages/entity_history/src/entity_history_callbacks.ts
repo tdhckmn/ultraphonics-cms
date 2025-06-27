@@ -1,28 +1,29 @@
 import { EntityCallbacks } from "@firecms/core";
-import equal from "react-fast-compare"
+import equal from "react-fast-compare";
 
 export const entityHistoryCallbacks: EntityCallbacks = {
     onSaveSuccess: async (props) => {
-
         const changedFields = props.previousValues ? findChangedFields(props.previousValues, props.values) : null;
         const uid = props.context.authController.user?.uid;
-        props.context.dataSource.saveEntity({
-            path: props.path + "/" + props.entityId + "/__history",
-            values: {
-                ...props.values,
-                __metadata: {
-                    previous_values: props.previousValues,
-                    changed_fields: changedFields,
-                    updated_on: new Date(),
-                    updated_by: uid,
-                }
-            },
-            status: "new"
-        }).then(() => {
-            console.debug("History saved for", props.path, props.entityId);
-        });
-    }
-}
+        props.context.dataSource
+            .saveEntity({
+                path: props.path + "/" + props.entityId + "/__history",
+                values: {
+                    ...props.values,
+                    __metadata: {
+                        previous_values: props.previousValues,
+                        changed_fields: changedFields,
+                        updated_on: new Date(),
+                        updated_by: uid,
+                    },
+                },
+                status: "new",
+            })
+            .then(() => {
+                console.debug("History saved for", props.path, props.entityId);
+            });
+    },
+};
 
 function findChangedFields<M extends object>(oldValues: M, newValues: M, prefix: string = ""): string[] {
     const changedFields: string[] = [];
@@ -32,10 +33,7 @@ function findChangedFields<M extends object>(oldValues: M, newValues: M, prefix:
     if (!oldValues || !newValues) return [prefix || "."];
 
     // Get all unique keys from both objects
-    const allKeys = new Set([
-        ...Object.keys(oldValues),
-        ...Object.keys(newValues)
-    ]);
+    const allKeys = new Set([...Object.keys(oldValues), ...Object.keys(newValues)]);
 
     for (const key of allKeys) {
         const oldValue = oldValues[key as keyof M];
@@ -43,7 +41,7 @@ function findChangedFields<M extends object>(oldValues: M, newValues: M, prefix:
         const currentPath = prefix ? `${prefix}.${key}` : key;
 
         // If key exists only in one object
-        if ((key in oldValues) !== (key in newValues)) {
+        if (key in oldValues !== key in newValues) {
             changedFields.push(currentPath);
             continue;
         }
@@ -59,13 +57,15 @@ function findChangedFields<M extends object>(oldValues: M, newValues: M, prefix:
                 // Check if any array element changed
                 for (let i = 0; i < oldValue.length; i++) {
                     if (
-                        typeof oldValue[i] === "object" && oldValue[i] !== null &&
-                        typeof newValue[i] === "object" && newValue[i] !== null
+                        typeof oldValue[i] === "object" &&
+                        oldValue[i] !== null &&
+                        typeof newValue[i] === "object" &&
+                        newValue[i] !== null
                     ) {
                         const nestedChanges = findChangedFields(
                             oldValue[i] as object,
                             newValue[i] as object,
-                            `${currentPath}[${i}]`
+                            `${currentPath}[${i}]`,
                         );
                         if (nestedChanges.length > 0) {
                             changedFields.push(currentPath);
@@ -80,14 +80,12 @@ function findChangedFields<M extends object>(oldValues: M, newValues: M, prefix:
         }
         // Handle nested objects
         else if (
-            typeof oldValue === "object" && oldValue !== null &&
-            typeof newValue === "object" && newValue !== null
+            typeof oldValue === "object" &&
+            oldValue !== null &&
+            typeof newValue === "object" &&
+            newValue !== null
         ) {
-            const nestedChanges = findChangedFields(
-                oldValue as object,
-                newValue as object,
-                currentPath
-            );
+            const nestedChanges = findChangedFields(oldValue as object, newValue as object, currentPath);
             changedFields.push(...nestedChanges);
         }
         // Handle primitives

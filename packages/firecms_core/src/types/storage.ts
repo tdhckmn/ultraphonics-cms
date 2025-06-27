@@ -2,11 +2,11 @@
  * @group Models
  */
 export interface UploadFileProps {
-    file: File,
-    fileName?: string,
-    path?: string,
-    metadata?: any,
-    bucket?: string
+    file: File;
+    fileName?: string;
+    path?: string;
+    metadata?: any;
+    bucket?: string;
 }
 
 /**
@@ -81,12 +81,12 @@ export interface StorageSource {
      * @param bucket
      */
     uploadFile: ({
-                     file,
-                     fileName,
-                     path,
-                     metadata,
-                     bucket
-                 }: UploadFileProps) => Promise<UploadFileResult>;
+        file,
+        fileName,
+        path,
+        metadata,
+        bucket,
+    }: UploadFileProps) => Promise<UploadFileResult>;
 
     /**
      * Convert a storage path or URL into a download configuration
@@ -115,12 +115,14 @@ export interface StorageSource {
      * @param path
      * @param options
      */
-    list: (path: string, options?: {
-        bucket?: string,
-        maxResults?: number,
-        pageToken?: string
-    }) => Promise<StorageListResult>;
-
+    list: (
+        path: string,
+        options?: {
+            bucket?: string;
+            maxResults?: number;
+            pageToken?: string;
+        }
+    ) => Promise<StorageListResult>;
 }
 
 /**

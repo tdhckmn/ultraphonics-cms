@@ -8,9 +8,9 @@ import {
     useReferenceDialog,
     useSelectionController,
     useSideEntityController,
-    useSnackbarController
+    useSnackbarController,
 } from "@firecms/core";
-import { Button, GitHubIcon, IconButton, Paper, Tooltip, Typography, } from "@firecms/ui";
+import { Button, GitHubIcon, IconButton, Paper, Tooltip, Typography } from "@firecms/ui";
 
 const usersCollection = buildCollection({
     path: "users",
@@ -24,20 +24,20 @@ const usersCollection = buildCollection({
     properties: {
         first_name: {
             name: "First name",
-            dataType: "string"
+            dataType: "string",
         },
         last_name: {
             name: "Last name",
-            dataType: "string"
+            dataType: "string",
         },
         email: {
             name: "Email",
             dataType: "string",
-            email: true
+            email: true,
         },
         phone: {
             name: "Phone",
-            dataType: "string"
+            dataType: "string",
         },
         liked_products: {
             dataType: "array",
@@ -45,8 +45,8 @@ const usersCollection = buildCollection({
             description: "Products this user has liked",
             of: {
                 dataType: "reference",
-                path: "products"
-            }
+                path: "products",
+            },
         },
         picture: {
             name: "Picture",
@@ -55,25 +55,25 @@ const usersCollection = buildCollection({
                 large: {
                     name: "Large",
                     dataType: "string",
-                    url: "image"
+                    url: "image",
                 },
                 thumbnail: {
                     name: "Thumbnail",
                     dataType: "string",
-                    url: "image"
-                }
+                    url: "image",
+                },
             },
-            previewProperties: ["large"]
-        }
+            previewProperties: ["large"],
+        },
     },
     additionalFields: [
         {
             key: "sample_additional",
             name: "Sample additional",
             Builder: ({ entity }) => <>{`Generated column: ${entity.values.first_name}`}</>,
-            dependencies: ["first_name"]
-        }
-    ]
+            dependencies: ["first_name"],
+        },
+    ],
 });
 
 /**
@@ -81,7 +81,6 @@ const usersCollection = buildCollection({
 
  */
 export function ExampleCMSView() {
-
     // hook to display custom snackbars
     const snackbarController = useSnackbarController();
 
@@ -101,9 +100,9 @@ export function ExampleCMSView() {
         onSingleEntitySelected(entity: Entity<any> | null) {
             snackbarController.open({
                 type: "success",
-                message: "Selected " + entity?.values.name
-            })
-        }
+                message: "Selected " + entity?.values.name,
+            });
+        },
     });
 
     const customProductCollection = buildCollection({
@@ -114,26 +113,27 @@ export function ExampleCMSView() {
             name: {
                 name: "Name",
                 validation: { required: true },
-                dataType: "string"
+                dataType: "string",
             },
             very_custom_field: {
                 name: "Very custom field",
-                dataType: "string"
-            }
-        }
+                dataType: "string",
+            },
+        },
     });
 
     const githubLink = (
-        <Tooltip
-            asChild={true}
-            title="Get the source code of this example view">
+        <Tooltip asChild={true} title="Get the source code of this example view">
             <IconButton
-                href={"https://github.com/firecmsco/firecms/blob/main/examples/example_cloud/src/views/ExampleCMSView.tsx"}
+                href={
+                    "https://github.com/firecmsco/firecms/blob/main/examples/example_cloud/src/views/ExampleCMSView.tsx"
+                }
                 rel="noopener noreferrer"
                 target="_blank"
                 component={"a"}
-                size="large">
-                <GitHubIcon/>
+                size="large"
+            >
+                <GitHubIcon />
             </IconButton>
         </Tooltip>
     );
@@ -141,61 +141,68 @@ export function ExampleCMSView() {
     return (
         <div className="flex h-full">
             <div className="m-auto flex flex-col items-center max-w-4xl">
-
                 <div className="flex flex-col gap-12 items-start">
-
                     <div className="mt-24">
                         <Typography variant="h4">
                             This is an example of an additional view
                         </Typography>
                         <p>
-                            {authController.user
-                                ? <>Logged in as {authController.user.displayName}</>
-                                : <>You are not logged in</>}
+                            {authController.user ? (
+                                <>Logged in as {authController.user.displayName}</>
+                            ) : (
+                                <>You are not logged in</>
+                            )}
                         </p>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <Paper className={"w-full flex flex-col p-4 items-start"}>
                             <p className="mb-4 flex-grow">
-                                Use this button to select an entity under the path `products` programmatically
+                                Use this button to select an entity under the path `products`
+                                programmatically
                             </p>
                             <Button
                                 variant={"outlined"}
                                 size={"small"}
-                                onClick={referenceDialog.open}>
+                                onClick={referenceDialog.open}
+                            >
                                 Test reference dialog
                             </Button>
                         </Paper>
 
                         <Paper className="w-full flex flex-col p-4 items-start">
-                            <p className="mb-4 flex-grow">
-                                Use this button to open a snackbar
-                            </p>
+                            <p className="mb-4 flex-grow">Use this button to open a snackbar</p>
                             <Button
                                 variant={"outlined"}
                                 size={"small"}
-                                onClick={() => snackbarController.open({
-                                    type: "success",
-                                    message: "This is pretty cool"
-                                })}>
+                                onClick={() =>
+                                    snackbarController.open({
+                                        type: "success",
+                                        message: "This is pretty cool",
+                                    })
+                                }
+                            >
                                 Test snackbar
                             </Button>
                         </Paper>
 
                         <Paper className="w-full flex flex-col p-4 items-start">
                             <p className="mb-4 flex-grow">
-                                Use this button to open an entity in a custom path with a custom schema
+                                Use this button to open an entity in a custom path with a custom
+                                schema
                             </p>
                             <Button
                                 size={"small"}
                                 variant={"outlined"}
-                                onClick={() => sideEntityController.open({
-                                    entityId: "B003WT1622",
-                                    path: "/products-test",
-                                    collection: customProductCollection,
-                                    width: 1000
-                                })}>
+                                onClick={() =>
+                                    sideEntityController.open({
+                                        entityId: "B003WT1622",
+                                        path: "/products-test",
+                                        collection: customProductCollection,
+                                        width: 1000,
+                                    })
+                                }
+                            >
                                 Open custom entity
                             </Button>
                         </Paper>
@@ -205,18 +212,16 @@ export function ExampleCMSView() {
                         <p className="mb-4">
                             You can include full entity collections in your views:
                         </p>
-                        <Paper
-                            className={"h-[400px]"}>
-                            <EntityCollectionView {...usersCollection}
-                                                  fullPath={"users"}
-                                                  selectionController={selectionController}/>
+                        <Paper className={"h-[400px]"}>
+                            <EntityCollectionView
+                                {...usersCollection}
+                                fullPath={"users"}
+                                selectionController={selectionController}
+                            />
                         </Paper>
                     </div>
 
-                    <div className="mt-auto">
-                        {githubLink}
-                    </div>
-
+                    <div className="mt-auto">{githubLink}</div>
                 </div>
             </div>
         </div>

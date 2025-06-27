@@ -10,7 +10,7 @@ import {
     useReferenceDialog,
     useSelectionController,
     useSideEntityController,
-    useSnackbarController
+    useSnackbarController,
 } from "@firecms/core";
 import {
     Button,
@@ -25,7 +25,7 @@ import {
     Sheet,
     TextField,
     Tooltip,
-    Typography
+    Typography,
 } from "@firecms/ui";
 import { Product } from "../types";
 import { usersCollection } from "../collections/users_collection";
@@ -38,13 +38,13 @@ import { usersCollection } from "../collections/users_collection";
 
  */
 export function ExampleCMSView() {
-
     // hook to display custom snackbars
     const snackbarController = useSnackbarController();
 
     const [isSheetOpen, setOpenSheet] = React.useState(false);
 
-    const [sampleSelectedProduct, setSampleSelectedProduct] = React.useState<EntityReference | null>();
+    const [sampleSelectedProduct, setSampleSelectedProduct] =
+        React.useState<EntityReference | null>();
 
     // hook to open the side dialog that shows the entity forms
     const sideEntityController = useSideEntityController();
@@ -58,9 +58,9 @@ export function ExampleCMSView() {
         onSingleEntitySelected(entity: Entity<Product> | null) {
             snackbarController.open({
                 type: "success",
-                message: "Selected " + entity?.values.name
-            })
-        }
+                message: "Selected " + entity?.values.name,
+            });
+        },
     });
 
     const customProductCollection = buildCollection({
@@ -71,46 +71,50 @@ export function ExampleCMSView() {
             name: {
                 name: "Name",
                 validation: { required: true },
-                dataType: "string"
+                dataType: "string",
             },
             very_custom_field: {
                 name: "Very custom field",
-                dataType: "string"
-            }
-        }
+                dataType: "string",
+            },
+        },
     });
 
     // in custom tables, you can manage the selected entities externally
     const tableSelectionController = useSelectionController();
 
     const githubLink = (
-        <Tooltip
-            title="Get the source code of this example view">
+        <Tooltip title="Get the source code of this example view">
             <IconButton
-                href={"https://github.com/firecmsco/firecms/blob/main/examples/example_cloud/src/views/ExampleCMSView.tsx"}
+                href={
+                    "https://github.com/firecmsco/firecms/blob/main/examples/example_cloud/src/views/ExampleCMSView.tsx"
+                }
                 rel="noopener noreferrer"
                 target="_blank"
                 component={"a"}
-                size="large">
-                <GitHubIcon/>
+                size="large"
+            >
+                <GitHubIcon />
             </IconButton>
         </Tooltip>
     );
 
-        return (
+    return (
         <div className="flex h-full">
             <div className="m-auto flex flex-col items-center max-w-4xl">
-
                 <div className="flex flex-col gap-12 items-start">
-
                     <div className="mt-24">
                         <Typography variant="h4">
                             This is an example of an additional view
                         </Typography>
                         <p>
-                            {authController.user
-                                ? <>Logged in as <Chip>{authController.user.displayName}</Chip></>
-                                : <>You are not logged in</>}
+                            {authController.user ? (
+                                <>
+                                    Logged in as <Chip>{authController.user.displayName}</Chip>
+                                </>
+                            ) : (
+                                <>You are not logged in</>
+                            )}
                         </p>
                     </div>
 
@@ -119,29 +123,26 @@ export function ExampleCMSView() {
                             size={"small"}
                             placeholder="Invite others by email"
                             className="flex-grow"
-                            endAdornment={<Select
-                                size={"small"}
-                                value={"read"}>
-                                <SelectItem value={"write"}>Can edit</SelectItem>
-                                <SelectItem value={"read"}>Can view</SelectItem>
-                            </Select>}
+                            endAdornment={
+                                <Select size={"small"} value={"read"}>
+                                    <SelectItem value={"write"}>Can edit</SelectItem>
+                                    <SelectItem value={"read"}>Can view</SelectItem>
+                                </Select>
+                            }
                         />
-                        <Button color="neutral">
-                            Invite
-                        </Button>
+                        <Button color="neutral">Invite</Button>
                     </div>
 
                     <div>
                         <Button
                             variant={"outlined"}
                             size={"small"}
-                            onClick={() => setOpenSheet(true)}>
+                            onClick={() => setOpenSheet(true)}
+                        >
                             Open bottom sheet
                         </Button>
                     </div>
-                    <Sheet open={isSheetOpen}
-                           onOpenChange={setOpenSheet}
-                           side={"bottom"}>
+                    <Sheet open={isSheetOpen} onOpenChange={setOpenSheet} side={"bottom"}>
                         <div className="bg-white font-bold dark:bg-surface-800 p-4 h-[90vh]">
                             Sheet Content
                         </div>
@@ -150,45 +151,51 @@ export function ExampleCMSView() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <Paper className={"w-full flex flex-col p-4 items-start"}>
                             <p className="mb-4 flex-grow">
-                                Use this button to select an entity under the
-                                path <code>products</code> programmatically
+                                Use this button to select an entity under the path{" "}
+                                <code>products</code> programmatically
                             </p>
                             <Button
                                 variant={"outlined"}
                                 size={"small"}
-                                onClick={referenceDialog.open}>
+                                onClick={referenceDialog.open}
+                            >
                                 Test reference dialog
                             </Button>
                         </Paper>
 
                         <Paper className="w-full flex flex-col p-4 items-start">
-                            <p className="mb-4 flex-grow">
-                                Use this button to open a snackbar
-                            </p>
+                            <p className="mb-4 flex-grow">Use this button to open a snackbar</p>
                             <Button
                                 variant={"outlined"}
                                 size={"small"}
-                                onClick={() => snackbarController.open({
-                                    type: "success",
-                                    message: "This is pretty cool"
-                                })}>
+                                onClick={() =>
+                                    snackbarController.open({
+                                        type: "success",
+                                        message: "This is pretty cool",
+                                    })
+                                }
+                            >
                                 Test snackbar
                             </Button>
                         </Paper>
 
                         <Paper className="w-full flex flex-col p-4 items-start">
                             <p className="mb-4 flex-grow">
-                                Use this button to open an entity in a custom path with a custom schema
+                                Use this button to open an entity in a custom path with a custom
+                                schema
                             </p>
                             <Button
                                 size={"small"}
                                 variant={"outlined"}
-                                onClick={() => sideEntityController.open({
-                                    entityId: "B003WT1622",
-                                    path: "/products",
-                                    collection: customProductCollection,
-                                    width: 1000
-                                })}>
+                                onClick={() =>
+                                    sideEntityController.open({
+                                        entityId: "B003WT1622",
+                                        path: "/products",
+                                        collection: customProductCollection,
+                                        width: 1000,
+                                    })
+                                }
+                            >
                                 Open custom entity
                             </Button>
                         </Paper>
@@ -201,35 +208,31 @@ export function ExampleCMSView() {
                         <ReferenceWidget
                             name={"Sample reference widget"}
                             value={sampleSelectedProduct ?? null}
-                            onReferenceSelected={({
-                                                      reference,
-                                                      entity
-                                                  }) => setSampleSelectedProduct(reference)}
+                            onReferenceSelected={({ reference, entity }) =>
+                                setSampleSelectedProduct(reference)
+                            }
                             path={"products"}
                             size={"small"}
-                            className={"w-full"}/>
+                            className={"w-full"}
+                        />
                     </div>
 
                     <div className="w-full">
                         <p className="mb-4">
                             You can include full entity collections in your views:
                         </p>
-                        <Paper
-                            className={"h-[400px]"}>
-                            <EntityCollectionView {...usersCollection}
-                                                  fullPath={"users"}
-                                                  selectionController={tableSelectionController}/>
+                        <Paper className={"h-[400px]"}>
+                            <EntityCollectionView
+                                {...usersCollection}
+                                fullPath={"users"}
+                                selectionController={tableSelectionController}
+                            />
                         </Paper>
                     </div>
 
-                    <div className="mt-auto">
-                        {githubLink}
-                    </div>
-
+                    <div className="mt-auto">{githubLink}</div>
                 </div>
             </div>
-
-
         </div>
     );
 }

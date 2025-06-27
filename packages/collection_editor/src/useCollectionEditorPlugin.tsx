@@ -15,8 +15,10 @@ import { useCollectionEditorController } from "./useCollectionEditorController";
 import { EditorCollectionActionStart } from "./ui/EditorCollectionActionStart";
 import { NewCollectionCard } from "./ui/NewCollectionCard";
 
-export interface CollectionConfigControllerProps<EC extends PersistedCollection = PersistedCollection, USER extends User = User> {
-
+export interface CollectionConfigControllerProps<
+    EC extends PersistedCollection = PersistedCollection,
+    USER extends User = User,
+> {
     /**
      * Firebase app where the configuration is saved.
      */
@@ -36,9 +38,9 @@ export interface CollectionConfigControllerProps<EC extends PersistedCollection 
 
     extraView?: {
         View: React.ComponentType<{
-            path: string
-        }>,
-        icon: React.ReactNode
+            path: string;
+        }>;
+        icon: React.ReactNode;
     };
 
     collectionInference?: CollectionInference;
@@ -50,7 +52,6 @@ export interface CollectionConfigControllerProps<EC extends PersistedCollection 
     onAnalyticsEvent?: (event: string, params?: object) => void;
 
     includeIntroView?: boolean;
-
 }
 
 /**
@@ -64,19 +65,20 @@ export interface CollectionConfigControllerProps<EC extends PersistedCollection 
  * @param getUser
  * @param collectionInference
  */
-export function useCollectionEditorPlugin<EC extends PersistedCollection = PersistedCollection, USER extends User = User>
-({
-     collectionConfigController,
-     configPermissions,
-     reservedGroups,
-     extraView,
-     getUser,
-     collectionInference,
-     getData,
-     onAnalyticsEvent,
-     includeIntroView = true
- }: CollectionConfigControllerProps<EC, USER>): FireCMSPlugin<any, any, PersistedCollection> {
-
+export function useCollectionEditorPlugin<
+    EC extends PersistedCollection = PersistedCollection,
+    USER extends User = User,
+>({
+    collectionConfigController,
+    configPermissions,
+    reservedGroups,
+    extraView,
+    getUser,
+    collectionInference,
+    getData,
+    onAnalyticsEvent,
+    includeIntroView = true,
+}: CollectionConfigControllerProps<EC, USER>): FireCMSPlugin<any, any, PersistedCollection> {
     return {
         key: "collection_editor",
         loading: collectionConfigController.loading,
@@ -91,11 +93,11 @@ export function useCollectionEditorPlugin<EC extends PersistedCollection = Persi
                 getUser,
                 getData,
                 onAnalyticsEvent,
-            }
+            },
         },
         homePage: {
-            additionalActions: <NewCollectionButton/>,
-            additionalChildrenStart: includeIntroView ? <IntroWidget/> : undefined,
+            additionalActions: <NewCollectionButton />,
+            additionalChildrenStart: includeIntroView ? <IntroWidget /> : undefined,
             CollectionActions: HomePageEditorCollectionAction,
             AdditionalCards: NewCollectionCard,
             allowDragAndDrop: true,
@@ -106,24 +108,22 @@ export function useCollectionEditorPlugin<EC extends PersistedCollection = Persi
             CollectionActionsStart: EditorCollectionActionStart,
             CollectionActions: EditorCollectionAction,
             HeaderAction: CollectionViewHeaderAction,
-            AddColumnComponent: PropertyAddColumnComponent
-        }
+            AddColumnComponent: PropertyAddColumnComponent,
+        },
     };
 }
 
 export function IntroWidget() {
-
     const navigation = useNavigationController();
-    if (!navigation.topLevelNavigation)
-        throw Error("Navigation not ready in FireCMSHomePage");
+    if (!navigation.topLevelNavigation) throw Error("Navigation not ready in FireCMSHomePage");
 
     const authController = useAuthController();
 
     const collectionEditorController = useCollectionEditorController();
     const canCreateCollections = collectionEditorController.configPermissions
         ? collectionEditorController.configPermissions({
-            user: authController.user,
-        }).createCollections
+              user: authController.user,
+          }).createCollections
         : true;
 
     if (!navigation.initialised || (navigation.collections ?? []).length > 0) {
@@ -131,26 +131,32 @@ export function IntroWidget() {
     }
 
     return (
-        <Paper
-            className={"my-4 px-4 py-6 flex flex-col  bg-white dark:bg-surface-accent-800 gap-2"}>
-            <Typography variant={"subtitle2"} className={"uppercase"}>No collections found</Typography>
+        <Paper className={"my-4 px-4 py-6 flex flex-col  bg-white dark:bg-surface-accent-800 gap-2"}>
+            <Typography variant={"subtitle2"} className={"uppercase"}>
+                No collections found
+            </Typography>
             <Typography>
-                Start building collections in FireCMS easily. Map them to your existing
-                database data, import from files, or use our templates.
+                Start building collections in FireCMS easily. Map them to your existing database data, import from
+                files, or use our templates.
             </Typography>
-            {canCreateCollections && <Button
-                onClick={collectionEditorController && canCreateCollections
-                    ? () => collectionEditorController.createCollection({
-                        parentCollectionIds: [],
-                        redirect: true,
-                        sourceClick: "new_collection_card"
-                    })
-                    : undefined}>
-                <AddIcon/>Create your first collection
-            </Button>}
-            <Typography color={"secondary"}>
-                You can also define collections programmatically.
-            </Typography>
+            {canCreateCollections && (
+                <Button
+                    onClick={
+                        collectionEditorController && canCreateCollections
+                            ? () =>
+                                  collectionEditorController.createCollection({
+                                      parentCollectionIds: [],
+                                      redirect: true,
+                                      sourceClick: "new_collection_card",
+                                  })
+                            : undefined
+                    }
+                >
+                    <AddIcon />
+                    Create your first collection
+                </Button>
+            )}
+            <Typography color={"secondary"}>You can also define collections programmatically.</Typography>
         </Paper>
     );
 }

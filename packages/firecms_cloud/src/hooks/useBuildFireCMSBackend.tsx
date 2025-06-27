@@ -9,15 +9,13 @@ import {
     onAuthStateChanged,
     signInWithPopup,
     signOut,
-    User as FirebaseUser
+    User as FirebaseUser,
 } from "@firebase/auth";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { buildProjectsApi } from "../api/projects";
 import { clearDelegatedLoginTokensCache } from "../utils";
 
-const AUTH_SCOPES = [
-    "https://www.googleapis.com/auth/cloud-platform"
-];
+const AUTH_SCOPES = ["https://www.googleapis.com/auth/cloud-platform"];
 
 export interface FireCMSBackendProps {
     backendApiHost: string;
@@ -26,15 +24,16 @@ export interface FireCMSBackendProps {
 }
 
 export function useBuildFireCMSBackend({
-                                           backendApiHost,
-                                           backendFirebaseApp,
-                                           onUserChange
-                                       }: FireCMSBackendProps): FireCMSBackend {
-
+    backendApiHost,
+    backendFirebaseApp,
+    onUserChange,
+}: FireCMSBackendProps): FireCMSBackend {
     const [loggedUser, setLoggedUser] = useState<FirebaseUser | null | undefined>(undefined); // logged user, anonymous or logged out
 
     const [authLoading, setAuthLoading] = useState(true);
-    const [googleCredential, setGoogleCredential] = useState<OAuthCredential | null>(loadCredentialFromStorage());
+    const [googleCredential, setGoogleCredential] = useState<OAuthCredential | null>(
+        loadCredentialFromStorage()
+    );
     const [authProviderError, setAuthProviderError] = useState<any>();
     const [permissionsNotGrantedError, setPermissionsNotGrantedError] = useState<boolean>(false);
 
@@ -47,17 +46,18 @@ export function useBuildFireCMSBackend({
 
     const firestoreRef = useRef<Firestore>();
 
-    const updateFirebaseUser = useCallback( (firebaseUser: FirebaseUser | null) => {
+    const updateFirebaseUser = useCallback((firebaseUser: FirebaseUser | null) => {
         onUserChange?.(firebaseUser);
         setLoggedUser(firebaseUser);
     }, []);
 
     useEffect(() => {
         if (availableProjectsLoaded && availableProjectIds) {
-            Promise.all(availableProjectIds.map((projectId) => getProject(projectId)))
-                .then((projectsRes) => {
-                    setProjects(projectsRes.filter(Boolean) as FireCMSProject[])
-                })
+            Promise.all(availableProjectIds.map((projectId) => getProject(projectId))).then(
+                (projectsRes) => {
+                    setProjects(projectsRes.filter(Boolean) as FireCMSProject[]);
+                }
+            );
         }
     }, [availableProjectIds, availableProjectsLoaded]);
 
@@ -76,12 +76,11 @@ export function useBuildFireCMSBackend({
                 setAuthLoading(false);
                 updateFirebaseUser(firebaseUser);
             },
-            error => setAuthProviderError(error)
+            (error) => setAuthProviderError(error)
         );
     }, [backendFirebaseApp, updateFirebaseUser]);
 
     useEffect(() => {
-
         const firestore = firestoreRef.current;
         if (!firestore) {
             return;
@@ -92,81 +91,80 @@ export function useBuildFireCMSBackend({
             setAvailableProjectsLoaded(false);
             return;
         }
-        return onSnapshot(doc(firestore, "users", loggedUser.uid),
-            {
-                next: (snapshot) => {
-                    const projectIds = snapshot.get("projects") ?? [];
-                    setAvailableProjectsError(undefined);
-                    setAvailableProjectIds(projectIds);
-                    setAvailableProjectsLoaded(true);
-                    setAvailableProjectsLoading(false);
-                },
-                error: (e) => {
-                    // console.error(e);
-                    setAvailableProjectsError(e);
-                    setAvailableProjectsLoading(false);
-                }
-            }
-        );
+        return onSnapshot(doc(firestore, "users", loggedUser.uid), {
+            next: (snapshot) => {
+                const projectIds = snapshot.get("projects") ?? [];
+                setAvailableProjectsError(undefined);
+                setAvailableProjectIds(projectIds);
+                setAvailableProjectsLoaded(true);
+                setAvailableProjectsLoading(false);
+            },
+            error: (e) => {
+                // console.error(e);
+                setAvailableProjectsError(e);
+                setAvailableProjectsLoading(false);
+            },
+        });
     }, [loggedUser]);
 
-    const googleLogin = useCallback((includeGoogleAdminScopes?: boolean): Promise<FirebaseUser | null> => {
-        if (!backendFirebaseApp)
-            throw Error("useBuildFireCMSBackend googleLogin error");
-        const provider = new GoogleAuthProvider();
-        provider.setCustomParameters({
-            access_type: "offline"
-        });
-        if (includeGoogleAdminScopes)
-            AUTH_SCOPES.forEach((scope) => provider.addScope(scope));
-        const auth = getAuth(backendFirebaseApp);
-        return signInWithPopup(auth, provider)
-            .then(credential => {
-                if (includeGoogleAdminScopes) {
-                    // @ts-ignore
-                    const userInfo = JSON.parse(credential._tokenResponse.rawUserInfo);
-                    const grantedScopes = userInfo.granted_scopes.split(" ");
-                    if (includeGoogleAdminScopes && !grantedScopes.includes(AUTH_SCOPES[0])) {
-                        setPermissionsNotGrantedError(true);
-                    } else {
-                        const credentialFromResult = GoogleAuthProvider.credentialFromResult(credential);
-                        setGoogleCredential(credentialFromResult);
-                        saveCredentialInStorage(credentialFromResult);
-                        setPermissionsNotGrantedError(false);
-                    }
-                }
-                return credential.user;
-            })
-            .catch((e) => {
-                setAuthProviderError(e);
-                return null;
+    const googleLogin = useCallback(
+        (includeGoogleAdminScopes?: boolean): Promise<FirebaseUser | null> => {
+            if (!backendFirebaseApp) throw Error("useBuildFireCMSBackend googleLogin error");
+            const provider = new GoogleAuthProvider();
+            provider.setCustomParameters({
+                access_type: "offline",
             });
-    }, [backendFirebaseApp]);
+            if (includeGoogleAdminScopes) AUTH_SCOPES.forEach((scope) => provider.addScope(scope));
+            const auth = getAuth(backendFirebaseApp);
+            return signInWithPopup(auth, provider)
+                .then((credential) => {
+                    if (includeGoogleAdminScopes) {
+                        // @ts-ignore
+                        const userInfo = JSON.parse(credential._tokenResponse.rawUserInfo);
+                        const grantedScopes = userInfo.granted_scopes.split(" ");
+                        if (includeGoogleAdminScopes && !grantedScopes.includes(AUTH_SCOPES[0])) {
+                            setPermissionsNotGrantedError(true);
+                        } else {
+                            const credentialFromResult =
+                                GoogleAuthProvider.credentialFromResult(credential);
+                            setGoogleCredential(credentialFromResult);
+                            saveCredentialInStorage(credentialFromResult);
+                            setPermissionsNotGrantedError(false);
+                        }
+                    }
+                    return credential.user;
+                })
+                .catch((e) => {
+                    setAuthProviderError(e);
+                    return null;
+                });
+        },
+        [backendFirebaseApp]
+    );
 
     const onSignOut = useCallback(() => {
         const auth = getAuth(backendFirebaseApp);
-        clearDelegatedLoginTokensCache()
-        signOut(auth)
-            .then(_ => {
-                setLoggedUser(null);
-                setGoogleCredential(null);
-                setAuthProviderError(null);
-                saveCredentialInStorage(null);
-            });
+        clearDelegatedLoginTokensCache();
+        signOut(auth).then((_) => {
+            setLoggedUser(null);
+            setGoogleCredential(null);
+            setAuthProviderError(null);
+            saveCredentialInStorage(null);
+        });
     }, [backendFirebaseApp]);
 
     const getBackendAuthToken = useCallback(() => {
-        if (!loggedUser)
-            throw Error("Trying to get Firebase token ");
+        if (!loggedUser) throw Error("Trying to get Firebase token ");
         return loggedUser.getIdToken();
     }, [loggedUser]);
 
     const getProject = useCallback((projectId: string) => {
         const firestore = firestoreRef.current;
-        if (!firestore)
-            throw Error("useFireCMSProjectsRepository error");
+        if (!firestore) throw Error("useFireCMSProjectsRepository error");
         return getDoc(doc(firestore, "projects", projectId))
-            .then(doc => doc.exists() ? { projectId: doc.id, ...doc.data() } as FireCMSProject : null)
+            .then((doc) =>
+                doc.exists() ? ({ projectId: doc.id, ...doc.data() } as FireCMSProject) : null
+            )
             .catch((error) => {
                 console.error("Error getting project:", error);
                 return null;
@@ -193,9 +191,8 @@ export function useBuildFireCMSBackend({
         backendUid: loggedUser?.uid,
         projectsApi,
         getProject,
-        projects
-    }
-
+        projects,
+    };
 }
 
 function saveCredentialInStorage(credential: OAuthCredential | null) {
@@ -205,7 +202,7 @@ function saveCredentialInStorage(credential: OAuthCredential | null) {
     }
     const credentialString = JSON.stringify({
         created_on: new Date(),
-        credential: credential.toJSON()
+        credential: credential.toJSON(),
     });
     localStorage.setItem("googleCredential", credentialString);
 }
@@ -213,11 +210,10 @@ function saveCredentialInStorage(credential: OAuthCredential | null) {
 function loadCredentialFromStorage(): OAuthCredential | null {
     try {
         const credentialString = localStorage.getItem("googleCredential");
-        if (!credentialString)
-            return null;
+        if (!credentialString) return null;
         const credentialJSON = JSON.parse(credentialString) satisfies {
-            created_on: string,
-            credential: any
+            created_on: string;
+            credential: any;
         };
         const credential = OAuthCredential.fromJSON(credentialJSON.credential);
         const createdOn = new Date(credentialJSON.created_on);

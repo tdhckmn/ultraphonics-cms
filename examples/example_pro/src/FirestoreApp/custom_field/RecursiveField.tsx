@@ -10,7 +10,7 @@ import {
     ResolvedNumberProperty,
     ResolvedProperty,
     ResolvedStringProperty,
-    TextFieldBinding
+    TextFieldBinding,
 } from "@firecms/core";
 import { BooleanSwitchWithLabel, Paper, Select, SelectItem } from "@firecms/ui";
 
@@ -22,8 +22,8 @@ export const conditionProperty = (name: string): MapProperty => ({
             dataType: "string",
             name: "Name",
             validation: {
-                required: true
-            }
+                required: true,
+            },
         },
         operator: {
             dataType: "string",
@@ -31,49 +31,48 @@ export const conditionProperty = (name: string): MapProperty => ({
             enumValues: {
                 "==": "==",
                 "!=": "!=",
-                "in": "in",
+                in: "in",
                 ">": ">",
                 "<": "<",
-                "startsWith": "startsWith",
-                "endsWith": "endsWith",
-                "includes": "includes"
-            }
+                startsWith: "startsWith",
+                endsWith: "endsWith",
+                includes: "includes",
+            },
         },
         value: {
             name: "Value",
             dataType: "string",
             // @ts-ignore
-            Field: UnionField
+            Field: UnionField,
         },
         and: {
             dataType: "map",
             name: "And",
             Field: ConditionalField,
             customProps: {
-                getProperty: () => conditionProperty("And condition")
-            }
+                getProperty: () => conditionProperty("And condition"),
+            },
         },
         or: {
             dataType: "map",
             name: "Or",
             Field: ConditionalField,
             customProps: {
-                getProperty: () => conditionProperty("Or condition")
-            }
+                getProperty: () => conditionProperty("Or condition"),
+            },
         },
-    }
+    },
 });
 
 type ConditionalFieldProps = {
-    getProperty: () => MapProperty
-}
+    getProperty: () => MapProperty;
+};
 
 function ConditionalField({
-                              value,
-                              customProps,
-                              ...props
-                          }: FieldProps<object, ConditionalFieldProps>) {
-
+    value,
+    customProps,
+    ...props
+}: FieldProps<object, ConditionalFieldProps>) {
     const { getProperty } = customProps;
     const [enabled, setEnabled] = React.useState<boolean>(Boolean(value));
     const resolvedProperty = useMemo(() => {
@@ -92,56 +91,61 @@ function ConditionalField({
                 className={"text-text-secondary dark:text-text-secondary-dark ml-3.5 mt-4"}
             />
             <Paper className={"flex flex-col gap-2 p-2"}>
-                <BooleanSwitchWithLabel size="small" value={enabled} onValueChange={setEnabled} label={"Enabled"}/>
-                {enabled && resolvedProperty && <MapFieldBinding
-                    {...props}
-                    value={value}
-                    customProps={customProps}
-                    property={resolvedProperty}
-                    minimalistView={true}
-                />}
+                <BooleanSwitchWithLabel
+                    size="small"
+                    value={enabled}
+                    onValueChange={setEnabled}
+                    label={"Enabled"}
+                />
+                {enabled && resolvedProperty && (
+                    <MapFieldBinding
+                        {...props}
+                        value={value}
+                        customProps={customProps}
+                        property={resolvedProperty}
+                        minimalistView={true}
+                    />
+                )}
             </Paper>
         </>
-    )
-
+    );
 }
 
 function UnionField({
-                        value,
-                        property,
-                        ...props
-                    }: FieldProps<string | number | (string | number)[]>) {
-
+    value,
+    property,
+    ...props
+}: FieldProps<string | number | (string | number)[]>) {
     const [type, setType] = React.useState<string>(inferTypeFromValue(value));
     const internalProperty: ResolvedProperty = useMemo(() => {
         if (type === "string") {
             return {
-                ...property as ResolvedStringProperty,
-                dataType: "string"
-            }
+                ...(property as ResolvedStringProperty),
+                dataType: "string",
+            };
         } else if (type === "number") {
             return {
-                ...property as ResolvedNumberProperty,
-                dataType: "number"
-            }
+                ...(property as ResolvedNumberProperty),
+                dataType: "number",
+            };
         } else if (type === "string[]") {
             return {
-                ...property as ResolvedArrayProperty,
+                ...(property as ResolvedArrayProperty),
                 dataType: "array",
                 of: {
-                    dataType: "string"
-                }
+                    dataType: "string",
+                },
             };
         } else if (type === "number[]") {
             return {
-                ...property as ResolvedArrayProperty,
+                ...(property as ResolvedArrayProperty),
                 dataType: "array",
                 of: {
-                    dataType: "number"
-                }
-            }
+                    dataType: "number",
+                },
+            };
         } else {
-            throw new Error("Invalid type")
+            throw new Error("Invalid type");
         }
     }, [type]);
 
@@ -155,36 +159,38 @@ function UnionField({
         } else if (type === "number[]") {
             return RepeatFieldBinding;
         } else {
-            throw new Error("Invalid type")
+            throw new Error("Invalid type");
         }
     }, [type]);
 
-    return (<>
+    return (
+        <>
             <LabelWithIcon
                 icon={getIconForProperty(property as ResolvedProperty, "small")}
                 required={property.validation?.required}
                 title={property.name}
                 className={"text-text-secondary dark:text-text-secondary-dark ml-3.5"}
             />
-            <Paper key={`form_control_${props.propertyKey}_${type}`} className={"flex flex-col gap-2 p-2"}>
-                <Select size="medium"
-                        value={type}
-                        fullWidth={true}
-                        onValueChange={setType}>
+            <Paper
+                key={`form_control_${props.propertyKey}_${type}`}
+                className={"flex flex-col gap-2 p-2"}
+            >
+                <Select size="medium" value={type} fullWidth={true} onValueChange={setType}>
                     <SelectItem value={"string"}>String</SelectItem>
                     <SelectItem value={"number"}>Number</SelectItem>
                     <SelectItem value={"string[]"}>String Array</SelectItem>
                     <SelectItem value={"number[]"}>Number Array</SelectItem>
                 </Select>
-                <Component key={`form_control_${props.propertyKey}_${type}`}
-                           value={value}
-                           property={internalProperty}
-                           {...props}
-                           minimalistView={true}/>
+                <Component
+                    key={`form_control_${props.propertyKey}_${type}`}
+                    value={value}
+                    property={internalProperty}
+                    {...props}
+                    minimalistView={true}
+                />
             </Paper>
         </>
-    )
-
+    );
 }
 
 function inferTypeFromValue(value: string | number | (string | number)[]) {
@@ -198,4 +204,3 @@ function inferTypeFromValue(value: string | number | (string | number)[]) {
         return typeof value === "number" ? "number" : "string";
     }
 }
-

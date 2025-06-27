@@ -8,7 +8,8 @@ export default function MultiSelectBasicDemo() {
         <MultiSelect
             value={selectedValues}
             onValueChange={setSelectedValues}
-            label="Basic MultiSelect">
+            label="Basic MultiSelect"
+        >
             <MultiSelectItem value="option1">Option 1</MultiSelectItem>
             <MultiSelectItem value="option2">Option 2</MultiSelectItem>
             <MultiSelectItem value="option3">Option 3</MultiSelectItem>

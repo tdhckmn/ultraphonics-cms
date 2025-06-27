@@ -4,11 +4,14 @@ import {
     EntityCollection,
     PermissionsBuilder,
     PropertiesOrBuilders,
-    PropertyOrBuilder
+    PropertyOrBuilder,
 } from "../types";
 import { isPropertyBuilder } from "./entities";
 
-export function sortProperties<M extends Record<string, any>>(properties: PropertiesOrBuilders<M>, propertiesOrder?: (keyof M)[]): PropertiesOrBuilders<M> {
+export function sortProperties<M extends Record<string, any>>(
+    properties: PropertiesOrBuilders<M>,
+    propertiesOrder?: (keyof M)[]
+): PropertiesOrBuilders<M> {
     try {
         const propertiesKeys = Object.keys(properties);
         const allPropertiesOrder = propertiesOrder ?? propertiesKeys;
@@ -16,15 +19,22 @@ export function sortProperties<M extends Record<string, any>>(properties: Proper
             .map((key) => {
                 if (properties[key as keyof M]) {
                     const property = properties[key] as PropertyOrBuilder;
-                    if (!isPropertyBuilder(property) && property?.dataType === "map" && property.properties) {
-                        return ({
+                    if (
+                        !isPropertyBuilder(property) &&
+                        property?.dataType === "map" &&
+                        property.properties
+                    ) {
+                        return {
                             [key]: {
                                 ...property,
-                                properties: sortProperties(property.properties, property.propertiesOrder)
-                            }
-                        });
+                                properties: sortProperties(
+                                    property.properties,
+                                    property.propertiesOrder
+                                ),
+                            },
+                        };
                     } else {
-                        return ({ [key]: property });
+                        return { [key]: property };
                     }
                 } else {
                     return undefined;
@@ -58,15 +68,17 @@ export function resolveDefaultSelectedView(
  * @param collections
  * @param permissionsBuilder
  */
-export const applyPermissionsFunctionIfEmpty = (collections: EntityCollection[], permissionsBuilder?: PermissionsBuilder<any, any>): EntityCollection[] => {
-
-    return collections.map(collection => {
+export const applyPermissionsFunctionIfEmpty = (
+    collections: EntityCollection[],
+    permissionsBuilder?: PermissionsBuilder<any, any>
+): EntityCollection[] => {
+    return collections.map((collection) => {
         if (collection.permissions) {
             return collection;
         }
-        return ({
+        return {
             ...collection,
-            permissions: permissionsBuilder
-        });
+            permissions: permissionsBuilder,
+        };
     });
-}
+};

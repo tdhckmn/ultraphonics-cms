@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function DeleteIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"delete"}/>
+    return <Icon {...props} iconKey={"delete"} />;
 }

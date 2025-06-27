@@ -10,10 +10,7 @@ export default function DebouncedTextFieldBasicDemo() {
 
     return (
         <div>
-            <DebouncedTextField
-                value={value}
-                onChange={handleChange}
-            />
+            <DebouncedTextField value={value} onChange={handleChange} />
         </div>
     );
 }

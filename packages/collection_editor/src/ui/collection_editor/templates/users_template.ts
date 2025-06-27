@@ -10,33 +10,33 @@ export const usersCollectionTemplate: EntityCollection = {
     properties: makePropertiesEditable({
         displayName: {
             name: "Display name",
-            dataType: "string"
+            dataType: "string",
         },
         email: {
             name: "Email",
             dataType: "string",
-            email: true
+            email: true,
         },
         emailVerified: {
             name: "Email verified",
-            dataType: "boolean"
+            dataType: "boolean",
         },
         phone: {
             name: "Phone",
-            dataType: "string"
+            dataType: "string",
         },
         favourite_products: {
             name: "Favourite products",
             dataType: "array",
             of: {
                 dataType: "reference",
-                path: "products"
-            }
+                path: "products",
+            },
         },
         photoURL: {
             name: "Photo URL",
             dataType: "string",
-            url: "image"
-        }
+            url: "image",
+        },
     }),
 };

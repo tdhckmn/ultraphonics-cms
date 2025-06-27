@@ -6,22 +6,19 @@ import DocumentReference = admin.firestore.DocumentReference;
  * When a locale is updated, we check update the 'available_locales' field in the product
  */
 export const setProductAvailableLocales = functions
-    .region('europe-west3')
-    .firestore
-    .document('/products/{productId}/locales/{localeId}')
+    .region("europe-west3")
+    .firestore.document("/products/{productId}/locales/{localeId}")
     .onWrite((change, context) => {
         const productRef: DocumentReference = change.after.ref.firestore
             .collection("products")
             .doc(context.params.productId);
-        return availableLocalesForProduct(productRef)
-            .then((availableLocales: string[]) => {
-                console.debug("Available locales", availableLocales);
-                return productRef.update({
-                    available_locales: availableLocales
-                });
+        return availableLocalesForProduct(productRef).then((availableLocales: string[]) => {
+            console.debug("Available locales", availableLocales);
+            return productRef.update({
+                available_locales: availableLocales,
             });
+        });
     });
-
 
 function availableLocalesForProduct(productRef: DocumentReference): Promise<string[]> {
     return productRef
@@ -30,16 +27,16 @@ function availableLocalesForProduct(productRef: DocumentReference): Promise<stri
         .then((localesSnapshot) =>
             localesSnapshot.docs
                 .filter((localeDoc) => localeDoc.get("selectable"))
-                .map((localeDoc) => localeDoc.id));
+                .map((localeDoc) => localeDoc.id)
+        );
 }
 
 /**
  * When a product is deleted, we delete all its locales
  */
 export const onDeleteSubcollections = functions
-    .region('europe-west3')
-    .firestore
-    .document('/products/{productId}')
+    .region("europe-west3")
+    .firestore.document("/products/{productId}")
     .onDelete((snapshot, context) => {
         const firestore = admin.firestore();
         return firestore.recursiveDelete(snapshot.ref);

@@ -3,7 +3,7 @@ import {
     TypesCount,
     TypesCountRecord,
     ValuesCountEntry,
-    ValuesCountRecord
+    ValuesCountRecord,
 } from "./types";
 import { buildStringProperty } from "./builders/string_property_builder";
 import { buildValidation } from "./builders/validation_builder";
@@ -46,12 +46,17 @@ export function buildPropertyFromData(
             increaseValuesCount(valuesCount, "inferred_prop", entry, getType);
         });
     }
-    const enumValues = "enumValues" in property ? resolveEnumValues(property["enumValues"] as EnumValues) : undefined;
+    const enumValues =
+        "enumValues" in property
+            ? resolveEnumValues(property["enumValues"] as EnumValues)
+            : undefined;
     if (enumValues) {
-        const newEnumValues = extractEnumFromValues(Array.from(valuesCount["inferred_prop"].valuesCount.keys()));
+        const newEnumValues = extractEnumFromValues(
+            Array.from(valuesCount["inferred_prop"].valuesCount.keys())
+        );
         return {
             ...property,
-            enumValues: [...newEnumValues, ...enumValues]
+            enumValues: [...newEnumValues, ...enumValues],
         } as StringProperty;
     }
     const generatedProperty = buildPropertyFromCount(
@@ -125,7 +130,8 @@ function increaseTypeCount(
                     mapTypesCount = {};
                 }
                 fieldValue.forEach((value) => {
-                    if (value && typeof value === "object" && !Array.isArray(value)) { // Ensure value is an object for Object.entries
+                    if (value && typeof value === "object" && !Array.isArray(value)) {
+                        // Ensure value is an object for Object.entries
                         Object.entries(value).forEach(([key, v]) =>
                             increaseMapTypeCount(mapTypesCount, key, v, getType)
                         );
@@ -183,7 +189,7 @@ function increaseValuesCount(
     if (!valuesRecord) {
         valuesRecord = {
             values: [],
-            valuesCount: new Map()
+            valuesCount: new Map(),
         };
         typeValuesRecord[key] = valuesRecord;
     }
@@ -208,7 +214,10 @@ function increaseValuesCount(
     } else {
         if (fieldValue !== null && fieldValue !== undefined) {
             valuesRecord.values.push(fieldValue);
-            valuesRecord.valuesCount.set(fieldValue, (valuesRecord.valuesCount.get(fieldValue) ?? 0) + 1);
+            valuesRecord.valuesCount.set(
+                fieldValue,
+                (valuesRecord.valuesCount.get(fieldValue) ?? 0) + 1
+            );
         }
     }
 }
@@ -279,7 +288,7 @@ function buildPropertyFromCount(
                 dataType: "map",
                 name: title,
                 keyValue: true,
-                properties: {}
+                properties: {},
             };
         }
         const properties = buildPropertiesFromCount(
@@ -290,7 +299,7 @@ function buildPropertyFromCount(
         result = {
             dataType: "map",
             name: title,
-            properties
+            properties,
         };
     } else if (mostProbableType === "array") {
         const arrayTypesCount = typesCount.array as TypesCount;
@@ -305,7 +314,7 @@ function buildPropertyFromCount(
         result = {
             dataType: "array",
             name: title,
-            of
+            of,
         };
     }
 
@@ -313,7 +322,7 @@ function buildPropertyFromCount(
         const propertyProps: InferencePropertyBuilderProps = {
             name: key,
             totalDocsCount,
-            valuesResult
+            valuesResult,
         };
         if (mostProbableType === "string") {
             result = buildStringProperty(propertyProps);
@@ -321,7 +330,7 @@ function buildPropertyFromCount(
             result = buildReferenceProperty(propertyProps);
         } else {
             result = {
-                dataType: mostProbableType
+                dataType: mostProbableType,
             } as Property;
         }
 
@@ -337,7 +346,7 @@ function buildPropertyFromCount(
 
     return {
         ...result,
-        editable: true
+        editable: true,
     };
 }
 
@@ -372,10 +381,7 @@ function countMaxDocumentsUnder(typesCount: TypesCount) {
     return count;
 }
 
-function getMostProbableTypeInArray(
-    array: any[],
-    getType: InferenceTypeBuilder
-): DataType {
+function getMostProbableTypeInArray(array: any[], getType: InferenceTypeBuilder): DataType {
     const typesCount: TypesCount = {};
     array.forEach((value) => {
         increaseTypeCount(getType(value), typesCount, value, getType);
@@ -405,9 +411,7 @@ function formatString(input: string): string {
     const words = normalized.split(" ");
 
     // Capitalize the first letter of each word and join them with a space
-    const formatted = words
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
+    const formatted = words.map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 
     return formatted;
 }

@@ -31,14 +31,14 @@ You can also apply classes to the `Scaffold` to style it according to your needs
 import { Scaffold, AppBar, Drawer, NavigationRoutes, SideDialogs } from "@firecms/core";
 import logo from "./images/logo.png";
 //...
-return <Scaffold
-    logo={logo}
-    autoOpenDrawer>
-    <AppBar title={"My CMS app"}/>
-    <Drawer/>
-    <NavigationRoutes/>
-    <SideDialogs/>
-</Scaffold>
+return (
+    <Scaffold logo={logo} autoOpenDrawer>
+        <AppBar title={"My CMS app"} />
+        <Drawer />
+        <NavigationRoutes />
+        <SideDialogs />
+    </Scaffold>
+);
 ```
 
 ### AppBar
@@ -65,29 +65,39 @@ The default appbar includes an avatar tied to the logged-user.
 import { AppBar } from "@firecms/core";
 import { Button, ForumIcon, LogoutIcon, MenuItem, PaymentIcon, Tooltip } from "@firecms/ui";
 //...
-return <AppBar title={title}
-               endAdornment={<>
-                   <Tooltip
-                           asChild={true}
-                           title={"Your custom action"}>
-                       <Button variant={"outlined"}><ForumIcon size="small"/></Button>
-                   </Tooltip>
-               </>}
-               dropDownActions={
-                   <>
-                       <MenuItem onClick={() => {
-                           console.log("Settings clicked");
-                       }}>
-                           <PaymentIcon size="small"/> Settings
-                       </MenuItem>
-                       <MenuItem onClick={() => {
-                           console.log("Logout clicked");
-                       }}>
-                           <LogoutIcon size="small"/>
-                           Logout
-                       </MenuItem>
-                   </>
-               }/>
+return (
+    <AppBar
+        title={title}
+        endAdornment={
+            <>
+                <Tooltip asChild={true} title={"Your custom action"}>
+                    <Button variant={"outlined"}>
+                        <ForumIcon size="small" />
+                    </Button>
+                </Tooltip>
+            </>
+        }
+        dropDownActions={
+            <>
+                <MenuItem
+                    onClick={() => {
+                        console.log("Settings clicked");
+                    }}
+                >
+                    <PaymentIcon size="small" /> Settings
+                </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        console.log("Logout clicked");
+                    }}
+                >
+                    <LogoutIcon size="small" />
+                    Logout
+                </MenuItem>
+            </>
+        }
+    />
+);
 ```
 
 #### Replace the default AppBar
@@ -97,12 +107,14 @@ You can replace the default AppBar by wrapping your custom component with the `A
 ```tsx
 import { AppBar, Scaffold } from "@firecms/core";
 //...
-return <Scaffold>
-    <AppBar>
-        <div>My custom appbar</div>
-    </AppBar>
-    {/* ... */}
-</Scaffold>
+return (
+    <Scaffold>
+        <AppBar>
+            <div>My custom appbar</div>
+        </AppBar>
+        {/* ... */}
+    </Scaffold>
+);
 ```
 
 All the props passed to the `AppBar` will be ignored if you define a custom component.
@@ -130,12 +142,14 @@ Note that the burger icon will be displayed automatically if you define a custom
 ```tsx
 import { Drawer, Scaffold } from "@firecms/core";
 //...
-return <Scaffold>
-    <Drawer>
-        <div>My custom drawer</div>
-    </Drawer>
-    {/* ... */}
-</Scaffold>
+return (
+    <Scaffold>
+        <Drawer>
+            <div>My custom drawer</div>
+        </Drawer>
+        {/* ... */}
+    </Scaffold>
+);
 ```
 
 ### NavigationRoutes
@@ -156,17 +170,15 @@ Note that you can also define your own routes if you need to.
 ```tsx
 import { NavigationRoutes } from "@firecms/core";
 //...
-return <NavigationRoutes homePage={<>My custom home page</>}>
-    {/* Define your custom routes here, using react-router */}
-    <Route
-        key={"navigation_admin_" + path}
-        path={"invoices"}
-        element={<InvoicesPage/>}
-    />
-</NavigationRoutes>
+return (
+    <NavigationRoutes homePage={<>My custom home page</>}>
+        {/* Define your custom routes here, using react-router */}
+        <Route key={"navigation_admin_" + path} path={"invoices"} element={<InvoicesPage />} />
+    </NavigationRoutes>
+);
 ```
 
-Note that you can also define custom views by defining them in `useBuildNavigationController`, with the 
+Note that you can also define custom views by defining them in `useBuildNavigationController`, with the
 added benefit that they will be automatically included in the default drawer.
 
 ### SideDialogs
@@ -174,9 +186,8 @@ added benefit that they will be automatically included in the default drawer.
 The `SideDialogs` component is a container for side dialogs. Side dialogs are typically used to display forms or
 additional information in a side panel.
 
-You can access the `useSideDialogsController` hook to open and close side dialogs programmatically from your 
+You can access the `useSideDialogsController` hook to open and close side dialogs programmatically from your
 custom components.
-
 
 ## Utilities
 
@@ -191,5 +202,3 @@ You can use the `useApp()` hook to access the `AppState` object from the context
 - `closeDrawer`: Function to close the drawer.
 - `autoOpenDrawer`: Whether the drawer should open on hover.
 - `logo`: Logo to be displayed in the top bar and drawer.
-
-

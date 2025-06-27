@@ -10,32 +10,32 @@ type CardProps = {
     className?: string;
 };
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>(({
-                                                              children,
-                                                              className,
-                                                              onClick,
-                                                              style,
-                                                              ...props
-                                                          }, ref) => {
-    const onKeyPress = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (e.key === "Enter" || e.key === " ") {
-            onClick?.();
-        }
-    }, [onClick]);
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+    ({ children, className, onClick, style, ...props }, ref) => {
+        const onKeyPress = useCallback(
+            (e: React.KeyboardEvent<HTMLDivElement>) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    onClick?.();
+                }
+            },
+            [onClick]
+        );
 
-    return (
-        <div
-            ref={ref}
-            onKeyPress={onKeyPress}
-            role={onClick ? "button" : undefined}
-            tabIndex={onClick ? 0 : undefined}
-            onClick={onClick}
-            className={cls(cardMixin, onClick && cardClickableMixin, className)}
-            style={style}
-            {...props}>
-            {children}
-        </div>
-    );
-});
+        return (
+            <div
+                ref={ref}
+                onKeyPress={onKeyPress}
+                role={onClick ? "button" : undefined}
+                tabIndex={onClick ? 0 : undefined}
+                onClick={onClick}
+                className={cls(cardMixin, onClick && cardClickableMixin, className)}
+                style={style}
+                {...props}
+            >
+                {children}
+            </div>
+        );
+    }
+);
 
 export { Card };

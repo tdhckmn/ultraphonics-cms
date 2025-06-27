@@ -22,43 +22,32 @@ containing a `string` and an error snackbar will be displayed.
 ```tsx
 import React from "react";
 
-import {
-    buildCollection,
-    EntityOnDeleteProps,
-    EntityOnSaveProps
-} from "@camberi/firecms";
+import { buildCollection, EntityOnDeleteProps, EntityOnSaveProps } from "@camberi/firecms";
 
 type Product = {
     name: string;
     uppercase_name: string;
-}
+};
 
 const productSchema = buildCollection<Product>({
-
     name: "Product",
     properties: {
         name: {
             title: "Name",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         uppercase_name: {
             title: "Uppercase Name",
             dataType: "string",
             disabled: true,
-            description: "This field gets updated with a preSave callback"
-        }
-    }
+            description: "This field gets updated with a preSave callback",
+        },
+    },
 });
 
 const productCallbacks = buildEntityCallbacks({
-    onPreSave: ({
-                    collection,
-                    path,
-                    entityId,
-                    values,
-                    status
-                }) => {
+    onPreSave: ({ collection, path, entityId, values, status }) => {
         values.uppercase_name = values.name?.toUpperCase();
         return values;
     },
@@ -72,15 +61,13 @@ const productCallbacks = buildEntityCallbacks({
     },
 
     onPreDelete: ({
-                      collection,
-                      path,
-                      entityId,
-                      entity,
-                      context
-                  }: EntityOnDeleteProps<Product>
-    ) => {
-        if (context.authController.user)
-            throw Error("Product deletion not allowed");
+        collection,
+        path,
+        entityId,
+        entity,
+        context,
+    }: EntityOnDeleteProps<Product>) => {
+        if (context.authController.user) throw Error("Product deletion not allowed");
     },
 
     onDelete: (props: EntityOnDeleteProps<Product>) => {
@@ -91,27 +78,26 @@ const productCallbacks = buildEntityCallbacks({
 
 #### EntityOnSaveProps
 
-* `schema`: EntitySchema Resolved schema of the entity
+- `schema`: EntitySchema Resolved schema of the entity
 
-* `path`: string Full path where this entity is being saved
+- `path`: string Full path where this entity is being saved
 
-* `entityId`?: string Id of the entity or undefined if new
+- `entityId`?: string Id of the entity or undefined if new
 
-* `values`: EntityValues Values being saved
+- `values`: EntityValues Values being saved
 
-* `status`: EntityStatus New or existing entity
+- `status`: EntityStatus New or existing entity
 
-* `context`: FireCMSContext Context of the app status
+- `context`: FireCMSContext Context of the app status
 
 #### EntityOnDeleteProps
 
-* `schema`: EntitySchema Resolved schema of the entity
+- `schema`: EntitySchema Resolved schema of the entity
 
-* `path`: string Full path where this entity is being saved
+- `path`: string Full path where this entity is being saved
 
-* `entityId`?: string Id of the entity or undefined if new
+- `entityId`?: string Id of the entity or undefined if new
 
-* `entity`: Entity Deleted entity
+- `entity`: Entity Deleted entity
 
-* `context`: FireCMSContext Context of the app status
-
+- `context`: FireCMSContext Context of the app status

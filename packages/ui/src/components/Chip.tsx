@@ -4,7 +4,7 @@ import { CHIP_COLORS, cls, getColorSchemeForKey } from "../util";
 export type ChipColorScheme = {
     color: string;
     text: string;
-}
+};
 
 export type ChipColorKey = keyof typeof CHIP_COLORS;
 
@@ -23,41 +23,47 @@ export interface ChipProps {
 const sizeClassNames = {
     small: "px-2 py-0.5 text-sm",
     medium: "px-3 py-1 text-sm",
-    large: "px-4 py-1.5 text-sm"
-}
+    large: "px-4 py-1.5 text-sm",
+};
 
 /**
  * @group Preview components
  */
 export function Chip({
-                         children,
-                         colorScheme,
-                         error,
-                         outlined,
-                         onClick,
-                         icon,
-                         size = "large",
-                         className,
-                         style
-                     }: ChipProps) {
-
-    const usedColorScheme = typeof colorScheme === "string" ? getColorSchemeForKey(colorScheme) : colorScheme;
+    children,
+    colorScheme,
+    error,
+    outlined,
+    onClick,
+    icon,
+    size = "large",
+    className,
+    style,
+}: ChipProps) {
+    const usedColorScheme =
+        typeof colorScheme === "string" ? getColorSchemeForKey(colorScheme) : colorScheme;
     return (
         <div
-            className={cls("rounded-lg max-w-full w-max h-fit font-regular inline-flex gap-1",
+            className={cls(
+                "rounded-lg max-w-full w-max h-fit font-regular inline-flex gap-1",
                 "text-ellipsis",
                 "items-center",
-                onClick ? "cursor-pointer hover:bg-surface-accent-300 hover:dark:bg-surface-accent-700" : "",
+                onClick
+                    ? "cursor-pointer hover:bg-surface-accent-300 hover:dark:bg-surface-accent-700"
+                    : "",
                 sizeClassNames[size],
-                error || !usedColorScheme ? "bg-surface-accent-200 dark:bg-surface-accent-800 text-surface-accent-800 dark:text-white" : "",
+                error || !usedColorScheme
+                    ? "bg-surface-accent-200 dark:bg-surface-accent-800 text-surface-accent-800 dark:text-white"
+                    : "",
                 error ? "text-red-500 dark:text-red-400" : "",
-                className)}
+                className
+            )}
             onClick={onClick}
             style={{
                 backgroundColor: error || !usedColorScheme ? undefined : usedColorScheme.color,
                 color: error || !usedColorScheme ? undefined : usedColorScheme.text,
                 overflow: "hidden",
-                ...style
+                ...style,
                 // display: "-webkit-box",
                 // WebkitLineClamp: 1,
                 // WebkitBoxOrient: "vertical",

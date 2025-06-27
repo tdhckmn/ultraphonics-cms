@@ -5,10 +5,13 @@ import { RefObject, useEffect } from "react";
 /**
  * Hook that alerts clicks outside the passed ref
  */
-export function useOutsideAlerter(ref: RefObject<HTMLElement>, onOutsideClick: () => void, active = true): void {
+export function useOutsideAlerter(
+    ref: RefObject<HTMLElement>,
+    onOutsideClick: () => void,
+    active = true
+): void {
     useEffect(() => {
-        if (!active)
-            return;
+        if (!active) return;
 
         /**
          * Alert if clicked on outside of element
@@ -38,8 +41,7 @@ export function useOutsideAlerter(ref: RefObject<HTMLElement>, onOutsideClick: (
  */
 function isInPresentationLayer(node: Node | null): boolean {
     if (node instanceof HTMLElement) {
-        if (node.getAttribute("role") === "presentation")
-            return true;
+        if (node.getAttribute("role") === "presentation") return true;
         return isInPresentationLayer(node.parentNode);
     }
     return false;

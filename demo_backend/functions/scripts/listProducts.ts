@@ -23,7 +23,6 @@ const listProducts = async () => {
             });
 
             console.log(ids);
-            }
-        );
+        });
 };
 listProducts();

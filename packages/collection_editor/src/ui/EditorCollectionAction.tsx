@@ -1,16 +1,15 @@
 import { CollectionActionsProps, useAuthController, useNavigationController } from "@firecms/core";
-import { IconButton, SettingsIcon, Tooltip, } from "@firecms/ui";
+import { IconButton, SettingsIcon, Tooltip } from "@firecms/ui";
 
 import { useCollectionEditorController } from "../useCollectionEditorController";
 import { PersistedCollection } from "../types/persisted_collection";
 
 export function EditorCollectionAction({
-                                           path: fullPath,
-                                           parentCollectionIds,
-                                           collection,
-                                           tableController
-                                       }: CollectionActionsProps) {
-
+    path: fullPath,
+    parentCollectionIds,
+    collection,
+    tableController,
+}: CollectionActionsProps) {
     const authController = useAuthController();
     const navigationController = useNavigationController();
     const collectionEditorController = useCollectionEditorController();
@@ -19,38 +18,41 @@ export function EditorCollectionAction({
 
     const canEditCollection = collectionEditorController.configPermissions
         ? collectionEditorController.configPermissions({
-            user: authController.user,
-            collection
-        }).editCollections
+              user: authController.user,
+              collection,
+          }).editCollections
         : true;
 
-    const editorButton = <Tooltip
-        asChild={true}
-        title={canEditCollection ? "Edit collection" : "You don't have permissions to edit this collection"}>
-        <IconButton
-            color={"primary"}
-            disabled={!canEditCollection}
-            onClick={canEditCollection
-                ? () => collectionEditorController?.editCollection({
-                    id: collection.id,
-                    fullPath,
-                    parentCollectionIds,
-                    parentCollection: parentCollection as PersistedCollection,
-                    existingEntities: tableController?.data ?? []
-                })
-                : undefined}>
-            <SettingsIcon/>
-        </IconButton>
-    </Tooltip>;
+    const editorButton = (
+        <Tooltip
+            asChild={true}
+            title={canEditCollection ? "Edit collection" : "You don't have permissions to edit this collection"}
+        >
+            <IconButton
+                color={"primary"}
+                disabled={!canEditCollection}
+                onClick={
+                    canEditCollection
+                        ? () =>
+                              collectionEditorController?.editCollection({
+                                  id: collection.id,
+                                  fullPath,
+                                  parentCollectionIds,
+                                  parentCollection: parentCollection as PersistedCollection,
+                                  existingEntities: tableController?.data ?? [],
+                              })
+                        : undefined
+                }
+            >
+                <SettingsIcon />
+            </IconButton>
+        </Tooltip>
+    );
 
-    return <>
-        {editorButton}
-    </>
-
+    return <>{editorButton}</>;
 }
 
 function getObjectOrNull(o?: object): object | null {
-    if (o && Object.keys(o).length === 0)
-        return o
+    if (o && Object.keys(o).length === 0) return o;
     return o ?? null;
 }

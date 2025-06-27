@@ -8,7 +8,6 @@ import { useFireCMSContext } from "../useFireCMSContext";
  * @group Hooks and utilities
  */
 export interface CollectionFetchProps<M extends Record<string, any>> {
-
     /**
      * Absolute collection path
      */
@@ -17,7 +16,7 @@ export interface CollectionFetchProps<M extends Record<string, any>> {
     /**
      * collection of the entity displayed by this collection
      */
-    collection: EntityCollection<M>
+    collection: EntityCollection<M>;
 
     /**
      * Number of entities to fetch
@@ -60,16 +59,14 @@ export interface CollectionFetchResult<M extends Record<string, any>> {
  * @param searchString
  * @group Hooks and utilities
  */
-export function useCollectionFetch<M extends Record<string, any>, USER extends User>(
-    {
-        path: inputPath,
-        collection,
-        filterValues,
-        sortBy,
-        itemCount,
-        searchString
-    }: CollectionFetchProps<M>): CollectionFetchResult<M> {
-
+export function useCollectionFetch<M extends Record<string, any>, USER extends User>({
+    path: inputPath,
+    collection,
+    filterValues,
+    sortBy,
+    itemCount,
+    searchString,
+}: CollectionFetchProps<M>): CollectionFetchResult<M> {
     const dataSource = useDataSource(collection);
     const navigationController = useNavigationController();
 
@@ -87,7 +84,6 @@ export function useCollectionFetch<M extends Record<string, any>, USER extends U
     const [noMoreToLoad, setNoMoreToLoad] = useState<boolean>(false);
 
     useEffect(() => {
-
         setDataLoading(true);
 
         const onEntitiesUpdate = async (entities: Entity<M>[]) => {
@@ -99,18 +95,22 @@ export function useCollectionFetch<M extends Record<string, any>, USER extends U
                                 collection,
                                 path,
                                 entity,
-                                context
-                            })));
+                                context,
+                            })
+                        )
+                    );
                 } catch (e: any) {
                     console.error(e);
                 }
             }
             setDataLoading(false);
             setDataLoadingError(undefined);
-            setData(entities.map(e => ({
-                ...e,
-                // values: sanitizeData(e.values, resolvedCollection.properties)
-            })));
+            setData(
+                entities.map((e) => ({
+                    ...e,
+                    // values: sanitizeData(e.values, resolvedCollection.properties)
+                }))
+            );
             setNoMoreToLoad(!itemCount || entities.length < itemCount);
         };
 
@@ -132,23 +132,23 @@ export function useCollectionFetch<M extends Record<string, any>, USER extends U
                 limit: itemCount,
                 startAfter: undefined,
                 orderBy: sortByProperty,
-                order: currentSort
+                order: currentSort,
             });
         } else {
-            dataSource.fetchCollection<M>({
-                path,
-                collection,
-                searchString,
-                filter: filterValues,
-                limit: itemCount,
-                startAfter: undefined,
-                orderBy: sortByProperty,
-                order: currentSort
-            })
+            dataSource
+                .fetchCollection<M>({
+                    path,
+                    collection,
+                    searchString,
+                    filter: filterValues,
+                    limit: itemCount,
+                    startAfter: undefined,
+                    orderBy: sortByProperty,
+                    order: currentSort,
+                })
                 .then(onEntitiesUpdate)
                 .catch(onError);
-            return () => {
-            };
+            return () => {};
         }
     }, [path, itemCount, currentSort, sortByProperty, filterValues, searchString]);
 
@@ -156,7 +156,6 @@ export function useCollectionFetch<M extends Record<string, any>, USER extends U
         data,
         dataLoading,
         dataLoadingError,
-        noMoreToLoad
+        noMoreToLoad,
     };
-
 }

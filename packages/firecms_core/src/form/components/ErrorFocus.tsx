@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import { useFormex } from "@firecms/formex";
 
-export const ErrorFocus = ({ containerRef }:
-                               {
-                                   containerRef?: React.RefObject<HTMLDivElement>
-                               }) => {
+export const ErrorFocus = ({
+    containerRef,
+}: {
+    containerRef?: React.RefObject<HTMLDivElement>;
+}) => {
     const { isSubmitting, isValidating, errors } = useFormex();
 
     useEffect(() => {
@@ -22,7 +23,7 @@ export const ErrorFocus = ({ containerRef }:
                     const top = errorElement.getBoundingClientRect().top;
                     scrollableParent.scrollTo({
                         top: scrollableParent.scrollTop + top - 196,
-                        behavior: "smooth"
+                        behavior: "smooth",
                     });
                 }
                 const input = errorElement.querySelector("input");
@@ -45,7 +46,9 @@ const isScrollable = (ele: HTMLElement | null) => {
 };
 
 const getScrollableParent = (ele: HTMLElement | null): HTMLElement | null => {
-    return (!ele || ele === document.body)
+    return !ele || ele === document.body
         ? document.body
-        : (isScrollable(ele) ? ele : getScrollableParent(ele.parentNode as HTMLElement));
+        : isScrollable(ele)
+          ? ele
+          : getScrollableParent(ele.parentNode as HTMLElement);
 };

@@ -5,8 +5,13 @@ import { Plugin, PluginKey } from "@tiptap/pm/state";
 
 export type UploadFn = (image: File) => Promise<string>;
 
-export async function onFileRead(view: EditorView, readerEvent: ProgressEvent<FileReader>, pos: number, upload: UploadFn, image: File) {
-
+export async function onFileRead(
+    view: EditorView,
+    readerEvent: ProgressEvent<FileReader>,
+    pos: number,
+    upload: UploadFn,
+    image: File
+) {
     const { schema } = view.state;
 
     // @ts-ignore
@@ -58,7 +63,7 @@ export const createDropImagePlugin = (upload: UploadFn): Plugin => {
                 }
                 // Map decorations to the new document structure
                 return old.map(tr.mapping, tr.doc);
-            }
+            },
         },
         props: {
             handleDOMEvents: {
@@ -69,18 +74,17 @@ export const createDropImagePlugin = (upload: UploadFn): Plugin => {
                     event.preventDefault();
 
                     const files = Array.from(event.dataTransfer.files);
-                    const images = files.filter(file => /image/i.test(file.type));
+                    const images = files.filter((file) => /image/i.test(file.type));
 
                     if (images.length === 0) {
                         console.log("No images found in dropped files");
                         return false;
                     }
 
-                    images.forEach(image => {
-
+                    images.forEach((image) => {
                         const position = view.posAtCoords({
                             left: event.clientX,
-                            top: event.clientY
+                            top: event.clientY,
                         });
                         if (!position) return;
 
@@ -92,7 +96,7 @@ export const createDropImagePlugin = (upload: UploadFn): Plugin => {
                     });
 
                     return true;
-                }
+                },
             },
             handlePaste(view, event, slice) {
                 const items = Array.from(event.clipboardData?.items || []);
@@ -117,7 +121,7 @@ export const createDropImagePlugin = (upload: UploadFn): Plugin => {
             },
             decorations(state) {
                 return plugin.getState(state);
-            }
+            },
         },
         view(editorView) {
             // This is needed to immediately apply the decoration updates
@@ -129,9 +133,9 @@ export const createDropImagePlugin = (upload: UploadFn): Plugin => {
                     if (prevDecos !== newDecos) {
                         view.updateState(view.state);
                     }
-                }
+                },
             };
-        }
+        },
     });
     return plugin;
 };
@@ -150,11 +154,11 @@ export const createImageExtension = (dropImagePlugin: Plugin) => {
     return TiptapImage.extend({
         addProseMirrorPlugins() {
             return [dropImagePlugin];
-        }
+        },
     }).configure({
         allowBase64: true,
         HTMLAttributes: {
-            class: cls("rounded-lg border", defaultBorderMixin)
-        }
+            class: cls("rounded-lg border", defaultBorderMixin),
+        },
     });
 };

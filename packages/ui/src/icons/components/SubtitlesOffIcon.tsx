@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function SubtitlesOffIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"subtitles_off"}/>
+    return <Icon {...props} iconKey={"subtitles_off"} />;
 }

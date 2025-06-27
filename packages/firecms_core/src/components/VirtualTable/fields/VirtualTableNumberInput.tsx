@@ -6,18 +6,12 @@ export function VirtualTableNumberInput(props: {
     error: Error | undefined;
     value: number;
     align: "right" | "left" | "center";
-    updateValue: (newValue: (number | null)) => void;
+    updateValue: (newValue: number | null) => void;
     focused: boolean;
     disabled: boolean;
 }) {
-
-    const {
-        align,
-        value,
-        updateValue,
-        focused,
-    } = props;
-    const propStringValue = (value && typeof value === "number") ? value.toString() : "";
+    const { align, value, updateValue, focused } = props;
+    const propStringValue = value && typeof value === "number" ? value.toString() : "";
     const [internalValue, setInternalValue] = useState<string | null>(propStringValue);
 
     const prevValue = useRef<number | null>(value);
@@ -32,26 +26,20 @@ export function VirtualTableNumberInput(props: {
         if (internalValue !== propStringValue) {
             if (internalValue !== undefined && internalValue !== null) {
                 const numberValue = parseFloat(internalValue);
-                if (isNaN(numberValue))
-                    return;
-                if (numberValue !== undefined && numberValue !== null)
-                    updateValue(numberValue);
+                if (isNaN(numberValue)) return;
+                if (numberValue !== undefined && numberValue !== null) updateValue(numberValue);
             } else {
                 updateValue(null);
             }
         }
-
     }, [internalValue, value]);
 
     useDebouncedCallback(internalValue, doUpdate, !focused, 2000);
 
-    useEffect(
-        () => {
-            if (!focused && propStringValue !== internalValue)
-                setInternalValue(value !== undefined && value !== null ? value.toString() : null);
-        },
-        [value, focused]
-    );
+    useEffect(() => {
+        if (!focused && propStringValue !== internalValue)
+            setInternalValue(value !== undefined && value !== null ? value.toString() : null);
+    }, [value, focused]);
 
     const ref = React.useRef<HTMLInputElement>(null);
 
@@ -66,17 +54,18 @@ export function VirtualTableNumberInput(props: {
     return (
         <input
             ref={ref}
-            className={cls("w-full text-right p-0 m-0 bg-transparent border-none resize-none outline-none font-normal leading-normal text-unset", focusedDisabled)}
+            className={cls(
+                "w-full text-right p-0 m-0 bg-transparent border-none resize-none outline-none font-normal leading-normal text-unset",
+                focusedDisabled
+            )}
             style={{
-                textAlign: align
+                textAlign: align,
             }}
             value={internalValue ?? ""}
             onChange={(evt) => {
                 const newValue = evt.target.value.replace(",", ".");
-                if (newValue.length === 0)
-                    setInternalValue(null);
-                if (regexp.test(newValue) || newValue.startsWith("-"))
-                    setInternalValue(newValue);
+                if (newValue.length === 0) setInternalValue(null);
+                if (regexp.test(newValue) || newValue.startsWith("-")) setInternalValue(newValue);
             }}
         />
     );

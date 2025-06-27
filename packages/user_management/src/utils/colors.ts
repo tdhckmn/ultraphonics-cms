@@ -21,10 +21,15 @@ export function darkenColor(hexColor: string, darkenBy = 10): string {
     b = Math.floor(b * (1 - darkenBy / 100));
 
     // Recombine into hex and return
-    return "#" +
-        (r < 16 ? "0" : "") + r.toString(16) +
-        (g < 16 ? "0" : "") + g.toString(16) +
-        (b < 16 ? "0" : "") + b.toString(16);
+    return (
+        "#" +
+        (r < 16 ? "0" : "") +
+        r.toString(16) +
+        (g < 16 ? "0" : "") +
+        g.toString(16) +
+        (b < 16 ? "0" : "") +
+        b.toString(16)
+    );
 }
 
 export function hexToRgbaWithOpacity(hexColor: string, opacity = 10): string {

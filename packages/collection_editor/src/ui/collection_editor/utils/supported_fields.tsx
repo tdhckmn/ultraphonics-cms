@@ -21,7 +21,7 @@ export const supportedFieldsIds: PropertyConfigId[] = [
     "group",
     "key_value",
     "repeat",
-    "block"
+    "block",
 ];
 
 export const supportedFields: Record<string, PropertyConfig> = Object.entries(DEFAULT_FIELD_CONFIGS)

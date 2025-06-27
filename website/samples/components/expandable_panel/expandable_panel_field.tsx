@@ -11,10 +11,9 @@ export default function ExpandablePanelFieldDemo() {
             onExpandedChange={setExpanded}
             asField={true}
         >
-
             <div className={"p-4"}>
                 This Expandable Panel is styled as a field, making it a great choice for forms.
             </div>
         </ExpandablePanel>
-);
+    );
 }

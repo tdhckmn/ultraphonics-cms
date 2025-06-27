@@ -24,7 +24,7 @@ buildProperty({
     name: "Tags",
     of: {
         dataType: "string",
-        previewAsTag: true
+        previewAsTag: true,
     },
     expanded: true,
     sortable: true, // default is true
@@ -36,4 +36,3 @@ The data type is [`array`](../config/array).
 
 Internally the component used
 is [`RepeatFieldBinding`](../../api/functions/RepeatFieldBinding).
-

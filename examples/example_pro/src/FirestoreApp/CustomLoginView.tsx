@@ -3,7 +3,6 @@ import { Alert, BooleanSwitchWithLabel, Typography } from "@firecms/ui";
 import { FirebaseLoginView, FirebaseLoginViewProps } from "@firecms/firebase";
 
 export function CustomLoginView(props: FirebaseLoginViewProps) {
-
     const [termsAccepted, setTermsAccepted] = useState(false);
     const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
 
@@ -21,40 +20,49 @@ export function CustomLoginView(props: FirebaseLoginViewProps) {
         <FirebaseLoginView
             {...props}
             disableSignupScreen={false}
-            noUserComponent={<Alert>
-                Sample custom message when no user exists
-            </Alert>}
+            noUserComponent={<Alert>Sample custom message when no user exists</Alert>}
             disabled={!termsAccepted}
             additionalComponent={
                 <>
-                    <BooleanSwitchWithLabel size="small"
-                                            invisible={true}
-                                            value={newsletterSubscribed}
-                                            onValueChange={setNewsletterSubscribed}
-                                            position={"start"}
-                                            label={
-                                                <Typography variant={"caption"}>
-                                                    Join our newsletter. No spam, only important
-                                                    updates!
-                                                </Typography>}/>
-                    <BooleanSwitchWithLabel size="small"
-                                            invisible={true}
-                                            value={termsAccepted}
-                                            onValueChange={setTermsAccepted}
-                                            position={"start"}
-                                            label={
-                                                <Typography variant={"caption"}>
-                                                    By signing in you agree to our <a
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    href={"https://firecms.co/policy/terms_conditions"}>
-                                                    Terms and Conditions</a> and our <a
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    href={"https://firecms.co/policy/privacy_policy"}>
-                                                    Privacy policy</a>
-                                                </Typography>
-                                            }/>
+                    <BooleanSwitchWithLabel
+                        size="small"
+                        invisible={true}
+                        value={newsletterSubscribed}
+                        onValueChange={setNewsletterSubscribed}
+                        position={"start"}
+                        label={
+                            <Typography variant={"caption"}>
+                                Join our newsletter. No spam, only important updates!
+                            </Typography>
+                        }
+                    />
+                    <BooleanSwitchWithLabel
+                        size="small"
+                        invisible={true}
+                        value={termsAccepted}
+                        onValueChange={setTermsAccepted}
+                        position={"start"}
+                        label={
+                            <Typography variant={"caption"}>
+                                By signing in you agree to our{" "}
+                                <a
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href={"https://firecms.co/policy/terms_conditions"}
+                                >
+                                    Terms and Conditions
+                                </a>{" "}
+                                and our{" "}
+                                <a
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href={"https://firecms.co/policy/privacy_policy"}
+                                >
+                                    Privacy policy
+                                </a>
+                            </Typography>
+                        }
+                    />
                 </>
             }
         />
@@ -66,13 +74,13 @@ const handleSubmit = (email: string) => {
     fetch(url, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
         },
         body: JSON.stringify({
             email_address: email,
-            source: "demo"
-        })
+            source: "demo",
+        }),
     }).then((res) => {
         console.log("newsletter response", res);
     });
-}
+};

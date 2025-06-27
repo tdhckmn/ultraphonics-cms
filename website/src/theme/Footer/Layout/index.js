@@ -5,14 +5,13 @@ import { EnterpriseTeaser } from "../../../partials/general/EnterpriseTeaser";
 import { useLocation } from "@docusaurus/router";
 
 export default function LayoutWrapper(props) {
-
     const { pathname } = useLocation();
     // const includeEnterpriseTeaser = !pathname.startsWith("/enterprise");
 
     return (
         <>
             {/*{includeEnterpriseTeaser && <EnterpriseTeaser/>}*/}
-            <Newsletter/>
+            <Newsletter />
             <Layout {...props} />
         </>
     );

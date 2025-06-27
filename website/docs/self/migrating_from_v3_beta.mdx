@@ -19,48 +19,48 @@ For self-hosted versions, there has been a change in the API for the data manage
 can be used as an auth controller, but with all the added logic for user management.
 
 ❌ Code before:
-```typescript
-    /**
-     * Controller in charge of user management
-     */
-    const userManagement = useBuildUserManagement({
-        dataSourceDelegate: firestoreDelegate
-    });
 
-    /**
-     * Controller for managing authentication
-     */
-    const authController: FirebaseAuthController = useFirebaseAuthController({
-        firebaseApp,
-        signInOptions,
-        loading: userManagement.loading,
-        defineRolesFor: userManagement.defineRolesFor
-    });
+```typescript
+/**
+ * Controller in charge of user management
+ */
+const userManagement = useBuildUserManagement({
+    dataSourceDelegate: firestoreDelegate,
+});
+
+/**
+ * Controller for managing authentication
+ */
+const authController: FirebaseAuthController = useFirebaseAuthController({
+    firebaseApp,
+    signInOptions,
+    loading: userManagement.loading,
+    defineRolesFor: userManagement.defineRolesFor,
+});
 ```
 
 ✅ Code after:
 
 ```typescript
-    /**
-     * Controller for managing authentication
-     */
-    const authController: FirebaseAuthController = useFirebaseAuthController({
-        firebaseApp,
-        signInOptions
-    });
+/**
+ * Controller for managing authentication
+ */
+const authController: FirebaseAuthController = useFirebaseAuthController({
+    firebaseApp,
+    signInOptions,
+});
 
-    /**
-     * Controller in charge of user management
-     */
-    const userManagement = useBuildUserManagement({
-        dataSourceDelegate: firestoreDelegate,
-        authController
-    });
+/**
+ * Controller in charge of user management
+ */
+const userManagement = useBuildUserManagement({
+    dataSourceDelegate: firestoreDelegate,
+    authController,
+});
 ```
 
 The `userManagement` controller now also qualifies as an `authController`, so you can use it as such, but it is not
 necessary to do so.
-
 
 ### Styling
 
@@ -79,9 +79,9 @@ Your `index.css` file should look like this:
 @tailwind utilities;
 
 :root {
-    --fcms-primary: #0070F4;
+    --fcms-primary: #0070f4;
     --fcms-primary-bg: #0061e610;
-    --fcms-secondary: #FF5B79;
+    --fcms-secondary: #ff5b79;
 }
 ```
 
@@ -89,12 +89,11 @@ Your `index.css` file should look like this:
 
 The default fonts are now imported in the clients project (so they can be replaced if needed).
 You need to add these imports:
+
 ```
     "typeface-rubik": "^1.1.13",
     "@fontsource/jetbrains-mono": "^5.0.20",
 ```
-
-
 
 ## FireCMS Cloud
 
@@ -106,6 +105,7 @@ The main package has been renamed from `firecms` to `@firecms/cloud` since versi
 You can also remove the `@firecms/cli` package, as it is implicitly installed by `@firecms/cloud`.
 
 This is a sample `package.json` with the new config:
+
 ```
 {
   "name": "my-firecms-project",
@@ -159,14 +159,14 @@ import { FireCMS } from "@firecms/cloud";
 You also need to update your `vite.config.js` file to include the new package name and config:
 
 ```javascript
-import { defineConfig } from "vite"
-import react from "@vitejs/plugin-react"
-import federation from "@originjs/vite-plugin-federation"
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import federation from "@originjs/vite-plugin-federation";
 
 // https://vitejs.dev/config/
 export default defineConfig({
     esbuild: {
-        logOverride: { "this-is-undefined-in-esm": "silent" }
+        logOverride: { "this-is-undefined-in-esm": "silent" },
     },
     plugins: [
         react(),
@@ -174,7 +174,7 @@ export default defineConfig({
             name: "remote_app",
             filename: "remoteEntry.js",
             exposes: {
-                "./config": "./src/index"
+                "./config": "./src/index",
             },
             shared: [
                 "react",
@@ -190,40 +190,39 @@ export default defineConfig({
                 "@firebase/storage",
                 "@firebase/analytics",
                 "@firebase/remote-config",
-                "@firebase/app-check"
-            ]
-        })
+                "@firebase/app-check",
+            ],
+        }),
     ],
     build: {
         modulePreload: false,
         target: "ESNEXT",
         cssCodeSplit: false,
-    }
-})
+    },
+});
 ```
 
 ### Tailwind CSS
 
 - You need to add the tailwind typography plugin to your project. You can do this by installing the `@tailwindcss/typography` package:
 
-  ```bash
-  yarn add -D @tailwindcss/typography
-  ```
+    ```bash
+    yarn add -D @tailwindcss/typography
+    ```
 
 - You should also make sure you are using at least version `3.4.3` of the `tailwindcss` package, and `postcss` version `8.4.38`.
 
 - The preset now comes from the `@firecms/ui` package. You can update your `tailwind.config.cjs` file to include the new preset:
 
-  ```javascript
-  import fireCMSConfig from "@firecms/ui/tailwind.config.js";
+    ```javascript
+    import fireCMSConfig from "@firecms/ui/tailwind.config.js";
 
-  export default {
-      presets: [fireCMSConfig],
-      content: [
-          "./index.html",
-          "./src/**/*.{js,ts,jsx,tsx}",
-          "./node_modules/@firecms/**/src/**/*.{js,ts,jsx,tsx}",
-      ],
-  };
-  ```
-
+    export default {
+        presets: [fireCMSConfig],
+        content: [
+            "./index.html",
+            "./src/**/*.{js,ts,jsx,tsx}",
+            "./node_modules/@firecms/**/src/**/*.{js,ts,jsx,tsx}",
+        ],
+    };
+    ```

@@ -1,19 +1,13 @@
 import { DataType } from "@firecms/core";
 
 export function getInferenceType(value: any): DataType {
-    if (typeof value === "number")
-        return "number";
-    else if (typeof value === "string")
-        return "string";
-    else if (typeof value === "boolean")
-        return "boolean";
-    else if (value instanceof Date)
-        return "date";
-    else if (Array.isArray(value))
-        return "array";
+    if (typeof value === "number") return "number";
+    else if (typeof value === "string") return "string";
+    else if (typeof value === "boolean") return "boolean";
+    else if (value instanceof Date) return "date";
+    else if (Array.isArray(value)) return "array";
     return "map";
 }
-
 
 function isUnixTimestamp(num: number): boolean {
     const numString = num.toString();

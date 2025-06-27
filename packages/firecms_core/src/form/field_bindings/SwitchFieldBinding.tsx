@@ -17,49 +17,51 @@ type SwitchFieldProps = FieldProps<boolean>;
  * @group Form fields
  */
 export const SwitchFieldBinding = function SwitchFieldBinding({
-                                                                  propertyKey,
-                                                                  value,
-                                                                  setValue,
-                                                                  error,
-                                                                  showError,
-                                                                  autoFocus,
-                                                                  disabled,
-                                                                  size = "large",
-                                                                  property,
-                                                                  includeDescription
-                                                              }: SwitchFieldProps) {
-
+    propertyKey,
+    value,
+    setValue,
+    error,
+    showError,
+    autoFocus,
+    disabled,
+    size = "large",
+    property,
+    includeDescription,
+}: SwitchFieldProps) {
     useClearRestoreValue({
         property,
         value,
-        setValue
+        setValue,
     });
 
     return (
         <>
-
             <PropertyIdCopyTooltip propertyKey={propertyKey}>
                 <BooleanSwitchWithLabel
                     value={value}
                     onValueChange={(v) => setValue(v)}
                     error={showError}
                     className={property.widthPercentage !== undefined ? "mt-8" : undefined}
-                    label={<LabelWithIcon
-                        icon={getIconForProperty(property, "small")}
-                        required={property.validation?.required}
-                        title={property.name}/>}
+                    label={
+                        <LabelWithIcon
+                            icon={getIconForProperty(property, "small")}
+                            required={property.validation?.required}
+                            title={property.name}
+                        />
+                    }
                     disabled={disabled}
                     autoFocus={autoFocus}
                     size={size}
                 />
             </PropertyIdCopyTooltip>
 
-            <FieldHelperText includeDescription={includeDescription}
-                             showError={showError}
-                             error={error}
-                             disabled={disabled}
-                             property={property}/>
+            <FieldHelperText
+                includeDescription={includeDescription}
+                showError={showError}
+                error={error}
+                disabled={disabled}
+                property={property}
+            />
         </>
-
     );
 };

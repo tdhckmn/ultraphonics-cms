@@ -4,7 +4,7 @@ import { CollectionSize, Entity, EntityCollection, FilterValues } from "../../ty
 import {
     EntityCollectionRowActions,
     EntityCollectionTable,
-    useDataSourceTableController
+    useDataSourceTableController,
 } from "../EntityCollectionTable";
 import {
     useAuthController,
@@ -12,7 +12,7 @@ import {
     useDataSource,
     useLargeLayout,
     useNavigationController,
-    useSideEntityController
+    useSideEntityController,
 } from "../../hooks";
 import { ErrorView } from "../ErrorView";
 import { AddIcon, Button, DialogActions, Typography } from "@firecms/ui";
@@ -26,7 +26,6 @@ import { useAnalyticsController } from "../../hooks/useAnalyticsController";
  * @group Components
  */
 export interface ReferenceSelectionInnerProps<M extends Record<string, any>> {
-
     /**
      * Allow multiple selection of values
      */
@@ -80,7 +79,6 @@ export interface ReferenceSelectionInnerProps<M extends Record<string, any>> {
      * Maximum number of entities that can be selected.
      */
     maxSelection?: number;
-
 }
 
 /**
@@ -88,19 +86,17 @@ export interface ReferenceSelectionInnerProps<M extends Record<string, any>> {
  * You probably want to open this dialog as a side view using {@link useReferenceDialog}
  * @group Components
  */
-export function ReferenceSelectionTable<M extends Record<string, any>>(
-    {
-        onSingleEntitySelected,
-        onMultipleEntitiesSelected,
-        multiselect,
-        collection,
-        path: pathInput,
-        selectedEntityIds: selectedEntityIdsProp,
-        description,
-        forceFilter,
-        maxSelection,
-    }: ReferenceSelectionInnerProps<M>) {
-
+export function ReferenceSelectionTable<M extends Record<string, any>>({
+    onSingleEntitySelected,
+    onMultipleEntitiesSelected,
+    multiselect,
+    collection,
+    path: pathInput,
+    selectedEntityIds: selectedEntityIdsProp,
+    description,
+    forceFilter,
+    maxSelection,
+}: ReferenceSelectionInnerProps<M>) {
     const authController = useAuthController();
     const sideDialogContext = useSideDialogContext();
     const sideEntityController = useSideEntityController();
@@ -120,21 +116,18 @@ export function ReferenceSelectionTable<M extends Record<string, any>>(
 
         analyticsController.onAnalyticsEvent?.("reference_selection_toggle", {
             path: fullPath,
-            entityId: entity.id
+            entityId: entity.id,
         });
         if (selectedEntities) {
-
             if (selectedEntities.map((e) => e.id).indexOf(entity.id) > -1) {
                 newValue = selectedEntities.filter((item: Entity<any>) => item.id !== entity.id);
             } else {
-                if (maxSelection && selectedEntities.length >= maxSelection)
-                    return;
+                if (maxSelection && selectedEntities.length >= maxSelection) return;
                 newValue = [...selectedEntities, entity];
             }
             selectionController.setSelectedEntities(newValue);
 
-            if (onMultipleEntitiesSelected)
-                onMultipleEntitiesSelected(newValue);
+            if (onMultipleEntitiesSelected) onMultipleEntitiesSelected(newValue);
         }
     };
 
@@ -145,22 +138,25 @@ export function ReferenceSelectionTable<M extends Record<string, any>>(
      */
     useEffect(() => {
         let unmounted = false;
-        const selectedEntityIds = selectedEntityIdsProp?.map(id => id?.toString()).filter(Boolean);
+        const selectedEntityIds = selectedEntityIdsProp
+            ?.map((id) => id?.toString())
+            .filter(Boolean);
         if (selectedEntityIds && collection) {
             Promise.all(
                 selectedEntityIds.map((entityId) =>
                     dataSource.fetchEntity({
                         path: fullPath,
                         entityId,
-                        collection
-                    })))
-                .then((entities) => {
-                    if (!unmounted) {
-                        const result = entities.filter(e => e !== undefined) as Entity<any>[];
-                        selectionController.setSelectedEntities(result);
-                        setEntitiesDisplayedFirst(result);
-                    }
-                });
+                        collection,
+                    })
+                )
+            ).then((entities) => {
+                if (!unmounted) {
+                    const result = entities.filter((e) => e !== undefined) as Entity<any>[];
+                    selectionController.setSelectedEntities(result);
+                    setEntitiesDisplayedFirst(result);
+                }
+            });
         } else {
             selectionController.setSelectedEntities([]);
             setEntitiesDisplayedFirst([]);
@@ -168,11 +164,17 @@ export function ReferenceSelectionTable<M extends Record<string, any>>(
         return () => {
             unmounted = true;
         };
-    }, [dataSource, fullPath, selectedEntityIdsProp, collection, selectionController.setSelectedEntities]);
+    }, [
+        dataSource,
+        fullPath,
+        selectedEntityIdsProp,
+        collection,
+        selectionController.setSelectedEntities,
+    ]);
 
     const onClear = () => {
         analyticsController.onAnalyticsEvent?.("reference_selection_clear", {
-            path: fullPath
+            path: fullPath,
         });
         selectionController.setSelectedEntities([]);
         if (!multiselect && onSingleEntitySelected) {
@@ -186,7 +188,7 @@ export function ReferenceSelectionTable<M extends Record<string, any>>(
         if (!multiselect && onSingleEntitySelected) {
             analyticsController.onAnalyticsEvent?.("reference_selected_single", {
                 path: fullPath,
-                entityId: entity.id
+                entityId: entity.id,
             });
             onSingleEntitySelected(entity);
             sideDialogContext.close(false);
@@ -198,7 +200,7 @@ export function ReferenceSelectionTable<M extends Record<string, any>>(
     // create a new entity from within the reference dialog
     const onNewClick = () => {
         analyticsController.onAnalyticsEvent?.("reference_selection_new_entity", {
-            path: fullPath
+            path: fullPath,
         });
         sideEntityController.open({
             path: fullPath,
@@ -208,55 +210,63 @@ export function ReferenceSelectionTable<M extends Record<string, any>>(
                 setEntitiesDisplayedFirst([entity, ...entitiesDisplayedFirst]);
                 onEntityClick(entity);
             },
-            closeOnSave: true
+            closeOnSave: true,
         });
     };
 
     const tableRowActionsBuilder = ({
-                                        entity,
-                                        size,
-                                        width,
-                                        frozen
-                                    }: {
-        entity: Entity<any>,
-        size: CollectionSize,
-        width: number,
-        frozen?: boolean
+        entity,
+        size,
+        width,
+        frozen,
+    }: {
+        entity: Entity<any>;
+        size: CollectionSize;
+        width: number;
+        frozen?: boolean;
     }) => {
         const selectedEntities = selectionController.selectedEntities;
-        const isSelected = selectedEntities && selectedEntities.map(e => e.id).indexOf(entity.id) > -1;
-        return <EntityCollectionRowActions
-            width={width}
-            frozen={frozen}
-            entity={entity}
-            size={size}
-            isSelected={isSelected}
-            selectionEnabled={multiselect}
-            hideId={collection?.hideIdFromCollection}
-            fullPath={fullPath}
-            selectionController={selectionController}
-            openEntityMode={"side_panel"}
-        />;
-
+        const isSelected =
+            selectedEntities && selectedEntities.map((e) => e.id).indexOf(entity.id) > -1;
+        return (
+            <EntityCollectionRowActions
+                width={width}
+                frozen={frozen}
+                entity={entity}
+                size={size}
+                isSelected={isSelected}
+                selectionEnabled={multiselect}
+                hideId={collection?.hideIdFromCollection}
+                fullPath={fullPath}
+                selectionController={selectionController}
+                openEntityMode={"side_panel"}
+            />
+        );
     };
 
-    const onDone = useCallback((event: React.SyntheticEvent) => {
-        event.stopPropagation();
-        sideDialogContext.close(false);
-    }, [sideDialogContext]);
+    const onDone = useCallback(
+        (event: React.SyntheticEvent) => {
+            event.stopPropagation();
+            sideDialogContext.close(false);
+        },
+        [sideDialogContext]
+    );
 
     if (!collection) {
-        return <ErrorView
-            error={"Could not find collection with id " + collection}/>
+        return <ErrorView error={"Could not find collection with id " + collection} />;
     }
 
-    const resolvedCollection = useMemo(() => resolveCollection({
-        collection: collection,
-        path: fullPath,
-        values: {},
-        propertyConfigs: customizationController.propertyConfigs,
-        authController
-    }), [collection, customizationController.propertyConfigs, fullPath]);
+    const resolvedCollection = useMemo(
+        () =>
+            resolveCollection({
+                collection: collection,
+                path: fullPath,
+                values: {},
+                propertyConfigs: customizationController.propertyConfigs,
+                authController,
+            }),
+        [collection, customizationController.propertyConfigs, fullPath]
+    );
 
     const displayedColumnIds = useColumnIds(resolvedCollection, false);
 
@@ -268,23 +278,16 @@ export function ReferenceSelectionTable<M extends Record<string, any>>(
         updateUrl: false,
     });
 
-    const {
-        textSearchLoading,
-        textSearchInitialised,
-        onTextSearchClick,
-        textSearchEnabled
-    } =
+    const { textSearchLoading, textSearchInitialised, onTextSearchClick, textSearchEnabled } =
         useTableSearchHelper({
             collection,
             fullPath,
         });
 
     return (
-
         <div className="flex flex-col h-full">
-
             <div className="flex-grow">
-                {entitiesDisplayedFirst &&
+                {entitiesDisplayedFirst && (
                     <EntityCollectionTable
                         textSearchLoading={textSearchLoading}
                         onTextSearchClick={textSearchInitialised ? undefined : onTextSearchClick}
@@ -295,90 +298,86 @@ export function ReferenceSelectionTable<M extends Record<string, any>>(
                         enablePopupIcon={false}
                         tableRowActionsBuilder={tableRowActionsBuilder}
                         openEntityMode={"side_panel"}
-                        title={<Typography variant={"subtitle2"} className={"flex flex-row gap-2"}>
-                            <IconForView
-                                size={"small"}
-                                collectionOrView={collection}
-                                className={"text-surface-300 dark:text-surface-600"}/>
-                            {collection.singularName ? `Select ${collection.singularName}` : `Select
+                        title={
+                            <Typography variant={"subtitle2"} className={"flex flex-row gap-2"}>
+                                <IconForView
+                                    size={"small"}
+                                    collectionOrView={collection}
+                                    className={"text-surface-300 dark:text-surface-600"}
+                                />
+                                {collection.singularName
+                                    ? `Select ${collection.singularName}`
+                                    : `Select
                                                                                               from ${collection.name}`}
-                        </Typography>}
+                            </Typography>
+                        }
                         defaultSize={collection.defaultSize}
                         properties={resolvedCollection.properties}
                         forceFilter={forceFilter}
                         inlineEditing={false}
                         selectionController={selectionController}
-                        actions={<ReferenceDialogActions
-                            collection={collection}
-                            path={fullPath}
-                            onNewClick={onNewClick}
-                            onClear={onClear}/>
+                        actions={
+                            <ReferenceDialogActions
+                                collection={collection}
+                                path={fullPath}
+                                onNewClick={onNewClick}
+                                onClear={onClear}
+                            />
                         }
-                    />}
+                    />
+                )}
             </div>
             <DialogActions translucent={false}>
-                {description &&
-                    <Typography variant={"body2"}
-                                className="flex-grow text-left">
+                {description && (
+                    <Typography variant={"body2"} className="flex-grow text-left">
                         {description}
-                    </Typography>}
-                <Button
-                    onClick={onDone}
-                    color="primary"
-                    variant="filled">
+                    </Typography>
+                )}
+                <Button onClick={onDone} color="primary" variant="filled">
                     Done
                 </Button>
             </DialogActions>
         </div>
-
     );
-
 }
 
 function ReferenceDialogActions({
-                                    collection,
-                                    path,
-                                    onClear,
-                                    onNewClick
-                                }: {
-    collection: EntityCollection<any>,
-    path: string,
-    onClear: () => void,
-    onNewClick: () => void
+    collection,
+    path,
+    onClear,
+    onNewClick,
+}: {
+    collection: EntityCollection<any>;
+    path: string;
+    onClear: () => void;
+    onNewClick: () => void;
 }) {
-
     const authController = useAuthController();
 
     const largeLayout = useLargeLayout();
 
     const onClick: MouseEventHandler<HTMLButtonElement> | undefined = onNewClick
         ? (e) => {
-            e.preventDefault();
-            onNewClick();
-        }
+              e.preventDefault();
+              onNewClick();
+          }
         : undefined;
-    const addButton = canCreateEntity(collection, authController, path, null) &&
-        onClick && (largeLayout
-            ? <Button
-                onClick={onClick}
-                startIcon={<AddIcon/>}
-                variant="outlined"
-                color="primary">
+    const addButton =
+        canCreateEntity(collection, authController, path, null) &&
+        onClick &&
+        (largeLayout ? (
+            <Button onClick={onClick} startIcon={<AddIcon />} variant="outlined" color="primary">
                 Add {collection.singularName ?? collection.name}
             </Button>
-            : <Button
-                onClick={onClick}
-                variant="outlined"
-                color="primary"
-            >
-                <AddIcon/>
-            </Button>);
+        ) : (
+            <Button onClick={onClick} variant="outlined" color="primary">
+                <AddIcon />
+            </Button>
+        ));
 
     return (
         <>
-            <Button onClick={onClear}
-                    variant={"text"}
-                    color="primary">
+            <Button onClick={onClear} variant={"text"} color="primary">
                 Clear
             </Button>
             {addButton}

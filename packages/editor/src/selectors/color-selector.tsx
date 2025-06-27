@@ -96,9 +96,9 @@ interface ColorSelectorProps {
 }
 
 export const ColorSelector = ({
-                                  open,
-                                  onOpenChange
-                              }:{
+    open,
+    onOpenChange,
+}: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }) => {
@@ -106,11 +106,11 @@ export const ColorSelector = ({
 
     if (!editor) return null;
     const activeColorItem = TEXT_COLORS.find(({ color }) =>
-        editor.isActive("textStyle", { color }),
+        editor.isActive("textStyle", { color })
     );
 
     const activeHighlightItem = HIGHLIGHT_COLORS.find(({ color }) =>
-        editor.isActive("highlight", { color }),
+        editor.isActive("highlight", { color })
     );
 
     return (
@@ -120,38 +120,37 @@ export const ColorSelector = ({
             className="my-1 flex max-h-80 w-48 flex-col overflow-hidden overflow-y-auto rounded border p-1 shadow"
             trigger={
                 <Button className="gap-2 rounded-none" variant="text" color={"text"}>
-                      <span
-                          className="rounded px-1"
-                          style={{
-                              color: activeColorItem?.color,
-                              backgroundColor: activeHighlightItem?.color,
-                          }}
-                      >
+                    <span
+                        className="rounded px-1"
+                        style={{
+                            color: activeColorItem?.color,
+                            backgroundColor: activeHighlightItem?.color,
+                        }}
+                    >
                         A
-                      </span>
-                    <KeyboardArrowDownIcon size={"small"}/>
-                </Button>}
-            modal={true} open={open} onOpenChange={onOpenChange}>
-
-
+                    </span>
+                    <KeyboardArrowDownIcon size={"small"} />
+                </Button>
+            }
+            modal={true}
+            open={open}
+            onOpenChange={onOpenChange}
+        >
             <div className="flex flex-col">
                 <div className="my-1 px-2 text-sm font-semibold text-surface-400 dark:text-surface-400">
                     Color
                 </div>
-                {TEXT_COLORS.map(({
-                                      name,
-                                      color
-                                  }, index) => (
+                {TEXT_COLORS.map(({ name, color }, index) => (
                     <EditorBubbleItem
                         key={index}
                         onSelect={() => {
                             editor.commands.unsetColor();
                             name !== "Default" &&
-                            editor
-                                .chain()
-                                .focus()
-                                .setColor(color || "")
-                                .run();
+                                editor
+                                    .chain()
+                                    .focus()
+                                    .setColor(color || "")
+                                    .run();
                         }}
                         className="flex cursor-pointer items-center justify-between px-2 py-1 text-sm hover:bg-blue-50 hover:dark:bg-surface-700"
                     >
@@ -171,10 +170,7 @@ export const ColorSelector = ({
                 <div className="my-1 px-2 text-sm font-semibold text-surface-400 dark:text-surface-400">
                     Background
                 </div>
-                {HIGHLIGHT_COLORS.map(({
-                                           name,
-                                           color
-                                       }, index) => (
+                {HIGHLIGHT_COLORS.map(({ name, color }, index) => (
                     <EditorBubbleItem
                         key={index}
                         onSelect={() => {
@@ -193,12 +189,11 @@ export const ColorSelector = ({
                             <span>{name}</span>
                         </div>
                         {editor.isActive("highlight", { color }) && (
-                            <CheckIcon className="h-4 w-4"/>
+                            <CheckIcon className="h-4 w-4" />
                         )}
                     </EditorBubbleItem>
                 ))}
             </div>
-
         </Popover>
     );
 };

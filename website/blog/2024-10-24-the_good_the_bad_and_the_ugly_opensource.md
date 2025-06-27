@@ -43,7 +43,7 @@ the community and usage expand naturally. Seeing developers embrace our project 
 immensely.
 
 ![FireCMS Dashboard](../static/img/blog/firecms_demo.png)
-*The intuitive interface of FireCMS that our users love.*
+_The intuitive interface of FireCMS that our users love._
 
 ## The Bad
 
@@ -84,6 +84,5 @@ in [FireCMS Cloud](https://app.firecms.co/) or give us a star in [Github](https:
 ### What are you going to build?
 
 We want to hear about it :) Find us
-on [Discord](https://discord.gg/fxy7xsQm3m), [LinkedIn](
-https://www.linkedin.com/company/firecms/?originalSubdomain=es),
+on [Discord](https://discord.gg/fxy7xsQm3m), [LinkedIn](https://www.linkedin.com/company/firecms/?originalSubdomain=es),
 or ping us at [hello@firecms.co](mailto:hello@firecms.co)

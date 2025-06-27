@@ -13,46 +13,50 @@ function FeaturesPage() {
     const schemaMarkup = {
         "@context": "http://schema.org",
         "@type": "Product",
-        "name": "FireCMS",
-        "description": "Experience the power of FireCMS today completely for free. Try FireCMS Cloud for a fully-managed, full-service solution, or FireCMS PRO for a self-hosted version with additional features.",
-        "offers": [
+        name: "FireCMS",
+        description:
+            "Experience the power of FireCMS today completely for free. Try FireCMS Cloud for a fully-managed, full-service solution, or FireCMS PRO for a self-hosted version with additional features.",
+        offers: [
             {
                 "@type": "Offer",
-                "url": "https://firecms.co",
-                "priceCurrency": "USD",
-                "price": "0.00",
-                "priceValidUntil": "2025-12-31",
-                "itemCondition": "http://schema.org/NewCondition",
-                "availability": "http://schema.org/InStock",
-                "seller": {
+                url: "https://firecms.co",
+                priceCurrency: "USD",
+                price: "0.00",
+                priceValidUntil: "2025-12-31",
+                itemCondition: "http://schema.org/NewCondition",
+                availability: "http://schema.org/InStock",
+                seller: {
                     "@type": "Organization",
-                    "name": "FireCMS"
-                }
+                    name: "FireCMS",
+                },
             },
             {
                 "@type": "Offer",
-                "url": "https://firecms.co/pro",
-                "priceCurrency": "USD",
-                "price": "9.99",
-                "priceValidUntil": "2025-12-31",
-                "itemCondition": "http://schema.org/NewCondition",
-                "availability": "http://schema.org/InStock",
-                "seller": {
+                url: "https://firecms.co/pro",
+                priceCurrency: "USD",
+                price: "9.99",
+                priceValidUntil: "2025-12-31",
+                itemCondition: "http://schema.org/NewCondition",
+                availability: "http://schema.org/InStock",
+                seller: {
                     "@type": "Organization",
-                    "name": "FireCMS"
-                }
-            }
-        ]
+                    name: "FireCMS",
+                },
+            },
+        ],
     };
     return (
         <Layout
             title={"Pricing - FireCMS"}
-            description="Self-hosted version and free Cloud tier, adaptive pricing for everyone">
+            description="Self-hosted version and free Cloud tier, adaptive pricing for everyone"
+        >
             <Head>
-                <meta property="og:title" content="Pricing - FireCMS"/>
-                <meta property="og:description"
-                      content="Self-hosted version and free Cloud tier, adaptive pricing for everyone"/>
-                <meta property="og:image" content="https://firecms.co/img/firecms_logo.svg"/>
+                <meta property="og:title" content="Pricing - FireCMS" />
+                <meta
+                    property="og:description"
+                    content="Self-hosted version and free Cloud tier, adaptive pricing for everyone"
+                />
+                <meta property="og:image" content="https://firecms.co/img/firecms_logo.svg" />
                 {/*<script type="text/javascript">*/}
                 {/*    {clarityScript}*/}
                 {/*</script>*/}
@@ -69,7 +73,8 @@ function FeaturesPage() {
                                 Full no-code/low-code solution
                             </h2>
                         </div>
-                    </>}
+                    </>
+                }
                 // subtitle={
                 //     <>
                 //         <p>
@@ -93,16 +98,13 @@ function FeaturesPage() {
 
             {/*<VersionsToggle value={version} onSelect={setVersion}/>*/}
 
-            <FireCMSCloudVersions/>
+            <FireCMSCloudVersions />
 
-            <CLIInstructions/>
-            <PricingQuote/>
-            <VersionsComparison/>
-
-
+            <CLIInstructions />
+            <PricingQuote />
+            <VersionsComparison />
         </Layout>
     );
 }
 
 export default FeaturesPage;
-

@@ -6,7 +6,7 @@ import { FieldHelperText, LabelWithIconAndTooltip } from "../components";
 import { PropertyFieldBinding } from "../PropertyFieldBinding";
 import { EnumValuesChip } from "../../preview";
 import { FieldProps, FormContext, PropertyFieldBindingProps, PropertyOrBuilder } from "../../types";
-import { getDefaultValueFor, getIconForProperty, mergeDeep, } from "../../util";
+import { getDefaultValueFor, getIconForProperty, mergeDeep } from "../../util";
 import { DEFAULT_ONE_OF_TYPE, DEFAULT_ONE_OF_VALUE } from "../../util/common";
 import { cls, ExpandablePanel, paperMixin, Select, SelectItem, Typography } from "@firecms/ui";
 import { useClearRestoreValue } from "../useClearRestoreValue";
@@ -21,54 +21,49 @@ import { ArrayContainer, ArrayEntryParams } from "../../components";
  * @group Form fields
  */
 export function BlockFieldBinding<T extends Array<any>>({
-                                                            propertyKey,
-                                                            value,
-                                                            error,
-                                                            showError,
-                                                            isSubmitting,
-                                                            setValue,
-                                                            setFieldValue,
-                                                            minimalistView: minimalistViewProp,
-                                                            property,
-                                                            includeDescription,
-                                                            underlyingValueHasChanged,
-                                                            context,
-                                                            disabled
-                                                        }: FieldProps<T>) {
-
+    propertyKey,
+    value,
+    error,
+    showError,
+    isSubmitting,
+    setValue,
+    setFieldValue,
+    minimalistView: minimalistViewProp,
+    property,
+    includeDescription,
+    underlyingValueHasChanged,
+    context,
+    disabled,
+}: FieldProps<T>) {
     const minimalistView = minimalistViewProp || property.minimalistView;
 
-    if (!property.oneOf)
-        throw Error("ArrayOneOfField misconfiguration. Property `oneOf` not set");
+    if (!property.oneOf) throw Error("ArrayOneOfField misconfiguration. Property `oneOf` not set");
 
     const expanded = property.expanded === undefined ? true : property.expanded;
     useClearRestoreValue({
         property,
         value,
-        setValue
+        setValue,
     });
 
     const [lastAddedId, setLastAddedId] = useState<number | undefined>();
 
-    const buildEntry = ({
-                            index,
-                            internalId,
-                            storedProps,
-                            storeProps
-                        }: ArrayEntryParams) => {
-
-        return <BlockEntry
-            key={`array_one_of_${internalId}`}
-            name={`${propertyKey}.${index}`}
-            index={index}
-            value={value[index]}
-            typeField={property.oneOf!.typeField ?? DEFAULT_ONE_OF_TYPE}
-            valueField={property.oneOf!.valueField ?? DEFAULT_ONE_OF_VALUE}
-            properties={property.oneOf!.properties}
-            autoFocus={internalId === lastAddedId}
-            context={context}
-            storeProps={storeProps}
-            storedProps={storedProps}/>;
+    const buildEntry = ({ index, internalId, storedProps, storeProps }: ArrayEntryParams) => {
+        return (
+            <BlockEntry
+                key={`array_one_of_${internalId}`}
+                name={`${propertyKey}.${index}`}
+                index={index}
+                value={value[index]}
+                typeField={property.oneOf!.typeField ?? DEFAULT_ONE_OF_TYPE}
+                valueField={property.oneOf!.valueField ?? DEFAULT_ONE_OF_VALUE}
+                properties={property.oneOf!.properties}
+                autoFocus={internalId === lastAddedId}
+                context={context}
+                storeProps={storeProps}
+                storedProps={storedProps}
+            />
+        );
     };
 
     const title = (
@@ -77,43 +72,51 @@ export function BlockFieldBinding<T extends Array<any>>({
             icon={getIconForProperty(property, "small")}
             required={property.validation?.required}
             title={property.name}
-            className={"text-text-secondary dark:text-text-secondary-dark"}/>
+            className={"text-text-secondary dark:text-text-secondary-dark"}
+        />
     );
 
     const firstOneOfKey = Object.keys(property.oneOf.properties)[0];
-    const body = <ArrayContainer value={value}
-                                 className={"flex flex-col gap-3"}
-                                 droppableId={propertyKey}
-                                 addLabel={property.name ? "Add entry to " + property.name : "Add entry"}
-                                 buildEntry={buildEntry}
-                                 onInternalIdAdded={setLastAddedId}
-                                 disabled={isSubmitting || Boolean(property.disabled)}
-                                 canAddElements={!property.disabled}
-                                 onValueChange={(value) => setFieldValue(propertyKey, value)}
-                                 newDefaultEntry={{
-                                     [property.oneOf!.typeField ?? DEFAULT_ONE_OF_TYPE]: firstOneOfKey,
-                                     [property.oneOf!.valueField ?? DEFAULT_ONE_OF_VALUE]: getDefaultValueFor(property.oneOf.properties[firstOneOfKey])
-                                 }}/>;
+    const body = (
+        <ArrayContainer
+            value={value}
+            className={"flex flex-col gap-3"}
+            droppableId={propertyKey}
+            addLabel={property.name ? "Add entry to " + property.name : "Add entry"}
+            buildEntry={buildEntry}
+            onInternalIdAdded={setLastAddedId}
+            disabled={isSubmitting || Boolean(property.disabled)}
+            canAddElements={!property.disabled}
+            onValueChange={(value) => setFieldValue(propertyKey, value)}
+            newDefaultEntry={{
+                [property.oneOf!.typeField ?? DEFAULT_ONE_OF_TYPE]: firstOneOfKey,
+                [property.oneOf!.valueField ?? DEFAULT_ONE_OF_VALUE]: getDefaultValueFor(
+                    property.oneOf.properties[firstOneOfKey]
+                ),
+            }}
+        />
+    );
     return (
-
         <>
-
-            {!minimalistView &&
+            {!minimalistView && (
                 <ExpandablePanel
                     innerClassName={"px-2 md:px-4 pb-2 md:pb-4 pt-1 md:pt-2"}
                     initiallyExpanded={expanded}
-                    title={title}>
+                    title={title}
+                >
                     {body}
-                </ExpandablePanel>}
+                </ExpandablePanel>
+            )}
 
             {minimalistView && body}
 
-            <FieldHelperText includeDescription={includeDescription}
-                             showError={showError}
-                             error={error}
-                             disabled={disabled}
-                             property={property}/>
-
+            <FieldHelperText
+                includeDescription={includeDescription}
+                showError={showError}
+                error={error}
+                disabled={disabled}
+                property={property}
+            />
         </>
     );
 }
@@ -145,24 +148,22 @@ interface BlockEntryProps {
      */
     context: FormContext<any>;
 
-    storedProps?: object,
-    storeProps: (props: object) => void
-
+    storedProps?: object;
+    storeProps: (props: object) => void;
 }
 
 function BlockEntry({
-                        name,
-                        index,
-                        value,
-                        typeField,
-                        valueField,
-                        properties,
-                        autoFocus,
-                        context,
-                        storedProps,
-                        storeProps
-                    }: BlockEntryProps) {
-
+    name,
+    index,
+    value,
+    typeField,
+    valueField,
+    properties,
+    autoFocus,
+    context,
+    storedProps,
+    storeProps,
+}: BlockEntryProps) {
     const type = value && value[typeField];
     const [typeInternal, setTypeInternal] = useState<string | undefined>(type ?? undefined);
 
@@ -182,27 +183,29 @@ function BlockEntry({
 
     const propertyInternal = typeInternal ? properties[typeInternal] : undefined;
 
-    const property = storedProps && typeof propertyInternal === "object" ? mergeDeep(propertyInternal, storedProps) : propertyInternal;
+    const property =
+        storedProps && typeof propertyInternal === "object"
+            ? mergeDeep(propertyInternal, storedProps)
+            : propertyInternal;
 
-    const enumValuesConfigs = Object.entries(properties)
-        .map(([key, property]) => ({
-            id: key,
-            label: property.name ?? key
-        }));
+    const enumValuesConfigs = Object.entries(properties).map(([key, property]) => ({
+        id: key,
+        label: property.name ?? key,
+    }));
 
     const typeFieldName = `${name}.${typeField}`;
     const valueFieldName = `${name}.${valueField}`;
 
     const fieldProps: PropertyFieldBindingProps<any, any> | undefined = property
         ? {
-            propertyKey: valueFieldName,
-            property,
-            context,
-            autoFocus,
-            partOfArray: false,
-            minimalistView: true,
-            onPropertyChange: storeProps,
-        }
+              propertyKey: valueFieldName,
+              property,
+              context,
+              autoFocus,
+              partOfArray: false,
+              minimalistView: true,
+              onPropertyChange: storeProps,
+          }
         : undefined;
 
     const updateType = (newType: any) => {
@@ -210,58 +213,69 @@ function BlockEntry({
         setTypeInternal(newType);
         formex.setFieldTouched(typeFieldName, true);
         formex.setFieldValue(typeFieldName, newType);
-        formex.setFieldValue(valueFieldName, newSelectedProperty ? getDefaultValueFor(newSelectedProperty) : null);
+        formex.setFieldValue(
+            valueFieldName,
+            newSelectedProperty ? getDefaultValueFor(newSelectedProperty) : null
+        );
     };
 
     return (
         <div className={cls(paperMixin, "bg-transparent p-2")}>
-
-            <Field
-                name={typeFieldName}
-            >
+            <Field name={typeFieldName}>
                 {(fieldProps) => {
-                    const value1 = fieldProps.field.value !== undefined && fieldProps.field.value !== null ? fieldProps.field.value as string : "";
+                    const value1 =
+                        fieldProps.field.value !== undefined && fieldProps.field.value !== null
+                            ? (fieldProps.field.value as string)
+                            : "";
                     return (
                         <>
                             <Select
                                 className="mb-2"
-                                placeholder={<Typography variant={"caption"}
-                                                         className={"px-4 py-2 font-medium"}>Type</Typography>}
+                                placeholder={
+                                    <Typography
+                                        variant={"caption"}
+                                        className={"px-4 py-2 font-medium"}
+                                    >
+                                        Type
+                                    </Typography>
+                                }
                                 size={"medium"}
                                 fullWidth={true}
                                 position={"item-aligned"}
                                 value={value1}
-                                renderValue={(enumKey: any) =>
+                                renderValue={(enumKey: any) => (
                                     <EnumValuesChip
                                         enumKey={enumKey}
                                         enumValues={enumValuesConfigs}
-                                        size={"small"}/>
-                                }
+                                        size={"small"}
+                                    />
+                                )}
                                 onValueChange={(value) => {
                                     updateType(value);
-                                }}>
+                                }}
+                            >
                                 {enumValuesConfigs.map((enumConfig) => (
-                                    <SelectItem
-                                        key={enumConfig.id}
-                                        value={String(enumConfig.id)}>
+                                    <SelectItem key={enumConfig.id} value={String(enumConfig.id)}>
                                         <EnumValuesChip
                                             enumKey={enumConfig.id}
                                             enumValues={enumValuesConfigs}
-                                            size={"small"}/>
-                                    </SelectItem>)
-                                )}
+                                            size={"small"}
+                                        />
+                                    </SelectItem>
+                                ))}
                             </Select>
                         </>
                     );
-                }
-                }
+                }}
             </Field>
 
             {fieldProps && (
                 // It is important to use this key to force a re-render of the field on type change
-                <PropertyFieldBinding key={`form_control_${name}_${typeInternal}`} {...fieldProps}/>
+                <PropertyFieldBinding
+                    key={`form_control_${name}_${typeInternal}`}
+                    {...fieldProps}
+                />
             )}
-
         </div>
     );
 }

@@ -2,17 +2,17 @@
 import path from "path";
 
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react"
+import react from "@vitejs/plugin-react";
 
 const ReactCompilerConfig = {
-    target: "18"
+    target: "18",
 };
 
 const isExternal = (id: string) => !id.startsWith(".") && !path.isAbsolute(id);
 
 export default defineConfig(() => ({
     esbuild: {
-        logOverride: { "this-is-undefined-in-esm": "silent" }
+        logOverride: { "this-is-undefined-in-esm": "silent" },
     },
     build: {
         target: "ESNEXT",
@@ -23,11 +23,11 @@ export default defineConfig(() => ({
         lib: {
             entry: path.resolve(__dirname, "src/index.ts"),
             name: "FireCMS Cloud",
-            fileName: (format) => `index.${format}.js`
+            fileName: (format) => `index.${format}.js`,
         },
         rollupOptions: {
-            external: isExternal
-        }
+            external: isExternal,
+        },
     },
     resolve: {
         alias: {
@@ -38,19 +38,22 @@ export default defineConfig(() => ({
             "@firecms/user_management": path.resolve(__dirname, "../user_management/src"),
             "@firecms/schema_inference": path.resolve(__dirname, "../schema_inference/src"),
             "@firecms/collection_editor": path.resolve(__dirname, "../collection_editor/src"),
-            "@firecms/collection_editor_firebase": path.resolve(__dirname, "../collection_editor_firebase/src"),
+            "@firecms/collection_editor_firebase": path.resolve(
+                __dirname,
+                "../collection_editor_firebase/src"
+            ),
             "@firecms/data_enhancement": path.resolve(__dirname, "../data_enhancement/src"),
             "@firecms/data_import": path.resolve(__dirname, "../data_import/src"),
             "@firecms/data_export": path.resolve(__dirname, "../data_export/src"),
             "@firecms/data_import_export": path.resolve(__dirname, "../data_import_export/src"),
             "@firecms/datatalk": path.resolve(__dirname, "../datatalk/src"),
-        }
+        },
     },
-    plugins: [react({
+    plugins: [
+        react({
             babel: {
-                plugins: [
-                    ["babel-plugin-react-compiler", ReactCompilerConfig],
-                ],
-            }
-        })]
+                plugins: [["babel-plugin-react-compiler", ReactCompilerConfig]],
+            },
+        }),
+    ],
 }));

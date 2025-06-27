@@ -2,26 +2,26 @@
 import path from "path";
 
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react"
+import react from "@vitejs/plugin-react";
 
 const isExternal = (id: string) => !id.startsWith(".") && !path.isAbsolute(id);
 
 export default defineConfig(() => ({
     esbuild: {
-        logOverride: { "this-is-undefined-in-esm": "silent" }
+        logOverride: { "this-is-undefined-in-esm": "silent" },
     },
     build: {
         lib: {
             entry: path.resolve(__dirname, "src/index.ts"),
             name: "FireCMS data import/export",
-            fileName: (format) => `index.${format}.js`
+            fileName: (format) => `index.${format}.js`,
         },
         target: "ESNEXT",
         sourcemap: true,
         minify: false,
         rollupOptions: {
-            external: isExternal
-        }
+            external: isExternal,
+        },
     },
     resolve: {
         alias: {
@@ -31,7 +31,7 @@ export default defineConfig(() => ({
             "@firecms/formex": path.resolve(__dirname, "../formex/src"),
             "@firecms/data_import": path.resolve(__dirname, "../data_import/src"),
             "@firecms/data_export": path.resolve(__dirname, "../data_export/src"),
-        }
+        },
     },
-    plugins: [react()]
+    plugins: [react()],
 }));

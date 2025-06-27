@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function BorderVerticalIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"border_vertical"}/>
+    return <Icon {...props} iconKey={"border_vertical"} />;
 }

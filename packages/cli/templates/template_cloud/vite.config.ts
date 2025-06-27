@@ -1,11 +1,11 @@
-import { defineConfig } from "vite"
-import react from "@vitejs/plugin-react"
-import federation from "@originjs/vite-plugin-federation"
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import federation from "@originjs/vite-plugin-federation";
 
 // https://vitejs.dev/config/
 export default defineConfig({
     esbuild: {
-        logOverride: { "this-is-undefined-in-esm": "silent" }
+        logOverride: { "this-is-undefined-in-esm": "silent" },
     },
     plugins: [
         react(),
@@ -13,7 +13,7 @@ export default defineConfig({
             name: "remote_app",
             filename: "remoteEntry.js",
             exposes: {
-                "./config": "./src/index"
+                "./config": "./src/index",
             },
             shared: [
                 "react",
@@ -29,14 +29,14 @@ export default defineConfig({
                 "@firebase/storage",
                 "@firebase/analytics",
                 "@firebase/remote-config",
-                "@firebase/app-check"
-            ]
-        })
+                "@firebase/app-check",
+            ],
+        }),
     ],
     build: {
         modulePreload: false,
         minify: false,
         target: "ESNEXT",
         cssCodeSplit: false,
-    }
+    },
 });

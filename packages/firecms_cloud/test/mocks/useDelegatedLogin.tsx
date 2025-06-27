@@ -2,8 +2,10 @@ import { User as FirebaseUser } from "@firebase/auth";
 import { useEffect } from "react";
 import { createMockUser } from "./mock_user";
 
-export function useMockDelegatedLogin({ onUserChanged }: {
-    onUserChanged: (user?: FirebaseUser) => void,
+export function useMockDelegatedLogin({
+    onUserChanged,
+}: {
+    onUserChanged: (user?: FirebaseUser) => void;
 }) {
     useEffect(() => {
         onUserChanged(createMockUser());
@@ -11,7 +13,6 @@ export function useMockDelegatedLogin({ onUserChanged }: {
 
     return {
         delegatedLoginLoading: false,
-        delegatedLoginError: undefined
-    }
-
+        delegatedLoginError: undefined,
+    };
 }

@@ -13,9 +13,9 @@ export interface FieldInputProps<Value> {
     /** Is the field checked? */
     checked?: boolean;
     /** Change event handler */
-    onChange: (event: React.SyntheticEvent) => void,
+    onChange: (event: React.SyntheticEvent) => void;
     /** Blur event handler */
-    onBlur: (event: React.FocusEvent) => void,
+    onBlur: (event: React.FocusEvent) => void;
 }
 
 export interface FormexFieldProps<Value = any, FormValues extends object = any> {
@@ -24,14 +24,10 @@ export interface FormexFieldProps<Value = any, FormValues extends object = any> 
 }
 
 export interface FieldConfig<Value, C extends React.ElementType | undefined = undefined> {
-
     /**
      * Component to render. Can either be a string e.g. 'select', 'input', or 'textarea', or a component.
      */
-    as?:
-        | C
-        | string
-        | React.ForwardRefExoticComponent<any>;
+    as?: C | string | React.ForwardRefExoticComponent<any>;
 
     /**
      * Children render function <Field name>{props => ...}</Field>)
@@ -61,22 +57,21 @@ export interface FieldConfig<Value, C extends React.ElementType | undefined = un
 
     /** Inner ref */
     innerRef?: (instance: any) => void;
-
 }
 
 export type FieldProps<T, C extends React.ElementType | undefined> = {
     as?: C;
-} & (C extends React.ElementType ? (React.ComponentProps<C> & FieldConfig<T, C>) : FieldConfig<T, C>);
+} & (C extends React.ElementType ? React.ComponentProps<C> & FieldConfig<T, C> : FieldConfig<T, C>);
 
 export function Field<T, C extends React.ElementType | undefined = undefined>({
-                                                                                  validate,
-                                                                                  name,
-                                                                                  children,
-                                                                                  as: is, // `as` is reserved in typescript lol
-                                                                                  // component,
-                                                                                  className,
-                                                                                  ...props
-                                                                              }: FieldProps<T, C>) {
+    validate,
+    name,
+    children,
+    as: is, // `as` is reserved in typescript lol
+    // component,
+    className,
+    ...props
+}: FieldProps<T, C>) {
     const formex = useFormex();
 
     const field = getFieldProps({ name, ...props }, formex);
@@ -116,11 +111,12 @@ export function Field<T, C extends React.ElementType | undefined = undefined>({
     return React.createElement(asElement, { ...field, ...props, className }, children);
 }
 
-const getFieldProps = (nameOrOptions: string | FieldConfig<any>, formex: FormexController<any>): FieldInputProps<any> => {
+const getFieldProps = (
+    nameOrOptions: string | FieldConfig<any>,
+    formex: FormexController<any>
+): FieldInputProps<any> => {
     const isAnObject = isObject(nameOrOptions);
-    const name = isAnObject
-        ? (nameOrOptions as FieldConfig<any>).name
-        : nameOrOptions;
+    const name = isAnObject ? (nameOrOptions as FieldConfig<any>).name : nameOrOptions;
     const valueState = getIn(formex.values, name);
 
     const field: FieldInputProps<any> = {
@@ -141,9 +137,7 @@ const getFieldProps = (nameOrOptions: string | FieldConfig<any>, formex: FormexC
             if (valueProp === undefined) {
                 field.checked = !!valueState;
             } else {
-                field.checked = !!(
-                    Array.isArray(valueState) && ~valueState.indexOf(valueProp)
-                );
+                field.checked = !!(Array.isArray(valueState) && ~valueState.indexOf(valueProp));
                 field.value = valueProp;
             }
         } else if (type === "radio") {

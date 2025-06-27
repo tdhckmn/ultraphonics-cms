@@ -4,7 +4,6 @@ title: Collection Bar Actions
 sidebar_label: Collection Bar Actions
 ---
 
-
 ![collection_actions](/img/collection_actions.png)
 
 You can add your custom components to the collection bar.
@@ -25,7 +24,6 @@ import { CollectionActionsProps, useSnackbarController } from "@firecms/core";
 import { Button } from "@firecms/ui";
 
 export function SampleCollectionActions({ selectionController }: CollectionActionsProps) {
-
     const snackbarController = useSnackbarController();
 
     const onClick = (event: React.MouseEvent) => {
@@ -33,18 +31,15 @@ export function SampleCollectionActions({ selectionController }: CollectionActio
         const count = selectedEntities ? selectedEntities.length : 0;
         snackbarController.open({
             type: "success",
-            message: `User defined code here! ${count} products selected`
+            message: `User defined code here! ${count} products selected`,
         });
     };
 
     return (
-        <Button onClick={onClick}
-                color="primary"
-                variant={"text"}>
+        <Button onClick={onClick} color="primary" variant={"text"}>
             My custom action
         </Button>
     );
-
 }
 ```
 
@@ -61,7 +56,6 @@ export const productCollection: EntitySchema = buildCollection({
 });
 ```
 
-
 ### Sample modifying filters
 
 This is an example of how you can modify the filters in the collection bar:
@@ -71,17 +65,14 @@ import React from "react";
 import { CollectionActionsProps } from "@firecms/core";
 import { CloseIcon, IconButton, Select, SelectItem } from "@firecms/ui";
 
-export function CustomFiltersActions({
-                                         tableController
-                                     }: CollectionActionsProps) {
-
+export function CustomFiltersActions({ tableController }: CollectionActionsProps) {
     const filterValues = tableController.filterValues;
     const categoryFilter = filterValues?.category;
     const categoryFilterValue = categoryFilter?.[1];
 
     const updateFilter = (value: string | null) => {
         const newFilter = {
-            ...filterValues
+            ...filterValues,
         };
         if (value) {
             newFilter.category = ["==", value];
@@ -92,22 +83,25 @@ export function CustomFiltersActions({
     };
 
     return (
-        <Select placeholder={"Category filter"}
-                className={"w-44"}
-                endAdornment={categoryFilterValue ?
+        <Select
+            placeholder={"Category filter"}
+            className={"w-44"}
+            endAdornment={
+                categoryFilterValue ? (
                     <IconButton size={"small"} onClick={() => updateFilter(null)}>
-                        <CloseIcon size={"smallest"}/>
-                    </IconButton> : undefined}
-                onValueChange={updateFilter}
-                size={"small"}
-                value={categoryFilterValue}>
+                        <CloseIcon size={"smallest"} />
+                    </IconButton>
+                ) : undefined
+            }
+            onValueChange={updateFilter}
+            size={"small"}
+            value={categoryFilterValue}
+        >
             <SelectItem value="cameras">Cameras</SelectItem>
             <SelectItem value="bath">Bath</SelectItem>
         </Select>
     );
-
 }
-
 ```
 
 then just add it to your collection configuration:
@@ -122,7 +116,6 @@ export const productCollection: EntitySchema = buildCollection({
     // ...
 });
 ```
-
 
 ## CollectionActionsProps
 

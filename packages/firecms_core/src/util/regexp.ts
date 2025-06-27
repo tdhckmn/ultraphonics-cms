@@ -24,9 +24,10 @@ export function hydrateRegExp(input?: string): RegExp | undefined {
 }
 
 export function isValidRegExp(input: string): boolean {
-    const fullRegexp = input.match(/\/((?![*+?])(?:[^\r\n[/\\]|\\.|\[(?:[^\r\n\]\\]|\\.)*])+)\/((?:g(?:im?|mi?)?|i(?:gm?|mg?)?|m(?:gi?|ig?)?)?)/);
-    if (fullRegexp)
-        return true;
+    const fullRegexp = input.match(
+        /\/((?![*+?])(?:[^\r\n[/\\]|\\.|\[(?:[^\r\n\]\\]|\\.)*])+)\/((?:g(?:im?|mi?)?|i(?:gm?|mg?)?|m(?:gi?|ig?)?)?)/
+    );
+    if (fullRegexp) return true;
     const simpleRegexp = input.match(/((?![*+?])(?:[^\r\n[/\\]|\\.|\[(?:[^\r\n\]\\]|\\.)*])+)/);
     return !!simpleRegexp;
 }

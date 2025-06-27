@@ -8,7 +8,6 @@ export default [
     ...tseslint.configs.recommended,
     pluginReact.configs.flat.recommended,
     {
-
         files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
 
         languageOptions: {
@@ -63,9 +62,13 @@ export default [
             "spaced-comment": "off",
             indent: [0, 4],
 
-            quotes: [1, "double", {
-                avoidEscape: true,
-            }],
+            quotes: [
+                1,
+                "double",
+                {
+                    avoidEscape: true,
+                },
+            ],
 
             // "react-hooks/rules-of-hooks": "error",
             // "react-hooks/exhaustive-deps": "warn",
@@ -74,6 +77,6 @@ export default [
             "@typescript-eslint/no-inferrable-types": "warn",
             "@typescript-eslint/ban-ts-comment": "warn",
             "@typescript-eslint/no-explicit-any": "off",
-        }
-    }
+        },
+    },
 ];

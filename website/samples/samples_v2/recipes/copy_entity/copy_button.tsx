@@ -3,7 +3,7 @@ import {
     EntityCollection,
     useDataSource,
     useReferenceDialog,
-    useSnackbarController
+    useSnackbarController,
 } from "firecms";
 import { Button } from "@mui/material";
 import { useCallback } from "react";
@@ -16,12 +16,11 @@ export type CopyEntityButtonProps = {
 };
 
 export function CopyEntityButton({
-                                     pathFrom,
-                                     collectionFrom,
-                                     pathTo,
-                                     collectionTo
-                                 }: CopyEntityButtonProps) {
-
+    pathFrom,
+    collectionFrom,
+    pathTo,
+    collectionTo,
+}: CopyEntityButtonProps) {
     // The datasource allows us to create new documents
     const dataSource = useDataSource();
 
@@ -30,34 +29,35 @@ export function CopyEntityButton({
 
     // We declare a callback function for the reference dialog that will
     // create the new entity and show a snackbar when completed
-    const copyEntity = useCallback((entity: Entity<any> | null) => {
-        if (entity) {
-            dataSource.saveEntity({
-                path: pathTo,
-                values: entity.values,
-                entityId: entity.id,
-                collection: collectionTo,
-                status: "new"
-            }).then(() => {
-                snackbarController.open({
-                    type: "success",
-                    message: "Copied entity " + entity.id
-                });
-            });
-        }
-    }, [collectionTo, dataSource, pathTo, snackbarController]);
+    const copyEntity = useCallback(
+        (entity: Entity<any> | null) => {
+            if (entity) {
+                dataSource
+                    .saveEntity({
+                        path: pathTo,
+                        values: entity.values,
+                        entityId: entity.id,
+                        collection: collectionTo,
+                        status: "new",
+                    })
+                    .then(() => {
+                        snackbarController.open({
+                            type: "success",
+                            message: "Copied entity " + entity.id,
+                        });
+                    });
+            }
+        },
+        [collectionTo, dataSource, pathTo, snackbarController]
+    );
 
     // This dialog is used to prompt the selected collection
     const referenceDialog = useReferenceDialog({
         path: pathFrom,
         collection: collectionFrom,
         multiselect: false,
-        onSingleEntitySelected: copyEntity
+        onSingleEntitySelected: copyEntity,
     });
 
-    return (
-        <Button onClick={referenceDialog.open}>
-            Copy from {pathFrom}
-        </Button>
-    );
+    return <Button onClick={referenceDialog.open}>Copy from {pathFrom}</Button>;
 }

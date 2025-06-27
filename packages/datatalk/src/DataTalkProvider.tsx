@@ -8,7 +8,7 @@ import {
     orderBy,
     query,
     setDoc,
-    Timestamp
+    Timestamp,
 } from "@firebase/firestore";
 import { FirebaseApp } from "@firebase/app";
 import { Session } from "./types";
@@ -34,13 +34,12 @@ interface DataTalkConfigParams {
 const DataTalkConfigContext = React.createContext<DataTalkConfig>({} as any);
 
 export function useBuildDataTalkConfig({
-                                           enabled,
-                                           firebaseApp,
-                                           userSessionsPath,
-                                           getAuthToken,
-                                           apiEndpoint
-                                       }: DataTalkConfigParams): DataTalkConfig {
-
+    enabled,
+    firebaseApp,
+    userSessionsPath,
+    getAuthToken,
+    apiEndpoint,
+}: DataTalkConfigParams): DataTalkConfig {
     const [loading, setLoading] = useState<boolean>(true);
     const [sessions, setSessions] = useState<Session[]>([]);
     const [samplePrompts, setSamplePrompts] = useState<string[]>([]);
@@ -55,25 +54,30 @@ export function useBuildDataTalkConfig({
     const createSessionId = useCallback(async (): Promise<string> => {
         if (!firebaseApp) throw Error("useBuildDataTalkConfig Firebase not initialised");
         const firestore = getFirestore(firebaseApp);
-        if (!firestore || !userSessionsPath) throw Error("useFirestoreConfigurationPersistence Firestore not initialised");
+        if (!firestore || !userSessionsPath)
+            throw Error("useFirestoreConfigurationPersistence Firestore not initialised");
         return doc(collection(firestore, userSessionsPath)).id;
     }, [firebaseApp, userSessionsPath]);
 
-    const saveSession = useCallback(async (session: Session) => {
-        if (!firebaseApp) throw Error("useBuildDataTalkConfig Firebase not initialised");
-        const firestore = getFirestore(firebaseApp);
-        if (!firestore || !userSessionsPath) throw Error("useFirestoreConfigurationPersistence Firestore not initialised");
-        const {
-            id,
-            ...sessionData
-        } = session;
-        const sessionDoc = doc(firestore, userSessionsPath, id);
-        return setDoc(sessionDoc, sessionData);
-    }, [firebaseApp, userSessionsPath]);
+    const saveSession = useCallback(
+        async (session: Session) => {
+            if (!firebaseApp) throw Error("useBuildDataTalkConfig Firebase not initialised");
+            const firestore = getFirestore(firebaseApp);
+            if (!firestore || !userSessionsPath)
+                throw Error("useFirestoreConfigurationPersistence Firestore not initialised");
+            const { id, ...sessionData } = session;
+            const sessionDoc = doc(firestore, userSessionsPath, id);
+            return setDoc(sessionDoc, sessionData);
+        },
+        [firebaseApp, userSessionsPath]
+    );
 
-    const getSession = useCallback(async (sessionId: string) => {
-        return sessions.find(s => s.id === sessionId);
-    }, [sessions])
+    const getSession = useCallback(
+        async (sessionId: string) => {
+            return sessions.find((s) => s.id === sessionId);
+        },
+        [sessions]
+    );
 
     useEffect(() => {
         if (!enabled) return;
@@ -89,10 +93,10 @@ export function useBuildDataTalkConfig({
             ),
             {
                 next: (snapshot) => {
-                    const updatedSessions = snapshot.docs.map(doc => {
+                    const updatedSessions = snapshot.docs.map((doc) => {
                         return {
                             id: doc.id,
-                            ...doc.data()
+                            ...doc.data(),
                         } as Session;
                     });
                     setSessions(updatedSessions);
@@ -100,7 +104,7 @@ export function useBuildDataTalkConfig({
                 },
                 error: (e) => {
                     console.error(e);
-                }
+                },
             }
         );
     }, [firebaseApp, userSessionsPath]);
@@ -111,20 +115,22 @@ export function useBuildDataTalkConfig({
         saveSession,
         getSession,
         createSessionId,
-        rootPromptsSuggestions: samplePrompts
+        rootPromptsSuggestions: samplePrompts,
     };
 }
 
 export const useDataTalk = () => useContext(DataTalkConfigContext);
 
 export function DataTalkProvider({
-                                     config,
-                                     children,
-                                 }: { config: DataTalkConfig, children: React.ReactNode }) {
-
-    return <DataTalkConfigContext.Provider value={config}>
-        {children}
-    </DataTalkConfigContext.Provider>;
+    config,
+    children,
+}: {
+    config: DataTalkConfig;
+    children: React.ReactNode;
+}) {
+    return (
+        <DataTalkConfigContext.Provider value={config}>{children}</DataTalkConfigContext.Provider>
+    );
 }
 
 const timestampToDateConverter = {
@@ -134,14 +140,14 @@ const timestampToDateConverter = {
     fromFirestore(snapshot: any, options: any) {
         const data = snapshot.data(options);
         return convertTimestamps(data);
-    }
+    },
 };
 
 function convertTimestamps(data: any): any {
     if (data instanceof Timestamp) {
         return data.toDate(); // Convert Timestamp directly if the item is a Timestamp
     } else if (Array.isArray(data)) {
-        return data.map(item => convertTimestamps(item)); // Process arrays recursively
+        return data.map((item) => convertTimestamps(item)); // Process arrays recursively
     } else if (data !== null && typeof data === "object") {
         for (const key in data) {
             data[key] = convertTimestamps(data[key]); // Recursively process object properties

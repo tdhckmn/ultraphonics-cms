@@ -16,7 +16,7 @@ import {
     useBuildLocalConfigurationPersistence,
     useBuildModeController,
     useBuildNavigationController,
-    useValidateAuthenticator
+    useValidateAuthenticator,
 } from "@firecms/core";
 import {
     FirebaseAuthController,
@@ -25,7 +25,7 @@ import {
     useFirebaseAuthController,
     useFirebaseStorageSource,
     useFirestoreDelegate,
-    useInitialiseFirebase
+    useInitialiseFirebase,
 } from "@firecms/firebase";
 
 import { firebaseConfig } from "./firebase_config";
@@ -34,7 +34,7 @@ import { useDataEnhancementPlugin } from "@firecms/data_enhancement";
 import {
     useBuildUserManagement,
     userManagementAdminViews,
-    useUserManagementPlugin
+    useUserManagementPlugin,
 } from "@firecms/user_management";
 import { useImportPlugin } from "@firecms/data_import";
 import { useExportPlugin } from "@firecms/data_export";
@@ -43,19 +43,16 @@ import { useFirestoreCollectionsConfigController } from "@firecms/collection_edi
 import { mergeCollections, useCollectionEditorPlugin } from "@firecms/collection_editor";
 
 export function App() {
-
     const title = "My CMS app";
 
     if (!firebaseConfig?.projectId) {
-        throw new Error("Firebase config not found. Please check your `firebase_config.ts` file and make sure it is correctly set up.");
+        throw new Error(
+            "Firebase config not found. Please check your `firebase_config.ts` file and make sure it is correctly set up."
+        );
     }
 
-    const {
-        firebaseApp,
-        firebaseConfigLoading,
-        configError
-    } = useInitialiseFirebase({
-        firebaseConfig
+    const { firebaseApp, firebaseConfigLoading, configError } = useInitialiseFirebase({
+        firebaseConfig,
     });
 
     // Uncomment this to enable App Check
@@ -71,13 +68,13 @@ export function App() {
      * Note that this is optional and you can define your collections in code.
      */
     const collectionConfigController = useFirestoreCollectionsConfigController({
-        firebaseApp
+        firebaseApp,
     });
 
     const collectionsBuilder = useCallback(() => {
         // Here we define a sample collection in code.
         const collections = [
-            productsCollection
+            productsCollection,
             // Your collections here
         ];
         // You can merge collections defined in the collection editor (UI) with your own collections
@@ -85,11 +82,16 @@ export function App() {
     }, [collectionConfigController.collections]);
 
     // Here you define your custom top-level views
-    const views: CMSView[] = useMemo(() => ([{
-        path: "example",
-        name: "Example CMS view",
-        view: <ExampleCMSView/>
-    }]), []);
+    const views: CMSView[] = useMemo(
+        () => [
+            {
+                path: "example",
+                name: "Example CMS view",
+                view: <ExampleCMSView />,
+            },
+        ],
+        []
+    );
 
     const signInOptions: FirebaseSignInProvider[] = ["google.com", "password"];
 
@@ -102,16 +104,15 @@ export function App() {
      * Delegate used for fetching and saving data in Firestore
      */
     const firestoreDelegate = useFirestoreDelegate({
-        firebaseApp
-    })
+        firebaseApp,
+    });
 
     /**
      * Controller used for saving and fetching files in storage
      */
     const storageSource = useFirebaseStorageSource({
-        firebaseApp
+        firebaseApp,
     });
-
 
     /**
      * Controller for managing authentication
@@ -126,7 +127,7 @@ export function App() {
      */
     const userManagementController = useBuildUserManagement({
         authController: firebaseAuthController,
-        dataSourceDelegate: firestoreDelegate
+        dataSourceDelegate: firestoreDelegate,
     });
 
     /**
@@ -137,16 +138,12 @@ export function App() {
     /**
      * Use the authenticator to control access to the main view
      */
-    const {
-        authLoading,
-        canAccessMainView,
-        notAllowedError
-    } = useValidateAuthenticator({
+    const { authLoading, canAccessMainView, notAllowedError } = useValidateAuthenticator({
         authController: userManagementController,
         disabled: userManagementController.loading,
         authenticator: userManagementController.authenticator, // you can define your own authenticator here
         dataSourceDelegate: firestoreDelegate,
-        storageSource
+        storageSource,
     });
 
     const navigationController = useBuildNavigationController({
@@ -155,7 +152,7 @@ export function App() {
         views,
         adminViews: userManagementAdminViews,
         authController: userManagementController,
-        dataSourceDelegate: firestoreDelegate
+        dataSourceDelegate: firestoreDelegate,
     });
 
     /**
@@ -163,16 +160,17 @@ export function App() {
      */
     const dataEnhancementPlugin = useDataEnhancementPlugin({
         getConfigForPath: ({ path }) => {
-            if (path === "products")
-                return true;
+            if (path === "products") return true;
             return false;
-        }
+        },
     });
 
     /**
      * User management plugin
      */
-    const userManagementPlugin = useUserManagementPlugin({ userManagement: userManagementController });
+    const userManagementPlugin = useUserManagementPlugin({
+        userManagement: userManagementController,
+    });
 
     /**
      * Allow import and export data plugin
@@ -181,22 +179,20 @@ export function App() {
     const exportPlugin = useExportPlugin();
 
     const collectionEditorPlugin = useCollectionEditorPlugin({
-        collectionConfigController
+        collectionConfigController,
     });
 
     if (firebaseConfigLoading || !firebaseApp) {
-        return <CircularProgressCenter/>;
+        return <CircularProgressCenter />;
     }
 
     if (configError) {
         return <>{configError}</>;
     }
 
-
     return (
         <SnackbarProvider>
             <ModeControllerProvider value={modeController}>
-
                 <FireCMS
                     apiKey={import.meta.env.VITE_FIRECMS_API_KEY}
                     navigationController={navigationController}
@@ -209,17 +205,13 @@ export function App() {
                         importPlugin,
                         exportPlugin,
                         userManagementPlugin,
-                        collectionEditorPlugin
+                        collectionEditorPlugin,
                     ]}
                 >
-                    {({
-                          context,
-                          loading
-                      }) => {
-
+                    {({ context, loading }) => {
                         let component;
                         if (loading || authLoading) {
-                            component = <CircularProgressCenter size={"large"}/>;
+                            component = <CircularProgressCenter size={"large"} />;
                         } else {
                             if (!canAccessMainView) {
                                 component = (
@@ -228,17 +220,19 @@ export function App() {
                                         signInOptions={signInOptions}
                                         firebaseApp={firebaseApp}
                                         authController={userManagementController}
-                                        notAllowedError={notAllowedError}/>
+                                        notAllowedError={notAllowedError}
+                                    />
                                 );
                             } else {
                                 component = (
                                     <Scaffold
                                         // logo={...}
-                                        autoOpenDrawer={false}>
-                                        <AppBar title={title}/>
-                                        <Drawer/>
-                                        <NavigationRoutes/>
-                                        <SideDialogs/>
+                                        autoOpenDrawer={false}
+                                    >
+                                        <AppBar title={title} />
+                                        <Drawer />
+                                        <NavigationRoutes />
+                                        <SideDialogs />
                                     </Scaffold>
                                 );
                             }

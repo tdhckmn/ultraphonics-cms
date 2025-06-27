@@ -16,5 +16,5 @@ export type ProLicense = {
             encrypted_key: string;
             end_key_string: string;
         };
-    }
-}
+    };
+};

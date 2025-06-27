@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function LineStyleIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"line_style"}/>
+    return <Icon {...props} iconKey={"line_style"} />;
 }

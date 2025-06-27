@@ -9,37 +9,33 @@ import {
     IconButton,
     Tooltip,
     Typography,
-    UploadIcon
+    UploadIcon,
 } from "@firecms/ui";
 
 export function DemoImportAction({}: CollectionActionsProps) {
-
     const [open, setOpen] = React.useState(false);
 
-    return <>
+    return (
+        <>
+            <Tooltip title={"Import"} asChild={true}>
+                <IconButton color={"primary"} onClick={() => setOpen(true)}>
+                    <UploadIcon />
+                </IconButton>
+            </Tooltip>
 
-        <Tooltip title={"Import"}
-                 asChild={true}>
-            <IconButton color={"primary"} onClick={() => setOpen(true)}>
-                <UploadIcon/>
-            </IconButton>
-        </Tooltip>
-
-        <Dialog open={open}
-                maxWidth={"lg"}>
-            <DialogTitle>Import data</DialogTitle>
-            <DialogContent className={"flex flex-col gap-4 my-4"}>
-                <Typography variant={"body2"}>The import feature is disabled in this demo</Typography>
-            </DialogContent>
-            <DialogActions>
-
-                <Button variant="outlined"
-                        onClick={() => setOpen(false)}>
-                    Got it
-                </Button>
-
-            </DialogActions>
-        </Dialog>
-
-    </>;
+            <Dialog open={open} maxWidth={"lg"}>
+                <DialogTitle>Import data</DialogTitle>
+                <DialogContent className={"flex flex-col gap-4 my-4"}>
+                    <Typography variant={"body2"}>
+                        The import feature is disabled in this demo
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="outlined" onClick={() => setOpen(false)}>
+                        Got it
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
+    );
 }

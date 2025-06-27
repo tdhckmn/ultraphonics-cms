@@ -8,9 +8,5 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     if (!data) {
         return <div>Product not found</div>;
     }
-    return (
-        <ProductDetailView product={data}/>
-    )
+    return <ProductDetailView product={data} />;
 }
-
-

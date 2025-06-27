@@ -11,7 +11,7 @@ import {
     FireCMSContext,
     SelectedCellProps,
     User,
-    WhereFilterOp
+    WhereFilterOp,
 } from "../../types";
 import { useDebouncedData } from "./useDebouncedData";
 import { ScrollRestorationController } from "./useScrollRestoration";
@@ -46,8 +46,7 @@ export type DataSourceTableControllerProps<M extends Record<string, any> = any> 
      * When set to true the filters and sort will be updated in the URL
      */
     updateUrl?: boolean;
-
-}
+};
 
 /**
  * Use this hook to build a controller for the {@link EntityCollectionTable}.
@@ -64,77 +63,79 @@ export type DataSourceTableControllerProps<M extends Record<string, any> = any> 
  * @param forceFilterFromProps
  * @param updateUrl
  */
-export function useDataSourceTableController<M extends Record<string, any> = any, USER extends User = User>(
-    {
-        fullPath,
-        collection,
-        scrollRestoration,
-        entitiesDisplayedFirst,
-        lastDeleteTimestamp,
-        forceFilter: forceFilterFromProps,
-        updateUrl
-    }: DataSourceTableControllerProps<M>)
-    : EntityTableController<M> {
-
-    const {
-        initialFilter,
-        initialSort,
-        forceFilter: forceFilterFromCollection
-    } = collection;
+export function useDataSourceTableController<
+    M extends Record<string, any> = any,
+    USER extends User = User,
+>({
+    fullPath,
+    collection,
+    scrollRestoration,
+    entitiesDisplayedFirst,
+    lastDeleteTimestamp,
+    forceFilter: forceFilterFromProps,
+    updateUrl,
+}: DataSourceTableControllerProps<M>): EntityTableController<M> {
+    const { initialFilter, initialSort, forceFilter: forceFilterFromCollection } = collection;
 
     const [popupCell, setPopupCell] = React.useState<SelectedCellProps<M> | undefined>(undefined);
     const navigation = useNavigationController();
     const dataSource = useDataSource(collection);
-    const resolvedPath = useMemo(() => navigation.resolveIdsFrom(fullPath), [fullPath, navigation.resolveIdsFrom]);
+    const resolvedPath = useMemo(
+        () => navigation.resolveIdsFrom(fullPath),
+        [fullPath, navigation.resolveIdsFrom]
+    );
 
     const forceFilter = forceFilterFromProps ?? forceFilterFromCollection;
     const paginationEnabled = collection.pagination === undefined || Boolean(collection.pagination);
-    const pageSize = typeof collection.pagination === "number" ? collection.pagination : DEFAULT_PAGE_SIZE;
+    const pageSize =
+        typeof collection.pagination === "number" ? collection.pagination : DEFAULT_PAGE_SIZE;
 
     const [searchString, setSearchString] = React.useState<string | undefined>();
 
-    const checkFilterCombination = useCallback((filterValues: FilterValues<any>,
-                                                sortBy?: [string, "asc" | "desc"]) => {
-        if (!dataSource.isFilterCombinationValid)
-            return true;
-        return dataSource.isFilterCombinationValid({
-            path: resolvedPath,
-            collection,
-            filterValues,
-            sortBy
-        })
-    }, []);
+    const checkFilterCombination = useCallback(
+        (filterValues: FilterValues<any>, sortBy?: [string, "asc" | "desc"]) => {
+            if (!dataSource.isFilterCombinationValid) return true;
+            return dataSource.isFilterCombinationValid({
+                path: resolvedPath,
+                collection,
+                filterValues,
+                sortBy,
+            });
+        },
+        []
+    );
 
-    const onScroll = ({
-                          scrollOffset
-                      }: {
-        scrollOffset: number
-    }) => {
+    const onScroll = ({ scrollOffset }: { scrollOffset: number }) => {
         if (scrollRestoration) {
             scrollRestoration.updateCollectionScroll({
                 fullPath: resolvedPath,
                 scrollOffset,
                 data: rawData,
-                filters: filterValues
+                filters: filterValues,
             });
         }
-    }
+    };
 
     const initialSortInternal = useMemo(() => {
         if (initialSort && forceFilter && !checkFilterCombination(forceFilter, initialSort)) {
-            console.warn("Initial sort is not compatible with the force filter. Ignoring initial sort");
+            console.warn(
+                "Initial sort is not compatible with the force filter. Ignoring initial sort"
+            );
             return undefined;
         }
         return initialSort;
     }, [initialSort, forceFilter]);
 
-    const {
-        filterValues: initialFilterUrl,
-        sortBy: initialSortUrl,
-    } = parseFilterAndSort(window.location.search);
+    const { filterValues: initialFilterUrl, sortBy: initialSortUrl } = parseFilterAndSort(
+        window.location.search
+    );
 
-    const [filterValues, setFilterValues] = React.useState<FilterValues<Extract<keyof M, string>> | undefined>(forceFilter ?? (updateUrl ? initialFilterUrl : undefined) ?? initialFilter ?? undefined);
-    const [sortBy, setSortBy] = React.useState<[Extract<keyof M, string>, "asc" | "desc"] | undefined>(initialSortUrl ?? initialSortInternal);
+    const [filterValues, setFilterValues] = React.useState<
+        FilterValues<Extract<keyof M, string>> | undefined
+    >(forceFilter ?? (updateUrl ? initialFilterUrl : undefined) ?? initialFilter ?? undefined);
+    const [sortBy, setSortBy] = React.useState<
+        [Extract<keyof M, string>, "asc" | "desc"] | undefined
+    >(initialSortUrl ?? initialSortInternal);
 
     useUpdateUrl(filterValues, sortBy, searchString, updateUrl);
 
@@ -147,12 +148,14 @@ export function useDataSourceTableController<M extends Record<string, any> = any
                 fullPath: resolvedPath,
                 scrollOffset: collectionScroll?.scrollOffset ?? 0,
                 data: rawData,
-                filters: filterValues
+                filters: filterValues,
             });
         }
     }, []);
 
-    const [itemCount, setItemCount] = React.useState<number | undefined>(paginationEnabled ? initialItemCount : undefined);
+    const [itemCount, setItemCount] = React.useState<number | undefined>(
+        paginationEnabled ? initialItemCount : undefined
+    );
 
     const sortByProperty = sortBy ? sortBy[0] : undefined;
     const currentSort = sortBy ? sortBy[1] : undefined;
@@ -167,20 +170,22 @@ export function useDataSourceTableController<M extends Record<string, any> = any
 
     const clearFilter = useCallback(() => setFilterValues(forceFilter ?? undefined), [forceFilter]);
 
-    const updateFilterValues = useCallback((updatedFilter: FilterValues<Extract<keyof M, string>> | undefined) => {
-        if (forceFilter) {
-            console.warn("Filter is not compatible with the force filter. Ignoring filter");
-            return;
-        }
-        if (updatedFilter && Object.keys(updatedFilter).length === 0) {
-            setFilterValues(undefined);
-        } else {
-            setFilterValues(updatedFilter);
-        }
-    }, [forceFilter]);
+    const updateFilterValues = useCallback(
+        (updatedFilter: FilterValues<Extract<keyof M, string>> | undefined) => {
+            if (forceFilter) {
+                console.warn("Filter is not compatible with the force filter. Ignoring filter");
+                return;
+            }
+            if (updatedFilter && Object.keys(updatedFilter).length === 0) {
+                setFilterValues(undefined);
+            } else {
+                setFilterValues(updatedFilter);
+            }
+        },
+        [forceFilter]
+    );
 
     useEffect(() => {
-
         setDataLoading(true);
 
         const onEntitiesUpdate = async (entities: Entity<M>[]) => {
@@ -192,18 +197,22 @@ export function useDataSourceTableController<M extends Record<string, any> = any
                                 collection,
                                 path: resolvedPath,
                                 entity,
-                                context
-                            })));
+                                context,
+                            })
+                        )
+                    );
                 } catch (e: any) {
                     console.error(e);
                 }
             }
             setDataLoading(false);
             setDataLoadingError(undefined);
-            setRawData(entities.map(e => ({
-                ...e,
-                // values: sanitizeData(e.values, resolvedCollection.properties)
-            })));
+            setRawData(
+                entities.map((e) => ({
+                    ...e,
+                    // values: sanitizeData(e.values, resolvedCollection.properties)
+                }))
+            );
             setNoMoreToLoad(!itemCount || entities.length < itemCount);
         };
 
@@ -225,29 +234,29 @@ export function useDataSourceTableController<M extends Record<string, any> = any
                 limit: itemCount,
                 startAfter: undefined,
                 orderBy: sortByProperty,
-                order: currentSort
+                order: currentSort,
             });
         } else {
-            dataSource.fetchCollection<M>({
-                path: resolvedPath,
-                collection,
-                searchString,
-                filter: filterValues,
-                limit: itemCount,
-                startAfter: undefined,
-                orderBy: sortByProperty,
-                order: currentSort
-            })
+            dataSource
+                .fetchCollection<M>({
+                    path: resolvedPath,
+                    collection,
+                    searchString,
+                    filter: filterValues,
+                    limit: itemCount,
+                    startAfter: undefined,
+                    orderBy: sortByProperty,
+                    order: currentSort,
+                })
                 .then(onEntitiesUpdate)
                 .catch(onError);
-            return () => {
-            };
+            return () => {};
         }
     }, [resolvedPath, itemCount, currentSort, sortByProperty, filterValues, searchString]);
 
     const orderedData = useDataOrder({
         data: rawData,
-        entitiesDisplayedFirst
+        entitiesDisplayedFirst,
     });
 
     // hack to fix Firestore listeners firing with incomplete data
@@ -255,7 +264,7 @@ export function useDataSourceTableController<M extends Record<string, any> = any
         filterValues,
         sortBy,
         searchString,
-        lastDeleteTimestamp
+        lastDeleteTimestamp,
     });
 
     return {
@@ -278,8 +287,8 @@ export function useDataSourceTableController<M extends Record<string, any> = any
         pageSize,
         checkFilterCombination,
         popupCell,
-        setPopupCell
-    }
+        setPopupCell,
+    };
 }
 
 function useUpdateUrl<M extends Record<string, any> = any>(
@@ -288,7 +297,6 @@ function useUpdateUrl<M extends Record<string, any> = any>(
     searchString: string | undefined,
     updateUrl: boolean | undefined
 ) {
-
     useEffect(() => {
         if (updateUrl) {
             const newUrl = encodeFilterAndSort(filterValues, sortBy);
@@ -297,13 +305,15 @@ function useUpdateUrl<M extends Record<string, any> = any>(
             const hash = window.location.hash;
             if (state === "")
                 window.history.replaceState({}, "", `${window.location.pathname}${hash}`);
-            else
-                window.history.replaceState({}, "", `?${state}${hash}`);
+            else window.history.replaceState({}, "", `?${state}${hash}`);
         }
     }, [filterValues, sortBy, searchString, updateUrl]);
 }
 
-function encodeFilterAndSort(filterValues?: FilterValues<string>, sortBy?: [string, "asc" | "desc"] | undefined) {
+function encodeFilterAndSort(
+    filterValues?: FilterValues<string>,
+    sortBy?: [string, "asc" | "desc"] | undefined
+) {
     const entries: Record<string, string> = {};
     if (sortBy) {
         entries["__sort"] = encodeURIComponent(sortBy[0]);
@@ -334,7 +344,9 @@ function encodeFilterAndSort(filterValues?: FilterValues<string>, sortBy?: [stri
                 }
                 if (encodedValue !== undefined) {
                     entries[encodeURIComponent(`${key}_op`)] = encodeURIComponent(op);
-                    entries[encodeURIComponent(`${key}_value`)] = encodeURIComponent(encodedValue.toString());
+                    entries[encodeURIComponent(`${key}_value`)] = encodeURIComponent(
+                        encodedValue.toString()
+                    );
                 }
             }
         });
@@ -342,12 +354,14 @@ function encodeFilterAndSort(filterValues?: FilterValues<string>, sortBy?: [stri
     if (!Object.keys(entries).length) {
         return "";
     }
-    return Object.entries(entries).map(([key, value]) => `${key}=${value}`).join("&");
+    return Object.entries(entries)
+        .map(([key, value]) => `${key}=${value}`)
+        .join("&");
 }
 
 function parseFilterAndSort<M>(search: string): {
-    filterValues: FilterValues<string> | undefined,
-    sortBy?: [Extract<keyof M, string>, "asc" | "desc"]
+    filterValues: FilterValues<string> | undefined;
+    sortBy?: [Extract<keyof M, string>, "asc" | "desc"];
 } {
     const entries = new URLSearchParams(search);
     const filterValues: FilterValues<string> = {};
@@ -367,8 +381,8 @@ function parseFilterAndSort<M>(search: string): {
 
     return {
         filterValues: Object.keys(filterValues).length ? filterValues : undefined,
-        sortBy
-    }
+        sortBy,
+    };
 }
 
 function isDate(dateString: string): boolean {

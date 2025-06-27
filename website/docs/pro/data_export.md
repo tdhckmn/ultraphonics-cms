@@ -5,7 +5,6 @@ title: Data Export
 
 ![data_export.png](/img/data_export.png)
 
-
 This document provides an overview of how to use the **Data Export Plugin** with FireCMS to export collection data in
 JSON or CSV formats.
 
@@ -70,13 +69,8 @@ import { FireCMS } from "@firecms/core";
 import { useExportPlugin } from "@firecms/data_export";
 
 function App() {
-    
     const exportPlugin = useExportPlugin({
-        exportAllowed: ({
-                            collectionEntitiesCount,
-                            path,
-                            collection
-                        }) => {
+        exportAllowed: ({ collectionEntitiesCount, path, collection }) => {
             // Example: Allow export only if there are more than 10 entities
             return collectionEntitiesCount > 10;
         },
@@ -90,18 +84,18 @@ function App() {
 
     const navigationController = useBuildNavigationController({
         // ... rest of your config
-        plugins
+        plugins,
     });
-    
+
     return (
-            <FireCMS
-                navigationController={navigationController}
-                /*... rest of your configuration */
-            >
-              {({ context, loading }) => {
-                  // ... your components
-              }}
-            </FireCMS>
+        <FireCMS
+            navigationController={navigationController}
+            /*... rest of your configuration */
+        >
+            {({ context, loading }) => {
+                // ... your components
+            }}
+        </FireCMS>
     );
 }
 
@@ -134,13 +128,9 @@ You can customize how the export functionality behaves by providing custom imple
 
 ```jsx
 const exportPlugin = useExportPlugin({
-    exportAllowed: ({
-                        collection,
-                        path,
-                        collectionEntitiesCount
-                    }) => {
+    exportAllowed: ({ collection, path, collectionEntitiesCount }) => {
         // Allow export only for admins
-        return userRoles.includes('admin');
+        return userRoles.includes("admin");
     },
     notAllowedView: <div>Only administrators can export data.</div>,
     onAnalyticsEvent: (event, params) => {
@@ -161,7 +151,7 @@ export type ExportPluginProps = {
     exportAllowed?: (props: ExportAllowedParams) => boolean;
     notAllowedView?: React.ReactNode;
     onAnalyticsEvent?: (event: string, params?: any) => void;
-}
+};
 ```
 
 ### `ExportAllowedParams`
@@ -175,4 +165,3 @@ export type ExportAllowedParams = {
     collection: EntityCollection;
 };
 ```
-

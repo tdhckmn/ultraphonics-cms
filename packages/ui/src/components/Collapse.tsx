@@ -13,13 +13,14 @@ interface CollapseProps {
 }
 
 export function Collapse({
-                             children,
-                             className,
-                             in: isOpen = false,
-                             duration = 220
-                         }: CollapseProps) {
-
-    useInjectStyles(`Collapse-${duration}`, `
+    children,
+    className,
+    in: isOpen = false,
+    duration = 220,
+}: CollapseProps) {
+    useInjectStyles(
+        `Collapse-${duration}`,
+        `
 .CollapseContent-${duration} {
   overflow: hidden;
 }
@@ -47,18 +48,14 @@ export function Collapse({
     height: 0;
   }
 }
-`);
+`
+    );
 
     return (
-        <Collapsible.Root
-            open={isOpen}
-            className={className}>
-
-            <Collapsible.Content
-                className={cls(`CollapseContent-${duration}`)}
-            >
+        <Collapsible.Root open={isOpen} className={className}>
+            <Collapsible.Content className={cls(`CollapseContent-${duration}`)}>
                 {children}
             </Collapsible.Content>
         </Collapsible.Root>
-    )
-};
+    );
+}

@@ -1,7 +1,6 @@
 import { Permissions } from "../index";
 
 export type Role = {
-
     /**
      * ID of the role
      */
@@ -31,11 +30,10 @@ export type Role = {
     collectionPermissions?: Record<string, Permissions>;
 
     config?: {
-
         createCollections?: boolean;
 
         editCollections?: boolean | "own";
 
         deleteCollections?: boolean | "own";
-    }
-}
+    };
+};

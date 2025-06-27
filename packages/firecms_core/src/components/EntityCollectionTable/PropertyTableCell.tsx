@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import equal from "react-fast-compare"
+import equal from "react-fast-compare";
 import {
     CMSType,
     Entity,
@@ -9,7 +9,7 @@ import {
     ResolvedNumberProperty,
     ResolvedProperty,
     ResolvedStringProperty,
-    StringProperty
+    StringProperty,
 } from "../../types";
 
 import { VirtualTableInput } from "../VirtualTable/fields/VirtualTableInput";
@@ -51,144 +51,142 @@ export interface PropertyTableCellProps<T extends CMSType> {
 }
 
 function isStorageProperty(property: ResolvedProperty) {
-    if (property.dataType === "string" && property.markdown)
-        return false;
-    if (property.dataType === "string" && (property as ResolvedStringProperty).storage)
-        return true;
+    if (property.dataType === "string" && property.markdown) return false;
+    if (property.dataType === "string" && (property as ResolvedStringProperty).storage) return true;
     if (property.dataType === "array") {
         if (Array.isArray(property.of)) {
             return false;
         } else {
-            return ((property as ResolvedArrayProperty).of as ResolvedProperty)?.dataType === "string" &&
+            return (
+                ((property as ResolvedArrayProperty).of as ResolvedProperty)?.dataType ===
+                    "string" &&
                 ((property as ResolvedArrayProperty).of as ResolvedStringProperty)?.storage
+            );
         }
     }
     return false;
 }
 
-export const PropertyTableCell = React.memo<PropertyTableCellProps<any>>(
-    function PropertyTableCell<T extends CMSType, M extends Record<string, any>>({
-                                                                                     propertyKey,
-                                                                                     customFieldValidator,
-                                                                                     value,
-                                                                                     property,
-                                                                                     align,
-                                                                                     width,
-                                                                                     height,
-                                                                                     path,
-                                                                                     entity,
-                                                                                     readonly,
-                                                                                     disabled: disabledProp,
-                                                                                     enablePopupIcon = true
-                                                                                 }: PropertyTableCellProps<T>) {
+export const PropertyTableCell = React.memo<PropertyTableCellProps<any>>(function PropertyTableCell<
+    T extends CMSType,
+    M extends Record<string, any>,
+>({
+    propertyKey,
+    customFieldValidator,
+    value,
+    property,
+    align,
+    width,
+    height,
+    path,
+    entity,
+    readonly,
+    disabled: disabledProp,
+    enablePopupIcon = true,
+}: PropertyTableCellProps<T>) {
+    const { onValueChange, size, selectedCell, select, setPopupCell } =
+        useSelectableTableController();
 
-        const {
-            onValueChange,
-            size,
-            selectedCell,
-            select,
-            setPopupCell
-        } = useSelectableTableController();
+    const selected =
+        selectedCell?.propertyKey === propertyKey &&
+        selectedCell?.entityPath === entity.path &&
+        selectedCell?.entityId === entity.id;
 
-        const selected = selectedCell?.propertyKey === propertyKey &&
-            selectedCell?.entityPath === entity.path &&
-            selectedCell?.entityId === entity.id;
+    const [internalValue, setInternalValue] = useState<any | null>(value);
+    const internalValueRef = useRef(value);
 
-        const [internalValue, setInternalValue] = useState<any | null>(value);
-        const internalValueRef = useRef(value);
+    const [error, setError] = useState<Error | undefined>();
+    const [validationError, setValidationError] = useState<Error | undefined>();
+    const [saved, setSaved] = useState<boolean>(false);
 
-        const [error, setError] = useState<Error | undefined>();
-        const [validationError, setValidationError] = useState<Error | undefined>();
-        const [saved, setSaved] = useState<boolean>(false);
-
-        const onValueUpdated = useCallback(() => {
-            setSaved(true)
-            setTimeout(() => {
-                setSaved(false);
-            }, 100);
-        }, []);
-
-        const customField = Boolean(property.Field);
-        const customPreview = Boolean(property.Preview);
-        const readOnlyProperty = isReadOnly(property);
-        const disabledTooltip: string | undefined = typeof property.disabled === "object" ? property.disabled.disabledMessage : undefined;
-        const disabled = readonly || disabledProp || Boolean(property.disabled);
-
-        const validation = useMemo(() => mapPropertyToYup({
-            property,
-            entityId: entity.id,
-            customFieldValidator,
-            name: propertyKey
-        }), [entity.id, property, propertyKey]);
-
-        useEffect(
-            () => {
-                if (!equal(value, internalValueRef.current)) {
-                    setValidationError(undefined);
-                    setInternalValue(value);
-                    internalValueRef.current = value;
-                    onValueUpdated();
-                }
-            },
-            [onValueUpdated, value]
-        );
-
-        const saveValues = (value: any) => {
-            if (equal(value, internalValueRef.current))
-                return;
+    const onValueUpdated = useCallback(() => {
+        setSaved(true);
+        setTimeout(() => {
             setSaved(false);
-            validation
-                .validate(value)
-                .then(() => {
-                    setValidationError(undefined);
-                    internalValueRef.current = value;
-                    if (onValueChange) {
-                        try {
-                            onValueChange({
-                                value,
-                                propertyKey,
-                                setError,
-                                onValueUpdated,
-                                data: entity,
-                            });
-                        } catch (e: any) {
-                            console.error("onValueChange error", e);
-                            setError(e);
-                        }
+        }, 100);
+    }, []);
 
+    const customField = Boolean(property.Field);
+    const customPreview = Boolean(property.Preview);
+    const readOnlyProperty = isReadOnly(property);
+    const disabledTooltip: string | undefined =
+        typeof property.disabled === "object" ? property.disabled.disabledMessage : undefined;
+    const disabled = readonly || disabledProp || Boolean(property.disabled);
+
+    const validation = useMemo(
+        () =>
+            mapPropertyToYup({
+                property,
+                entityId: entity.id,
+                customFieldValidator,
+                name: propertyKey,
+            }),
+        [entity.id, property, propertyKey]
+    );
+
+    useEffect(() => {
+        if (!equal(value, internalValueRef.current)) {
+            setValidationError(undefined);
+            setInternalValue(value);
+            internalValueRef.current = value;
+            onValueUpdated();
+        }
+    }, [onValueUpdated, value]);
+
+    const saveValues = (value: any) => {
+        if (equal(value, internalValueRef.current)) return;
+        setSaved(false);
+        validation
+            .validate(value)
+            .then(() => {
+                setValidationError(undefined);
+                internalValueRef.current = value;
+                if (onValueChange) {
+                    try {
+                        onValueChange({
+                            value,
+                            propertyKey,
+                            setError,
+                            onValueUpdated,
+                            data: entity,
+                        });
+                    } catch (e: any) {
+                        console.error("onValueChange error", e);
+                        setError(e);
                     }
-                })
-                .catch((e) => {
-                    setValidationError(e);
-                });
-        };
+                }
+            })
+            .catch((e) => {
+                setValidationError(e);
+            });
+    };
 
-        useEffect(() => {
-            validation
-                .validate(internalValue)
-                .then(() => setValidationError(undefined))
-                .catch(setValidationError);
-        }, [internalValue, validation, propertyKey, property, entity]);
+    useEffect(() => {
+        validation
+            .validate(internalValue)
+            .then(() => setValidationError(undefined))
+            .catch(setValidationError);
+    }, [internalValue, validation, propertyKey, property, entity]);
 
-        const updateValue = (newValue: any | null) => {
+    const updateValue = (newValue: any | null) => {
+        let updatedValue: any;
+        if (newValue === undefined) {
+            updatedValue = null;
+        } else {
+            updatedValue = newValue;
+        }
+        setInternalValue(updatedValue);
+        saveValues(updatedValue);
+    };
 
-            let updatedValue: any;
-            if (newValue === undefined) {
-                updatedValue = null;
-            } else {
-                updatedValue = newValue;
-            }
-            setInternalValue(updatedValue);
-            saveValues(updatedValue);
-        };
+    useClearRestoreValue<any>({
+        property,
+        value: internalValue,
+        setValue: updateValue,
+    });
 
-        useClearRestoreValue<any>({
-            property,
-            value: internalValue,
-            setValue: updateValue
-        });
-
-        const onSelect = useCallback((cellRect: DOMRect | undefined) => {
+    const onSelect = useCallback(
+        (cellRect: DOMRect | undefined) => {
             if (!cellRect) {
                 select(undefined);
             } else {
@@ -198,39 +196,41 @@ export const PropertyTableCell = React.memo<PropertyTableCellProps<any>>(
                     entityPath: entity.path,
                     entityId: entity.id,
                     cellRect,
-                    propertyKey: propertyKey as Extract<keyof M, string>
+                    propertyKey: propertyKey as Extract<keyof M, string>,
                 });
             }
-        }, [entity, height, propertyKey, select, width]);
+        },
+        [entity, height, propertyKey, select, width]
+    );
 
-        const openPopup = (cellRect: DOMRect | undefined) => {
-            if (!setPopupCell)
-                return;
-            if (!cellRect) {
-                setPopupCell(undefined);
-            } else {
-                setPopupCell({
-                    width,
-                    height,
-                    entityPath: entity.path,
-                    entityId: entity.id,
-                    cellRect,
-                    propertyKey: propertyKey as Extract<keyof M, string>
-                });
-            }
-        };
+    const openPopup = (cellRect: DOMRect | undefined) => {
+        if (!setPopupCell) return;
+        if (!cellRect) {
+            setPopupCell(undefined);
+        } else {
+            setPopupCell({
+                width,
+                height,
+                entityPath: entity.path,
+                entityId: entity.id,
+                cellRect,
+                propertyKey: propertyKey as Extract<keyof M, string>,
+            });
+        }
+    };
 
-        let innerComponent: React.ReactNode | undefined;
-        let allowScroll = false;
-        let showExpandIcon = false;
-        let hideOverflow = true;
-        let removePadding = false;
-        let fullHeight = false;
-        let includeActions = true;
-        const showError = !disabled && error;
+    let innerComponent: React.ReactNode | undefined;
+    let allowScroll = false;
+    let showExpandIcon = false;
+    let hideOverflow = true;
+    let removePadding = false;
+    let fullHeight = false;
+    let includeActions = true;
+    const showError = !disabled && error;
 
-        if (readonly || readOnlyProperty) {
-            return <EntityTableCell
+    if (readonly || readOnlyProperty) {
+        return (
+            <EntityTableCell
                 size={size}
                 width={width}
                 saved={saved}
@@ -239,7 +239,8 @@ export const PropertyTableCell = React.memo<PropertyTableCellProps<any>>(
                 align={align ?? "left"}
                 fullHeight={false}
                 disabledTooltip={disabledTooltip ?? (readOnlyProperty ? "Read only" : undefined)}
-                disabled={true}>
+                disabled={true}
+            >
                 <PropertyPreview
                     width={width}
                     height={getRowHeight(size)}
@@ -248,238 +249,281 @@ export const PropertyTableCell = React.memo<PropertyTableCellProps<any>>(
                     value={internalValue}
                     size={getPreviewSizeFrom(size)}
                 />
-            </EntityTableCell>;
-        }
+            </EntityTableCell>
+        );
+    }
 
-        if (!customField && (!customPreview || selected)) {
-            const isAStorageProperty = isStorageProperty(property);
-            if (property.dataType === "string" && (property as StringProperty).reference?.path) {
-                const stringProperty = property as StringProperty;
-                const path = stringProperty.reference?.path as string;
-                const referenceProperty = stringProperty.reference as ReferenceProperty;
-                const referenceValue = internalValue ? new EntityReference(internalValue, path) : undefined;
-                innerComponent =
-                    <TableReferenceField name={propertyKey as string}
-                                         internalValue={referenceValue}
-                                         updateValue={(v) => updateValue(v ? (v as EntityReference).id : null)}
-                                         disabled={disabled}
-                                         size={size}
-                                         path={path}
-                                         multiselect={false}
-                                         previewProperties={referenceProperty.previewProperties}
-                                         includeId={referenceProperty.includeId}
-                                         includeEntityLink={referenceProperty.includeEntityLink}
-                                         title={stringProperty.name}
-                                         forceFilter={referenceProperty.forceFilter}
-                    />;
-                allowScroll = false;
-            } else if (isAStorageProperty) {
-                innerComponent = <TableStorageUpload error={validationError ?? error}
-                                                     disabled={disabled}
-                                                     focused={selected}
-                                                     selected={selected}
-                                                     openPopup={setPopupCell ? openPopup : undefined}
-                                                     property={property as ResolvedStringProperty | ResolvedArrayProperty<string[]>}
-                                                     entity={entity}
-                                                     path={path}
-                                                     value={internalValue}
-                                                     previewSize={getPreviewSizeFrom(size)}
-                                                     updateValue={updateValue}
-                                                     propertyKey={propertyKey as string}
-                />;
-                includeActions = false;
-                showExpandIcon = true;
+    if (!customField && (!customPreview || selected)) {
+        const isAStorageProperty = isStorageProperty(property);
+        if (property.dataType === "string" && (property as StringProperty).reference?.path) {
+            const stringProperty = property as StringProperty;
+            const path = stringProperty.reference?.path as string;
+            const referenceProperty = stringProperty.reference as ReferenceProperty;
+            const referenceValue = internalValue
+                ? new EntityReference(internalValue, path)
+                : undefined;
+            innerComponent = (
+                <TableReferenceField
+                    name={propertyKey as string}
+                    internalValue={referenceValue}
+                    updateValue={(v) => updateValue(v ? (v as EntityReference).id : null)}
+                    disabled={disabled}
+                    size={size}
+                    path={path}
+                    multiselect={false}
+                    previewProperties={referenceProperty.previewProperties}
+                    includeId={referenceProperty.includeId}
+                    includeEntityLink={referenceProperty.includeEntityLink}
+                    title={stringProperty.name}
+                    forceFilter={referenceProperty.forceFilter}
+                />
+            );
+            allowScroll = false;
+        } else if (isAStorageProperty) {
+            innerComponent = (
+                <TableStorageUpload
+                    error={validationError ?? error}
+                    disabled={disabled}
+                    focused={selected}
+                    selected={selected}
+                    openPopup={setPopupCell ? openPopup : undefined}
+                    property={property as ResolvedStringProperty | ResolvedArrayProperty<string[]>}
+                    entity={entity}
+                    path={path}
+                    value={internalValue}
+                    previewSize={getPreviewSizeFrom(size)}
+                    updateValue={updateValue}
+                    propertyKey={propertyKey as string}
+                />
+            );
+            includeActions = false;
+            showExpandIcon = true;
+            fullHeight = true;
+            removePadding = true;
+        } else if (selected && property.dataType === "number") {
+            const numberProperty = property as ResolvedNumberProperty;
+            if (numberProperty.enumValues) {
+                innerComponent = (
+                    <VirtualTableSelect
+                        name={propertyKey as string}
+                        multiple={false}
+                        disabled={disabled}
+                        focused={selected}
+                        valueType={"number"}
+                        small={getPreviewSizeFrom(size) !== "medium"}
+                        enumValues={numberProperty.enumValues}
+                        error={validationError ?? error}
+                        internalValue={internalValue as string | number}
+                        updateValue={updateValue}
+                    />
+                );
                 fullHeight = true;
-                removePadding = true;
-            } else if (selected && property.dataType === "number") {
-                const numberProperty = property as ResolvedNumberProperty;
-                if (numberProperty.enumValues) {
-                    innerComponent = <VirtualTableSelect name={propertyKey as string}
-                                                         multiple={false}
-                                                         disabled={disabled}
-                                                         focused={selected}
-                                                         valueType={"number"}
-                                                         small={getPreviewSizeFrom(size) !== "medium"}
-                                                         enumValues={numberProperty.enumValues}
-                                                         error={validationError ?? error}
-                                                         internalValue={internalValue as string | number}
-                                                         updateValue={updateValue}
-                    />;
-                    fullHeight = true;
-                } else {
-                    innerComponent = <VirtualTableNumberInput
+            } else {
+                innerComponent = (
+                    <VirtualTableNumberInput
                         align={align}
                         error={validationError ?? error}
                         focused={selected}
                         disabled={disabled}
                         value={internalValue as number}
                         updateValue={updateValue}
-                    />;
-                    allowScroll = true;
-                }
-            } else if (selected && property.dataType === "string") {
-                const stringProperty = property as ResolvedStringProperty;
-                if (stringProperty.enumValues) {
-                    innerComponent = <VirtualTableSelect name={propertyKey as string}
-                                                         multiple={false}
-                                                         focused={selected}
-                                                         disabled={disabled}
-                                                         valueType={"string"}
-                                                         small={getPreviewSizeFrom(size) !== "medium"}
-                                                         enumValues={stringProperty.enumValues}
-                                                         error={validationError ?? error}
-                                                         internalValue={internalValue as string | number}
-                                                         updateValue={updateValue}
-                    />;
-                    fullHeight = true;
-                } else if (stringProperty.markdown || !stringProperty.storage || !stringProperty.reference) {
-                    const multiline = Boolean(stringProperty.multiline) || Boolean(stringProperty.markdown);
-                    innerComponent = <VirtualTableInput error={validationError ?? error}
-                                                        disabled={disabled}
-                                                        multiline={multiline}
-                                                        focused={selected}
-                                                        value={internalValue as string}
-                                                        updateValue={updateValue}
-                    />;
-                    allowScroll = true;
-                }
-            } else if (property.dataType === "boolean") {
-                innerComponent = <VirtualTableSwitch error={validationError ?? error}
-                                                     disabled={disabled}
-                                                     focused={selected}
-                                                     internalValue={internalValue as boolean}
-                                                     updateValue={updateValue}
-                />;
-            } else if (property.dataType === "date") {
-                innerComponent = <VirtualTableDateField name={propertyKey as string}
-                                                        error={validationError ?? error}
-                                                        disabled={disabled}
-                                                        mode={property.mode}
-                                                        focused={selected}
-                                                        internalValue={internalValue as Date}
-                                                        updateValue={updateValue}
-                />;
-                fullHeight = true;
-                hideOverflow = false;
-                allowScroll = false;
-            } else if (property.dataType === "reference") {
-                if (typeof property.path === "string") {
-                    innerComponent =
-                        <TableReferenceField name={propertyKey as string}
-                                             internalValue={internalValue as EntityReference}
-                                             updateValue={updateValue}
-                                             disabled={disabled}
-                                             size={size}
-                                             path={property.path}
-                                             multiselect={false}
-                                             previewProperties={property.previewProperties}
-                                             includeId={property.includeId}
-                                             includeEntityLink={property.includeEntityLink}
-                                             title={property.name}
-                                             forceFilter={property.forceFilter}
-                        />;
-                }
-                allowScroll = false;
-            } else if (property.dataType === "array") {
-                const arrayProperty = (property as ResolvedArrayProperty);
-
-                if (!arrayProperty.of && !arrayProperty.oneOf) {
-                    throw Error(`You need to specify an 'of' or 'oneOf' prop (or specify a custom field) in your array property ${propertyKey}`);
-                }
-                if (arrayProperty.of && !Array.isArray(arrayProperty.of)) {
-                    if (arrayProperty.of.dataType === "string" || arrayProperty.of.dataType === "number") {
-                        if (selected && arrayProperty.of.enumValues) {
-                            innerComponent =
-                                <VirtualTableSelect name={propertyKey as string}
-                                                    multiple={true}
-                                                    disabled={disabled}
-                                                    focused={selected}
-                                                    small={getPreviewSizeFrom(size) !== "medium"}
-                                                    valueType={arrayProperty.of.dataType}
-                                                    enumValues={arrayProperty.of.enumValues}
-                                                    error={validationError ?? error}
-                                                    internalValue={internalValue as string | number}
-                                                    updateValue={updateValue}
-                                />;
-                            allowScroll = true;
-                            fullHeight = true;
-                            hideOverflow = false;
-                        }
-                    } else if (arrayProperty.of.dataType === "reference") {
-                        if (typeof arrayProperty.of.path === "string") {
-                            innerComponent =
-                                <TableReferenceField
-                                    name={propertyKey as string}
-                                    disabled={disabled}
-                                    internalValue={internalValue as EntityReference[]}
-                                    updateValue={updateValue}
-                                    size={size}
-                                    multiselect={true}
-                                    path={arrayProperty.of.path}
-                                    previewProperties={arrayProperty.of.previewKeys}
-                                    title={arrayProperty.name}
-                                    forceFilter={arrayProperty.of.forceFilter}
-                                    includeId={arrayProperty.of.includeId}
-                                    includeEntityLink={arrayProperty.of.includeEntityLink}
-                                />;
-                        }
-                        allowScroll = false;
-                    }
-                }
-
+                    />
+                );
+                allowScroll = true;
             }
-        }
-
-        if (!innerComponent) {
-            allowScroll = false;
-            showExpandIcon = enablePopupIcon && selected && !innerComponent && !disabled && !readOnlyProperty;
+        } else if (selected && property.dataType === "string") {
+            const stringProperty = property as ResolvedStringProperty;
+            if (stringProperty.enumValues) {
+                innerComponent = (
+                    <VirtualTableSelect
+                        name={propertyKey as string}
+                        multiple={false}
+                        focused={selected}
+                        disabled={disabled}
+                        valueType={"string"}
+                        small={getPreviewSizeFrom(size) !== "medium"}
+                        enumValues={stringProperty.enumValues}
+                        error={validationError ?? error}
+                        internalValue={internalValue as string | number}
+                        updateValue={updateValue}
+                    />
+                );
+                fullHeight = true;
+            } else if (
+                stringProperty.markdown ||
+                !stringProperty.storage ||
+                !stringProperty.reference
+            ) {
+                const multiline =
+                    Boolean(stringProperty.multiline) || Boolean(stringProperty.markdown);
+                innerComponent = (
+                    <VirtualTableInput
+                        error={validationError ?? error}
+                        disabled={disabled}
+                        multiline={multiline}
+                        focused={selected}
+                        value={internalValue as string}
+                        updateValue={updateValue}
+                    />
+                );
+                allowScroll = true;
+            }
+        } else if (property.dataType === "boolean") {
             innerComponent = (
-                <PropertyPreview width={width}
-                                 height={height}
-                                 propertyKey={propertyKey as string}
-                                 value={internalValue}
-                                 property={property}
-                                 size={getPreviewSizeFrom(size)}
+                <VirtualTableSwitch
+                    error={validationError ?? error}
+                    disabled={disabled}
+                    focused={selected}
+                    internalValue={internalValue as boolean}
+                    updateValue={updateValue}
                 />
             );
-        }
-
-        return (
-            <EntityTableCell
-                key={`cell_${propertyKey}_${entity.path}_${entity.id}`}
-                size={size}
-                width={width}
-                onSelect={onSelect}
-                selected={selected}
-                disabled={disabled || readOnlyProperty}
-                disabledTooltip={disabledTooltip ?? "Disabled"}
-                removePadding={removePadding}
-                fullHeight={fullHeight}
-                saved={saved}
-                error={validationError ?? error}
-                align={align}
-                allowScroll={allowScroll}
-                showExpandIcon={showExpandIcon}
-                value={internalValue}
-                hideOverflow={hideOverflow}
-                actions={includeActions && <EntityTableCellActions
-                    showError={showError}
+        } else if (property.dataType === "date") {
+            innerComponent = (
+                <VirtualTableDateField
+                    name={propertyKey as string}
+                    error={validationError ?? error}
                     disabled={disabled}
-                    showExpandIcon={showExpandIcon}
-                    selected={selected}
-                    openPopup={!disabled ? openPopup : undefined}/>}
-            >
+                    mode={property.mode}
+                    focused={selected}
+                    internalValue={internalValue as Date}
+                    updateValue={updateValue}
+                />
+            );
+            fullHeight = true;
+            hideOverflow = false;
+            allowScroll = false;
+        } else if (property.dataType === "reference") {
+            if (typeof property.path === "string") {
+                innerComponent = (
+                    <TableReferenceField
+                        name={propertyKey as string}
+                        internalValue={internalValue as EntityReference}
+                        updateValue={updateValue}
+                        disabled={disabled}
+                        size={size}
+                        path={property.path}
+                        multiselect={false}
+                        previewProperties={property.previewProperties}
+                        includeId={property.includeId}
+                        includeEntityLink={property.includeEntityLink}
+                        title={property.name}
+                        forceFilter={property.forceFilter}
+                    />
+                );
+            }
+            allowScroll = false;
+        } else if (property.dataType === "array") {
+            const arrayProperty = property as ResolvedArrayProperty;
 
-                {innerComponent}
+            if (!arrayProperty.of && !arrayProperty.oneOf) {
+                throw Error(
+                    `You need to specify an 'of' or 'oneOf' prop (or specify a custom field) in your array property ${propertyKey}`
+                );
+            }
+            if (arrayProperty.of && !Array.isArray(arrayProperty.of)) {
+                if (
+                    arrayProperty.of.dataType === "string" ||
+                    arrayProperty.of.dataType === "number"
+                ) {
+                    if (selected && arrayProperty.of.enumValues) {
+                        innerComponent = (
+                            <VirtualTableSelect
+                                name={propertyKey as string}
+                                multiple={true}
+                                disabled={disabled}
+                                focused={selected}
+                                small={getPreviewSizeFrom(size) !== "medium"}
+                                valueType={arrayProperty.of.dataType}
+                                enumValues={arrayProperty.of.enumValues}
+                                error={validationError ?? error}
+                                internalValue={internalValue as string | number}
+                                updateValue={updateValue}
+                            />
+                        );
+                        allowScroll = true;
+                        fullHeight = true;
+                        hideOverflow = false;
+                    }
+                } else if (arrayProperty.of.dataType === "reference") {
+                    if (typeof arrayProperty.of.path === "string") {
+                        innerComponent = (
+                            <TableReferenceField
+                                name={propertyKey as string}
+                                disabled={disabled}
+                                internalValue={internalValue as EntityReference[]}
+                                updateValue={updateValue}
+                                size={size}
+                                multiselect={true}
+                                path={arrayProperty.of.path}
+                                previewProperties={arrayProperty.of.previewKeys}
+                                title={arrayProperty.name}
+                                forceFilter={arrayProperty.of.forceFilter}
+                                includeId={arrayProperty.of.includeId}
+                                includeEntityLink={arrayProperty.of.includeEntityLink}
+                            />
+                        );
+                    }
+                    allowScroll = false;
+                }
+            }
+        }
+    }
 
-            </EntityTableCell>
+    if (!innerComponent) {
+        allowScroll = false;
+        showExpandIcon =
+            enablePopupIcon && selected && !innerComponent && !disabled && !readOnlyProperty;
+        innerComponent = (
+            <PropertyPreview
+                width={width}
+                height={height}
+                propertyKey={propertyKey as string}
+                value={internalValue}
+                property={property}
+                size={getPreviewSizeFrom(size)}
+            />
         );
+    }
 
-    },
-    areEqual) as React.FunctionComponent<PropertyTableCellProps<any>>;
+    return (
+        <EntityTableCell
+            key={`cell_${propertyKey}_${entity.path}_${entity.id}`}
+            size={size}
+            width={width}
+            onSelect={onSelect}
+            selected={selected}
+            disabled={disabled || readOnlyProperty}
+            disabledTooltip={disabledTooltip ?? "Disabled"}
+            removePadding={removePadding}
+            fullHeight={fullHeight}
+            saved={saved}
+            error={validationError ?? error}
+            align={align}
+            allowScroll={allowScroll}
+            showExpandIcon={showExpandIcon}
+            value={internalValue}
+            hideOverflow={hideOverflow}
+            actions={
+                includeActions && (
+                    <EntityTableCellActions
+                        showError={showError}
+                        disabled={disabled}
+                        showExpandIcon={showExpandIcon}
+                        selected={selected}
+                        openPopup={!disabled ? openPopup : undefined}
+                    />
+                )
+            }
+        >
+            {innerComponent}
+        </EntityTableCell>
+    );
+}, areEqual) as React.FunctionComponent<PropertyTableCellProps<any>>;
 
 function areEqual(prevProps: PropertyTableCellProps<any>, nextProps: PropertyTableCellProps<any>) {
-    return prevProps.height === nextProps.height &&
+    return (
+        prevProps.height === nextProps.height &&
         prevProps.propertyKey === nextProps.propertyKey &&
         prevProps.align === nextProps.align &&
         prevProps.width === nextProps.width &&
@@ -487,5 +531,5 @@ function areEqual(prevProps: PropertyTableCellProps<any>, nextProps: PropertyTab
         equal(prevProps.value, nextProps.value) &&
         equal(prevProps.entity.id, nextProps.entity.id) &&
         equal(prevProps.entity.values, nextProps.entity.values)
-        ;
+    );
 }

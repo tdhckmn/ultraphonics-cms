@@ -27,7 +27,7 @@ Firebase, a platform developed by Google, offers a comprehensive suite of tools 
 By leveraging Firebase, FireCMS offers a CMS that is not only powerful but aso scalable, secure, and cost-effective.
 
 ![FireCMS Dashboard](../static/img/blog/firecms-dashboard.png)
-*The sleek and intuitive FireCMS dashboard powered by Firebase.*
+_The sleek and intuitive FireCMS dashboard powered by Firebase._
 
 <!-- truncate -->
 
@@ -140,7 +140,7 @@ With [FireCMS](https://firecms.co), you get a CMS explicitly designed to leverag
 - **Extensibility**: Use Firebase Cloud Functions to extend functionality without managing additional servers.
 
 ![Configuring FireCMS](../static/img/blog/firecms_configuration.png)
-*Easily configure your FireCMS with straightforward schemas.*
+_Easily configure your FireCMS with straightforward schemas._
 
 ## Addressing Common Concerns
 

@@ -20,14 +20,12 @@ account and manage the indexing of your documents.
 
 You can achieve this by implementing a Google Cloud Function that listens to
 Firestore changes and updates the Algolia index.
-There is also a [Firebase extension](https://extensions.dev/extensions/algolia/firestore-algolia-search) 
+There is also a [Firebase extension](https://extensions.dev/extensions/algolia/firestore-algolia-search)
 for the very same purpose.
 
 The examples below show how to use Algolia as an external search provider, using the `algoliasearch` library version 5.
 
-
 ### Using Algolia in FireCMS Cloud
-
 
 We provide a utility method for performing searches in Algolia `performAlgoliaTextSearch`.
 You need to import the `algoliasearch` library and create an Algolia client.
@@ -48,30 +46,29 @@ import {
     buildCollection,
     FireCMSCloudApp,
     EntityCollectionsBuilder,
-    FireCMSAppConfig
+    FireCMSAppConfig,
 } from "@firecms/cloud";
 
-const client: SearchClient | undefined = algoliasearch("YOUR_ALGOLIA_APP_ID", "YOUR_ALGOLIA_SEARCH_KEY");
+const client: SearchClient | undefined = algoliasearch(
+    "YOUR_ALGOLIA_APP_ID",
+    "YOUR_ALGOLIA_SEARCH_KEY"
+);
 
 const algoliaSearchController = buildExternalSearchController({
     isPathSupported: (path) => path === "products",
-    search: async ({
-                       path,
-                       searchString
-                   }) => {
+    search: async ({ path, searchString }) => {
         if (path === "products") {
             return performAlgoliaTextSearch(client, "products", searchString);
         }
         return undefined;
-    }
+    },
 });
-
 
 const appConfig: FireCMSAppConfig = {
     version: "1",
     textSearchControllerBuilder: algoliaSearchController,
     // ...
-}
+};
 ```
 
 ### Using Algolia in self-hosted FireCMS
@@ -83,33 +80,28 @@ import { algoliasearch, SearchClient } from "algoliasearch";
 
 import { buildExternalSearchController, performAlgoliaTextSearch } from "@firecms/firebase";
 
-const client: SearchClient | undefined = algoliasearch("YOUR_ALGOLIA_APP_ID", "YOUR_ALGOLIA_SEARCH_KEY");
+const client: SearchClient | undefined = algoliasearch(
+    "YOUR_ALGOLIA_APP_ID",
+    "YOUR_ALGOLIA_SEARCH_KEY"
+);
 
 const algoliaSearchController = buildExternalSearchController({
     isPathSupported: (path) => path === "products",
-    search: async ({
-                       path,
-                       searchString
-                   }) => {
-        if (path === "products")
-            return performAlgoliaTextSearch(client, "products", searchString);
+    search: async ({ path, searchString }) => {
+        if (path === "products") return performAlgoliaTextSearch(client, "products", searchString);
         return undefined;
-    }
+    },
 });
 
-
 export function App() {
-
     // ...
     const firestoreDelegate = useFirestoreDelegate({
         firebaseApp,
-        textSearchControllerBuilder: algoliaSearchControllerBuilder
+        textSearchControllerBuilder: algoliaSearchControllerBuilder,
     });
     // ...
 }
-
 ```
-
 
 ### Local text search
 
@@ -129,7 +121,6 @@ Then you need to mark each collection with `textSearchEnabled: true`.
 
 If you have declared an external indexing provider, the local text search will be
 effective **only for the paths not supported by the external provider**.
-
 
 ### Using an external search provider
 

@@ -8,13 +8,16 @@ import {
     DefaultAppBarProps,
     Locale,
     ModifyCollectionProps,
-    PropertyConfig
+    PropertyConfig,
 } from "@firecms/core";
 import { FirebaseApp } from "@firebase/app";
-import { AppCheckOptions, FirestoreIndexesBuilder, FirestoreTextSearchControllerBuilder } from "@firecms/firebase";
+import {
+    AppCheckOptions,
+    FirestoreIndexesBuilder,
+    FirestoreTextSearchControllerBuilder,
+} from "@firecms/firebase";
 
 export type FireCMSAppConfig = {
-
     /**
      * Customization schema version.
      */
@@ -109,5 +112,4 @@ export type FireCMSAppConfig = {
      * App Check configuration.
      */
     appCheck?: AppCheckOptions;
-
-}
+};

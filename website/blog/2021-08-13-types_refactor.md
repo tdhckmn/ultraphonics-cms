@@ -11,23 +11,24 @@ CMS.
 
 The signature of `EntitySchema<Key extends string = string>` has changed to
 `EntitySchema<M>` where `M` is your model type like:
+
 ```tsx
 import { buildSchema } from "@camberi/firecms";
 
 type Product = {
     name: string;
-    price:number;
-}
+    price: number;
+};
 
 const productSchema = buildSchema<Product>({
     // ...
-    properties:{
-      name: {
-        dataType: "string",
+    properties: {
+        name: {
+            dataType: "string",
+            // ...
+        },
         // ...
-      },
-      // ...
-    }
+    },
     // ...
 });
 ```
@@ -50,7 +51,6 @@ references like `EntityCollection<typeof productSchema>`, like the ones we had
 in the previous examples. In that case you can create your `Product` type if
 you want better type checking or simply remove it.
 
-
 ### Motivation
 
 Let's face it, the type system related to schemas until now was a mess.
@@ -71,6 +71,7 @@ The new system is now able to tell you exactly what you are configuring wrong,
 or suggest the props you are looking for. The following is a configuration
 error because we are assigning the `multiline` config, which applies only to
 strings, to a number property:
+
 ```
 // ...
 name: {
@@ -85,10 +86,10 @@ name: {
 ```
 
 So it indicates a type error:
-<img loading="lazy" 
-    style={{maxWidth: "400px"}}
-    src={require('../static/img/config_error.png').default}
-    alt="Configuration error"
+<img loading="lazy"
+style={{maxWidth: "400px"}}
+src={require('../static/img/config_error.png').default}
+alt="Configuration error"
 />
 
 ### Migration examples
@@ -102,17 +103,11 @@ import { buildSchema } from "@camberi/firecms";
 type Product = {
     name: string;
     price: number;
-}
+};
 
 export const productSchema = buildSchema<Product>({
     name: "Product",
-    onPreSave: ({
-                    schema,
-                    path,
-                    id,
-                    values,
-                    status
-                }) => {
+    onPreSave: ({ schema, path, id, values, status }) => {
         // Now values is of type `Product`
         console.log(values);
         return values;
@@ -121,19 +116,18 @@ export const productSchema = buildSchema<Product>({
     properties: {
         name: {
             dataType: "string",
-            title: "Name"
+            title: "Name",
         },
         price: {
             dataType: "number",
-            title: "Price"
-        }
-    }
+            title: "Price",
+        },
+    },
 });
 ```
 
 With this update you get a complete type system in all your callbacks, which will
 help prevent errors.
-
 
 ### Use without specifying the type
 
@@ -145,13 +139,7 @@ import { buildSchema, buildProperty } from "@camberi/firecms";
 
 export const productSchema = buildSchema({
     name: "Product",
-    onPreSave: ({
-                    schema,
-                    path,
-                    id,
-                    values,
-                    status
-                }) => {
+    onPreSave: ({ schema, path, id, values, status }) => {
         // Now values is of type `{ name: string; price: number; }`, so
         // equivalent to the previous example
         console.log(values);
@@ -161,13 +149,13 @@ export const productSchema = buildSchema({
     properties: {
         name: buildProperty({
             dataType: "string",
-            title: "Name"
+            title: "Name",
         }),
         price: buildProperty({
             dataType: "number",
-            title: "Price"
-        })
-    }
+            title: "Price",
+        }),
+    },
 });
 ```
 
@@ -184,6 +172,7 @@ fix breaking changes, but we are convinced that this is a change for the better,
 making our life and our users easier 😉
 
 ### Affected types and methods
+
 All the following types and methods have seen their types changed from
 `<S extends EntitySchema<Key>, Key extends string> `to `<M>`
 

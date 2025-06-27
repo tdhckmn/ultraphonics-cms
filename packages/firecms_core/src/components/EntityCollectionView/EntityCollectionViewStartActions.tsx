@@ -1,6 +1,11 @@
 import React from "react";
 import { useCustomizationController, useFireCMSContext } from "../../hooks";
-import { CollectionActionsProps, EntityCollection, EntityTableController, SelectionController } from "../../types";
+import {
+    CollectionActionsProps,
+    EntityCollection,
+    EntityTableController,
+    SelectionController,
+} from "../../types";
 import { toArray } from "../../util/arrays";
 import { ErrorBoundary } from "../ErrorBoundary";
 import { ClearFilterSortButton } from "../ClearFilterSortButton";
@@ -13,18 +18,17 @@ export type EntityCollectionViewStartActionsProps<M extends Record<string, any>>
     selectionController: SelectionController<M>;
     tableController: EntityTableController<M>;
     collectionEntitiesCount: number;
-}
+};
 
 export function EntityCollectionViewStartActions<M extends Record<string, any>>({
-                                                                                    collection,
-                                                                                    relativePath,
-                                                                                    parentCollectionIds,
-                                                                                    path,
-                                                                                    selectionController,
-                                                                                    tableController,
-                                                                                    collectionEntitiesCount
-                                                                                }: EntityCollectionViewStartActionsProps<M>) {
-
+    collection,
+    relativePath,
+    parentCollectionIds,
+    path,
+    selectionController,
+    tableController,
+    collectionEntitiesCount,
+}: EntityCollectionViewStartActionsProps<M>) {
     const context = useFireCMSContext();
 
     const customizationController = useCustomizationController();
@@ -38,31 +42,32 @@ export function EntityCollectionViewStartActions<M extends Record<string, any>>(
         selectionController,
         context,
         tableController,
-        collectionEntitiesCount
+        collectionEntitiesCount,
     };
     const actions: React.ReactNode[] = [
         <ClearFilterSortButton
             key={"clear_filter"}
             tableController={tableController}
-            enabled={!collection.forceFilter}/>
+            enabled={!collection.forceFilter}
+        />,
     ];
 
     if (plugins) {
         plugins.forEach((plugin, i) => {
             if (plugin.collectionView?.CollectionActionsStart) {
-                actions.push(...toArray(plugin.collectionView?.CollectionActionsStart)
-                    .map((Action, j) => (
+                actions.push(
+                    ...toArray(plugin.collectionView?.CollectionActionsStart).map((Action, j) => (
                         <ErrorBoundary key={`plugin_actions_${i}_${j}`}>
-                            <Action {...actionProps} {...plugin.collectionView?.collectionActionsStartProps}/>
+                            <Action
+                                {...actionProps}
+                                {...plugin.collectionView?.collectionActionsStartProps}
+                            />
                         </ErrorBoundary>
-                    )));
+                    ))
+                );
             }
         });
     }
 
-    return (
-        <>
-            {actions}
-        </>
-    );
+    return <>{actions}</>;
 }

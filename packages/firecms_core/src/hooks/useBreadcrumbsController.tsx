@@ -6,9 +6,7 @@ import { BreadcrumbContext } from "../contexts/BreacrumbsContext";
  */
 export interface BreadcrumbsController {
     breadcrumbs: BreadcrumbEntry[];
-    set: (props: {
-        breadcrumbs: BreadcrumbEntry[];
-    }) => void;
+    set: (props: { breadcrumbs: BreadcrumbEntry[] }) => void;
 }
 
 /**

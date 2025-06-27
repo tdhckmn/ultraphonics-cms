@@ -62,10 +62,9 @@ export type InitOptions = Partial<{
 
     env: "prod" | "dev";
     debug: boolean;
-}>
+}>;
 
 export async function createFireCMSApp(rawArgs) {
-
     console.log(`
 ${chalk.green.bold(" ___ _          ___ __  __ ___")}
 ${chalk.green.bold("| __(_)_ _ ___ / __|  \\/  / __|")}
@@ -80,18 +79,20 @@ ${chalk.red.bold("Welcome to the FireCMS CLI")} 🔥
     const mustLogin = ["cloud"].includes(options.template) && !currentUser;
 
     async function promptLogin() {
-        await inquirer.prompt([
-            {
-                type: "confirm",
-                name: "login",
-                message: "Do you want to log in?",
-                default: true
-            }
-        ]).then(async answers => {
-            if (answers.login) {
-                return login(options.env, options.debug);
-            }
-        });
+        await inquirer
+            .prompt([
+                {
+                    type: "confirm",
+                    name: "login",
+                    message: "Do you want to log in?",
+                    default: true,
+                },
+            ])
+            .then(async (answers) => {
+                if (answers.login) {
+                    return login(options.env, options.debug);
+                }
+            });
     }
 
     if (mustLogin) {
@@ -106,7 +107,9 @@ ${chalk.red.bold("Welcome to the FireCMS CLI")} 🔥
     } else if (currentUser) {
         console.log("You are logged in as", currentUser["email"]);
     } else {
-        console.log("You can login to FireCMS to automatically set up your project, or continue without logging in");
+        console.log(
+            "You can login to FireCMS to automatically set up your project, or continue without logging in"
+        );
         await promptLogin();
     }
 
@@ -129,10 +132,10 @@ function parseArgumentsIntoOptions(rawArgs): InitOptions {
             "--next-pro": Boolean,
             "--community": Boolean,
             "--debug": Boolean,
-            "--env": String
+            "--env": String,
         },
         {
-            argv: rawArgs.slice(2)
+            argv: rawArgs.slice(2),
         }
     );
     const env = args["--env"] || "prod";
@@ -161,7 +164,7 @@ function parseArgumentsIntoOptions(rawArgs): InitOptions {
         template,
         debug: args["--debug"] || false,
         firebaseProjectId: args["--projectId"],
-        env
+        env,
     };
 }
 
@@ -185,30 +188,39 @@ async function promptForMissingOptions(options: InitOptions): Promise<InitOption
                 message: "Choose a template",
                 choices: [
                     {
-                        name: "FireCMS Cloud " + chalk.gray("(use this option if you access FireCMS from app.firecms.co)"),
-                        value: "cloud"
+                        name:
+                            "FireCMS Cloud " +
+                            chalk.gray(
+                                "(use this option if you access FireCMS from app.firecms.co)"
+                            ),
+                        value: "cloud",
                     },
                     {
-                        name: "FireCMS PRO " + chalk.gray("(self-hosted version with full functionality)"),
-                        value: "pro"
+                        name:
+                            "FireCMS PRO " +
+                            chalk.gray("(self-hosted version with full functionality)"),
+                        value: "pro",
                     },
                     {
-                        name: "FireCMS PRO with Next.js frontend" + chalk.gray("(self-hosted version with frontend boilerplate CRUD app)"),
-                        value: "next-pro"
+                        name:
+                            "FireCMS PRO with Next.js frontend" +
+                            chalk.gray("(self-hosted version with frontend boilerplate CRUD app)"),
+                        value: "next-pro",
                     },
                     {
-                        name: "FireCMS Community " + chalk.gray("(MIT licensed version with the base functionality)"),
-                        value: "community"
-                    }
-                ]
-            }
+                        name:
+                            "FireCMS Community " +
+                            chalk.gray("(MIT licensed version with the base functionality)"),
+                        value: "community",
+                    },
+                ],
+            },
         ]);
         template = answers.template;
         options.template = template;
     }
 
     if (template !== "v2") {
-
         const currentUser = await getCurrentUser(options.env, options.debug);
         let shouldAskForProjectManually = false;
 
@@ -219,45 +231,39 @@ async function promptForMissingOptions(options: InitOptions): Promise<InitOption
             let gcpProjects: any;
 
             if (template === "cloud") {
-                cloudProjects = await getCloudProjects(options.env,
-                    options.debug,
-                    onErr => {
-                        spinner.fail("Error loading projects");
-                    })
+                cloudProjects = await getCloudProjects(options.env, options.debug, (onErr) => {
+                    spinner.fail("Error loading projects");
+                })
                     .then((res) => {
                         if (!res) {
-                            if (spinner.isSpinning)
-                                spinner.fail("Error loading projects");
+                            if (spinner.isSpinning) spinner.fail("Error loading projects");
                             process.exit(1);
                         }
                         spinner.succeed();
                         return res;
                     })
                     .catch((e) => {
-                        if (spinner.isSpinning)
-                            spinner.fail("Error loading projects");
+                        if (spinner.isSpinning) spinner.fail("Error loading projects");
                     });
                 if (cloudProjects.length === 0) {
-                    console.log("Please create a FireCMS Cloud project first. Head to https://app.firecms.co to get started and then run this command again!");
+                    console.log(
+                        "Please create a FireCMS Cloud project first. Head to https://app.firecms.co to get started and then run this command again!"
+                    );
                 }
             } else {
-                gcpProjects = await getGcpProjects(options.env,
-                    options.debug,
-                    onErr => {
-                        spinner.fail("Error loading projects");
-                    })
+                gcpProjects = await getGcpProjects(options.env, options.debug, (onErr) => {
+                    spinner.fail("Error loading projects");
+                })
                     .then((res) => {
                         if (!res) {
-                            if (spinner.isSpinning)
-                                spinner.fail("Error loading projects");
+                            if (spinner.isSpinning) spinner.fail("Error loading projects");
                             process.exit(1);
                         }
                         spinner.succeed();
                         return res;
                     })
                     .catch((e) => {
-                        if (spinner.isSpinning)
-                            spinner.fail("Error loading projects");
+                        if (spinner.isSpinning) spinner.fail("Error loading projects");
                     });
             }
 
@@ -267,22 +273,22 @@ async function promptForMissingOptions(options: InitOptions): Promise<InitOption
                 const choices = [
                     {
                         name: chalk.gray("Enter project id manually"),
-                        value: "!_-manual"
+                        value: "!_-manual",
                     },
-                    ...(cloudProjects ?? []).map(project => ({
+                    ...(cloudProjects ?? []).map((project) => ({
                         name: project.id,
-                        value: project.id
+                        value: project.id,
                     })),
-                    ...(gcpProjects ?? []).map(project => ({
+                    ...(gcpProjects ?? []).map((project) => ({
                         name: project.projectId,
-                        value: project.projectId
-                    }))
+                        value: project.projectId,
+                    })),
                 ];
                 questions.push({
                     type: "list",
                     name: "firebaseProjectId",
                     message: "Select your project",
-                    choices: choices
+                    choices: choices,
                 });
             }
         }
@@ -290,8 +296,11 @@ async function promptForMissingOptions(options: InitOptions): Promise<InitOption
             type: "input",
             name: "firebaseProjectIdManual",
             message: "Please enter your Firebase project ID",
-            when: (answers) => shouldAskForProjectManually || !answers.firebaseProjectId || answers.firebaseProjectId === "!_-manual",
-            default: options.firebaseProjectId
+            when: (answers) =>
+                shouldAskForProjectManually ||
+                !answers.firebaseProjectId ||
+                answers.firebaseProjectId === "!_-manual",
+            default: options.firebaseProjectId,
         });
     }
 
@@ -299,7 +308,7 @@ async function promptForMissingOptions(options: InitOptions): Promise<InitOption
         type: "input",
         name: "dir_name",
         message: "Please choose which folder to create the project in",
-        default: options.dir_name ?? defaultName
+        default: options.dir_name ?? defaultName,
     });
 
     if (!options.git) {
@@ -308,7 +317,7 @@ async function promptForMissingOptions(options: InitOptions): Promise<InitOption
             name: "git",
             message: "Initialize a git repository?",
             when: (answers) => Boolean(answers.firebaseProjectId),
-            default: false
+            default: false,
         });
     }
 
@@ -318,12 +327,11 @@ async function promptForMissingOptions(options: InitOptions): Promise<InitOption
         ...options,
         dir_name: answers.dir_name ?? options.dir_name,
         git: options.git || answers.git,
-        firebaseProjectId: answers.firebaseProjectIdManual || answers.firebaseProjectId
+        firebaseProjectId: answers.firebaseProjectIdManual || answers.firebaseProjectId,
     };
 }
 
 export async function createProject(options: InitOptions) {
-
     const dir = "./" + options.dir_name;
     if (fs.existsSync(dir)) {
         if (fs.readdirSync(dir).length !== 0) {
@@ -334,14 +342,11 @@ export async function createProject(options: InitOptions) {
         fs.mkdirSync(dir);
     }
 
-    const targetDirectory = path.resolve(
-        process.cwd(),
-        dir
-    );
+    const targetDirectory = path.resolve(process.cwd(), dir);
 
     options = {
         ...options,
-        targetDirectory: targetDirectory
+        targetDirectory: targetDirectory,
     };
 
     let templateFolder: string;
@@ -359,10 +364,7 @@ export async function createProject(options: InitOptions) {
         throw new Error("createProject: Invalid template");
     }
 
-    const templateDir = path.resolve(
-        targetDirPath,
-        "./templates/" + templateFolder
-    );
+    const templateDir = path.resolve(targetDirPath, "./templates/" + templateFolder);
     options.templateDirectory = templateDir;
 
     try {
@@ -376,18 +378,18 @@ export async function createProject(options: InitOptions) {
     const tasks = new Listr([
         {
             title: "Copy project files: " + options.targetDirectory,
-            task: (ctx) => copyTemplateFiles(options)
+            task: (ctx) => copyTemplateFiles(options),
         },
         {
             title: "Creating FireCMS webapp in project: " + options.firebaseProjectId,
             task: (ctx) => createWebApp(options),
-            enabled: () => currentUser && isSelfHostedTemplate(options.template)
+            enabled: () => currentUser && isSelfHostedTemplate(options.template),
         },
         {
             title: "Initialize git",
             task: () => initGit(options),
-            enabled: () => options.git
-        }
+            enabled: () => options.git,
+        },
     ]);
 
     await tasks.run();
@@ -410,7 +412,9 @@ export async function createProject(options: InitOptions) {
         console.log(chalk.cyan.bold("src/firebase_config.ts"));
         if (options.template === "pro") {
             console.log("");
-            console.log(`Also, make sure the user that is logging in has read/write access to the path ${chalk.cyan.bold("__FIRECMS")} in your database `);
+            console.log(
+                `Also, make sure the user that is logging in has read/write access to the path ${chalk.cyan.bold("__FIRECMS")} in your database `
+            );
         }
         console.log("");
         console.log("Run:");
@@ -422,7 +426,9 @@ export async function createProject(options: InitOptions) {
         console.log("Make sure you have a valid Firebase config in ");
         console.log(chalk.cyan.bold("src/app/common/firebase_config.ts"));
         console.log("");
-        console.log(`Also, make sure the user that is logging in has read/write access to the path ${chalk.cyan.bold("__FIRECMS")} in your database `);
+        console.log(
+            `Also, make sure the user that is logging in has read/write access to the path ${chalk.cyan.bold("__FIRECMS")} in your database `
+        );
         console.log("");
         console.log("Run:");
         console.log(chalk.bgYellow.black.bold("cd " + options.dir_name));
@@ -445,53 +451,63 @@ export async function createProject(options: InitOptions) {
 
     console.log("Remember to:");
     console.log("  - Drop a ⭐  in our Github page: https://github.com/firecmsco/firecms");
-    console.log("  - Join our Discord community: https://discord.gg/fxy7xsQm3m to get help and share your projects.");
+    console.log(
+        "  - Join our Discord community: https://discord.gg/fxy7xsQm3m to get help and share your projects."
+    );
 
     return true;
 }
 
 async function createWebApp(options: InitOptions) {
-    const firebaseConfig = await createSelfHostedProjectWebappConfig(options.env, options.firebaseProjectId, options.debug);
-    if (firebaseConfig)
-        await copyWebAppConfig(options, firebaseConfig);
+    const firebaseConfig = await createSelfHostedProjectWebappConfig(
+        options.env,
+        options.firebaseProjectId,
+        options.debug
+    );
+    if (firebaseConfig) await copyWebAppConfig(options, firebaseConfig);
 
     if (!firebaseConfig) {
-        console.warn("Could not set webapp config automatically. Please update your config manually in " + chalk.bold("src/firebase_config.ts"));
+        console.warn(
+            "Could not set webapp config automatically. Please update your config manually in " +
+                chalk.bold("src/firebase_config.ts")
+        );
     }
 }
 
 async function copyTemplateFiles(options: InitOptions) {
     return copy(options.templateDirectory, options.targetDirectory, {
         clobber: false,
-        dot: true
-    }).then(async _ => {
+        dot: true,
+    }).then(async (_) => {
         if (options.template === "pro" || options.template === "community") {
             return replaceProjectIdInTemplateFiles(options, [
                 "./src/App.tsx",
                 "./firebase.json",
                 "./package.json",
-                "./.firebaserc"
+                "./.firebaserc",
             ]);
         } else if (options.template === "cloud") {
-
-            return replaceProjectIdInTemplateFiles(options, [
-                "./src/App.tsx",
-                "./package.json"
-            ]);
+            return replaceProjectIdInTemplateFiles(options, ["./src/App.tsx", "./package.json"]);
         }
     });
 }
 
 async function copyWebAppConfig(options: InitOptions, firebaseConfig: object) {
-
-    const internalTargetDirectory = options.template === "next-pro" ? "src/app/common/firebase_config.ts" : "src/firebase_config.ts"
+    const internalTargetDirectory =
+        options.template === "next-pro"
+            ? "src/app/common/firebase_config.ts"
+            : "src/firebase_config.ts";
 
     const fullFileName = path.resolve(options.targetDirectory, internalTargetDirectory);
-    fs.writeFile(fullFileName, "export const firebaseConfig = " + JSON.stringify(firebaseConfig, null, 4), err => {
-        if (err) {
-            console.error("Failed to write file:", err);
+    fs.writeFile(
+        fullFileName,
+        "export const firebaseConfig = " + JSON.stringify(firebaseConfig, null, 4),
+        (err) => {
+            if (err) {
+                console.error("Failed to write file:", err);
+            }
         }
-    });
+    );
 }
 
 async function replaceProjectIdInTemplateFiles(options: InitOptions, files: string[] = []) {
@@ -508,12 +524,11 @@ async function replaceProjectIdInTemplateFiles(options: InitOptions, files: stri
             });
         });
     }
-
 }
 
 async function initGit(options: InitOptions) {
     const result = await execa("git", ["init"], {
-        cwd: options.targetDirectory
+        cwd: options.targetDirectory,
     });
     if (result.failed) {
         return Promise.reject(new Error("Failed to initialize git"));
@@ -522,7 +537,6 @@ async function initGit(options: InitOptions) {
 }
 
 async function getGcpProjects(env: "prod" | "dev", debug: boolean, onErr?: (e: any) => void) {
-
     try {
         const credentials = await getTokens(env, debug);
         const tokens = await refreshCredentials(env, credentials, onErr);
@@ -532,8 +546,8 @@ async function getGcpProjects(env: "prod" | "dev", debug: boolean, onErr?: (e: a
         const server = env === "prod" ? DEFAULT_SERVER : DEFAULT_SERVER_DEV;
         const response = await axios.get(server + "/gcp_projects", {
             headers: {
-                ["x-admin-authorization"]: `Bearer ${tokens["access_token"]}`
-            }
+                ["x-admin-authorization"]: `Bearer ${tokens["access_token"]}`,
+            },
         });
 
         if (response.status >= 400) {
@@ -550,7 +564,6 @@ async function getGcpProjects(env: "prod" | "dev", debug: boolean, onErr?: (e: a
 }
 
 async function getCloudProjects(env: "prod" | "dev", debug: boolean, onErr?: (e: any) => void) {
-
     try {
         const credentials = await getTokens(env, debug);
         const tokens = await refreshCredentials(env, credentials, onErr);
@@ -561,8 +574,8 @@ async function getCloudProjects(env: "prod" | "dev", debug: boolean, onErr?: (e:
         console.log("Getting projects from", server + "/projects");
         const response = await axios.get(server + "/projects", {
             headers: {
-                ["x-admin-authorization"]: `Bearer ${tokens["access_token"]}`
-            }
+                ["x-admin-authorization"]: `Bearer ${tokens["access_token"]}`,
+            },
         });
 
         if (response.status >= 400) {
@@ -578,7 +591,12 @@ async function getCloudProjects(env: "prod" | "dev", debug: boolean, onErr?: (e:
     }
 }
 
-async function createSelfHostedProjectWebappConfig(env, projectId, debug, onErr?: (e: any) => void) {
+async function createSelfHostedProjectWebappConfig(
+    env,
+    projectId,
+    debug,
+    onErr?: (e: any) => void
+) {
     try {
         const credentials = await getTokens(env, debug);
         const tokens = await refreshCredentials(env, credentials, onErr);
@@ -592,8 +610,8 @@ async function createSelfHostedProjectWebappConfig(env, projectId, debug, onErr?
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "x-admin-authorization": `Bearer ${token}`
-            }
+                "x-admin-authorization": `Bearer ${token}`,
+            },
         });
 
         const responseData = await response.json();
@@ -609,4 +627,3 @@ async function createSelfHostedProjectWebappConfig(env, projectId, debug, onErr?
 function isSelfHostedTemplate(template: Template) {
     return ["pro", "next-pro", "community"].includes(template);
 }
-

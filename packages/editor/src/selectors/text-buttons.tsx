@@ -7,7 +7,7 @@ import {
     FormatBoldIcon,
     FormatItalicIcon,
     FormatStrikethroughIcon,
-    FormatUnderlinedIcon
+    FormatUnderlinedIcon,
 } from "@firecms/ui";
 
 export const TextButtons = () => {
@@ -54,12 +54,14 @@ export const TextButtons = () => {
                         item.command(editor);
                     }}
                 >
-                    <Button size={"small"}
-                            color="text"
-                            className="gap-2 rounded-none h-full"
-                            variant="text">
+                    <Button
+                        size={"small"}
+                        color="text"
+                        className="gap-2 rounded-none h-full"
+                        variant="text"
+                    >
                         <item.icon
-                            className={cls( {
+                            className={cls({
                                 "text-inherit": !item.isActive(editor),
                                 "text-blue-500": item.isActive(editor),
                             })}

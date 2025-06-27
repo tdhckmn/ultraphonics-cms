@@ -3,7 +3,6 @@ import React, { ChangeEvent, useCallback, useDeferredValue, useEffect } from "re
 import { TextField, TextFieldProps } from "./index";
 
 export function DebouncedTextField<T extends string | number>(props: TextFieldProps<T>) {
-
     const previousEventRef = React.useRef<ChangeEvent<any>>();
     const [internalValue, setInternalValue] = React.useState(props.value);
 
@@ -15,8 +14,7 @@ export function DebouncedTextField<T extends string | number>(props: TextFieldPr
 
     useEffect(() => {
         const emptyInitialValue = !props.value;
-        if (emptyInitialValue && !deferredValue)
-            return;
+        if (emptyInitialValue && !deferredValue) return;
         if (deferredValue !== props.value && previousEventRef.current && props.onChange) {
             props.onChange(previousEventRef.current);
         }
@@ -27,7 +25,5 @@ export function DebouncedTextField<T extends string | number>(props: TextFieldPr
         setInternalValue(event.target.value);
     }, []);
 
-    return <TextField {...props}
-                      onChange={internalOnChange}
-                      value={internalValue}/>
+    return <TextField {...props} onChange={internalOnChange} value={internalValue} />;
 }

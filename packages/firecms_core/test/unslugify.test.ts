@@ -19,7 +19,9 @@ describe("unslugify", () => {
     });
 
     test("should handle non ascii chars", () => {
-        expect(unslugify("¿Cuál es la expectativa que tienes de esta red de mujeres?")).toBe("¿Cuál es la expectativa que tienes de esta red de mujeres?");
+        expect(unslugify("¿Cuál es la expectativa que tienes de esta red de mujeres?")).toBe(
+            "¿Cuál es la expectativa que tienes de esta red de mujeres?"
+        );
     });
 
     test("should treat non-hyphen, non-underscore, non-camelCase strings as already unslugified", () => {

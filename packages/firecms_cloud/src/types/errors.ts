@@ -4,7 +4,6 @@ type ApiErrorAdditional = {
 };
 
 export class ApiError extends Error {
-
     public code?: string;
     public projectId?: string;
     public data?: ApiErrorAdditional;

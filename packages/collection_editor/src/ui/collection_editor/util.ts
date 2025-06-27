@@ -3,9 +3,7 @@ export function idToPropertiesPath(id: string): string {
 }
 
 export function namespaceToPropertiesPath(namespace?: string): string {
-    return namespace
-        ? "properties." + namespace.replaceAll(".", ".properties.") + ".properties"
-        : "properties";
+    return namespace ? "properties." + namespace.replaceAll(".", ".properties.") + ".properties" : "properties";
 }
 
 export function namespaceToPropertiesOrderPath(namespace?: string): string {
@@ -15,14 +13,10 @@ export function namespaceToPropertiesOrderPath(namespace?: string): string {
 }
 
 export function getFullId(propertyKey: string, propertyNamespace?: string): string {
-    return propertyNamespace
-        ? `${propertyNamespace}.${propertyKey}`
-        : propertyKey;
+    return propertyNamespace ? `${propertyNamespace}.${propertyKey}` : propertyKey;
 }
 
 export function getFullIdPath(propertyKey: string, propertyNamespace?: string): string {
-    const keyWithNamespace = propertyNamespace
-        ? `${propertyNamespace}.${propertyKey}`
-        : propertyKey;
+    const keyWithNamespace = propertyNamespace ? `${propertyNamespace}.${propertyKey}` : propertyKey;
     return idToPropertiesPath(keyWithNamespace);
 }

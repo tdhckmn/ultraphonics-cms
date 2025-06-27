@@ -17,4 +17,3 @@ Consider that in order to use this hook you need to have a parent
     setMode: (mode: "light" | "dark") => void;
 }
 ```
-

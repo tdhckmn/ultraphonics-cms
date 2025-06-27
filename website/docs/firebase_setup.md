@@ -50,7 +50,7 @@ service cloud.firestore {
       allow read: if false;
       allow write: if false;
     }
-    
+
     // allow every read to products collection but write only to authenticated users
     match /databases/{database}/documents {
         match /products/{id=**} {
@@ -58,7 +58,7 @@ service cloud.firestore {
           allow write: if request.auth != null;
         }
     }
-    
+
     // allow users to modify only their own user document
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;

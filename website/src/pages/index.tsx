@@ -19,61 +19,57 @@ import { DataTalkIntro } from "../partials/home/DataTalkIntro";
 import { ClientLogos } from "../partials/ClientLogos";
 
 function Home() {
-
     return (
         <Layout
             title={"FireCMS"}
-            description="Headless CMS based on Firestore/Firebase, React and tailwindcss, and completely open-source">
+            description="Headless CMS based on Firestore/Firebase, React and tailwindcss, and completely open-source"
+        >
             <Head>
                 <title>FireCMS - Firestore/Firebase headless CMS</title>
-                <meta property="og:title" content="FireCMS - Firestore/Firebase headless CMS"/>
-                <meta property="og:description"
-                      content="Headless CMS based on Firestore/Firebase, React and tailwindcss, and completely open-source"/>
-                <meta property="og:image" content="https://firecms.co/img/firecms_logo.svg"/>
-                <link rel="canonical" href="https://firecms.co"/>
+                <meta property="og:title" content="FireCMS - Firestore/Firebase headless CMS" />
+                <meta
+                    property="og:description"
+                    content="Headless CMS based on Firestore/Firebase, React and tailwindcss, and completely open-source"
+                />
+                <meta property="og:image" content="https://firecms.co/img/firecms_logo.svg" />
+                <link rel="canonical" href="https://firecms.co" />
                 <script type="application/ld+json">
                     {JSON.stringify(softwareApplicationSchema)}
                 </script>
-                <script type="application/ld+json">
-                    {JSON.stringify(organizationSchema)}
-                </script>
+                <script type="application/ld+json">{JSON.stringify(organizationSchema)}</script>
                 {/*<script type="text/javascript">*/}
                 {/*    {clarityScript}*/}
                 {/*</script>*/}
             </Head>
 
             <main className={"max-w-[100vw] bg-gray-950 relative"}>
+                <HeroHome />
 
-                <HeroHome/>
+                <FireCMSIntro />
 
-                <FireCMSIntro/>
+                <LaunchInSteps />
 
-                <LaunchInSteps/>
+                <QuotesSection />
+                <ClientLogos />
 
-                <QuotesSection/>
-                <ClientLogos/>
+                <BuiltFor />
 
-                <BuiltFor/>
+                <SchemaEditorShowcase />
 
-                <SchemaEditorShowcase/>
+                <DataTalkIntro />
 
-                <DataTalkIntro/>
+                <ImportDataIntro />
 
-                <ImportDataIntro/>
+                <TechSplash />
 
-                <TechSplash/>
+                <DeveloperFeatures />
 
-                <DeveloperFeatures/>
+                <FirebaseTeaser />
 
-                <FirebaseTeaser/>
-
-                <DatakiIntro/>
-
+                <DatakiIntro />
             </main>
-
         </Layout>
     );
 }
 
 export default Home;
-

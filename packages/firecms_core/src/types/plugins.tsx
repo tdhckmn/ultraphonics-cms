@@ -14,8 +14,13 @@ import { NavigationGroupMapping } from "./navigation";
  * NOTE: This is a work in progress and the API is not stable yet.
  * @group Core
  */
-export type FireCMSPlugin<PROPS = any, FORM_PROPS = any, EC extends EntityCollection = EntityCollection, COL_ACTIONS_PROPS = any, COL_ACTIONS_START__PROPS = any> = {
-
+export type FireCMSPlugin<
+    PROPS = any,
+    FORM_PROPS = any,
+    EC extends EntityCollection = EntityCollection,
+    COL_ACTIONS_PROPS = any,
+    COL_ACTIONS_START__PROPS = any,
+> = {
     /**
      * Key of the plugin. This is used to identify the plugin in the CMS.
      */
@@ -37,14 +42,17 @@ export type FireCMSPlugin<PROPS = any, FORM_PROPS = any, EC extends EntityCollec
      * @param props
      */
     provider?: {
-        Component: React.ComponentType<PropsWithChildren<PROPS & {
-            context: FireCMSContext
-        }>>;
+        Component: React.ComponentType<
+            PropsWithChildren<
+                PROPS & {
+                    context: FireCMSContext;
+                }
+            >
+        >;
         props?: PROPS;
     };
 
     homePage?: {
-
         /**
          * Additional actions to be rendered in the home page, close to the search bar.
          */
@@ -74,7 +82,9 @@ export type FireCMSPlugin<PROPS = any, FORM_PROPS = any, EC extends EntityCollec
         /**
          * Add additional cards to each collection group in the home page.
          */
-        AdditionalCards?: React.ComponentType<PluginHomePageAdditionalCardsProps> | React.ComponentType<PluginHomePageAdditionalCardsProps>[];
+        AdditionalCards?:
+            | React.ComponentType<PluginHomePageAdditionalCardsProps>
+            | React.ComponentType<PluginHomePageAdditionalCardsProps>[];
 
         /**
          * Include a section in the home page with a custom component and title.
@@ -83,7 +93,7 @@ export type FireCMSPlugin<PROPS = any, FORM_PROPS = any, EC extends EntityCollec
         includeSection?: (props: PluginGenericProps) => {
             title: string;
             children: React.ReactNode;
-        }
+        };
 
         /**
          * Allow reordering with drag and drop of the collections in the home page.
@@ -98,40 +108,44 @@ export type FireCMSPlugin<PROPS = any, FORM_PROPS = any, EC extends EntityCollec
          * @param entries
          */
         onNavigationEntriesUpdate?: (entries: NavigationGroupMapping[]) => void;
-
-    }
+    };
 
     collectionView?: {
-
         /**
          * Use this component to add custom actions to the entity collections
          * toolbar.
          */
-        CollectionActions?: React.ComponentType<CollectionActionsProps<any, any, EC> & COL_ACTIONS_PROPS> | React.ComponentType<CollectionActionsProps<any, any, EC> & COL_ACTIONS_PROPS>[];
+        CollectionActions?:
+            | React.ComponentType<CollectionActionsProps<any, any, EC> & COL_ACTIONS_PROPS>
+            | React.ComponentType<CollectionActionsProps<any, any, EC> & COL_ACTIONS_PROPS>[];
         collectionActionsProps?: COL_ACTIONS_PROPS;
 
-        CollectionActionsStart?: React.ComponentType<CollectionActionsProps<any, any, EC> & COL_ACTIONS_START__PROPS> | React.ComponentType<CollectionActionsProps<any, any, EC> & COL_ACTIONS_START__PROPS>[];
+        CollectionActionsStart?:
+            | React.ComponentType<CollectionActionsProps<any, any, EC> & COL_ACTIONS_START__PROPS>
+            | React.ComponentType<
+                  CollectionActionsProps<any, any, EC> & COL_ACTIONS_START__PROPS
+              >[];
         collectionActionsStartProps?: COL_ACTIONS_START__PROPS;
 
         blockSearch?: (props: {
-            context: FireCMSContext,
-            path: string,
-            collection: EC,
-            parentCollectionIds?: string[]
+            context: FireCMSContext;
+            path: string;
+            collection: EC;
+            parentCollectionIds?: string[];
         }) => boolean;
 
         showTextSearchBar?: (props: {
-            context: FireCMSContext,
-            path: string,
-            collection: EC,
-            parentCollectionIds?: string[]
+            context: FireCMSContext;
+            path: string;
+            collection: EC;
+            parentCollectionIds?: string[];
         }) => boolean;
 
         onTextSearchClick?: (props: {
-            context: FireCMSContext,
-            path: string,
-            collection: EC,
-            parentCollectionIds?: string[]
+            context: FireCMSContext;
+            path: string;
+            collection: EC;
+            parentCollectionIds?: string[];
         }) => Promise<boolean>;
 
         /**
@@ -139,11 +153,11 @@ export type FireCMSPlugin<PROPS = any, FORM_PROPS = any, EC extends EntityCollec
          * @param props
          */
         HeaderAction?: React.ComponentType<{
-            property: ResolvedProperty,
-            propertyKey: string,
-            fullPath: string,
-            parentCollectionIds: string[],
-            onHover: boolean,
+            property: ResolvedProperty;
+            propertyKey: string;
+            fullPath: string;
+            parentCollectionIds: string[];
+            onHover: boolean;
             collection: EC;
             tableController: EntityTableController;
         }>;
@@ -153,28 +167,33 @@ export type FireCMSPlugin<PROPS = any, FORM_PROPS = any, EC extends EntityCollec
          * TODO: Only the first plugin that defines this callback will be used, at the moment.
          */
         AddColumnComponent?: React.ComponentType<{
-            fullPath: string,
-            parentCollectionIds: string[],
+            fullPath: string;
+            parentCollectionIds: string[];
             collection: EC;
             tableController: EntityTableController;
         }>;
-    }
+    };
 
     form?: {
         provider?: {
-            Component: React.ComponentType<PropsWithChildren<FORM_PROPS & PluginFormActionProps<any, EC>>>;
+            Component: React.ComponentType<
+                PropsWithChildren<FORM_PROPS & PluginFormActionProps<any, EC>>
+            >;
             props?: FORM_PROPS;
-        }
+        };
 
         Actions?: React.ComponentType<PluginFormActionProps<any, EC>>;
 
-        fieldBuilder?: <T extends CMSType = CMSType>(props: PluginFieldBuilderParams<T, any, EC>) => React.ComponentType<FieldProps<T>> | null;
+        fieldBuilder?: <T extends CMSType = CMSType>(
+            props: PluginFieldBuilderParams<T, any, EC>
+        ) => React.ComponentType<FieldProps<T>> | null;
 
-        fieldBuilderEnabled?: <T extends CMSType = CMSType>(props: PluginFieldBuilderParams<T>) => boolean;
-    }
+        fieldBuilderEnabled?: <T extends CMSType = CMSType>(
+            props: PluginFieldBuilderParams<T>
+        ) => boolean;
+    };
 
     collection?: {
-
         /**
          * Use this method to modify a single collection before it is rendered.
          * @param collection
@@ -186,10 +205,8 @@ export type FireCMSPlugin<PROPS = any, FORM_PROPS = any, EC extends EntityCollec
          * @param collections
          */
         injectCollections?: (collections: EntityCollection[]) => EntityCollection[];
-
-    }
-
-}
+    };
+};
 
 /**
  * Props passed to the {@link FireCMSPlugin.homePage.CollectionActions} method.
@@ -197,7 +214,12 @@ export type FireCMSPlugin<PROPS = any, FORM_PROPS = any, EC extends EntityCollec
  *
  * @group Models
  */
-export interface PluginHomePageActionsProps<EP extends object = object, M extends Record<string, any> = any, USER extends User = User, EC extends EntityCollection<M> = EntityCollection<M>> {
+export interface PluginHomePageActionsProps<
+    EP extends object = object,
+    M extends Record<string, any> = any,
+    USER extends User = User,
+    EC extends EntityCollection<M> = EntityCollection<M>,
+> {
     /**
      * Collection path of this entity. This is the full path, like
      * `users/1234/addresses`
@@ -215,10 +237,12 @@ export interface PluginHomePageActionsProps<EP extends object = object, M extend
     context: FireCMSContext<USER>;
 
     extraProps?: EP;
-
 }
 
-export interface PluginFormActionProps<USER extends User = User, EC extends EntityCollection = EntityCollection> {
+export interface PluginFormActionProps<
+    USER extends User = User,
+    EC extends EntityCollection = EntityCollection,
+> {
     entityId?: string;
     path: string;
     status: EntityStatus;
@@ -230,7 +254,11 @@ export interface PluginFormActionProps<USER extends User = User, EC extends Enti
     openEntityMode: "side_panel" | "full_screen";
 }
 
-export type PluginFieldBuilderParams<T extends CMSType = CMSType, M extends Record<string, any> = any, EC extends EntityCollection<M> = EntityCollection<M>> = {
+export type PluginFieldBuilderParams<
+    T extends CMSType = CMSType,
+    M extends Record<string, any> = any,
+    EC extends EntityCollection<M> = EntityCollection<M>,
+> = {
     fieldConfigId: string;
     propertyKey: string;
     property: Property<T> | ResolvedProperty<T>;

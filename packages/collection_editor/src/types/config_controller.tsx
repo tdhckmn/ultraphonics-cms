@@ -6,7 +6,6 @@ import { PersistedCollection } from "./persisted_collection";
  * and not defined in code.
  */
 export interface CollectionsConfigController {
-
     loading: boolean;
 
     collections?: PersistedCollection[];
@@ -23,41 +22,40 @@ export interface CollectionsConfigController {
 
     navigationEntries: NavigationGroupMapping[];
     saveNavigationEntries: (entries: NavigationGroupMapping[]) => Promise<void>;
-
 }
 
 export type UpdateCollectionParams<M extends Record<string, any>> = {
-    id: string,
-    collectionData: Partial<PersistedCollection<M>>,
-    previousId?: string,
-    parentCollectionIds?: string[]
-}
+    id: string;
+    collectionData: Partial<PersistedCollection<M>>;
+    previousId?: string;
+    parentCollectionIds?: string[];
+};
 
 export type SaveCollectionParams<M extends Record<string, any>> = {
-    id: string,
-    collectionData: PersistedCollection<M>,
-    previousId?: string,
-    parentCollectionIds?: string[]
-}
+    id: string;
+    collectionData: PersistedCollection<M>;
+    previousId?: string;
+    parentCollectionIds?: string[];
+};
 
 export type SavePropertyParams = {
-    path: string,
-    propertyKey: string,
-    namespace?: string,
-    newPropertiesOrder?: string[],
-    property: Property,
-    parentCollectionIds?: string[]
-}
+    path: string;
+    propertyKey: string;
+    namespace?: string;
+    newPropertiesOrder?: string[];
+    property: Property;
+    parentCollectionIds?: string[];
+};
 
 export type DeletePropertyParams = {
-    path: string,
-    propertyKey: string,
-    namespace?: string,
-    newPropertiesOrder?: string[],
-    parentCollectionIds?: string[]
-}
+    path: string;
+    propertyKey: string;
+    namespace?: string;
+    newPropertiesOrder?: string[];
+    parentCollectionIds?: string[];
+};
 
 export type DeleteCollectionParams = {
-    id: string,
-    parentCollectionIds?: string[]
-}
+    id: string;
+    parentCollectionIds?: string[];
+};

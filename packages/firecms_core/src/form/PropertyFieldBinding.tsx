@@ -1,5 +1,5 @@
 import React, { ComponentType, ReactElement, useCallback, useRef } from "react";
-import equal from "react-fast-compare"
+import equal from "react-fast-compare";
 
 import { Field, FieldProps as FormexFieldProps, getIn } from "@firecms/formex";
 
@@ -12,7 +12,7 @@ import {
     PropertyFieldBindingProps,
     PropertyOrBuilder,
     ResolvedEntityCollection,
-    ResolvedProperty
+    ResolvedProperty,
 } from "../types";
 import { ReadOnlyFieldBinding } from "./field_bindings/ReadOnlyFieldBinding";
 
@@ -47,59 +47,60 @@ import { ErrorBoundary } from "../components";
  * @param autoFocus
  * @group Form custom fields
  */
-export const PropertyFieldBinding = React.memo(PropertyFieldBindingInternal, (a: PropertyFieldBindingProps<any>, b: PropertyFieldBindingProps<any>) => {
-    if (a.propertyKey !== b.propertyKey) {
+export const PropertyFieldBinding = React.memo(
+    PropertyFieldBindingInternal,
+    (a: PropertyFieldBindingProps<any>, b: PropertyFieldBindingProps<any>) => {
+        if (a.propertyKey !== b.propertyKey) {
+            return false;
+        }
+        if (a.index !== b.index) {
+            return false;
+        }
+
+        if (a.size !== b.size) {
+            return false;
+        }
+        const aIsBuilder = isPropertyBuilder(a.property) || a.property.fromBuilder;
+        const bIsBuilder = isPropertyBuilder(b.property) || b.property.fromBuilder;
+
+        const baseCheck =
+            (aIsBuilder === bIsBuilder || equal(a.property, b.property)) &&
+            a.disabled === b.disabled;
+        if (!baseCheck) {
+            return false;
+        }
+
+        if (shouldPropertyReRender(b.property)) {
+            return false;
+        }
+
         return false;
     }
-    if (a.index !== b.index) {
-        return false;
-    }
+) as typeof PropertyFieldBindingInternal;
 
-    if (a.size !== b.size) {
-        return false;
-    }
-    const aIsBuilder = isPropertyBuilder(a.property) || a.property.fromBuilder;
-    const bIsBuilder = isPropertyBuilder(b.property) || b.property.fromBuilder;
-
-    const baseCheck = (aIsBuilder === bIsBuilder || equal(a.property, b.property)) &&
-        a.disabled === b.disabled;
-    if (!baseCheck) {
-        return false;
-    }
-
-    if (shouldPropertyReRender(b.property)) {
-        return false;
-    }
-
-    return false;
-}) as typeof PropertyFieldBindingInternal;
-
-function PropertyFieldBindingInternal<T extends CMSType = CMSType, M extends Record<string, any> = any>
-({
-     propertyKey,
-     property,
-     context,
-     includeDescription,
-     underlyingValueHasChanged,
-     disabled: disabledProp,
-     partOfArray,
-     minimalistView,
-     autoFocus,
-     index,
-     size,
-     onPropertyChange,
- }: PropertyFieldBindingProps<T, M>): ReactElement<PropertyFieldBindingProps<T, M>> {
-
+function PropertyFieldBindingInternal<
+    T extends CMSType = CMSType,
+    M extends Record<string, any> = any,
+>({
+    propertyKey,
+    property,
+    context,
+    includeDescription,
+    underlyingValueHasChanged,
+    disabled: disabledProp,
+    partOfArray,
+    minimalistView,
+    autoFocus,
+    index,
+    size,
+    onPropertyChange,
+}: PropertyFieldBindingProps<T, M>): ReactElement<PropertyFieldBindingProps<T, M>> {
     const authController = useAuthController();
     const customizationController = useCustomizationController();
 
     return (
-        <Field
-            key={propertyKey}
-            name={propertyKey}
-        >
+        <Field key={propertyKey} name={propertyKey}>
             {(fieldProps) => {
-
                 let Component: ComponentType<FieldProps<T>> | undefined;
                 const resolvedProperty: ResolvedProperty<T> | null = resolveProperty({
                     propertyKey,
@@ -109,10 +110,14 @@ function PropertyFieldBindingInternal<T extends CMSType = CMSType, M extends Rec
                     entityId: context.entityId,
                     propertyConfigs: customizationController.propertyConfigs,
                     index,
-                    authController
+                    authController,
                 });
 
-                const disabled = disabledProp || isReadOnly(resolvedProperty) || Boolean(resolvedProperty?.disabled) || context.disabled;
+                const disabled =
+                    disabledProp ||
+                    isReadOnly(resolvedProperty) ||
+                    Boolean(resolvedProperty?.disabled) ||
+                    context.disabled;
 
                 if (resolvedProperty === null || isHidden(resolvedProperty)) {
                     return <></>;
@@ -123,16 +128,21 @@ function PropertyFieldBindingInternal<T extends CMSType = CMSType, M extends Rec
                         Component = resolvedProperty.Field as ComponentType<FieldProps<any>>;
                     }
                 } else {
-                    const propertyConfig = getFieldConfig(resolvedProperty, customizationController.propertyConfigs);
+                    const propertyConfig = getFieldConfig(
+                        resolvedProperty,
+                        customizationController.propertyConfigs
+                    );
                     if (!propertyConfig) {
                         console.log("INTERNAL: Could not find field config for property", {
                             propertyKey,
                             property,
                             resolvedProperty,
                             fields: customizationController.propertyConfigs,
-                            propertyConfig
+                            propertyConfig,
                         });
-                        throw new Error(`INTERNAL: Could not find field config for property ${propertyKey}`);
+                        throw new Error(
+                            `INTERNAL: Could not find field config for property ${propertyKey}`
+                        );
                     }
                     const configProperty = resolveProperty({
                         propertyKey,
@@ -142,7 +152,7 @@ function PropertyFieldBindingInternal<T extends CMSType = CMSType, M extends Rec
                         entityId: context.entityId,
                         propertyConfigs: customizationController.propertyConfigs,
                         index,
-                        authController
+                        authController,
                     });
                     Component = configProperty.Field as ComponentType<FieldProps<T>>;
                 }
@@ -167,49 +177,49 @@ function PropertyFieldBindingInternal<T extends CMSType = CMSType, M extends Rec
                     minimalistView,
                     autoFocus,
                     size,
-                    onPropertyChange
+                    onPropertyChange,
                 };
 
-                return <FieldInternal
-                    Component={Component as ComponentType<FieldProps>}
-                    componentProps={componentProps}
-                    formexFieldProps={fieldProps}/>;
+                return (
+                    <FieldInternal
+                        Component={Component as ComponentType<FieldProps>}
+                        componentProps={componentProps}
+                        formexFieldProps={fieldProps}
+                    />
+                );
             }}
         </Field>
     );
-
 }
 
-type ResolvedPropertyFieldBindingProps<T extends CMSType = CMSType, M extends Record<string, any> = any> =
-    Omit<PropertyFieldBindingProps<T, M>, "property">
-    & {
-    property: ResolvedProperty<T>
+type ResolvedPropertyFieldBindingProps<
+    T extends CMSType = CMSType,
+    M extends Record<string, any> = any,
+> = Omit<PropertyFieldBindingProps<T, M>, "property"> & {
+    property: ResolvedProperty<T>;
 };
 
-function FieldInternal<T extends CMSType, CustomProps, M extends Record<string, any>>
-({
-     Component,
-     componentProps: {
-         propertyKey,
-         property,
-         includeDescription,
-         underlyingValueHasChanged,
-         partOfArray,
-         minimalistView,
-         autoFocus,
-         context,
-         disabled,
-         size,
-         onPropertyChange
-     },
-     formexFieldProps
- }:
- {
-     Component: ComponentType<FieldProps<T, any, M>>,
-     componentProps: ResolvedPropertyFieldBindingProps<T, M>,
-     formexFieldProps: FormexFieldProps<T, any>
- }) {
-
+function FieldInternal<T extends CMSType, CustomProps, M extends Record<string, any>>({
+    Component,
+    componentProps: {
+        propertyKey,
+        property,
+        includeDescription,
+        underlyingValueHasChanged,
+        partOfArray,
+        minimalistView,
+        autoFocus,
+        context,
+        disabled,
+        size,
+        onPropertyChange,
+    },
+    formexFieldProps,
+}: {
+    Component: ComponentType<FieldProps<T, any, M>>;
+    componentProps: ResolvedPropertyFieldBindingProps<T, M>;
+    formexFieldProps: FormexFieldProps<T, any>;
+}) {
     const { plugins } = useCustomizationController();
 
     const customFieldProps: any = property.customProps;
@@ -217,7 +227,8 @@ function FieldInternal<T extends CMSType, CustomProps, M extends Record<string, 
     const error = getIn(formexFieldProps.form.errors, propertyKey);
     const touched = getIn(formexFieldProps.form.touched, propertyKey);
 
-    const showError: boolean = error &&
+    const showError: boolean =
+        error &&
         (formexFieldProps.form.submitCount > 0 || property.validation?.unique) &&
         (!Array.isArray(error) || !!error.filter((e: any) => !!e).length);
 
@@ -227,7 +238,7 @@ function FieldInternal<T extends CMSType, CustomProps, M extends Record<string, 
         propertyKey: propertyKey,
         property: property,
         Component: Component,
-        plugins: plugins
+        plugins: plugins,
     });
     const UsedComponent: ComponentType<FieldProps<T>> = WrappedComponent ?? Component;
 
@@ -238,10 +249,13 @@ function FieldInternal<T extends CMSType, CustomProps, M extends Record<string, 
         formexFieldProps.form.setFieldValue(propertyKey, value, shouldValidate);
     }, []);
 
-    const setFieldValue = useCallback((otherPropertyKey: string, value: CMSType | null, shouldValidate?: boolean) => {
-        formexFieldProps.form.setFieldTouched(propertyKey, true, false);
-        formexFieldProps.form.setFieldValue(otherPropertyKey, value, shouldValidate);
-    }, []);
+    const setFieldValue = useCallback(
+        (otherPropertyKey: string, value: CMSType | null, shouldValidate?: boolean) => {
+            formexFieldProps.form.setFieldTouched(propertyKey, true, false);
+            formexFieldProps.form.setFieldValue(otherPropertyKey, value, shouldValidate);
+        },
+        []
+    );
 
     const cmsFieldProps: FieldProps<T, CustomProps, M> = {
         propertyKey,
@@ -262,24 +276,26 @@ function FieldInternal<T extends CMSType, CustomProps, M extends Record<string, 
         customProps: customFieldProps,
         context,
         size,
-        onPropertyChange
+        onPropertyChange,
     };
 
     return (
         <ErrorBoundary>
+            <UsedComponent {...cmsFieldProps} />
 
-            <UsedComponent {...cmsFieldProps}/>
-
-            {underlyingValueHasChanged && !isSubmitting &&
+            {underlyingValueHasChanged && !isSubmitting && (
                 <Typography variant={"caption"} className={"ml-3.5"}>
                     This value has been updated elsewhere
-                </Typography>}
-
-        </ErrorBoundary>);
-
+                </Typography>
+            )}
+        </ErrorBoundary>
+    );
 }
 
-const shouldPropertyReRender = (property: PropertyOrBuilder | ResolvedProperty, plugins?: FireCMSPlugin[]): boolean => {
+const shouldPropertyReRender = (
+    property: PropertyOrBuilder | ResolvedProperty,
+    plugins?: FireCMSPlugin[]
+): boolean => {
     if (plugins?.some((plugin) => plugin.form?.fieldBuilder)) {
         return true;
     }
@@ -287,63 +303,76 @@ const shouldPropertyReRender = (property: PropertyOrBuilder | ResolvedProperty, 
         return true;
     }
     const defAProperty = property as Property | ResolvedProperty;
-    const rerenderThisProperty = Boolean(defAProperty.Field) || ("fromBuilder" in defAProperty && defAProperty.fromBuilder);
+    const rerenderThisProperty =
+        Boolean(defAProperty.Field) || ("fromBuilder" in defAProperty && defAProperty.fromBuilder);
     if (defAProperty.dataType === "map" && defAProperty.properties) {
-        return rerenderThisProperty || Object.values(defAProperty.properties).some((childProperty) => shouldPropertyReRender(childProperty, plugins));
+        return (
+            rerenderThisProperty ||
+            Object.values(defAProperty.properties).some((childProperty) =>
+                shouldPropertyReRender(childProperty, plugins)
+            )
+        );
     } else if (defAProperty.dataType === "array" && "resolvedProperties" in defAProperty) {
         // @ts-ignore
-        return rerenderThisProperty || defAProperty.resolvedProperties?.some((childProperty) => childProperty && shouldPropertyReRender(childProperty, plugins));
+        return (
+            rerenderThisProperty ||
+            defAProperty.resolvedProperties?.some(
+                (childProperty) => childProperty && shouldPropertyReRender(childProperty, plugins)
+            )
+        );
     } else {
         return rerenderThisProperty;
     }
+};
+
+interface UseWrappedComponentParams<
+    T extends CMSType = CMSType,
+    M extends Record<string, any> = any,
+> {
+    path?: string;
+    collection?: ResolvedEntityCollection<M>;
+    propertyKey: string;
+    property: ResolvedProperty<T>;
+    Component: ComponentType<FieldProps<T, any, M>>;
+    plugins?: FireCMSPlugin[];
 }
 
-interface UseWrappedComponentParams<T extends CMSType = CMSType, M extends Record<string, any> = any> {
-    path?: string,
-    collection?: ResolvedEntityCollection<M>,
-    propertyKey: string,
-    property: ResolvedProperty<T>,
-    Component: ComponentType<FieldProps<T, any, M>>,
-    plugins?: FireCMSPlugin[]
-}
-
-function useWrappedComponent<T extends CMSType = CMSType, M extends Record<string, any> = any>(
-    {
-        path,
-        collection,
-        propertyKey,
-        property,
-        Component,
-        plugins
-    }: UseWrappedComponentParams<T, M>
-): ComponentType<FieldProps<T, any, M>> | null {
-
-    const wrapperRef = useRef<ComponentType<FieldProps<T, any, M>> | null>((() => {
-        let Wrapper: ComponentType<FieldProps<T, any, M>> | null = null;
-        if (plugins) {
-            plugins.forEach((plugin) => {
-                const fieldId = getFieldId(property);
-                if (fieldId && plugin.form?.fieldBuilder) {
-                    const params: PluginFieldBuilderParams<T> = {
-                        fieldConfigId: fieldId,
-                        propertyKey,
-                        property,
-                        Field: Component,
-                        plugin,
-                        path,
-                        collection,
-                    };
-                    const enabled = plugin.form?.fieldBuilderEnabled?.(params);
-                    if (enabled === undefined || enabled)
-                        Wrapper = plugin.form.fieldBuilder(params) || Wrapper;
-                }
-                if (!fieldId) {
-                    console.warn("INTERNAL: Field id not found for property", property);
-                }
-            });
-        }
-        return Wrapper;
-    })());
+function useWrappedComponent<T extends CMSType = CMSType, M extends Record<string, any> = any>({
+    path,
+    collection,
+    propertyKey,
+    property,
+    Component,
+    plugins,
+}: UseWrappedComponentParams<T, M>): ComponentType<FieldProps<T, any, M>> | null {
+    const wrapperRef = useRef<ComponentType<FieldProps<T, any, M>> | null>(
+        (() => {
+            let Wrapper: ComponentType<FieldProps<T, any, M>> | null = null;
+            if (plugins) {
+                plugins.forEach((plugin) => {
+                    const fieldId = getFieldId(property);
+                    if (fieldId && plugin.form?.fieldBuilder) {
+                        const params: PluginFieldBuilderParams<T> = {
+                            fieldConfigId: fieldId,
+                            propertyKey,
+                            property,
+                            Field: Component,
+                            plugin,
+                            path,
+                            collection,
+                        };
+                        const enabled = plugin.form?.fieldBuilderEnabled?.(params);
+                        if (enabled === undefined || enabled)
+                            Wrapper = plugin.form.fieldBuilder(params) || Wrapper;
+                    }
+                    if (!fieldId) {
+                        console.warn("INTERNAL: Field id not found for property", property);
+                    }
+                });
+            }
+            return Wrapper;
+        })()
+    );
 
     return wrapperRef.current;
 }

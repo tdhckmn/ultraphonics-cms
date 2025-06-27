@@ -1,7 +1,7 @@
 "use client";
 import React, { useCallback } from "react";
 
-import "@/app/common/index.css"
+import "@/app/common/index.css";
 import "typeface-rubik";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/600.css";
@@ -20,7 +20,7 @@ import {
     useBuildLocalConfigurationPersistence,
     useBuildModeController,
     useBuildNavigationController,
-    useValidateAuthenticator
+    useValidateAuthenticator,
 } from "@firecms/core";
 import {
     FirebaseAuthController,
@@ -29,12 +29,16 @@ import {
     useFirebaseAuthController,
     useFirebaseStorageSource,
     useFirestoreDelegate,
-    useInitialiseFirebase
+    useInitialiseFirebase,
 } from "@firecms/firebase";
 
 import { firebaseConfig } from "../common/firebase_config";
 import { useDataEnhancementPlugin } from "@firecms/data_enhancement";
-import { useBuildUserManagement, userManagementAdminViews, useUserManagementPlugin } from "@firecms/user_management";
+import {
+    useBuildUserManagement,
+    userManagementAdminViews,
+    useUserManagementPlugin,
+} from "@firecms/user_management";
 import { useImportPlugin } from "@firecms/data_import";
 import { useExportPlugin } from "@firecms/data_export";
 import logo from "@/app/common/logo.svg";
@@ -44,27 +48,21 @@ import Link from "next/link";
 import { Button, OpenInNewIcon } from "@firecms/ui";
 
 export function App() {
-
     const title = "FireCMS e-commerce and blog demo";
 
     if (!firebaseConfig?.projectId) {
-        throw new Error("Firebase config not found. Please check your `firebase_config.ts` file and make sure it is correctly set up.");
+        throw new Error(
+            "Firebase config not found. Please check your `firebase_config.ts` file and make sure it is correctly set up."
+        );
     }
 
-    const {
-        firebaseApp,
-        firebaseConfigLoading,
-        configError
-    } = useInitialiseFirebase({
+    const { firebaseApp, firebaseConfigLoading, configError } = useInitialiseFirebase({
         firebaseConfig,
         name: "FireCMS",
     });
 
     const collectionsBuilder = useCallback(() => {
-        return [
-            productsCollection,
-            blogCollection
-        ];
+        return [productsCollection, blogCollection];
     }, []);
 
     // // Here you define your custom top-level views
@@ -86,14 +84,14 @@ export function App() {
      */
     const firestoreDelegate = useFirestoreDelegate({
         firebaseApp,
-        localTextSearchEnabled: true
-    })
+        localTextSearchEnabled: true,
+    });
 
     /**
      * Controller used for saving and fetching files in storage
      */
     const storageSource = useFirebaseStorageSource({
-        firebaseApp
+        firebaseApp,
     });
 
     /**
@@ -101,14 +99,14 @@ export function App() {
      */
     const authController: FirebaseAuthController = useFirebaseAuthController({
         firebaseApp,
-        signInOptions
+        signInOptions,
     });
     /**
      * Controller in charge of user management
      */
     const userManagement = useBuildUserManagement({
         dataSourceDelegate: firestoreDelegate,
-        authController
+        authController,
     });
 
     /**
@@ -119,16 +117,12 @@ export function App() {
     /**
      * Use the authenticator to control access to the main view
      */
-    const {
-        authLoading,
-        canAccessMainView,
-        notAllowedError
-    } = useValidateAuthenticator({
+    const { authLoading, canAccessMainView, notAllowedError } = useValidateAuthenticator({
         authController: userManagement,
         disabled: userManagement.loading,
         authenticator: userManagement.authenticator, // you can define your own authenticator here
         dataSourceDelegate: firestoreDelegate,
-        storageSource
+        storageSource,
     });
 
     const navigationController = useBuildNavigationController({
@@ -138,7 +132,7 @@ export function App() {
         // views,
         adminViews: userManagementAdminViews,
         authController,
-        dataSourceDelegate: firestoreDelegate
+        dataSourceDelegate: firestoreDelegate,
     });
 
     /**
@@ -146,10 +140,9 @@ export function App() {
      */
     const dataEnhancementPlugin = useDataEnhancementPlugin({
         getConfigForPath: ({ path }) => {
-            if (path === "products")
-                return true;
+            if (path === "products") return true;
             return false;
-        }
+        },
     });
 
     /**
@@ -164,7 +157,7 @@ export function App() {
     const exportPlugin = useExportPlugin();
 
     if (firebaseConfigLoading || !firebaseApp) {
-        return <CircularProgressCenter/>;
+        return <CircularProgressCenter />;
     }
 
     if (configError) {
@@ -174,7 +167,6 @@ export function App() {
     return (
         <SnackbarProvider>
             <ModeControllerProvider value={modeController}>
-
                 <FireCMS
                     navigationController={navigationController}
                     authController={userManagement}
@@ -185,46 +177,48 @@ export function App() {
                         dataEnhancementPlugin,
                         importPlugin,
                         exportPlugin,
-                        userManagementPlugin
+                        userManagementPlugin,
                     ]}
                 >
-                    {({
-                          context,
-                          loading
-                      }) => {
-
+                    {({ context, loading }) => {
                         let component;
                         if (loading || authLoading) {
-                            component = <CircularProgressCenter size={"large"}/>;
+                            component = <CircularProgressCenter size={"large"} />;
                         } else {
                             if (!canAccessMainView) {
                                 component = (
-                                    <div className={"bg-white rounded-2xl max-w-[500px] w-full h-fit"}>
+                                    <div
+                                        className={
+                                            "bg-white rounded-2xl max-w-[500px] w-full h-fit"
+                                        }
+                                    >
                                         <FirebaseLoginView
                                             logo={logo.src}
                                             allowSkipLogin={false}
                                             signInOptions={signInOptions}
                                             firebaseApp={firebaseApp}
                                             authController={userManagement}
-                                            notAllowedError={notAllowedError}/>
+                                            notAllowedError={notAllowedError}
+                                        />
                                     </div>
-
                                 );
                             } else {
                                 component = (
-                                    <Scaffold
-                                        logo={logo.src}
-                                        autoOpenDrawer={false}>
-                                        <AppBar title={title}
-                                                endAdornment={<Link href={"/"} target={"_blank"}>
+                                    <Scaffold logo={logo.src} autoOpenDrawer={false}>
+                                        <AppBar
+                                            title={title}
+                                            endAdornment={
+                                                <Link href={"/"} target={"_blank"}>
                                                     <Button variant={"text"}>
-                                                        <OpenInNewIcon/>
+                                                        <OpenInNewIcon />
                                                         Go to website
                                                     </Button>
-                                                </Link>}/>
-                                        <Drawer/>
-                                        <NavigationRoutes/>
-                                        <SideDialogs/>
+                                                </Link>
+                                            }
+                                        />
+                                        <Drawer />
+                                        <NavigationRoutes />
+                                        <SideDialogs />
                                     </Scaffold>
                                 );
                             }

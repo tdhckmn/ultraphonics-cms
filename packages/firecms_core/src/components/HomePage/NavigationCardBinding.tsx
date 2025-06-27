@@ -23,22 +23,21 @@ import React from "react";
 
  */
 export function NavigationCardBinding({
-                                          path,
-                                          collection,
-                                          view,
-                                          url,
-                                          name,
-                                          description,
-                                          onClick,
-                                          type,
-                                          shrink
-                                      }: NavigationEntry & {
-    onClick?: () => void,
-    shrink?: boolean // <-- add shrink prop type
+    path,
+    collection,
+    view,
+    url,
+    name,
+    description,
+    onClick,
+    type,
+    shrink,
+}: NavigationEntry & {
+    onClick?: () => void;
+    shrink?: boolean; // <-- add shrink prop type
 }) {
-
     const userConfigurationPersistence = useUserConfigurationPersistence();
-    const collectionIcon = <IconForView collectionOrView={collection ?? view}/>;
+    const collectionIcon = <IconForView collectionOrView={collection ?? view} />;
 
     const navigate = useNavigate();
     const context = useFireCMSContext();
@@ -48,70 +47,78 @@ export function NavigationCardBinding({
 
     const actionsArray: React.ReactNode[] = userConfigurationPersistence
         ? [
-            <IconButton
-                key={"favourite"}
-                size={"small"}
-                onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (favourite) {
-                        userConfigurationPersistence.setFavouritePaths(
-                            userConfigurationPersistence.favouritePaths.filter(p => p !== path)
-                        );
-                    } else {
-                        userConfigurationPersistence.setFavouritePaths(
-                            [...userConfigurationPersistence.favouritePaths, path]
-                        );
-                    }
-                }}>
-                <StarIcon
-                    size={"small"}
-                    className={favourite ? "text-secondary" : "text-surface-400 dark:text-surface-500"}/>
-            </IconButton>
-        ]
+              <IconButton
+                  key={"favourite"}
+                  size={"small"}
+                  onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (favourite) {
+                          userConfigurationPersistence.setFavouritePaths(
+                              userConfigurationPersistence.favouritePaths.filter((p) => p !== path)
+                          );
+                      } else {
+                          userConfigurationPersistence.setFavouritePaths([
+                              ...userConfigurationPersistence.favouritePaths,
+                              path,
+                          ]);
+                      }
+                  }}
+              >
+                  <StarIcon
+                      size={"small"}
+                      className={
+                          favourite ? "text-secondary" : "text-surface-400 dark:text-surface-500"
+                      }
+                  />
+              </IconButton>,
+          ]
         : [];
 
     if (customizationController.plugins && collection) {
         const actionProps: PluginHomePageActionsProps = {
             path,
             collection,
-            context
+            context,
         };
-        customizationController.plugins.forEach((plugin, i) => (
-            actionsArray.push(plugin.homePage?.CollectionActions
-                ? <plugin.homePage.CollectionActions
-                    key={`actions_${i}`}
-                    {...actionProps}
-                    extraProps={plugin.homePage.extraProps}
-                />
-                : null
-            )))
+        customizationController.plugins.forEach((plugin, i) =>
+            actionsArray.push(
+                plugin.homePage?.CollectionActions ? (
+                    <plugin.homePage.CollectionActions
+                        key={`actions_${i}`}
+                        {...actionProps}
+                        extraProps={plugin.homePage.extraProps}
+                    />
+                ) : null
+            )
+        );
     }
 
-    const actions: React.ReactNode | undefined = <>
-        {actionsArray}
-    </>
+    const actions: React.ReactNode | undefined = <>{actionsArray}</>;
 
     if (type === "admin") {
-        return <SmallNavigationCard icon={collectionIcon}
-                                    name={name}
-                                    url={url}/>;
+        return <SmallNavigationCard icon={collectionIcon} name={name} url={url} />;
     }
 
-    return <NavigationCard
-        icon={collectionIcon}
-        name={name}
-        description={description}
-        actions={actions}
-        onClick={() => {
-            onClick?.();
-            navigate(url);
-            if (userConfigurationPersistence) {
-                userConfigurationPersistence.setRecentlyVisitedPaths(
-                    [path, ...(userConfigurationPersistence.recentlyVisitedPaths ?? []).filter(p => p !== path)]
-                );
-            }
-        }}
-        shrink={shrink}
-    />;
+    return (
+        <NavigationCard
+            icon={collectionIcon}
+            name={name}
+            description={description}
+            actions={actions}
+            onClick={() => {
+                onClick?.();
+                navigate(url);
+                if (userConfigurationPersistence) {
+                    userConfigurationPersistence.setRecentlyVisitedPaths([
+                        path,
+                        ...(userConfigurationPersistence.recentlyVisitedPaths ?? []).filter(
+                            (p) => p !== path
+                        ),
+                    ]);
+                }
+            }}
+            shrink={shrink}
+        />
+    );
 }

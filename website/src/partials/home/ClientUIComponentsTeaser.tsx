@@ -30,15 +30,14 @@ import {
     Skeleton,
     Tab,
     Tabs,
-    Tooltip
+    Tooltip,
 } from "@firecms/ui";
 import { CTAButtonDarkMixin } from "../styles";
 
 // @ts-ignore
-import Masonry, { ResponsiveMasonry } from "react-responsive-masonry"
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 
 export default function ClientUIComponentsTeaser() {
-
     const [tabValue, setTabValue] = useState("tab1");
     const [isDialogOpen, setDialogOpen] = useState(false);
     const [isSheetOpen, setSheetOpen] = useState(false);
@@ -53,11 +52,10 @@ export default function ClientUIComponentsTeaser() {
                 columnsCountBreakPoints={{
                     350: 1,
                     750: 2,
-                    900: 3
+                    900: 3,
                 }}
             >
                 <Masonry>
-
                     <div className={"relative p-2 flex flex-row gap-2 break-inside-avoid"}>
                         <Button>Buttons</Button>
                         <Button variant={"outlined"}>Buttons</Button>
@@ -72,9 +70,13 @@ export default function ClientUIComponentsTeaser() {
                     </div>
 
                     <div className="relative p-2 flex flex-col gap-2 break-inside-avoid">
-                        <FileUpload accept={{ "image/*": [] }} title="Click or drop your image" onFilesAdded={() => {
-                            console.log("Files added");
-                        }}/>
+                        <FileUpload
+                            accept={{ "image/*": [] }}
+                            title="Click or drop your image"
+                            onFilesAdded={() => {
+                                console.log("Files added");
+                            }}
+                        />
                     </div>
 
                     <div className="w-full relative p-2 flex flex-row gap-2 break-inside-avoid">
@@ -105,26 +107,23 @@ export default function ClientUIComponentsTeaser() {
                     </div>
 
                     <div className="relative p-2 flex flex-col gap-2 break-inside-avoid">
-                        <SearchBar innerClassName="w-full"/>
+                        <SearchBar innerClassName="w-full" />
                     </div>
                     <div className="relative p-2 flex flex-row gap-2 break-inside-avoid">
-                        <Button variant="outlined" size="small" onClick={() => setDialogOpen(true)}>Open Dialog</Button>
-                        <Button variant="outlined" size="small" onClick={() => setSheetOpen(true)}>Open side
-                            sheet
-                            <KeyboardTabIcon size={"small"}/>
+                        <Button variant="outlined" size="small" onClick={() => setDialogOpen(true)}>
+                            Open Dialog
+                        </Button>
+                        <Button variant="outlined" size="small" onClick={() => setSheetOpen(true)}>
+                            Open side sheet
+                            <KeyboardTabIcon size={"small"} />
                         </Button>
                         <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
-
                             <DialogTitle variant={"h6"} gutterBottom>
                                 Dialog
                             </DialogTitle>
-                            <DialogContent>
-                                This UI kit is amazing!
-                            </DialogContent>
+                            <DialogContent>This UI kit is amazing!</DialogContent>
                             <DialogActions>
-                                <Button
-                                    color="primary"
-                                    onClick={() => setDialogOpen(false)}>
+                                <Button color="primary" onClick={() => setDialogOpen(false)}>
                                     Ok
                                 </Button>
                             </DialogActions>
@@ -136,45 +135,60 @@ export default function ClientUIComponentsTeaser() {
                         </Sheet>
                     </div>
 
-
                     <div className="relative p-2 flex flex-row gap-2 break-inside-avoid items-center">
                         <Tooltip title={"Small button"}>
-                            <IconButton variant="filled" size="small" onClick={() => console.log("Small Clicked!")}>
-                                <SettingsIcon size="small"/>
+                            <IconButton
+                                variant="filled"
+                                size="small"
+                                onClick={() => console.log("Small Clicked!")}
+                            >
+                                <SettingsIcon size="small" />
                             </IconButton>
                         </Tooltip>
                         <Tooltip title={"Ghost button"}>
                             <IconButton variant="ghost" onClick={() => console.log("Clicked!")}>
-                                <MusicNoteIcon/>
+                                <MusicNoteIcon />
                             </IconButton>
                         </Tooltip>
                         <Tooltip title={"Filled button"}>
                             <IconButton
                                 variant="filled"
-                                onClick={() => console.log("Square Clicked!")}>
-                                <AddIcon/>
+                                onClick={() => console.log("Square Clicked!")}
+                            >
+                                <AddIcon />
                             </IconButton>
                         </Tooltip>
                         <Tooltip title={"Square filled button"}>
                             <IconButton
                                 variant="filled"
                                 shape="square"
-                                onClick={() => console.log("Square Clicked!")}>
-                                <CreditCardIcon/>
+                                onClick={() => console.log("Square Clicked!")}
+                            >
+                                <CreditCardIcon />
                             </IconButton>
                         </Tooltip>
                     </div>
 
                     <div className="relative p-2 flex flex-col gap-2 break-inside-avoid">
-                        <DateTimeField value={selectedDate}
-                                       onChange={setSelectedDate}
-                                       label="Select a date"
-                                       mode="date"/>
+                        <DateTimeField
+                            value={selectedDate}
+                            onChange={setSelectedDate}
+                            label="Select a date"
+                            mode="date"
+                        />
                     </div>
 
                     <div className="relative  flex flex-row gap-2 break-inside-avoid items-center">
-                        <Checkbox checked={checked} onCheckedChange={() => setChecked(!checked)} size="medium"/>
-                        <BooleanSwitch size="small" value={checked} onValueChange={() => setChecked(!checked)}/>
+                        <Checkbox
+                            checked={checked}
+                            onCheckedChange={() => setChecked(!checked)}
+                            size="medium"
+                        />
+                        <BooleanSwitch
+                            size="small"
+                            value={checked}
+                            onValueChange={() => setChecked(!checked)}
+                        />
                     </div>
 
                     <div className="w-full relative p-2 flex flex-row gap-2 break-inside-avoid ">
@@ -184,31 +198,42 @@ export default function ClientUIComponentsTeaser() {
                             onValueChange={setMultiSelectedValue}
                             placeholder={<i>Multi select</i>}
                         >
-                            <MultiSelectItem value="mother"><Person2Icon/>Mother</MultiSelectItem>
-                            <MultiSelectItem value="father"><PersonIcon/>Father</MultiSelectItem>
-                            <MultiSelectItem value="kid"><Person4Icon/>Kid</MultiSelectItem>
-                            <MultiSelectItem value="baby"><ChildFriendlyIcon/>Baby</MultiSelectItem>
+                            <MultiSelectItem value="mother">
+                                <Person2Icon />
+                                Mother
+                            </MultiSelectItem>
+                            <MultiSelectItem value="father">
+                                <PersonIcon />
+                                Father
+                            </MultiSelectItem>
+                            <MultiSelectItem value="kid">
+                                <Person4Icon />
+                                Kid
+                            </MultiSelectItem>
+                            <MultiSelectItem value="baby">
+                                <ChildFriendlyIcon />
+                                Baby
+                            </MultiSelectItem>
                         </MultiSelect>
                     </div>
 
                     <div className="relative p-2 flex flex-col gap-2 break-inside-avoid">
-                        <Skeleton width={180} height={20}/>
-                        <Skeleton width={2000} height={16}/>
-                        <Skeleton width={120} height={16}/>
+                        <Skeleton width={180} height={20} />
+                        <Skeleton width={2000} height={16} />
+                        <Skeleton width={120} height={16} />
                     </div>
 
                     <div className="relative p-2 flex flex-col gap-2 break-inside-avoid">
-                        <Chip colorScheme={"yellowLight"}><FaceIcon size={"small"}/>John Peterson</Chip>
+                        <Chip colorScheme={"yellowLight"}>
+                            <FaceIcon size={"small"} />
+                            John Peterson
+                        </Chip>
                     </div>
-
                 </Masonry>
             </ResponsiveMasonry>
-            <a
-                className={CTAButtonDarkMixin + " w-full lg:w-auto mt-8"}
-                href={"/ui"}
-            >
+            <a className={CTAButtonDarkMixin + " w-full lg:w-auto mt-8"} href={"/ui"}>
                 See all components
             </a>
         </div>
     );
-};
+}

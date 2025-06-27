@@ -17,8 +17,7 @@ export type NavigationRoutesProps = {
      */
     homePage?: React.ReactNode;
 
-    children?: React.ReactNode | React.ReactNode[]
-
+    children?: React.ReactNode | React.ReactNode[];
 };
 
 /**
@@ -29,89 +28,78 @@ export type NavigationRoutesProps = {
  *
  * @group Components
  */
-export const NavigationRoutes = React.memo<NavigationRoutesProps>(
-    function NavigationRoutes({
-                                  homePage = <DefaultHomePage/>,
-                                  children
-                              }: NavigationRoutesProps) {
+export const NavigationRoutes = React.memo<NavigationRoutesProps>(function NavigationRoutes({
+    homePage = <DefaultHomePage />,
+    children,
+}: NavigationRoutesProps) {
+    const location = useLocation();
+    const navigation = useNavigationController();
 
-        const location = useLocation();
-        const navigation = useNavigationController();
+    if (!navigation) return <></>;
 
-        if (!navigation)
-            return <></>;
+    const state = location.state as any;
 
-        const state = location.state as any;
+    /**
+     * The location can be overridden if `base_location` is set in the
+     * state field of the current location. This can happen if you open
+     * a side entity, like `products`, from a different one, like `users`
+     */
+    const baseLocation = state && state.base_location ? state.base_location : location;
 
-        /**
-         * The location can be overridden if `base_location` is set in the
-         * state field of the current location. This can happen if you open
-         * a side entity, like `products`, from a different one, like `users`
-         */
-        const baseLocation = state && state.base_location ? state.base_location : location;
+    const cmsViews: React.ReactNode[] = [];
+    if (navigation.views) {
+        navigation.views.forEach((cmsView) => {
+            if (Array.isArray(cmsView.path))
+                cmsViews.push(...cmsView.path.map((path) => buildCMSViewRoute(path, cmsView)));
+            else cmsViews.push(buildCMSViewRoute(cmsView.path, cmsView));
+        });
+    }
+    if (navigation.adminViews) {
+        navigation.adminViews.forEach((cmsView) => {
+            if (Array.isArray(cmsView.path))
+                cmsViews.push(...cmsView.path.map((path) => buildCMSViewRoute(path, cmsView)));
+            else cmsViews.push(buildCMSViewRoute(cmsView.path, cmsView));
+        });
+    }
 
-        const cmsViews: React.ReactNode[] = [];
-        if (navigation.views) {
-            navigation.views.forEach((cmsView) => {
-                if (Array.isArray(cmsView.path))
-                    cmsViews.push(...cmsView.path.map(path => buildCMSViewRoute(path, cmsView)));
-                else
-                    cmsViews.push(buildCMSViewRoute(cmsView.path, cmsView));
-            });
-        }
-        if (navigation.adminViews) {
-            navigation.adminViews.forEach((cmsView) => {
-                if (Array.isArray(cmsView.path))
-                    cmsViews.push(...cmsView.path.map(path => buildCMSViewRoute(path, cmsView)));
-                else
-                    cmsViews.push(buildCMSViewRoute(cmsView.path, cmsView));
-            });
-        }
+    const collectionUrlPath = navigation.buildUrlCollectionPath("");
+    const collectionRoute = (
+        <Route
+            path={collectionUrlPath + "/*"}
+            key={`navigation_entity`}
+            element={
+                <ErrorBoundary>
+                    <FireCMSRoute />
+                </ErrorBoundary>
+            }
+        />
+    );
 
-        const collectionUrlPath = navigation.buildUrlCollectionPath("");
-        const collectionRoute = (
-            <Route path={collectionUrlPath + "/*"}
-                   key={`navigation_entity`}
-                   element={
-                       <ErrorBoundary>
-                           <FireCMSRoute/>
-                       </ErrorBoundary>
-                   }/>
-        );
+    const homeRoute = <Route path={"/"} element={<HomePageRoute>{homePage}</HomePageRoute>} />;
 
-        const homeRoute = (
-            <Route path={"/"}
-                   element={<HomePageRoute>{homePage}</HomePageRoute>}/>
-        );
+    const notFoundRoute = <Route path={"*"} element={<NotFoundPage />} />;
 
-        const notFoundRoute = (
-            <Route path={"*"}
-                   element={
-                       <NotFoundPage/>
-                   }/>
-        );
+    return (
+        <Routes location={baseLocation}>
+            {collectionRoute}
 
-        return (
-            <Routes location={baseLocation}>
+            {cmsViews}
 
-                {collectionRoute}
+            {homeRoute}
 
-                {cmsViews}
+            {notFoundRoute}
 
-                {homeRoute}
-
-                {notFoundRoute}
-
-                {children}
-
-            </Routes>
-        );
-    });
+            {children}
+        </Routes>
+    );
+});
 
 const buildCMSViewRoute = (path: string, cmsView: CMSView) => {
-    return <Route
-        key={"navigation_view_" + path}
-        path={path}
-        element={<CustomCMSRoute cmsView={cmsView}/>}
-    />;
+    return (
+        <Route
+            key={"navigation_view_" + path}
+            path={path}
+            element={<CustomCMSRoute cmsView={cmsView} />}
+        />
+    );
 };

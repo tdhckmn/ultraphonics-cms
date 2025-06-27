@@ -14,7 +14,6 @@
 
 <br />
 
-
 [![NPM](https://img.shields.io/npm/v/firecms.svg)](https://www.npmjs.com/package/firecms) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 **Important**: This package is a wrapper around the FireCMS CLI. It is
@@ -94,7 +93,6 @@ For FireCMS PRO:
 ```bash
 firecms init --pro
 ```
-
 
 ### Development only
 

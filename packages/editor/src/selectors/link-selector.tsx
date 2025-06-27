@@ -1,5 +1,5 @@
 import { useEditor } from "../components";
-import { useEffect, useRef, } from "react";
+import { useEffect, useRef } from "react";
 import { Button, CheckIcon, cls, DeleteIcon, focusedDisabled, Popover } from "@firecms/ui";
 
 export function isValidUrl(url: string) {
@@ -29,10 +29,7 @@ interface LinkSelectorProps {
     onOpenChange: (open: boolean) => void;
 }
 
-export const LinkSelector = ({
-                                 open,
-                                 onOpenChange
-                             }: LinkSelectorProps) => {
+export const LinkSelector = ({ open, onOpenChange }: LinkSelectorProps) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const { editor } = useEditor();
 
@@ -44,18 +41,22 @@ export const LinkSelector = ({
     if (!editor) return null;
 
     return (
-        <Popover modal={true}
-                 open={open}
-                 onOpenChange={onOpenChange}
-                 trigger={<Button variant="text"
-                                  className="gap-2 rounded-none"
-                                  color={"text"}>
-                     <p className={cls("underline decoration-stone-400 underline-offset-4", {
-                         "text-blue-500": editor.isActive("link"),
-                     })}>
-                         Link
-                     </p>
-                 </Button>}>
+        <Popover
+            modal={true}
+            open={open}
+            onOpenChange={onOpenChange}
+            trigger={
+                <Button variant="text" className="gap-2 rounded-none" color={"text"}>
+                    <p
+                        className={cls("underline decoration-stone-400 underline-offset-4", {
+                            "text-blue-500": editor.isActive("link"),
+                        })}
+                    >
+                        Link
+                    </p>
+                </Button>
+            }
+        >
             <form
                 onSubmit={(e) => {
                     const target = e.currentTarget as HTMLFormElement;
@@ -71,7 +72,11 @@ export const LinkSelector = ({
                     autoFocus={open}
                     placeholder="Paste a link"
                     defaultValue={editor.getAttributes("link").href || ""}
-                    className={cls("text-surface-900 dark:text-white flex-grow bg-transparent p-1 text-sm outline-none", focusedDisabled)}/>
+                    className={cls(
+                        "text-surface-900 dark:text-white flex-grow bg-transparent p-1 text-sm outline-none",
+                        focusedDisabled
+                    )}
+                />
 
                 {editor.getAttributes("link").href ? (
                     <Button
@@ -84,12 +89,11 @@ export const LinkSelector = ({
                             editor.chain().focus().unsetLink().run();
                         }}
                     >
-                        <DeleteIcon size="small"/>
+                        <DeleteIcon size="small" />
                     </Button>
                 ) : (
-                    <Button size={"small"}
-                            variant={"text"}>
-                        <CheckIcon size="small"/>
+                    <Button size={"small"} variant={"text"}>
+                        <CheckIcon size="small" />
                     </Button>
                 )}
             </form>

@@ -17,7 +17,7 @@ const ctaProperty = buildProperty({
             name: "Name",
             description: "Text that will be shown on the button",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         type: {
             name: "Type",
@@ -26,27 +26,32 @@ const ctaProperty = buildProperty({
             dataType: "string",
             enumValues: {
                 complete: "Complete",
-                continue: "Continue"
-            }
-        }
-    }
+                continue: "Continue",
+            },
+        },
+    },
 });
 ```
 
-###  `properties`
+### `properties`
+
 Record of properties included in this map.
 
 ### `previewProperties`
+
 List of properties rendered as this map preview. Defaults to first 3.
 
 ### `spreadChildren`
+
 Display the child properties as independent columns in the collection
 view. Defaults to `false`.
 
 ### `expanded`
+
 Should the map be expanded by default in the form view. Defaults to `false`.
 
 ### `keyValue`
+
 Render this map as a key-value table that allows to use
 arbitrary keys. You don't need to define the properties in this case.
 
@@ -60,14 +65,16 @@ When set to `true`, displays the child properties directly without being wrapped
 
 ### `validation`
 
-* `required` Should this field be compulsory.
-* `requiredMessage` Message to be displayed as a validation error.
+- `required` Should this field be compulsory.
+- `requiredMessage` Message to be displayed as a validation error.
 
 ---
 
 The widget that gets created is
+
 - [`MapFieldBinding`](../../api/functions/MapFieldBinding) Field that renders the children
   property fields
 
 Links:
+
 - [API](../../api/interfaces/MapProperty)

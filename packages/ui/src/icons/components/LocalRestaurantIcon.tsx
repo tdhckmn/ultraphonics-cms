@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function LocalRestaurantIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"local_restaurant"}/>
+    return <Icon {...props} iconKey={"local_restaurant"} />;
 }

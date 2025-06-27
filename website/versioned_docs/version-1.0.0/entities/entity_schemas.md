@@ -47,8 +47,8 @@ type Product = {
     publisher: {
         name: string;
         external_id: string;
-    }
-}
+    };
+};
 
 export const productSchema = buildCollection<Product>({
     name: "Product",
@@ -57,9 +57,9 @@ export const productSchema = buildCollection<Product>({
             dataType: "string",
             title: "Name",
             config: {
-                multiline: true
+                multiline: true,
             },
-            validation: { required: true }
+            validation: { required: true },
         },
         main_image: {
             dataType: "string",
@@ -70,19 +70,19 @@ export const productSchema = buildCollection<Product>({
                     storagePath: "images",
                     acceptedFiles: ["image/*"],
                     metadata: {
-                        cacheControl: "max-age=1000000"
-                    }
-                }
+                        cacheControl: "max-age=1000000",
+                    },
+                },
             },
             description: "Upload field for images",
             validation: {
-                required: true
-            }
+                required: true,
+            },
         },
         available: {
             dataType: "boolean",
             title: "Available",
-            columnWidth: 100
+            columnWidth: 100,
         },
         price: ({ values }) => ({
             dataType: "number",
@@ -90,13 +90,13 @@ export const productSchema = buildCollection<Product>({
             validation: {
                 requiredMessage: "You must set a price between 0 and 1000",
                 min: 0,
-                max: 1000
+                max: 1000,
             },
             disabled: !values.available && {
                 clearOnDisabled: true,
-                disabledMessage: "You can only set the price on available items"
+                disabledMessage: "You can only set the price on available items",
             },
-            description: "Price with range validation"
+            description: "Price with range validation",
         }),
         related_products: {
             dataType: "array",
@@ -104,8 +104,8 @@ export const productSchema = buildCollection<Product>({
             description: "Reference to self",
             of: {
                 dataType: "reference",
-                path: "products"
-            }
+                path: "products",
+            },
         },
         publisher: {
             title: "Publisher",
@@ -114,14 +114,14 @@ export const productSchema = buildCollection<Product>({
             properties: {
                 name: {
                     title: "Name",
-                    dataType: "string"
+                    dataType: "string",
                 },
                 external_id: {
                     title: "External id",
-                    dataType: "string"
-                }
-            }
-        }
-    }
+                    dataType: "string",
+                },
+            },
+        },
+    },
 });
 ```

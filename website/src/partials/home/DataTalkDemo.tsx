@@ -12,9 +12,7 @@ export interface Exchange {
 
 type TimeoutId = ReturnType<typeof setTimeout> | null;
 
-export function DataTalkDemo({ exchanges }: {
-    exchanges: Exchange[]
-}): JSX.Element {
+export function DataTalkDemo({ exchanges }: { exchanges: Exchange[] }): JSX.Element {
     const [currentExchangeIndex, setCurrentExchangeIndex] = useState(0);
     const [displayText, setDisplayText] = useState("");
     const [isTyping, setIsTyping] = useState(true);
@@ -27,8 +25,7 @@ export function DataTalkDemo({ exchanges }: {
     const currentExchange = exchanges[currentExchangeIndex];
 
     useEffect(() => {
-        if (!isTyping) return () => {
-        };
+        if (!isTyping) return () => {};
         const q = currentExchange.query;
         if (displayText.length < q.length) {
             typingTimeout.current = setTimeout(() => {
@@ -44,8 +41,7 @@ export function DataTalkDemo({ exchanges }: {
     }, [displayText, isTyping, currentExchangeIndex]);
 
     useEffect(() => {
-        if (!showResponse) return () => {
-        };
+        if (!showResponse) return () => {};
         responseTimeout.current = setTimeout(() => setShowResponse(false), 4000);
         return () => {
             if (responseTimeout.current) clearTimeout(responseTimeout.current);
@@ -53,8 +49,7 @@ export function DataTalkDemo({ exchanges }: {
     }, [showResponse]);
 
     useEffect(() => {
-        if (isTyping || showResponse) return () => {
-        };
+        if (isTyping || showResponse) return () => {};
         nextTimeout.current = setTimeout(() => {
             setCurrentExchangeIndex((i) => (i + 1) % exchanges.length);
             setDisplayText("");
@@ -65,40 +60,31 @@ export function DataTalkDemo({ exchanges }: {
         };
     }, [isTyping, showResponse]);
 
-    const handleRunCode = (code: string) => {
-
-    };
-    const handleCopyCode = (code: string) =>
-        navigator.clipboard?.writeText(code);
-    const handleFeedback = (type: string) =>
-        alert(`Feedback (${type}) not implemented.`);
+    const handleRunCode = (code: string) => {};
+    const handleCopyCode = (code: string) => navigator.clipboard?.writeText(code);
+    const handleFeedback = (type: string) => alert(`Feedback (${type}) not implemented.`);
 
     return (
-
         <div className={"mt-8 mb-12 bg-gray-800 rounded-xl p-6 border " + defaultBorderMixin}>
             <div
                 className="container mx-auto flex-1 flex flex-col gap-4 overflow-y-auto"
                 style={{ height: 500 }}
             >
                 {/* User Query */}
-                <div
-                    className="flex flex-col gap-2 bg-surface-800 bg-opacity-20 rounded-lg p-4 shadow-sm">
+                <div className="flex flex-col gap-2 bg-surface-800 bg-opacity-20 rounded-lg p-4 shadow-sm">
                     <div className="flex items-start gap-3">
-                        <div
-                            className="rounded-full flex items-center justify-center overflow-hidden p-1 w-12 h-12">
-                  <span
-                      className="bg-surface-accent-800 flex items-center justify-center w-10 h-10 rounded-full">
-                    <span className="material-icons" style={{ fontSize: 24 }}>
-                      person
-                    </span>
-                  </span>
+                        <div className="rounded-full flex items-center justify-center overflow-hidden p-1 w-12 h-12">
+                            <span className="bg-surface-accent-800 flex items-center justify-center w-10 h-10 rounded-full">
+                                <span className="material-icons" style={{ fontSize: 24 }}>
+                                    person
+                                </span>
+                            </span>
                         </div>
                         <div className="flex-1 text-surface-200">
                             <p className="min-h-[1.5em] font-semibold">
                                 {displayText}
                                 {isTyping && (
-                                    <span
-                                        className="inline-block w-0.5 h-5 bg-current animate-pulse ml-1 align-middle"/>
+                                    <span className="inline-block w-0.5 h-5 bg-current animate-pulse ml-1 align-middle" />
                                 )}
                             </p>
                         </div>
@@ -116,40 +102,46 @@ export function DataTalkDemo({ exchanges }: {
                     {currentExchange && (
                         <div className="flex items-start gap-3">
                             {/* AI avatar */}
-                            <div
-                                className="rounded-full flex items-center justify-center overflow-hidden p-1 w-12 h-12">
-                    <span
-                        className="bg-surface-accent-800 flex items-center justify-center w-10 h-10 rounded-full">
-                      <span className="material-icons" style={{ fontSize: 24 }}>
-                        auto_fix_high
-                      </span>
-                    </span>
+                            <div className="rounded-full flex items-center justify-center overflow-hidden p-1 w-12 h-12">
+                                <span className="bg-surface-accent-800 flex items-center justify-center w-10 h-10 rounded-full">
+                                    <span className="material-icons" style={{ fontSize: 24 }}>
+                                        auto_fix_high
+                                    </span>
+                                </span>
                             </div>
 
                             <div className="mt-2 flex-1 text-surface-200">
-                                {currentExchange.responseText && <div
-                                    className="max-w-full prose-invert prose-headings:font-title text-base mb-4">
-                                    <p>{currentExchange.responseText}</p>
-                                </div>}
+                                {currentExchange.responseText && (
+                                    <div className="max-w-full prose-invert prose-headings:font-title text-base mb-4">
+                                        <p>{currentExchange.responseText}</p>
+                                    </div>
+                                )}
 
-                                <div className="flex flex-col my-4 gap-2" style={{ maxWidth: 1050 }}>
+                                <div
+                                    className="flex flex-col my-4 gap-2"
+                                    style={{ maxWidth: 1050 }}
+                                >
                                     <div className="flex flex-row w-full gap-4 items-start">
-
-                                        {currentExchange.Component && <currentExchange.Component/>}
-                                        {currentExchange.code && <>
-                                            <CodeBlock language="javascript" className={"flex-1 text-sm"}>
-                                                {currentExchange.code}
-                                            </CodeBlock>
-                                            <button
-                                                type="button"
-                                                onClick={() => handleRunCode(currentExchange.code)}
-                                                className="typography-button h-fit rounded-md whitespace-nowrap inline-flex items-center justify-center p-2 focus:outline-none transition ease-in-out duration-150 gap-2 w-fit border border-primary bg-primary focus:ring-primary shadow hover:ring-1 hover:ring-primary text-white hover:text-white py-1 px-2 flex-shrink-0"
-                                            >
-                                                Run Code
-                                            </button>
-                                        </>
-
-                                        }
+                                        {currentExchange.Component && <currentExchange.Component />}
+                                        {currentExchange.code && (
+                                            <>
+                                                <CodeBlock
+                                                    language="javascript"
+                                                    className={"flex-1 text-sm"}
+                                                >
+                                                    {currentExchange.code}
+                                                </CodeBlock>
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleRunCode(currentExchange.code)
+                                                    }
+                                                    className="typography-button h-fit rounded-md whitespace-nowrap inline-flex items-center justify-center p-2 focus:outline-none transition ease-in-out duration-150 gap-2 w-fit border border-primary bg-primary focus:ring-primary shadow hover:ring-1 hover:ring-primary text-white hover:text-white py-1 px-2 flex-shrink-0"
+                                                >
+                                                    Run Code
+                                                </button>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
 
@@ -161,9 +153,9 @@ export function DataTalkDemo({ exchanges }: {
                                         title="Copy code"
                                         className="cursor-pointer text-surface-accent-300 bg-transparent hover:bg-gray-500/20 inline-flex items-center justify-center p-2 text-sm font-medium rounded-full w-8 h-8 min-w-8 min-h-8"
                                     >
-                        <span className="material-icons" style={{ fontSize: 18 }}>
-                          content_copy
-                        </span>
+                                        <span className="material-icons" style={{ fontSize: 18 }}>
+                                            content_copy
+                                        </span>
                                     </button>
                                     <button
                                         type="button"
@@ -171,9 +163,9 @@ export function DataTalkDemo({ exchanges }: {
                                         title="Good response"
                                         className="cursor-pointer text-surface-accent-300 bg-transparent hover:bg-gray-500/20 inline-flex items-center justify-center p-2 text-sm font-medium rounded-full w-8 h-8 min-w-8 min-h-8"
                                     >
-                        <span className="material-icons" style={{ fontSize: 18 }}>
-                          thumb_up_off_alt
-                        </span>
+                                        <span className="material-icons" style={{ fontSize: 18 }}>
+                                            thumb_up_off_alt
+                                        </span>
                                     </button>
                                     <button
                                         type="button"
@@ -181,9 +173,9 @@ export function DataTalkDemo({ exchanges }: {
                                         title="Bad response"
                                         className="cursor-pointer text-surface-accent-300 bg-transparent hover:bg-gray-500/20 inline-flex items-center justify-center p-2 text-sm font-medium rounded-full w-8 h-8 min-w-8 min-h-8"
                                     >
-                        <span className="material-icons" style={{ fontSize: 18 }}>
-                          thumb_down_off_alt
-                        </span>
+                                        <span className="material-icons" style={{ fontSize: 18 }}>
+                                            thumb_down_off_alt
+                                        </span>
                                     </button>
                                 </div>
                             </div>

@@ -12,21 +12,21 @@ const DEFAULT_SERVER = "https://api-drplyi3b6q-ey.a.run.app";
  * @group Firebase
  */
 export async function performPineconeTextSearch({
-                                                   host = DEFAULT_SERVER,
-                                                   firebaseToken,
-                                                   projectId,
-                                                   collectionPath,
-                                                   query
-                                               }: {
-    host?: string,
-    firebaseToken: string,
-    collectionPath: string,
-    projectId: string,
-    query: string
+    host = DEFAULT_SERVER,
+    firebaseToken,
+    projectId,
+    collectionPath,
+    query,
+}: {
+    host?: string;
+    firebaseToken: string;
+    collectionPath: string;
+    projectId: string;
+    query: string;
 }): Promise<readonly string[]> {
-
     console.debug("Performing Pinecone query", collectionPath, query);
-    const response = await fetch((host ?? DEFAULT_SERVER) + `/projects/${projectId}/search/${collectionPath}`,
+    const response = await fetch(
+        (host ?? DEFAULT_SERVER) + `/projects/${projectId}/search/${collectionPath}`,
         {
             // mode: "no-cors",
             method: "POST",
@@ -36,40 +36,38 @@ export async function performPineconeTextSearch({
                 // "x-de-version": version
             },
             body: JSON.stringify({
-                query
-            })
-        });
+                query,
+            }),
+        }
+    );
 
     const promise = await response.json();
     return promise.data.ids;
-
 }
 
 export function buildPineconeSearchController({
-                                                 isPathSupported,
-                                                 search
-                                             }: {
-    isPathSupported: (path: string) => boolean,
+    isPathSupported,
+    search,
+}: {
+    isPathSupported: (path: string) => boolean;
     search: (props: {
-        searchString: string,
-        path: string,
-        currentUser?: FirebaseUser
-    }) => Promise<readonly string[] | undefined>,
+        searchString: string;
+        path: string;
+        currentUser?: FirebaseUser;
+    }) => Promise<readonly string[] | undefined>;
 }): FirestoreTextSearchControllerBuilder {
     return (props): FirestoreTextSearchController => {
-
         const init = (props: {
-            path: string,
-            collection?: EntityCollection | ResolvedEntityCollection
+            path: string;
+            collection?: EntityCollection | ResolvedEntityCollection;
         }) => {
             // do nothing
             return Promise.resolve(isPathSupported(props.path));
-        }
+        };
 
         return {
             init,
-            search
-        }
-    }
-
+            search,
+        };
+    };
 }

@@ -34,7 +34,7 @@ import {
     starterKit,
     taskItem,
     taskList,
-    tiptapLink
+    tiptapLink,
 } from "./editor_extensions";
 import { createDropImagePlugin, createImageExtension } from "./extensions/Image";
 import { CustomKeymap } from "./extensions/custom-keymap";
@@ -48,22 +48,22 @@ import { SlashCommand, suggestion } from "./extensions/slashCommand";
 export type FireCMSEditorTextSize = "sm" | "base" | "lg";
 
 export type FireCMSEditorProps = {
-    content?: JSONContent | string,
-    onMarkdownContentChange?: (content: string) => void,
-    onJsonContentChange?: (content: JSONContent | null) => void,
-    onHtmlContentChange?: (content: string) => void,
-    handleImageUpload: (file: File) => Promise<string>,
-    version?: number,
-    textSize?: FireCMSEditorTextSize,
-    highlight?: { from: number, to: number },
-    aiController?: EditorAIController,
+    content?: JSONContent | string;
+    onMarkdownContentChange?: (content: string) => void;
+    onJsonContentChange?: (content: JSONContent | null) => void;
+    onHtmlContentChange?: (content: string) => void;
+    handleImageUpload: (file: File) => Promise<string>;
+    version?: number;
+    textSize?: FireCMSEditorTextSize;
+    highlight?: { from: number; to: number };
+    aiController?: EditorAIController;
     customComponents?: CustomEditorComponent[];
     disabled?: boolean;
 };
 
 export type CustomEditorComponent = {
-    name: string,
-    component: React.FC
+    name: string;
+    component: React.FC;
 };
 
 // custom components need to be able to display and update the editor content
@@ -76,24 +76,23 @@ const CustomDocument = Document.extend({
 });
 
 const proseClasses = {
-    "sm": "prose-sm",
-    "base": "prose-base",
-    "lg": "prose-lg"
-}
+    sm: "prose-sm",
+    base: "prose-base",
+    lg: "prose-lg",
+};
 
 export const FireCMSEditor = ({
-                                  content,
-                                  onJsonContentChange,
-                                  onHtmlContentChange,
-                                  onMarkdownContentChange,
-                                  version,
-                                  textSize = "base",
-                                  highlight,
-                                  handleImageUpload,
-                                  aiController,
-                                  disabled
-                              }: FireCMSEditorProps) => {
-
+    content,
+    onJsonContentChange,
+    onHtmlContentChange,
+    onMarkdownContentChange,
+    version,
+    textSize = "base",
+    highlight,
+    handleImageUpload,
+    aiController,
+    disabled,
+}: FireCMSEditorProps) => {
     const ref = React.useRef<HTMLDivElement | null>(null);
     const editorRef = React.useRef<Editor | null>(null);
 
@@ -121,7 +120,6 @@ export const FireCMSEditor = ({
     useEffect(() => {
         if (version === undefined) return;
         if (editorRef.current && version > 0) {
-
             const chain = editorRef.current.chain();
 
             if (deferredHighlight) {
@@ -129,7 +127,6 @@ export const FireCMSEditor = ({
             } else {
                 chain.focus().removeAutocompleteHighlight().run();
             }
-
         }
     }, [deferredHighlight?.from, deferredHighlight?.to]);
 
@@ -146,70 +143,73 @@ export const FireCMSEditor = ({
         if (onHtmlContentChange) {
             onHtmlContentChange?.(editor.getHTML());
         }
-    }
+    };
 
     const proseClass = proseClasses[textSize];
 
-    const extensions: Extensions = useMemo(() => ([
-        starterKit as any,
-        CustomDocument,
-        HighlightDecorationExtension(highlight),
-        TextLoadingDecorationExtension,
-        Underline,
-        Bold,
-        TextStyle,
-        Italic,
-        Strike,
-        Color,
-        Highlight.configure({
-            multicolor: true
-        }),
-        // CustomBlock.configure({
-        //     component: CustomComponent,
-        //     delimiter: "```custom"
-        // }),
-        Heading,
-        CustomKeymap,
-        DragAndDrop,
-        placeholder,
-        tiptapLink,
-        imageExtension,
-        taskList,
-        taskItem,
-        Markdown.configure({
-            html: true
-        }),
-        horizontalRule,
-        bulletList,
-        orderedList,
-        listItem,
-        blockquote,
-        codeBlock,
-        code,
-        SlashCommand.configure({
-            HTMLAttributes: {
-                class: "mention"
-            },
-            suggestion: suggestion(ref, {
-                upload: handleImageUpload,
-                aiController,
-            })
-        })
-    ]), []);
+    const extensions: Extensions = useMemo(
+        () => [
+            starterKit as any,
+            CustomDocument,
+            HighlightDecorationExtension(highlight),
+            TextLoadingDecorationExtension,
+            Underline,
+            Bold,
+            TextStyle,
+            Italic,
+            Strike,
+            Color,
+            Highlight.configure({
+                multicolor: true,
+            }),
+            // CustomBlock.configure({
+            //     component: CustomComponent,
+            //     delimiter: "```custom"
+            // }),
+            Heading,
+            CustomKeymap,
+            DragAndDrop,
+            placeholder,
+            tiptapLink,
+            imageExtension,
+            taskList,
+            taskItem,
+            Markdown.configure({
+                html: true,
+            }),
+            horizontalRule,
+            bulletList,
+            orderedList,
+            listItem,
+            blockquote,
+            codeBlock,
+            code,
+            SlashCommand.configure({
+                HTMLAttributes: {
+                    class: "mention",
+                },
+                suggestion: suggestion(ref, {
+                    upload: handleImageUpload,
+                    aiController,
+                }),
+            }),
+        ],
+        []
+    );
 
     return (
-        <div
-            ref={ref}
-            className="relative min-h-[300px] w-full">
-
+        <div ref={ref} className="relative min-h-[300px] w-full">
             <EditorProvider
                 content={content ?? ""}
                 extensions={extensions}
                 editorProps={{
                     editable: () => !disabled,
                     attributes: {
-                        class: cls(proseClass, "prose-headings:font-title font-default focus:outline-none max-w-full p-12")
-                    }
+                        class: cls(
+                            proseClass,
+                            "prose-headings:font-title font-default focus:outline-none max-w-full p-12"
+                        ),
+                    },
                 }}
                 onCreate={({ editor }) => {
                     // @ts-ignore
@@ -218,24 +218,29 @@ export const FireCMSEditor = ({
                 }}
                 onUpdate={({ editor }) => {
                     onEditorUpdate(editor as Editor);
-                }}>
-
+                }}
+            >
                 <EditorBubble
                     tippyOptions={{
-                        placement: "top"
+                        placement: "top",
                     }}
-                    className={cls("flex w-fit max-w-[90vw] h-10 overflow-hidden rounded border bg-white dark:bg-surface-900 shadow", defaultBorderMixin)}
+                    className={cls(
+                        "flex w-fit max-w-[90vw] h-10 overflow-hidden rounded border bg-white dark:bg-surface-900 shadow",
+                        defaultBorderMixin
+                    )}
                 >
-                    <NodeSelector portalContainer={ref.current} open={openNode} onOpenChange={setOpenNode}/>
-                    <Separator orientation="vertical"/>
-                    <LinkSelector open={openLink} onOpenChange={setOpenLink}/>
-                    <Separator orientation="vertical"/>
-                    <TextButtons/>
+                    <NodeSelector
+                        portalContainer={ref.current}
+                        open={openNode}
+                        onOpenChange={setOpenNode}
+                    />
+                    <Separator orientation="vertical" />
+                    <LinkSelector open={openLink} onOpenChange={setOpenLink} />
+                    <Separator orientation="vertical" />
+                    <TextButtons />
                 </EditorBubble>
-
             </EditorProvider>
         </div>
-
     );
 };
 

@@ -21,8 +21,10 @@ import React, { useEffect } from "react";
  * @see FireCMSContext
  * @group Hooks and utilities
  */
-export const useFireCMSContext = <USER extends User = User, AuthControllerType extends AuthController<USER> = AuthController<USER>>(): FireCMSContext<USER, AuthControllerType> => {
-
+export const useFireCMSContext = <
+    USER extends User = User,
+    AuthControllerType extends AuthController<USER> = AuthController<USER>,
+>(): FireCMSContext<USER, AuthControllerType> => {
     const authController = useAuthController<USER, AuthControllerType>();
     const sideDialogsController = useSideDialogsController();
     const sideEntityController = useSideEntityController();
@@ -46,7 +48,7 @@ export const useFireCMSContext = <USER extends User = User, AuthControllerType e
         userConfigPersistence,
         dialogsController,
         customizationController,
-        analyticsController
+        analyticsController,
     });
 
     useEffect(() => {
@@ -61,9 +63,9 @@ export const useFireCMSContext = <USER extends User = User, AuthControllerType e
             userConfigPersistence,
             dialogsController,
             customizationController,
-            analyticsController
+            analyticsController,
         };
     }, [authController, dialogsController, navigation, sideDialogsController]);
 
     return fireCMSContextRef.current;
-}
+};

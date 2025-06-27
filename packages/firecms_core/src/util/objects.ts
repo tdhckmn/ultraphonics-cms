@@ -2,10 +2,13 @@ import hash from "object-hash";
 import { GeoPoint } from "../types";
 
 export const pick: <T>(obj: T, ...args: any[]) => T = (obj: any, ...args: any[]) => ({
-    ...args.reduce((res, key) => ({
-        ...res,
-        [key]: obj[key]
-    }), {})
+    ...args.reduce(
+        (res, key) => ({
+            ...res,
+            [key]: obj[key],
+        }),
+        {}
+    ),
 });
 
 export function isObject(item: any) {
@@ -70,7 +73,6 @@ export function mergeDeep<T extends Record<any, any>, U extends Record<any, any>
     return output as T & U;
 }
 
-
 export function getValueInPath(o: object | undefined, path: string): any {
     if (!o) return undefined;
     if (typeof o === "object") {
@@ -80,18 +82,18 @@ export function getValueInPath(o: object | undefined, path: string): any {
         if (path.includes(".") || path.includes("[")) {
             let pathSegments = path.split(/[.[]/);
             if (path.includes("[")) {
-                pathSegments = pathSegments.map(segment => segment.replace("]", ""));
+                pathSegments = pathSegments.map((segment) => segment.replace("]", ""));
             }
             const firstSegment = pathSegments[0];
-            const isArrayAndIndexExists = Array.isArray((o as any)[firstSegment]) && !isNaN(parseInt(pathSegments[1]));
+            const isArrayAndIndexExists =
+                Array.isArray((o as any)[firstSegment]) && !isNaN(parseInt(pathSegments[1]));
             const nextObject = isArrayAndIndexExists
                 ? (o as any)[firstSegment][parseInt(pathSegments[1])]
                 : (o as any)[firstSegment];
 
             const nextPath = pathSegments.slice(isArrayAndIndexExists ? 2 : 1).join(".");
-            if (nextPath === "")
-                return nextObject;
-            return getValueInPath(nextObject, nextPath)
+            if (nextPath === "") return nextObject;
+            return getValueInPath(nextObject, nextPath);
         }
     }
     return undefined;
@@ -102,10 +104,9 @@ export function removeInPath(o: object, path: string): object | undefined {
     const parts = path.split(".");
     const last = parts.pop();
     for (const part of parts) {
-        currentObject = (currentObject as any)[part]
+        currentObject = (currentObject as any)[part];
     }
-    if (last)
-        delete (currentObject as any)[last];
+    if (last) delete (currentObject as any)[last];
     return currentObject;
 }
 
@@ -117,7 +118,7 @@ export function removeFunctions(o: object | undefined): any {
             .filter(([_, value]) => typeof value !== "function")
             .map(([key, value]) => {
                 if (Array.isArray(value)) {
-                    return { [key]: value.map(v => removeFunctions(v)) };
+                    return { [key]: value.map((v) => removeFunctions(v)) };
                 } else if (typeof value === "object") {
                     return { [key]: removeFunctions(value) };
                 } else return { [key]: value };
@@ -130,12 +131,9 @@ export function removeFunctions(o: object | undefined): any {
 export function getHashValue<T>(v: T) {
     if (!v) return null;
     if (typeof v === "object") {
-        if ("id" in v)
-            return (v as any).id;
-        else if (v instanceof Date)
-            return v.toLocaleString();
-        else if (v instanceof GeoPoint)
-            return hash(v as Record<string, unknown>);
+        if ("id" in v) return (v as any).id;
+        else if (v instanceof Date) return v.toLocaleString();
+        else if (v instanceof GeoPoint) return hash(v as Record<string, unknown>);
     }
     return hash(v, { ignoreUnknown: true });
 }
@@ -149,13 +147,15 @@ export function removeUndefined(value: any, removeEmptyStrings?: boolean): any {
     }
     if (typeof value === "object") {
         const res: object = {};
-        if (value === null)
-            return value;
+        if (value === null) return value;
         Object.keys(value).forEach((key) => {
             if (!isEmptyObject(value)) {
                 const childRes = removeUndefined(value[key], removeEmptyStrings);
                 const isString = typeof childRes === "string";
-                const shouldKeepIfString = !removeEmptyStrings || (removeEmptyStrings && !isString) || (removeEmptyStrings && isString && childRes !== "");
+                const shouldKeepIfString =
+                    !removeEmptyStrings ||
+                    (removeEmptyStrings && !isString) ||
+                    (removeEmptyStrings && isString && childRes !== "");
                 if (childRes !== undefined && !isEmptyObject(childRes) && shouldKeepIfString)
                     (res as any)[key] = childRes;
             }
@@ -174,11 +174,9 @@ export function removeNulls(value: any): any {
     }
     if (typeof value === "object") {
         const res: object = {};
-        if (value === null)
-            return value;
+        if (value === null) return value;
         Object.keys(value).forEach((key) => {
-            if (value[key] !== null)
-                (res as any)[key] = removeNulls(value[key]);
+            if (value[key] !== null) (res as any)[key] = removeNulls(value[key]);
         });
         return res;
     }
@@ -186,9 +184,7 @@ export function removeNulls(value: any): any {
 }
 
 export function isEmptyObject(obj: object) {
-    return obj &&
-        Object.getPrototypeOf(obj) === Object.prototype &&
-        Object.keys(obj).length === 0
+    return obj && Object.getPrototypeOf(obj) === Object.prototype && Object.keys(obj).length === 0;
 }
 
 export function removePropsIfExisting(source: any, comparison: any) {
@@ -210,7 +206,7 @@ export function removePropsIfExisting(source: any, comparison: any) {
             }
         }
     } else {
-        Object.keys(comparison).forEach(key => {
+        Object.keys(comparison).forEach((key) => {
             if (key in res) {
                 if (isObject(res[key]) && isObject(comparison[key])) {
                     res[key] = removePropsIfExisting(res[key], comparison[key]);

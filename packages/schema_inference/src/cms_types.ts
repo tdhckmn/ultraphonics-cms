@@ -11,16 +11,25 @@ export type CMSType =
 /**
  * @group Entity properties
  */
-export type DataType<T extends CMSType = CMSType> =
-    T extends string ? "string" :
-        T extends number ? "number" :
-            T extends boolean ? "boolean" :
-                T extends Date ? "date" :
-                    T extends GeoPoint ? "geopoint" :
-                        T extends Vector ? "vector" :
-                            T extends EntityReference ? "reference" :
-                                T extends Array<any> ? "array" :
-                                    T extends Record<string, any> ? "map" : never;
+export type DataType<T extends CMSType = CMSType> = T extends string
+    ? "string"
+    : T extends number
+      ? "number"
+      : T extends boolean
+        ? "boolean"
+        : T extends Date
+          ? "date"
+          : T extends GeoPoint
+            ? "geopoint"
+            : T extends Vector
+              ? "vector"
+              : T extends EntityReference
+                ? "reference"
+                : T extends Array<any>
+                  ? "array"
+                  : T extends Record<string, any>
+                    ? "map"
+                    : never;
 
 /**
  * New or existing status
@@ -64,7 +73,6 @@ export class EntityReference {
 }
 
 export class GeoPoint {
-
     /**
      * The latitude of this GeoPoint instance.
      */
@@ -91,21 +99,28 @@ export class Vector {
 /**
  * @group Entity properties
  */
-export type Property<T extends CMSType = any> =
-    T extends string ? StringProperty :
-        T extends number ? NumberProperty :
-            T extends boolean ? BooleanProperty :
-                T extends Date ? DateProperty :
-                    T extends GeoPoint ? GeopointProperty :
-                        T extends EntityReference ? ReferenceProperty :
-                            T extends Array<CMSType> ? ArrayProperty<T> :
-                                T extends Record<string, any> ? MapProperty<T> : any;
+export type Property<T extends CMSType = any> = T extends string
+    ? StringProperty
+    : T extends number
+      ? NumberProperty
+      : T extends boolean
+        ? BooleanProperty
+        : T extends Date
+          ? DateProperty
+          : T extends GeoPoint
+            ? GeopointProperty
+            : T extends EntityReference
+              ? ReferenceProperty
+              : T extends Array<CMSType>
+                ? ArrayProperty<T>
+                : T extends Record<string, any>
+                  ? MapProperty<T>
+                  : any;
 
 /**
  * @group Entity properties
  */
 export interface PropertyDisabledConfig {
-
     /**
      * Enable this flag if you would like to clear the value of the field
      * when the corresponding property gets disabled.
@@ -138,8 +153,7 @@ export interface PropertyDisabledConfig {
  * If you need to ensure the order of the elements use an array of {@link EnumValueConfig}
  * @group Entity properties
  */
-export type EnumValues = EnumValueConfig[]
-    | Record<string | number, string | EnumValueConfig>;
+export type EnumValues = EnumValueConfig[] | Record<string | number, string | EnumValueConfig>;
 
 /**
  * Configuration for a particular entry in an `EnumValues`
@@ -158,7 +172,7 @@ export type EnumValueConfig = {
      * This value will not be selectable
      */
     disabled?: boolean;
-}
+};
 
 /**
  * Record of properties of an entity or a map property
@@ -168,13 +182,11 @@ export type Properties<M extends Record<string, any> = any> = {
     [k in keyof M]: Property<M[keyof M]>;
 };
 
-
 /**
  * Interface including all common properties of a CMS property
  * @group Entity properties
  */
 export interface BaseProperty<T extends CMSType> {
-
     /**
      * Datatype of the property
      */
@@ -230,14 +242,12 @@ export interface BaseProperty<T extends CMSType> {
      * This value will be set by default for new entities.
      */
     defaultValue?: T | null;
-
 }
 
 /**
  * @group Entity properties
  */
 export interface NumberProperty extends BaseProperty<number> {
-
     dataType: "number";
 
     /**
@@ -250,7 +260,7 @@ export interface NumberProperty extends BaseProperty<number> {
     /**
      * Rules for validating this property
      */
-    validation?: NumberPropertyValidationSchema,
+    validation?: NumberPropertyValidationSchema;
 
     /**
      * Add an icon to clear the value and set it to `null`. Defaults to `false`
@@ -262,21 +272,18 @@ export interface NumberProperty extends BaseProperty<number> {
  * @group Entity properties
  */
 export interface BooleanProperty extends BaseProperty<boolean> {
-
     dataType: "boolean";
 
     /**
      * Rules for validating this property
      */
-    validation?: PropertyValidationSchema,
-
+    validation?: PropertyValidationSchema;
 }
 
 /**
  * @group Entity properties
  */
 export interface StringProperty extends BaseProperty<string> {
-
     dataType: "string";
 
     /**
@@ -349,8 +356,8 @@ export interface StringProperty extends BaseProperty<string> {
 /**
  * @group Entity properties
  */
-export interface ArrayProperty<T extends ArrayT[] = any[], ArrayT extends CMSType = any> extends BaseProperty<T> {
-
+export interface ArrayProperty<T extends ArrayT[] = any[], ArrayT extends CMSType = any>
+    extends BaseProperty<T> {
     dataType: "array";
 
     /**
@@ -430,14 +437,13 @@ export interface ArrayProperty<T extends ArrayT[] = any[], ArrayT extends CMSTyp
      * This prop has no effect if `disabled` is set to true.
      */
     canAddElements?: boolean;
-
 }
 
 /**
  * @group Entity properties
  */
-export interface MapProperty<T extends Record<string, CMSType> = Record<string, CMSType>> extends BaseProperty<T> {
-
+export interface MapProperty<T extends Record<string, CMSType> = Record<string, CMSType>>
+    extends BaseProperty<T> {
     dataType: "map";
 
     /**
@@ -457,7 +463,7 @@ export interface MapProperty<T extends Record<string, CMSType> = Record<string, 
      * NOTE: If you don't set `required` in the map property, an empty object
      * will be considered valid, even if you set `required` in the properties.
      */
-    validation?: PropertyValidationSchema,
+    validation?: PropertyValidationSchema;
 
     /**
      * Properties that are displayed when rendered as a preview
@@ -495,14 +501,12 @@ export interface MapProperty<T extends Record<string, CMSType> = Record<string, 
      * arbitrary keys. You don't need to define the properties in this case.
      */
     keyValue?: boolean;
-
 }
 
 /**
  * @group Entity properties
  */
 export interface DateProperty extends BaseProperty<Date> {
-
     dataType: "date";
 
     /**
@@ -523,7 +527,7 @@ export interface DateProperty extends BaseProperty<Date> {
      * update (including creation). Useful for creating `created_on` or
      * `updated_on` fields
      */
-    autoValue?: "on_create" | "on_update"
+    autoValue?: "on_create" | "on_update";
 
     /**
      * Add an icon to clear the value and set it to `null`. Defaults to `false`
@@ -536,21 +540,18 @@ export interface DateProperty extends BaseProperty<Date> {
  */
 // TODO: currently this is the only unsupported field
 export interface GeopointProperty extends BaseProperty<GeoPoint> {
-
     dataType: "geopoint";
 
     /**
      * Rules for validating this property
      */
-    validation?: PropertyValidationSchema,
-
+    validation?: PropertyValidationSchema;
 }
 
 /**
  * @group Entity properties
  */
 export interface ReferenceProperty extends BaseProperty<EntityReference> {
-
     dataType: "reference";
 
     /**
@@ -581,7 +582,6 @@ export interface ReferenceProperty extends BaseProperty<EntityReference> {
      * Should the reference include a link to the entity (open the entity details). Defaults to `true`
      */
     includeEntityLink?: boolean;
-
 }
 
 export interface PropertyValidationSchema {
@@ -665,7 +665,6 @@ export interface ArrayPropertyValidationSchema extends PropertyValidationSchema 
  * @group Entity properties
  */
 export type StorageConfig = {
-
     /**
      * File MIME types that can be uploaded to this reference. Don't specify for
      * all.
@@ -679,7 +678,7 @@ export type StorageConfig = {
      * For the default Firebase implementation, the values passed here are of type
      * `firebase.storage.UploadMetadata`
      */
-    metadata?: Record<string, unknown>,
+    metadata?: Record<string, unknown>;
 
     /**
      * You can use this prop to customize the uploaded filename.
@@ -722,17 +721,16 @@ export type StorageConfig = {
      *
      * Defaults to false.
      */
-    storeUrl?: boolean,
+    storeUrl?: boolean;
 
     /**
      * Define maximal file size in bytes
      */
-    maxSize?: number,
-
-}
+    maxSize?: number;
+};
 
 export type FileType =
-    "image/*"
+    | "image/*"
     | "video/*"
     | "audio/*"
     | "application/*"

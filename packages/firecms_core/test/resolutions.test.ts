@@ -10,7 +10,8 @@ const testCollection = buildCollection({
     properties: {
         mainSaturation: {
             name: "Main saturation",
-            description: "Saturation applied to all colors when there is no saturation on color applied",
+            description:
+                "Saturation applied to all colors when there is no saturation on color applied",
             dataType: "array",
             of: {
                 dataType: "map",
@@ -21,89 +22,83 @@ const testCollection = buildCollection({
                         enumValues: {
                             oneNum: "Saturation without range",
                             fromTo: "Saturation available range",
-                        }
+                        },
                     },
-                    value: buildProperty(({
-                                              values,
-                                              index
-                                          }) => {
+                    value: buildProperty(({ values, index }) => {
                         if (!index) {
                             return null;
                         }
                         const parentValue = values.mainSaturation?.[index]?.type;
                         if (parentValue === "oneNum") {
-                            return ({
+                            return {
                                 name: "Saturation",
                                 dataType: "number",
                                 validation: {
                                     min: 0,
-                                    max: 100
-                                }
-                            })
+                                    max: 100,
+                                },
+                            };
                         } else if (parentValue === "fromTo") {
-                            return ({
-                                    name: "Saturation available range",
-                                    dataType: "map",
-                                    properties: {
-                                        from: {
-                                            name: "From",
-                                            dataType: "number",
-                                            validation: {
-                                                min: 0,
-                                                max: 100
-                                            }
+                            return {
+                                name: "Saturation available range",
+                                dataType: "map",
+                                properties: {
+                                    from: {
+                                        name: "From",
+                                        dataType: "number",
+                                        validation: {
+                                            min: 0,
+                                            max: 100,
                                         },
-                                        to: {
-                                            name: "To",
-                                            dataType: "number",
-                                            clearable: true,
-                                            validation: {
-                                                min: 0,
-                                                max: 100
-                                            }
+                                    },
+                                    to: {
+                                        name: "To",
+                                        dataType: "number",
+                                        clearable: true,
+                                        validation: {
+                                            min: 0,
+                                            max: 100,
                                         },
-                                    }
-                                }
-                            )
+                                    },
+                                },
+                            };
                         } else {
                             return {
                                 dataType: "string",
                                 name: "Type",
-                                disabled: { hidden: true }
+                                disabled: { hidden: true },
                             };
                         }
-                    })
-                }
+                    }),
+                },
             },
         },
-    }
+    },
 });
 
 describe("resolutions", () => {
-
     test("retrieves value using dot notation", () => {
-
         const values = {
             mainSaturation: [
                 {
                     type: "oneNum",
-                    value: 10
+                    value: 10,
                 },
                 {
                     type: "fromTo",
                     value: {
                         from: 0,
-                        to: 100
-                    }
-                }
-            ]
+                        to: 100,
+                    },
+                },
+            ],
         };
 
         const resolvedCollection = resolveCollection({
             collection: testCollection,
             path: "ignore",
             values,
-            authController: {} as any
+            authController: {} as any,
         });
 
         console.log("resolvedCollection", util.inspect(resolvedCollection, false, null, true));
@@ -116,6 +111,5 @@ describe("resolutions", () => {
         // expect(getValueInPath(obj, "nope")).toEqual(undefined);
         // expect(getValueInPath(obj, "nope.nope")).toEqual(undefined);
         // expect(getValueInPath(obj, "nope.nope.nope.nope")).toEqual(undefined);
-
     });
 });

@@ -10,11 +10,7 @@ export interface CustomBlockComponentProps {
 }
 
 export const CustomComponent: React.FC<CustomBlockComponentProps> = (props) => {
-
-    const {
-        node,
-        updateAttributes
-    } = props;
+    const { node, updateAttributes } = props;
 
     const [value, setValue] = useState<string>(node.attrs.content || "");
 
@@ -31,7 +27,7 @@ export const CustomComponent: React.FC<CustomBlockComponentProps> = (props) => {
 
     return (
         <NodeViewWrapper className="custom-component">
-            <textarea value={value} onChange={handleChange}/>
+            <textarea value={value} onChange={handleChange} />
         </NodeViewWrapper>
     );
 };

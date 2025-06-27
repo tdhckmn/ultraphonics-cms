@@ -4,7 +4,6 @@ title: ChatGPT plugin
 sidebar_label: ✨ ChatGPT plugin
 ---
 
-
 The OpenAI plugin allows you to use the **OpenAI API** to generate content using
 the latest **GPT models**. This plugin is able to understand the structure of
 your
@@ -54,22 +53,25 @@ const firebaseConfig = {
     projectId: "",
     storageBucket: "",
     messagingSenderId: "",
-    appId: ""
+    appId: "",
 };
 
 export default function App() {
-
     const dataEnhancementPlugin = useDataEnhancementPlugin();
 
-    return <FirebaseCMSApp
-        name={"My Online Shop"}
-        plugins={[dataEnhancementPlugin]}
-        authentication={myAuthenticator}
-        collections={[
-            //...
-        ]}
-        firebaseConfig={firebaseConfig}
-    />;
+    return (
+        <FirebaseCMSApp
+            name={"My Online Shop"}
+            plugins={[dataEnhancementPlugin]}
+            authentication={myAuthenticator}
+            collections={
+                [
+                    //...
+                ]
+            }
+            firebaseConfig={firebaseConfig}
+        />
+    );
 }
 ```
 
@@ -83,7 +85,7 @@ const dataEnhancementPlugin = useDataEnhancementPlugin({
     // Optional callback for defining which collections should be enhanced
     getConfigForPath: ({ path }) => {
         return true;
-    }
+    },
 });
 ```
 

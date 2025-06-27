@@ -27,8 +27,8 @@ const styles: {
         top: 0,
         left: 0,
         // Create a new layer, increase the isolation of the computed values
-        transform: "translateZ(0)"
-    }
+        transform: "translateZ(0)",
+    },
 };
 
 function isEmpty(obj: State) {
@@ -65,15 +65,14 @@ export const TextareaAutosize = React.forwardRef(function TextareaAutosize(
     const shadowRef = React.useRef<HTMLTextAreaElement>(null);
     const renders = React.useRef(0);
     const [state, setState] = React.useState<State>({
-        outerHeightStyle: 0
+        outerHeightStyle: 0,
     });
 
     const getUpdatedState = React.useCallback(() => {
-
         const input = inputRef.current!;
         if (typeof window === "undefined") {
             return {
-                outerHeightStyle: 0
+                outerHeightStyle: 0,
             };
         }
 
@@ -83,7 +82,7 @@ export const TextareaAutosize = React.forwardRef(function TextareaAutosize(
         // If input's width is shrunk and it's not visible, don't sync height.
         if (computedStyle.width === "0px") {
             return {
-                outerHeightStyle: 0
+                outerHeightStyle: 0,
             };
         }
 
@@ -103,7 +102,8 @@ export const TextareaAutosize = React.forwardRef(function TextareaAutosize(
         const padding =
             getStyleValue(computedStyle.paddingBottom) + getStyleValue(computedStyle.paddingTop);
         const border =
-            getStyleValue(computedStyle.borderBottomWidth) + getStyleValue(computedStyle.borderTopWidth);
+            getStyleValue(computedStyle.borderBottomWidth) +
+            getStyleValue(computedStyle.borderTopWidth);
         const minHeight = getStyleValue(computedStyle.minHeight);
 
         // The height of the inner content
@@ -125,33 +125,31 @@ export const TextareaAutosize = React.forwardRef(function TextareaAutosize(
         outerHeight = Math.max(outerHeight, singleRowHeight, minHeight);
 
         // Take the box sizing into account for applying this value as a style.
-        const outerHeightStyle = outerHeight + (!ignoreBoxSizing && boxSizing === "border-box" ? padding + border : 0);
+        const outerHeightStyle =
+            outerHeight + (!ignoreBoxSizing && boxSizing === "border-box" ? padding + border : 0);
 
         const overflow = Math.abs(outerHeight - innerHeight) <= 1;
 
         return {
             outerHeightStyle,
-            overflow
+            overflow,
         };
     }, [maxRows, minRows, props.placeholder]);
 
     const updateState = (prevState: State, newState: State) => {
-        const {
-            outerHeightStyle,
-            overflow
-        } = newState;
+        const { outerHeightStyle, overflow } = newState;
         // Need a large enough difference to update the height.
         // This prevents infinite rendering loop.
         if (
             renders.current < 20 &&
             ((outerHeightStyle > 0 &&
-                    Math.abs((prevState.outerHeightStyle || 0) - outerHeightStyle) > 1) ||
+                Math.abs((prevState.outerHeightStyle || 0) - outerHeightStyle) > 1) ||
                 prevState.overflow !== overflow)
         ) {
             renders.current += 1;
             return {
                 overflow,
-                outerHeightStyle
+                outerHeightStyle,
             };
         }
         if (process.env.NODE_ENV !== "production") {
@@ -159,7 +157,7 @@ export const TextareaAutosize = React.forwardRef(function TextareaAutosize(
                 console.error(
                     [
                         "MUI: Too many re-renders. The layout is unstable.",
-                        "TextareaAutosize limits the number of renders to prevent an infinite loop."
+                        "TextareaAutosize limits the number of renders to prevent an infinite loop.",
                     ].join("\n")
                 );
             }
@@ -291,8 +289,10 @@ export const TextareaAutosize = React.forwardRef(function TextareaAutosize(
     );
 }) as React.FC<TextareaAutosizeProps & { ref?: React.ForwardedRef<Element> }>;
 
-export type TextareaAutosizeProps = Omit<React.InputHTMLAttributes<HTMLTextAreaElement>, "onResize"> & {
-
+export type TextareaAutosizeProps = Omit<
+    React.InputHTMLAttributes<HTMLTextAreaElement>,
+    "onResize"
+> & {
     className?: string;
 
     shadowClassName?: string;
@@ -332,7 +332,7 @@ export type TextareaAutosizeProps = Omit<React.InputHTMLAttributes<HTMLTextAreaE
     autoFocus?: boolean;
 
     ignoreBoxSizing?: boolean;
-}
+};
 
 function useForkRef<Instance>(
     ...refs: Array<React.Ref<Instance> | undefined>
@@ -358,7 +358,7 @@ function useForkRef<Instance>(
 
 function setRef<T>(
     ref: React.MutableRefObject<T | null> | ((instance: T | null) => void) | null | undefined,
-    value: T | null,
+    value: T | null
 ): void {
     if (typeof ref === "function") {
         ref(value);

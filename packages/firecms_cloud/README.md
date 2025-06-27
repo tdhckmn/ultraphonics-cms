@@ -10,7 +10,6 @@
 
 <br />
 
-
 [![NPM](https://img.shields.io/npm/v/firecms.svg)](https://www.npmjs.com/package/firecms) [![License: MIT](https://img.shields.io/badge/license-MIT-purple.svg)](https://opensource.org/licenses/MIT)
 
 FireCMS is a headless CMS and admin panel

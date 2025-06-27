@@ -42,7 +42,7 @@ export function diffStrings(oldStr: string, newStr: string): Change[] {
         return trace;
     }
 
-// Backtrack the edit path and create Change objects
+    // Backtrack the edit path and create Change objects
     function backtrack(trace: Position[][], s1: string, s2: string): Change[] {
         const result: Change[] = [];
         let x = s1.length;

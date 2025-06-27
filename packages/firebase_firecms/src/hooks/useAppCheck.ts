@@ -24,12 +24,12 @@ export interface InitializeAppCheckResult {
  * @group Firebase
  */
 export function useAppCheck({
-                                firebaseApp,
-                                options,
-                            }: InitializeAppCheckProps): InitializeAppCheckResult {
+    firebaseApp,
+    options,
+}: InitializeAppCheckProps): InitializeAppCheckResult {
     if (options?.debugToken) {
         Object.assign(window, {
-            FIREBASE_APPCHECK_DEBUG_TOKEN: options?.debugToken
+            FIREBASE_APPCHECK_DEBUG_TOKEN: options?.debugToken,
         });
     }
 
@@ -39,23 +39,26 @@ export function useAppCheck({
 
     const initialCheck = useRef<boolean>(false);
 
-    const verifyToken = useCallback(async (appCheck: AppCheck) => {
-        console.debug("Verifying App Check token...", appCheck);
-        try {
-            const token = await getToken(appCheck, options?.forceRefresh);
-            console.debug("App Check token:", token);
-            if (!token) {
-                setError("App Check failed.");
-                setAppCheckVerified(false);
-            } else {
-                setAppCheckVerified(true);
-                console.debug("App Check success.");
+    const verifyToken = useCallback(
+        async (appCheck: AppCheck) => {
+            console.debug("Verifying App Check token...", appCheck);
+            try {
+                const token = await getToken(appCheck, options?.forceRefresh);
+                console.debug("App Check token:", token);
+                if (!token) {
+                    setError("App Check failed.");
+                    setAppCheckVerified(false);
+                } else {
+                    setAppCheckVerified(true);
+                    console.debug("App Check success.");
+                }
+            } catch (e: any) {
+                console.error("App Check error:", e);
+                setError(e.message);
             }
-        } catch (e: any) {
-            console.error("App Check error:", e);
-            setError(e.message);
-        }
-    }, [options?.forceRefresh]);
+        },
+        [options?.forceRefresh]
+    );
 
     useEffect(() => {
         if (!options) return;
@@ -65,32 +68,27 @@ export function useAppCheck({
 
         setAppCheckLoading(true);
 
-        const {
-            provider,
-            isTokenAutoRefreshEnabled
-        } = options;
+        const { provider, isTokenAutoRefreshEnabled } = options;
 
         removeCurrentAppCheckDiv();
 
         const appCheck = initializeAppCheck(firebaseApp, {
             provider,
-            isTokenAutoRefreshEnabled
+            isTokenAutoRefreshEnabled,
         });
 
-        verifyToken(appCheck)
-            .then(() => {
-                setAppCheckLoading(false);
-            });
+        verifyToken(appCheck).then(() => {
+            setAppCheckLoading(false);
+        });
         initialCheck.current = true;
     }, [appCheckVerified, firebaseApp, options, verifyToken]);
 
     return {
         loading: appCheckLoading,
         appCheckVerified,
-        error
+        error,
     };
 }
-
 
 function removeCurrentAppCheckDiv() {
     const div = document.getElementById("fire_app_check_[DEFAULT]");
@@ -98,4 +96,3 @@ function removeCurrentAppCheckDiv() {
         div.remove();
     }
 }
-

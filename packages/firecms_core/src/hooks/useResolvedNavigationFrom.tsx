@@ -56,23 +56,24 @@ interface ResolvedNavigationEntityCustom<M extends Record<string, any>> {
  * @group Hooks and utilities
  */
 export function resolveNavigationFrom<M extends Record<string, any>, USER extends User>({
-                                                                                                path,
-                                                                                                context
-                                                                                            }: {
-    path: string,
-    context: FireCMSContext<USER>
+    path,
+    context,
+}: {
+    path: string;
+    context: FireCMSContext<USER>;
 }): Promise<ResolvedNavigationEntry<M>[]> {
-
     const dataSource = context.dataSource;
     const navigation = context.navigation;
 
     if (!navigation) {
-        throw Error("Calling resolveNavigationFrom, but main navigation has not yet been initialised");
+        throw Error(
+            "Calling resolveNavigationFrom, but main navigation has not yet been initialised"
+        );
     }
 
     const navigationEntries = getNavigationEntriesFromPath({
         path,
-        collections: navigation.collections ?? []
+        collections: navigation.collections ?? [],
     });
 
     const resultPromises: Promise<ResolvedNavigationEntry<any>>[] = navigationEntries
@@ -82,13 +83,16 @@ export function resolveNavigationFrom<M extends Record<string, any>, USER extend
             } else if (entry.type === "entity") {
                 const collection = navigation.getCollection(entry.path);
                 if (!collection) {
-                    throw Error(`No collection defined in the navigation for the entity with path ${entry.path}`);
+                    throw Error(
+                        `No collection defined in the navigation for the entity with path ${entry.path}`
+                    );
                 }
-                return dataSource.fetchEntity({
-                    path: entry.path,
-                    entityId: entry.entityId,
-                    collection
-                })
+                return dataSource
+                    .fetchEntity({
+                        path: entry.path,
+                        entityId: entry.entityId,
+                        collection,
+                    })
                     .then((entity) => {
                         if (!entity) return undefined;
                         return { ...entry, entity };
@@ -99,7 +103,7 @@ export function resolveNavigationFrom<M extends Record<string, any>, USER extend
                 throw Error("Unmapped element in useEntitiesFromPath");
             }
         })
-        .filter(v => Boolean(v)) as Promise<ResolvedNavigationEntry<any>>[];
+        .filter((v) => Boolean(v)) as Promise<ResolvedNavigationEntry<any>>[];
 
     return Promise.all(resultPromises);
 }
@@ -115,9 +119,9 @@ export interface NavigationFromProps {
  * @group Hooks and utilities
  */
 export interface NavigationFrom<M extends Record<string, any>> {
-    data?: ResolvedNavigationEntry<M>[]
-    dataLoading: boolean,
-    dataLoadingError?: Error
+    data?: ResolvedNavigationEntry<M>[];
+    dataLoading: boolean;
+    dataLoadingError?: Error;
 }
 
 /**
@@ -126,11 +130,9 @@ export interface NavigationFrom<M extends Record<string, any>> {
  * in any React component that lives under `FireCMS`
  * @group Hooks and utilities
  */
-export function useResolvedNavigationFrom<M extends Record<string, any>, USER extends User>(
-    {
-        path
-    }: NavigationFromProps): NavigationFrom<M> {
-
+export function useResolvedNavigationFrom<M extends Record<string, any>, USER extends User>({
+    path,
+}: NavigationFromProps): NavigationFrom<M> {
     const context: FireCMSContext<USER> = useFireCMSContext();
 
     const [data, setData] = useState<ResolvedNavigationEntry<M>[] | undefined>();
@@ -147,7 +149,6 @@ export function useResolvedNavigationFrom<M extends Record<string, any>, USER ex
                 .catch((e) => setDataLoadingError(e))
                 .finally(() => setDataLoading(false));
         }
-
     }, [path, context]);
 
     if (!context.navigation) {

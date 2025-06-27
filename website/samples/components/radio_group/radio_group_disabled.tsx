@@ -8,21 +8,21 @@ export default function RadioGroupDisabledDemo() {
                 className="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-gray-100 dark:[&:has(:checked)]:bg-gray-800"
                 htmlFor="color-black"
             >
-                <RadioGroupItem id="color-black" value="black"/>
+                <RadioGroupItem id="color-black" value="black" />
                 Black
             </Label>
             <Label
                 className="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-gray-100 dark:[&:has(:checked)]:bg-gray-800"
                 htmlFor="color-white"
             >
-                <RadioGroupItem id="color-white" value="white" disabled/>
+                <RadioGroupItem id="color-white" value="white" disabled />
                 White
             </Label>
             <Label
                 className="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-gray-100 dark:[&:has(:checked)]:bg-gray-800"
                 htmlFor="color-blue"
             >
-                <RadioGroupItem id="color-blue" value="blue"/>
+                <RadioGroupItem id="color-blue" value="blue" />
                 Blue
             </Label>
         </RadioGroup>

@@ -1,61 +1,61 @@
 {
-  "name": "@firecms/user_management",
-  "type": "module",
-  "version": "3.0.0-canary.254",
-  "publishConfig": {
-    "access": "public"
-  },
-  "keywords": [
-    "firebase",
-    "cms",
-    "admin",
-    "admin panel",
-    "firebase panel",
-    "firestore",
-    "headless",
-    "headless cms",
-    "content manager"
-  ],
-  "exports": {
-    ".": {
-      "import": "./dist/index.es.js",
-      "require": "./dist/index.umd.js",
-      "types": "./dist/index.d.ts"
+    "name": "@firecms/user_management",
+    "type": "module",
+    "version": "3.0.0-canary.254",
+    "publishConfig": {
+        "access": "public"
     },
-    "./package.json": "./package.json"
-  },
-  "main": "./dist/index.umd.js",
-  "module": "./dist/index.es.js",
-  "types": "dist/index.d.ts",
-  "source": "src/index.ts",
-  "dependencies": {
-    "@firecms/core": "^3.0.0-canary.254",
-    "@firecms/formex": "^3.0.0-canary.254",
-    "@firecms/ui": "^3.0.0-canary.254",
-    "date-fns": "^3.6.0"
-  },
-  "peerDependencies": {
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0"
-  },
-  "devDependencies": {
-    "@types/node": "^20.17.14",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.0",
-    "babel-plugin-react-compiler": "beta",
-    "eslint-plugin-react-compiler": "beta",
-    "typescript": "^5.7.3",
-    "vite": "^5.4.14"
-  },
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build && tsc --emitDeclarationOnly -p tsconfig.prod.json",
-    "clean": "rm -rf dist && find ./src -name '*.js' -type f | xargs rm -f"
-  },
-  "files": [
-    "dist",
-    "src",
-    "bin"
-  ],
-  "gitHead": "946e1f4f5695190e903af3a71dd7111accfc1efa"
+    "keywords": [
+        "firebase",
+        "cms",
+        "admin",
+        "admin panel",
+        "firebase panel",
+        "firestore",
+        "headless",
+        "headless cms",
+        "content manager"
+    ],
+    "exports": {
+        ".": {
+            "import": "./dist/index.es.js",
+            "require": "./dist/index.umd.js",
+            "types": "./dist/index.d.ts"
+        },
+        "./package.json": "./package.json"
+    },
+    "main": "./dist/index.umd.js",
+    "module": "./dist/index.es.js",
+    "types": "dist/index.d.ts",
+    "source": "src/index.ts",
+    "dependencies": {
+        "@firecms/core": "^3.0.0-canary.254",
+        "@firecms/formex": "^3.0.0-canary.254",
+        "@firecms/ui": "^3.0.0-canary.254",
+        "date-fns": "^3.6.0"
+    },
+    "peerDependencies": {
+        "react": ">=18.0.0",
+        "react-dom": ">=18.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^20.17.14",
+        "@types/react": "^18.3.18",
+        "@types/react-dom": "^18.3.0",
+        "babel-plugin-react-compiler": "beta",
+        "eslint-plugin-react-compiler": "beta",
+        "typescript": "^5.7.3",
+        "vite": "^5.4.14"
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build && tsc --emitDeclarationOnly -p tsconfig.prod.json",
+        "clean": "rm -rf dist && find ./src -name '*.js' -type f | xargs rm -f"
+    },
+    "files": [
+        "dist",
+        "src",
+        "bin"
+    ],
+    "gitHead": "946e1f4f5695190e903af3a71dd7111accfc1efa"
 }

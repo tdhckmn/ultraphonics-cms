@@ -1,18 +1,17 @@
 import { mergeDeep } from "../src/util/objects";
 
 describe("mergeDeep", () => {
-
     it("should handle merging when target property is null and source property is an object", () => {
         const target = { optionalMap: null };
         const source = {
             optionalMap: {
-                "valueTwo": 222,
-                "valueOne": "one",
-                "nested": {
-                    "valueThree": "threeee",
-                    "valueFour": 444
-                }
-            }
+                valueTwo: 222,
+                valueOne: "one",
+                nested: {
+                    valueThree: "threeee",
+                    valueFour: 444,
+                },
+            },
         };
         const result = mergeDeep(target, source);
         expect(result).toEqual(source);
@@ -21,17 +20,17 @@ describe("mergeDeep", () => {
     it("should merge properties from source into target, overwriting existing ones", () => {
         const target = {
             a: 1,
-            b: 2
+            b: 2,
         };
         const source = {
             b: 3,
-            c: 4
+            c: 4,
         };
         const result = mergeDeep(target, source);
         expect(result).toEqual({
             a: 1,
             b: 3,
-            c: 4
+            c: 4,
         });
     });
 
@@ -40,15 +39,15 @@ describe("mergeDeep", () => {
             a: 1,
             nested: {
                 x: 10,
-                y: 20
-            }
+                y: 20,
+            },
         };
         const source = {
             b: 2,
             nested: {
                 y: 30,
-                z: 40
-            }
+                z: 40,
+            },
         };
         const result = mergeDeep(target, source);
         expect(result).toEqual({
@@ -57,8 +56,8 @@ describe("mergeDeep", () => {
             nested: {
                 x: 10,
                 y: 30,
-                z: 40
-            }
+                z: 40,
+            },
         });
         expect(result.nested).not.toBe(source.nested); // Should be a new object
         expect(result.nested).not.toBe(target.nested); // Should be a new object
@@ -70,7 +69,7 @@ describe("mergeDeep", () => {
         const result = mergeDeep(target, source);
         expect(result).toEqual({
             a: 1,
-            newNested: { x: 10 }
+            newNested: { x: 10 },
         });
         // According to the implementation, if key is not in target, source[key] is assigned directly.
         expect(result.newNested).toBe(source.newNested);
@@ -88,13 +87,13 @@ describe("mergeDeep", () => {
     it("should overwrite arrays from source (not merge them element-wise)", () => {
         const target = {
             arr: [1, 2],
-            other: "value"
+            other: "value",
         };
         const source = { arr: [3, 4] };
         const result = mergeDeep(target, source);
         expect(result).toEqual({
             arr: [3, 4],
-            other: "value"
+            other: "value",
         });
         expect(result.arr).not.toBe(source.arr); // Should be a new array instance from source
     });
@@ -102,32 +101,32 @@ describe("mergeDeep", () => {
     it("should overwrite target property with different primitive types from source", () => {
         const target = {
             val: 123,
-            val2: "abc"
+            val2: "abc",
         };
         const source = {
             val: "xyz",
-            val2: true
+            val2: true,
         };
         const result = mergeDeep(target, source);
         expect(result).toEqual({
             val: "xyz",
-            val2: true
+            val2: true,
         });
     });
 
     it("should overwrite target property with null from source", () => {
         const target = {
             a: 1,
-            b: { nested: "value" }
+            b: { nested: "value" },
         };
         const source = {
             a: null,
-            b: null
+            b: null,
         };
         const result = mergeDeep(target, source);
         expect(result).toEqual({
             a: null,
-            b: null
+            b: null,
         });
     });
 
@@ -135,13 +134,13 @@ describe("mergeDeep", () => {
         const target = { optionalMap: null };
         const source = {
             optionalMap: {
-                "valueTwo": 222,
-                "valueOne": "one",
-                "nested": {
-                    "valueThree": "threeee",
-                    "valueFour": 444
-                }
-            }
+                valueTwo: 222,
+                valueOne: "one",
+                nested: {
+                    valueThree: "threeee",
+                    valueFour: 444,
+                },
+            },
         };
         const result = mergeDeep(target, source);
         expect(result).toEqual(source);
@@ -150,34 +149,34 @@ describe("mergeDeep", () => {
     it("should overwrite target property with undefined from source if ignoreUndefined is false (default)", () => {
         const target = {
             a: 1,
-            b: "defined"
+            b: "defined",
         };
         const source = {
             b: undefined,
-            c: 3
+            c: 3,
         };
         const result = mergeDeep(target, source); // ignoreUndefined defaults to false
         expect(result).toEqual({
             a: 1,
             b: undefined,
-            c: 3
+            c: 3,
         });
     });
 
     it("should not overwrite target property with undefined from source if ignoreUndefined is true", () => {
         const target = {
             a: 1,
-            b: "defined"
+            b: "defined",
         };
         const source = {
             b: undefined,
-            c: 3
+            c: 3,
         };
         const result = mergeDeep(target, source, true);
         expect(result).toEqual({
             a: 1,
             b: "defined",
-            c: 3
+            c: 3,
         });
     });
 
@@ -187,7 +186,7 @@ describe("mergeDeep", () => {
         const result = mergeDeep(target, source, false);
         expect(result).toEqual({
             a: 1,
-            b: undefined
+            b: undefined,
         });
     });
 
@@ -203,14 +202,14 @@ describe("mergeDeep", () => {
             a: 1,
             nested: {
                 x: 10,
-                y: "original"
-            }
+                y: "original",
+            },
         };
         const source = {
             nested: {
                 y: undefined,
-                z: 30
-            }
+                z: 30,
+            },
         };
 
         const resultTrue = mergeDeep(target, source, true); // ignoreUndefined = true
@@ -219,8 +218,8 @@ describe("mergeDeep", () => {
             nested: {
                 x: 10,
                 y: "original",
-                z: 30
-            }
+                z: 30,
+            },
         });
 
         const resultFalse = mergeDeep(target, source, false); // ignoreUndefined = false
@@ -229,8 +228,8 @@ describe("mergeDeep", () => {
             nested: {
                 x: 10,
                 y: undefined,
-                z: 30
-            }
+                z: 30,
+            },
         });
     });
 
@@ -258,12 +257,12 @@ describe("mergeDeep", () => {
         const target = {};
         const source = {
             a: 1,
-            b: { nested: 2 }
+            b: { nested: 2 },
         };
         const result = mergeDeep(target, source);
         expect(result).toEqual({
             a: 1,
-            b: { nested: 2 }
+            b: { nested: 2 },
         });
         // New nested object 'b' will be a reference from source
         expect(result.b).toBe(source.b);
@@ -288,12 +287,12 @@ describe("mergeDeep", () => {
         const target = {
             a: 1,
             nested: { x: 10 },
-            common: "target"
+            common: "target",
         };
         const source = {
             b: 2,
             nested: { y: 20 },
-            common: "source"
+            common: "source",
         };
 
         const targetClone = JSON.parse(JSON.stringify(target));
@@ -308,13 +307,13 @@ describe("mergeDeep", () => {
     it("should overwrite a non-object in target with an object from source", () => {
         const target = {
             a: 1,
-            b: "not an object"
+            b: "not an object",
         };
         const source = { b: { nested: "value" } };
         const result = mergeDeep(target, source);
         expect(result).toEqual({
             a: 1,
-            b: { nested: "value" }
+            b: { nested: "value" },
         });
         // The new object for 'b' will be a reference from source.b
         expect(result.b).toBe(source.b);
@@ -323,33 +322,33 @@ describe("mergeDeep", () => {
     it("should overwrite an object in target with a non-object from source", () => {
         const target = {
             a: 1,
-            b: { nested: "value" }
+            b: { nested: "value" },
         };
         const source = { b: "not an object" };
         const result = mergeDeep(target, source);
         expect(result).toEqual({
             a: 1,
-            b: "not an object"
+            b: "not an object",
         });
     });
 
     it("should merge when target has a property that source doesn't", () => {
         const target = {
             a: 1,
-            b: { nestedA: "valA" }
+            b: { nestedA: "valA" },
         };
         const source = {
             b: { nestedB: "valB" },
-            c: 3
+            c: 3,
         };
         const result = mergeDeep(target, source);
         expect(result).toEqual({
             a: 1,
             b: {
                 nestedA: "valA",
-                nestedB: "valB"
+                nestedB: "valB",
             },
-            c: 3
+            c: 3,
         });
     });
 });

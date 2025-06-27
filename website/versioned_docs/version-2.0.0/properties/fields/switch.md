@@ -12,7 +12,7 @@ import { buildProperty } from "@firecms/core";
 
 buildProperty({
     name: "Selectable",
-    dataType: "boolean"
+    dataType: "boolean",
 });
 ```
 
@@ -20,4 +20,3 @@ The data type is [`boolean`](../config/boolean).
 
 Internally the component used
 is [`SwitchFieldBinding`].
-

@@ -21,6 +21,7 @@ type for any custom props you would like to pass to the preview, just like
 done when defining custom fields.
 
 ### Example
+
 Example of a custom preview for a `boolean` property:
 
 ```tsx
@@ -29,13 +30,11 @@ import { PropertyPreviewProps } from "@firecms/core";
 import { CheckBoxIcon, CheckBoxOutlineBlankIcon } from "@firecms/ui";
 
 export default function CustomBooleanPreview({
-                                                    value, property, size
-                                                }: PropertyPreviewProps<boolean>
-)
-{
-    return (
-        value ? <CheckBoxIcon/> : <CheckBoxOutlineBlankIcon/>
-    );
+    value,
+    property,
+    size,
+}: PropertyPreviewProps<boolean>) {
+    return value ? <CheckBoxIcon /> : <CheckBoxOutlineBlankIcon />;
 }
 ```
 
@@ -49,10 +48,8 @@ export const blogCollection = buildCollection({
         reviewed: {
             name: "Reviewed",
             dataType: "boolean",
-            Preview: CustomBooleanPreview
+            Preview: CustomBooleanPreview,
         },
-    }
+    },
 });
 ```
-
-

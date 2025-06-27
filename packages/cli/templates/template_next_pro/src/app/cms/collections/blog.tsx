@@ -15,16 +15,16 @@ export const blogCollection = buildCollection<BlogEntry>({
         {
             key: "blog_preview",
             name: "Blog preview",
-            Builder: ({ modifiedValues, entity }) => <CMSBlogPreview
-                id={entity?.id ?? "temp"}
-                blogEntry={modifiedValues}/>
-        }
+            Builder: ({ modifiedValues, entity }) => (
+                <CMSBlogPreview id={entity?.id ?? "temp"} blogEntry={modifiedValues} />
+            ),
+        },
     ],
     properties: {
         name: {
             name: "Name",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         header_image: {
             name: "Header image",
@@ -33,9 +33,9 @@ export const blogCollection = buildCollection<BlogEntry>({
                 storagePath: "images",
                 acceptedFiles: ["image/*"],
                 metadata: {
-                    cacheControl: "max-age=1000000"
-                }
-            }
+                    cacheControl: "max-age=1000000",
+                },
+            },
         },
         content: {
             name: "Content",
@@ -49,12 +49,12 @@ export const blogCollection = buildCollection<BlogEntry>({
                     text: {
                         dataType: "string",
                         name: "Text",
-                        markdown: true
+                        markdown: true,
                     },
                     quote: {
                         dataType: "string",
                         name: "Quote",
-                        multiline: true
+                        multiline: true,
                     },
                     images: {
                         name: "Images",
@@ -65,11 +65,12 @@ export const blogCollection = buildCollection<BlogEntry>({
                                 storagePath: "images",
                                 acceptedFiles: ["image/*"],
                                 metadata: {
-                                    cacheControl: "max-age=1000000"
-                                }
-                            }
+                                    cacheControl: "max-age=1000000",
+                                },
+                            },
                         },
-                        description: "This fields allows uploading multiple images at once and reordering"
+                        description:
+                            "This fields allows uploading multiple images at once and reordering",
                     },
                     products: {
                         name: "Products",
@@ -77,17 +78,17 @@ export const blogCollection = buildCollection<BlogEntry>({
                         of: {
                             dataType: "reference",
                             path: "products",
-                            previewProperties: ["name", "main_image"]
-                        }
-                    }
+                            previewProperties: ["name", "main_image"],
+                        },
+                    },
                 },
-                propertiesOrder: ["text", "quote", "images", "products"]
-            }
+                propertiesOrder: ["text", "quote", "images", "products"],
+            },
         },
         created_on: {
             name: "Created on",
             dataType: "date",
-            autoValue: "on_create"
+            autoValue: "on_create",
         },
         status: {
             name: "Status",
@@ -98,18 +99,18 @@ export const blogCollection = buildCollection<BlogEntry>({
                     id: "published",
                     label: "Published",
                 },
-                draft: "Draft"
+                draft: "Draft",
             },
-            defaultValue: "draft"
+            defaultValue: "draft",
         },
         publish_date: {
             name: "Publish date",
             dataType: "date",
-            clearable: true
+            clearable: true,
         },
         reviewed: {
             name: "Reviewed",
-            dataType: "boolean"
+            dataType: "boolean",
         },
         tags: {
             name: "Tags",
@@ -117,11 +118,11 @@ export const blogCollection = buildCollection<BlogEntry>({
             dataType: "array",
             of: {
                 dataType: "string",
-                previewAsTag: true
-            }
-        }
+                previewAsTag: true,
+            },
+        },
     },
     initialFilter: {
-        status: ["==", "published"]
-    }
+        status: ["==", "published"],
+    },
 });

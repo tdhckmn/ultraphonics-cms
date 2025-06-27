@@ -22,27 +22,27 @@ it gets uploaded to the storage backend, with the `imageCompression` prop.
 
 The complete list of params you can use when uploading files:
 
-* `mediaType` Media type of this reference, used for displaying the
+- `mediaType` Media type of this reference, used for displaying the
   preview.
-* `storagePath` Absolute path in your bucket. You can specify it
+- `storagePath` Absolute path in your bucket. You can specify it
   directly or use a callback
-* `acceptedFiles`
+- `acceptedFiles`
   File [MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types)
   that can be uploaded to this
   reference. Note that you can also use the asterisk notation, so `image/*`
   accepts any image file, and so on.
-* `metadata` Specific metadata set in your uploaded file.
-* `fileName` You can specify a fileName callback if you need to
+- `metadata` Specific metadata set in your uploaded file.
+- `fileName` You can specify a fileName callback if you need to
   customize the name of the file
-* `storagePath` You can specify a storage path callback if you need to
+- `storagePath` You can specify a storage path callback if you need to
   customize the path where it is stored.
-* `storeUrl` When set to `true`, this flag indicates that the download
+- `storeUrl` When set to `true`, this flag indicates that the download
   URL of the file will be saved in Firestore instead of the Cloud
   storage path. Note that the generated URL may use a token that, if
   disabled, may make the URL unusable and lose the original reference to
   Cloud Storage, so it is not encouraged to use this flag. Defaults to
   false.
-* `imageCompression` Use client side image compression and resizing
+- `imageCompression` Use client side image compression and resizing
   Will only be applied to these MIME types: `image/jpeg`, `image/png`
   and `image/webp`
 
@@ -57,7 +57,7 @@ customize the path and name of the file. The available placeholders are:
 - \{entityId\} - ID of the entity
 - \{propertyKey\} - ID of this property
 - \{path\} - Path of this entity
-:::
+  :::
 
 ### Single file upload
 
@@ -74,12 +74,12 @@ buildProperty({
         acceptedFiles: ["image/*"],
         maxSize: 1024 * 1024,
         metadata: {
-            cacheControl: "max-age=1000000"
+            cacheControl: "max-age=1000000",
         },
         fileName: (context) => {
             return context.file.name;
-        }
-    }
+        },
+    },
 });
 ```
 
@@ -104,11 +104,11 @@ buildProperty({
             storagePath: "images",
             acceptedFiles: ["image/*"],
             metadata: {
-                cacheControl: "max-age=1000000"
-            }
-        }
+                cacheControl: "max-age=1000000",
+            },
+        },
     },
-    description: "This fields allows uploading multiple images at once"
+    description: "This fields allows uploading multiple images at once",
 });
 ```
 

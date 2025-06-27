@@ -3,7 +3,6 @@ import { PartialEntityCollection, UserConfigurationPersistence } from "../types"
 import { mergeDeep, stripCollectionPath } from "../util";
 
 export function useBuildLocalConfigurationPersistence(): UserConfigurationPersistence {
-
     const configCache = useRef<Record<string, PartialEntityCollection>>({});
 
     const getCollectionFromStorage = useCallback((storageKey: string) => {
@@ -11,30 +10,48 @@ export function useBuildLocalConfigurationPersistence(): UserConfigurationPersis
         return item ? JSON.parse(item) : {};
     }, []);
 
-    const getCollectionConfig = useCallback(<M extends Record<string, any>>(path: string): PartialEntityCollection<M> => {
-        const storageKey = `collection_config::${stripCollectionPath(path)}`;
-        if (configCache.current[storageKey]) {
-            return configCache.current[storageKey] as PartialEntityCollection<M>;
-        }
-        return getCollectionFromStorage(storageKey);
-    }, [getCollectionFromStorage]);
+    const getCollectionConfig = useCallback(
+        <M extends Record<string, any>>(path: string): PartialEntityCollection<M> => {
+            const storageKey = `collection_config::${stripCollectionPath(path)}`;
+            if (configCache.current[storageKey]) {
+                return configCache.current[storageKey] as PartialEntityCollection<M>;
+            }
+            return getCollectionFromStorage(storageKey);
+        },
+        [getCollectionFromStorage]
+    );
 
-    const onCollectionModified = useCallback(<M extends Record<string, any>>(path: string, data: PartialEntityCollection<M>) => {
-        const storageKey = `collection_config::${stripCollectionPath(path)}`;
-        localStorage.setItem(storageKey, JSON.stringify(data));
-        const cachedConfig = configCache.current[storageKey];
-        const newConfig = mergeDeep(cachedConfig ?? getCollectionFromStorage(path), data);
-        configCache.current[storageKey] = mergeDeep(configCache.current[storageKey], newConfig);
-    }, [getCollectionFromStorage]);
+    const onCollectionModified = useCallback(
+        <M extends Record<string, any>>(path: string, data: PartialEntityCollection<M>) => {
+            const storageKey = `collection_config::${stripCollectionPath(path)}`;
+            localStorage.setItem(storageKey, JSON.stringify(data));
+            const cachedConfig = configCache.current[storageKey];
+            const newConfig = mergeDeep(cachedConfig ?? getCollectionFromStorage(path), data);
+            configCache.current[storageKey] = mergeDeep(configCache.current[storageKey], newConfig);
+        },
+        [getCollectionFromStorage]
+    );
 
     const [recentlyVisitedPaths, _setRecentlyVisitedPaths] = useState<string[]>([]);
     const [favouritePaths, _setFavouritePaths] = useState<string[]>([]);
     const [collapsedGroups, _setCollapsedGroups] = useState<string[]>([]);
 
     useEffect(() => {
-        _setRecentlyVisitedPaths(localStorage.getItem("recently_visited_paths") ? JSON.parse(localStorage.getItem("recently_visited_paths")!) : []);
-        _setFavouritePaths(localStorage.getItem("favourite_paths") ? JSON.parse(localStorage.getItem("favourite_paths")!) : []);
-        _setCollapsedGroups(localStorage.getItem("collapsed_groups") ? JSON.parse(localStorage.getItem("collapsed_groups")!) : []);
+        _setRecentlyVisitedPaths(
+            localStorage.getItem("recently_visited_paths")
+                ? JSON.parse(localStorage.getItem("recently_visited_paths")!)
+                : []
+        );
+        _setFavouritePaths(
+            localStorage.getItem("favourite_paths")
+                ? JSON.parse(localStorage.getItem("favourite_paths")!)
+                : []
+        );
+        _setCollapsedGroups(
+            localStorage.getItem("collapsed_groups")
+                ? JSON.parse(localStorage.getItem("collapsed_groups")!)
+                : []
+        );
     }, []);
 
     const setRecentlyVisitedPaths = useCallback((paths: string[]) => {
@@ -60,6 +77,6 @@ export function useBuildLocalConfigurationPersistence(): UserConfigurationPersis
         favouritePaths,
         setFavouritePaths,
         collapsedGroups,
-        setCollapsedGroups
-    }
+        setCollapsedGroups,
+    };
 }

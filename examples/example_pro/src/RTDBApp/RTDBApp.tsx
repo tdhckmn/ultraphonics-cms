@@ -16,7 +16,7 @@ import {
     useBuildLocalConfigurationPersistence,
     useBuildModeController,
     useBuildNavigationController,
-    useValidateAuthenticator
+    useValidateAuthenticator,
 } from "@firecms/core";
 
 import {
@@ -39,19 +39,14 @@ const firebaseConfig = {
     projectId: "rtdb-test-eb959",
     storageBucket: "rtdb-test-eb959.appspot.com",
     messagingSenderId: "380781473867",
-    appId: "1:380781473867:web:94e8457d48c642b1655dce"
+    appId: "1:380781473867:web:94e8457d48c642b1655dce",
 };
 
 function RTDBApp() {
-
     const name = "My FireCMS App";
 
-    const {
-        firebaseApp,
-        firebaseConfigLoading,
-        configError
-    } = useInitialiseFirebase({
-        firebaseConfig
+    const { firebaseApp, firebaseConfigLoading, configError } = useInitialiseFirebase({
+        firebaseConfig,
     });
 
     /**
@@ -66,7 +61,7 @@ function RTDBApp() {
      */
     const firebaseAuthController: FirebaseAuthController = useFirebaseAuthController({
         firebaseApp,
-        signInOptions
+        signInOptions,
     });
 
     /**
@@ -75,40 +70,38 @@ function RTDBApp() {
     const userConfigPersistence = useBuildLocalConfigurationPersistence();
 
     const RTDBDelegate = useFirebaseRTDBDelegate({
-        firebaseApp
+        firebaseApp,
     });
 
     /**
      * Controller used for saving and fetching files in storage
      */
     const storageSource = useFirebaseStorageSource({
-        firebaseApp
+        firebaseApp,
     });
 
     /**
      * Validate authenticator
      */
-    const {
-        authLoading,
-        canAccessMainView,
-        notAllowedError
-    } = useValidateAuthenticator({
+    const { authLoading, canAccessMainView, notAllowedError } = useValidateAuthenticator({
         authController: firebaseAuthController,
         authenticator: () => true,
         dataSourceDelegate: RTDBDelegate,
-        storageSource
+        storageSource,
     });
 
     const navigationController = useBuildNavigationController({
         collections: [productsCollection],
         authController: firebaseAuthController,
-        dataSourceDelegate: RTDBDelegate
+        dataSourceDelegate: RTDBDelegate,
     });
 
     if (firebaseConfigLoading || !firebaseApp) {
-        return <>
-            <CircularProgressCenter/>
-        </>;
+        return (
+            <>
+                <CircularProgressCenter />
+            </>
+        );
     }
 
     if (configError) {
@@ -118,23 +111,17 @@ function RTDBApp() {
     return (
         <SnackbarProvider>
             <ModeControllerProvider value={modeController}>
-
                 <FireCMS
                     navigationController={navigationController}
                     authController={firebaseAuthController}
                     userConfigPersistence={userConfigPersistence}
                     dataSourceDelegate={RTDBDelegate}
                     storageSource={storageSource}
-
                 >
-                    {({
-                          context,
-                          loading
-                      }) => {
-
+                    {({ context, loading }) => {
                         let component;
                         if (loading || authLoading) {
-                            component = <CircularProgressCenter size={"large"}/>;
+                            component = <CircularProgressCenter size={"large"} />;
                         } else {
                             if (!canAccessMainView) {
                                 const LoginViewUsed = FirebaseLoginView;
@@ -144,17 +131,16 @@ function RTDBApp() {
                                         signInOptions={signInOptions}
                                         firebaseApp={firebaseApp}
                                         authController={firebaseAuthController}
-                                        notAllowedError={notAllowedError}/>
+                                        notAllowedError={notAllowedError}
+                                    />
                                 );
                             } else {
                                 component = (
-                                    <Scaffold
-                                        autoOpenDrawer={false}>
-                                        <AppBar
-                                            title={name}/>
-                                        <Drawer/>
-                                        <NavigationRoutes/>
-                                        <SideDialogs/>
+                                    <Scaffold autoOpenDrawer={false}>
+                                        <AppBar title={name} />
+                                        <Drawer />
+                                        <NavigationRoutes />
+                                        <SideDialogs />
                                     </Scaffold>
                                 );
                             }

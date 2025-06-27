@@ -1,25 +1,24 @@
-import { ArrowForwardIcon, Card, cls, Markdown, Typography, } from "@firecms/ui";
+import { ArrowForwardIcon, Card, cls, Markdown, Typography } from "@firecms/ui";
 import React from "react"; // Import React
 
 export type NavigationCardProps = {
-    name: string,
+    name: string;
     description?: string;
     actions: React.ReactNode;
     icon: React.ReactNode;
-    onClick?: () => void,
-    shrink?: boolean
+    onClick?: () => void;
+    shrink?: boolean;
 };
 
 // Wrap the component with React.memo
 export const NavigationCard = React.memo(function NavigationCard({
-                                   name,
-                                   description,
-                                   icon,
-                                   actions,
-                                   onClick,
-                                   shrink
-                               }: NavigationCardProps) {
-
+    name,
+    description,
+    icon,
+    actions,
+    onClick,
+    shrink,
+}: NavigationCardProps) {
     return (
         <Card
             className={cls(
@@ -30,14 +29,9 @@ export const NavigationCard = React.memo(function NavigationCard({
                 onClick?.();
             }}
         >
-
             <div className="flex flex-col items-start h-full">
-                <div
-                    className="flex-grow w-full">
-
-                    <div
-                        className="h-10 flex items-center w-full justify-between text-surface-300 dark:text-surface-600">
-
+                <div className="flex-grow w-full">
+                    <div className="h-10 flex items-center w-full justify-between text-surface-300 dark:text-surface-600">
                         {icon}
 
                         <div
@@ -45,34 +39,29 @@ export const NavigationCard = React.memo(function NavigationCard({
                             onClick={(event: React.MouseEvent) => {
                                 event.preventDefault();
                                 event.stopPropagation();
-                            }}>
-
+                            }}
+                        >
                             {actions}
-
                         </div>
-
                     </div>
 
-                    <Typography gutterBottom variant="h5"
-                                component="h2">
+                    <Typography gutterBottom variant="h5" component="h2">
                         {name}
                     </Typography>
 
-                    {description && <Typography variant="body2"
-                                                color="secondary"
-                                                component="div">
-                        <Markdown source={description} size={"small"}/>
-                    </Typography>}
+                    {description && (
+                        <Typography variant="body2" color="secondary" component="div">
+                            <Markdown source={description} size={"small"} />
+                        </Typography>
+                    )}
                 </div>
 
                 <div style={{ alignSelf: "flex-end" }}>
-
                     <div className={"p-4"}>
-                        <ArrowForwardIcon className="text-primary"/>
+                        <ArrowForwardIcon className="text-primary" />
                     </div>
                 </div>
-
             </div>
-
-        </Card>)
+        </Card>
+    );
 });

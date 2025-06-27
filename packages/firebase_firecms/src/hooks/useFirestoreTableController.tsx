@@ -10,7 +10,7 @@ import {
     useFireCMSContext,
     useNavigationController,
     User,
-    WhereFilterOp
+    WhereFilterOp,
 } from "@firecms/core";
 import {
     collection as collectionClause,
@@ -22,7 +22,7 @@ import {
     Query,
     query,
     QueryConstraint,
-    where as whereClause
+    where as whereClause,
 } from "@firebase/firestore";
 import { cmsToFirestoreModel, firestoreToCMSModel } from "./useFirestoreDelegate";
 import { FirebaseApp } from "@firebase/app";
@@ -30,7 +30,6 @@ import { FirebaseApp } from "@firebase/app";
 const DEFAULT_PAGE_SIZE = 50;
 
 export type FirestoreTableControllerProps<M extends Record<string, any> = any> = {
-
     firebaseApp?: FirebaseApp;
 
     /**
@@ -46,8 +45,7 @@ export type FirestoreTableControllerProps<M extends Record<string, any> = any> =
      * This is used for reference fields selection
      */
     entitiesDisplayedFirst?: Entity<M>[];
-
-}
+};
 
 /**
  * Use this hook to build a controller for the {@link EntityCollectionTable}.
@@ -58,43 +56,50 @@ export type FirestoreTableControllerProps<M extends Record<string, any> = any> =
  * @param forceFilterFromProps
  * @param firebaseApp
  */
-export function useFirestoreTableController<M extends Record<string, any> = any, USER extends User = User>(
-    {
-        fullPath,
-        collection,
-        firebaseApp
-    }: FirestoreTableControllerProps<M>)
-    : EntityTableController<M> {
-
-    const {
-        initialFilter,
-        initialSort,
-        forceFilter
-    } = collection;
+export function useFirestoreTableController<
+    M extends Record<string, any> = any,
+    USER extends User = User,
+>({
+    fullPath,
+    collection,
+    firebaseApp,
+}: FirestoreTableControllerProps<M>): EntityTableController<M> {
+    const { initialFilter, initialSort, forceFilter } = collection;
 
     const [popupCell, setPopupCell] = React.useState<SelectedCellProps<M> | undefined>(undefined);
 
     const paginationEnabled = collection.pagination === undefined || Boolean(collection.pagination);
-    const pageSize = typeof collection.pagination === "number" ? collection.pagination : DEFAULT_PAGE_SIZE;
+    const pageSize =
+        typeof collection.pagination === "number" ? collection.pagination : DEFAULT_PAGE_SIZE;
 
     const [searchString, setSearchString] = React.useState<string | undefined>();
-    const [itemCount, setItemCount] = React.useState<number | undefined>(paginationEnabled ? pageSize : undefined);
+    const [itemCount, setItemCount] = React.useState<number | undefined>(
+        paginationEnabled ? pageSize : undefined
+    );
 
-    const checkFilterCombination = useCallback((filterValues: FilterValues<any>,
-                                                sortBy?: [string, "asc" | "desc"]) => {
-        return true;
-    }, []);
+    const checkFilterCombination = useCallback(
+        (filterValues: FilterValues<any>, sortBy?: [string, "asc" | "desc"]) => {
+            return true;
+        },
+        []
+    );
 
     const initialSortInternal = useMemo(() => {
         if (initialSort && forceFilter && !checkFilterCombination(forceFilter, initialSort)) {
-            console.warn("Initial sort is not compatible with the force filter. Ignoring initial sort");
+            console.warn(
+                "Initial sort is not compatible with the force filter. Ignoring initial sort"
+            );
             return undefined;
         }
         return initialSort;
     }, [initialSort, forceFilter]);
 
-    const [filterValues, setFilterValues] = React.useState<FilterValues<Extract<keyof M, string>> | undefined>(forceFilter ?? initialFilter ?? undefined);
-    const [sortBy, setSortBy] = React.useState<[Extract<keyof M, string>, "asc" | "desc"] | undefined>(initialSortInternal);
+    const [filterValues, setFilterValues] = React.useState<
+        FilterValues<Extract<keyof M, string>> | undefined
+    >(forceFilter ?? initialFilter ?? undefined);
+    const [sortBy, setSortBy] = React.useState<
+        [Extract<keyof M, string>, "asc" | "desc"] | undefined
+    >(initialSortInternal);
 
     const sortByProperty = sortBy ? sortBy[0] : undefined;
     const currentSort = sortBy ? sortBy[1] : undefined;
@@ -107,23 +112,24 @@ export function useFirestoreTableController<M extends Record<string, any> = any,
     const [dataLoadingError, setDataLoadingError] = useState<Error | undefined>();
     const [noMoreToLoad, setNoMoreToLoad] = useState<boolean>(false);
 
-
     const clearFilter = useCallback(() => setFilterValues(forceFilter ?? undefined), [forceFilter]);
 
-    const updateFilterValues = useCallback((updatedFilter: FilterValues<Extract<keyof M, string>> | undefined) => {
-        if (forceFilter) {
-            console.warn("Filter is not compatible with the force filter. Ignoring filter");
-            return;
-        }
-        if (updatedFilter && Object.keys(updatedFilter).length === 0) {
-            setFilterValues(undefined);
-        } else {
-            setFilterValues(updatedFilter);
-        }
-    }, [forceFilter]);
+    const updateFilterValues = useCallback(
+        (updatedFilter: FilterValues<Extract<keyof M, string>> | undefined) => {
+            if (forceFilter) {
+                console.warn("Filter is not compatible with the force filter. Ignoring filter");
+                return;
+            }
+            if (updatedFilter && Object.keys(updatedFilter).length === 0) {
+                setFilterValues(undefined);
+            } else {
+                setFilterValues(updatedFilter);
+            }
+        },
+        [forceFilter]
+    );
 
     useEffect(() => {
-
         setDataLoading(true);
 
         const onEntitiesUpdate = async (entities: Entity<M>[]) => {
@@ -135,18 +141,22 @@ export function useFirestoreTableController<M extends Record<string, any> = any,
                                 collection,
                                 path: fullPath,
                                 entity,
-                                context
-                            })));
+                                context,
+                            })
+                        )
+                    );
                 } catch (e: any) {
                     console.error(e);
                 }
             }
             setDataLoading(false);
             setDataLoadingError(undefined);
-            setRawData(entities.map(e => ({
-                ...e,
-                // values: sanitizeData(e.values, resolvedCollection.properties)
-            })));
+            setRawData(
+                entities.map((e) => ({
+                    ...e,
+                    // values: sanitizeData(e.values, resolvedCollection.properties)
+                }))
+            );
             setNoMoreToLoad(!itemCount || entities.length < itemCount);
         };
 
@@ -179,16 +189,13 @@ export function useFirestoreTableController<M extends Record<string, any> = any,
         }
 
         const q = query(collectionReference, ...queryParams);
-        return onSnapshot(q,
-            {
-                next: (snapshot) => {
-                    if (!searchString)
-                        onEntitiesUpdate(snapshot.docs.map((doc) => createEntityFromDocument(doc)));
-                },
-                error: onError
-            }
-        );
-
+        return onSnapshot(q, {
+            next: (snapshot) => {
+                if (!searchString)
+                    onEntitiesUpdate(snapshot.docs.map((doc) => createEntityFromDocument(doc)));
+            },
+            error: onError,
+        });
     }, [fullPath, itemCount, currentSort, sortByProperty, filterValues, searchString]);
 
     return {
@@ -209,18 +216,18 @@ export function useFirestoreTableController<M extends Record<string, any> = any,
         pageSize,
         checkFilterCombination,
         popupCell,
-        setPopupCell
-    }
+        setPopupCell,
+    };
 }
 
 const createEntityFromDocument = <M extends Record<string, any>>(
-    docSnap: DocumentSnapshot,
+    docSnap: DocumentSnapshot
 ): Entity<M> => {
     const values = firestoreToCMSModel(docSnap.data());
     return {
         id: docSnap.id,
         path: getCMSPathFromFirestorePath(docSnap.ref.path),
-        values
+        values,
     };
 };
 

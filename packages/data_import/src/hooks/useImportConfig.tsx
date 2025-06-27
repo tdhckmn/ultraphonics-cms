@@ -3,7 +3,6 @@ import { Entity, Property } from "@firecms/core";
 import { ImportConfig } from "../types";
 
 export const useImportConfig = (): ImportConfig => {
-
     const [inUse, setInUse] = useState<boolean>(false);
     const [defaultValues, setDefaultValues] = useState<Record<string, any>>({});
     const [idColumn, setIdColumn] = useState<string | undefined>();
@@ -29,6 +28,6 @@ export const useImportConfig = (): ImportConfig => {
         originProperties,
         setOriginProperties,
         defaultValues,
-        setDefaultValues
+        setDefaultValues,
     };
 };

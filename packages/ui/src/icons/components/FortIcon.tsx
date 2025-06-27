@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function FortIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"fort"}/>
+    return <Icon {...props} iconKey={"fort"} />;
 }

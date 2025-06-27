@@ -12,17 +12,16 @@ module.exports = function (context, options) {
                     tailwindcss,
                     postcssenv({
                         autoprefixer: {
-                            flexbox: "no-2009"
+                            flexbox: "no-2009",
                         },
-                        stage: 4
-                    })
-                ]
+                        stage: 4,
+                    }),
+                ],
             };
             return {
                 ...postcssOptions,
-                ...newOptions
+                ...newOptions,
             };
-        }
+        },
     };
 };
-

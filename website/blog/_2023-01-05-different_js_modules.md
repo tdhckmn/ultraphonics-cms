@@ -33,8 +33,6 @@ where the confusion starts.
 Let's start with the most common format, the one that you will find in the
 browser, and that is the ES module format.
 
-
-
 amd – Asynchronous Module Definition, used with module loaders like RequireJS
 
 cjs – CommonJS, suitable for Node and other bundlers (alias: commonjs)

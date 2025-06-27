@@ -19,19 +19,18 @@ import { EntityCollectionsBuilder } from "@firecms/core";
 // ...
 
 const collectionsBuilder: EntityCollectionsBuilder = async ({
-                                                                user,
-                                                                authController,
-                                                                dataSource
-                                                            }) =>
-    ({
-        collections: [
-            buildCollection({
-                path: "products",
-                properties: {}, // ...
-                name: "Products"
-            })
-        ]
-    });
+    user,
+    authController,
+    dataSource,
+}) => ({
+    collections: [
+        buildCollection({
+            path: "products",
+            properties: {}, // ...
+            name: "Products",
+        }),
+    ],
+});
 ```
 
 :::note
@@ -55,14 +54,13 @@ import { useCallback } from "react";
 import { buildCollection, EntityCollectionsBuilder } from "@firecms/core";
 
 const collectionsBuilder: EntityCollectionsBuilder = async ({
-                                                                user,
-                                                                authController,
-                                                                dataSource
-                                                            }) => {
-
+    user,
+    authController,
+    dataSource,
+}) => {
     // let's assume you have a database collection called "categories"
     const categoriesData: Entity<any>[] = await dataSource.fetchCollection({
-        path: "categories"
+        path: "categories",
     });
 
     return {
@@ -80,17 +78,16 @@ const collectionsBuilder: EntityCollectionsBuilder = async ({
                         // and the UI label will be the name of the category
                         enumValues: categoriesData.map((category: any) => ({
                             id: category.id,
-                            label: category.values.name
-                        }))
-                    }
+                            label: category.values.name,
+                        })),
+                    },
                     // ...
                 },
-                name: "Products"
-            })
-        ]
-    }
+                name: "Products",
+            }),
+        ],
+    };
 };
-
 ```
 
 ### Use in conjunction with authentication
@@ -104,52 +101,49 @@ example, the roles or the permissions.
 ```tsx
 import { useCallback } from "react";
 
-const myAuthenticator: Authenticator<FirebaseUserWrapper> = useCallback(async ({
-                                                                            user,
-                                                                            authController
-                                                                        }) => {
+const myAuthenticator: Authenticator<FirebaseUserWrapper> = useCallback(
+    async ({ user, authController }) => {
+        if (user?.email?.includes("flanders")) {
+            throw Error("Stupid Flanders!");
+        }
 
-    if (user?.email?.includes("flanders")) {
-        throw Error("Stupid Flanders!");
-    }
+        console.log("Allowing access to", user?.email);
+        // This is an example of retrieving async data related to the user
+        // and storing it in the controller's extra field.
+        const sampleUserRoles = await Promise.resolve(["admin"]);
+        authController.setExtra(sampleUserRoles);
 
-    console.log("Allowing access to", user?.email);
-    // This is an example of retrieving async data related to the user
-    // and storing it in the controller's extra field.
-    const sampleUserRoles = await Promise.resolve(["admin"]);
-    authController.setExtra(sampleUserRoles);
-
-    return true;
-}, []);
+        return true;
+    },
+    []
+);
 ```
 
 Then you can access the extra data in the `collectionsBuilder` callback.
 
 ```tsx
-const collectionsBuilder: EntityCollectionsBuilder = useCallback(async ({
-                                                                            user,
-                                                                            authController,
-                                                                            dataSource
-                                                                        }) => {
+const collectionsBuilder: EntityCollectionsBuilder = useCallback(
+    async ({ user, authController, dataSource }) => {
+        const userRoles = authController.extra;
 
-    const userRoles = authController.extra;
-
-    if (userRoles?.includes("admin")) {
-        return {
-            collections: [
-                buildCollection({
-                    path: "products",
-                    properties: {}, // ...
-                    name: "Products"
-                })
-            ]
-        };
-    } else {
-        return {
-            collections: []
-        };
-    }
-}, []);
+        if (userRoles?.includes("admin")) {
+            return {
+                collections: [
+                    buildCollection({
+                        path: "products",
+                        properties: {}, // ...
+                        name: "Products",
+                    }),
+                ],
+            };
+        } else {
+            return {
+                collections: [],
+            };
+        }
+    },
+    []
+);
 ```
 
 ### Where to use the `collectionsBuilder`
@@ -158,20 +152,19 @@ In the **Cloud version** of FireCMS, simply add the `collectionsBuilder` to the 
 config.
 
 ```tsx
-
 const collectionsBuilder: EntityCollectionsBuilder = async ({
-                                                                user,
-                                                                authController,
-                                                                dataSource
-                                                            }) => {
+    user,
+    authController,
+    dataSource,
+}) => {
     return {
-        collections: [] // your collections here
+        collections: [], // your collections here
     };
 };
 
 export const appConfig: FireCMSAppConfig = {
     version: "1",
-    collections: collectionsBuilder
+    collections: collectionsBuilder,
 };
 ```
 
@@ -179,6 +172,6 @@ In the **PRO version** of FireCMS, you can use the `collectionsBuilder` in the `
 
 ```tsx
 const navigationController = useBuildNavigationController({
-    collections: collectionsBuilder
+    collections: collectionsBuilder,
 });
 ```

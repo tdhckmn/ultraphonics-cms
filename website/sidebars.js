@@ -2,51 +2,51 @@
 const typedocSidebar = require("./docs/api/typedoc-sidebar.cjs");
 
 module.exports = {
-    "docsSidebar": [
+    docsSidebar: [
         {
-            "type": "doc",
-            "label": "Introduction",
-            "id": "intro"
+            type: "doc",
+            label: "Introduction",
+            id: "intro",
         },
         "what_is_new_v3",
         {
-            "type": "category",
-            "label": "☁️  FireCMS Cloud",
-            "collapsed": false,
+            type: "category",
+            label: "☁️  FireCMS Cloud",
+            collapsed: false,
             link: {
                 type: "doc",
-                id: "cloud/intro"
+                id: "cloud/intro",
             },
-            "items": [
+            items: [
                 "cloud/quickstart",
                 "cloud/app_config",
                 "cloud/deployment",
                 "cloud/app_check",
                 "cloud/creating_service_account",
                 "cloud/migrating_from_v2",
-                "cloud/eject_collections"
-            ]
+                "cloud/eject_collections",
+            ],
         },
         {
-            "type": "category",
-            "label": "Self-hosted",
-            "collapsed": false,
-            "items": [
+            type: "category",
+            label: "Self-hosted",
+            collapsed: false,
+            items: [
                 "self",
                 {
-                    "type": "doc",
-                    "id": "pro/nextjs",
-                    className: "pro-sidebar-item"
+                    type: "doc",
+                    id: "pro/nextjs",
+                    className: "pro-sidebar-item",
                 },
                 {
-                    "type": "doc",
-                    "id": "pro/firestore_rules",
-                    className: "pro-sidebar-item"
+                    type: "doc",
+                    id: "pro/firestore_rules",
+                    className: "pro-sidebar-item",
                 },
                 {
-                    "type": "doc",
-                    "id": "pro/sample_pro",
-                    className: "pro-sidebar-item"
+                    type: "doc",
+                    id: "pro/sample_pro",
+                    className: "pro-sidebar-item",
                 },
                 "self/main_components",
                 "self/styling_firecms",
@@ -55,46 +55,46 @@ module.exports = {
                 "firebase_setup",
                 "self/mongodb",
                 {
-                    "type": "doc",
-                    "id": "pro/licensing",
-                    className: "pro-sidebar-item"
+                    type: "doc",
+                    id: "pro/licensing",
+                    className: "pro-sidebar-item",
                 },
                 {
-                    "type": "doc",
-                    "id": "pro/user_management",
-                    className: "pro-sidebar-item"
+                    type: "doc",
+                    id: "pro/user_management",
+                    className: "pro-sidebar-item",
                 },
                 {
-                    "type": "doc",
-                    "id": "pro/collection_editor",
-                    className: "pro-sidebar-item"
+                    type: "doc",
+                    id: "pro/collection_editor",
+                    className: "pro-sidebar-item",
                 },
                 {
-                    "type": "doc",
-                    "id": "pro/data_export",
-                    className: "pro-sidebar-item"
+                    type: "doc",
+                    id: "pro/data_export",
+                    className: "pro-sidebar-item",
                 },
                 {
-                    "type": "doc",
-                    "id": "pro/data_import",
-                    className: "pro-sidebar-item"
+                    type: "doc",
+                    id: "pro/data_import",
+                    className: "pro-sidebar-item",
                 },
                 {
-                    "type": "doc",
-                    "id": "pro/entity_history",
-                    className: "pro-sidebar-item"
+                    type: "doc",
+                    id: "pro/entity_history",
+                    className: "pro-sidebar-item",
                 },
                 "self/custom_storage",
                 "self/controllers",
                 "self/migrating_from_v2_to_v3",
-                "self/migrating_from_v3_beta"
-            ]
+                "self/migrating_from_v3_beta",
+            ],
         },
         {
-            "type": "category",
-            "label": "Collections",
-            "collapsed": false,
-            "items": [
+            type: "category",
+            label: "Collections",
+            collapsed: false,
+            items: [
                 "collections/collections",
                 "collections/callbacks",
                 "collections/entity_views",
@@ -105,19 +105,19 @@ module.exports = {
                 "collections/dynamic_collections",
                 "collections/collection_actions",
                 "collections/collection_groups",
-                "collections/entity_actions"
-            ]
+                "collections/entity_actions",
+            ],
         },
         {
-            "type": "category",
-            "label": "Properties",
-            "collapsed": true,
-            "items": [
+            type: "category",
+            label: "Properties",
+            collapsed: true,
+            items: [
                 "properties/properties_intro",
                 {
-                    "type": "category",
-                    "label": "Fields",
-                    "items": [
+                    type: "category",
+                    label: "Fields",
+                    items: [
                         "properties/fields/text_fields",
                         "properties/fields/selects",
                         "properties/fields/file_upload",
@@ -127,13 +127,13 @@ module.exports = {
                         "properties/fields/group",
                         "properties/fields/key_value",
                         "properties/fields/repeat",
-                        "properties/fields/block"
-                    ]
+                        "properties/fields/block",
+                    ],
                 },
                 {
-                    "type": "category",
-                    "label": "Config",
-                    "items": [
+                    type: "category",
+                    label: "Config",
+                    items: [
                         "properties/config/properties_common",
                         "properties/config/string",
                         "properties/config/number",
@@ -142,20 +142,20 @@ module.exports = {
                         "properties/config/date",
                         "properties/config/array",
                         "properties/config/map",
-                        "properties/config/geopoint"
-                    ]
+                        "properties/config/geopoint",
+                    ],
                 },
                 "properties/conditional_fields",
                 "properties/custom_fields",
                 "properties/custom_previews",
-                "properties/reusing_properties"
-            ]
+                "properties/reusing_properties",
+            ],
         },
         "top_level_views",
         {
-            "type": "category",
-            "label": "Provided hooks",
-            "items": [
+            type: "category",
+            label: "Provided hooks",
+            items: [
                 "hooks/use_auth_controller",
                 "hooks/use_side_entity_controller",
                 "hooks/use_snackbar_controller",
@@ -163,32 +163,32 @@ module.exports = {
                 "hooks/use_firecms_context",
                 "hooks/use_data_source",
                 "hooks/use_storage_source",
-                "hooks/use_mode_controller"
-            ]
+                "hooks/use_mode_controller",
+            ],
         },
         {
-            "type": "category",
-            "label": "Recipes",
-            "collapsed": false,
-            "items": [
+            type: "category",
+            label: "Recipes",
+            collapsed: false,
+            items: [
                 "recipes/building_a_blog",
                 "recipes/autoupdate_slug",
                 "recipes/data_type_adapter",
                 "recipes/copy_entity",
                 "recipes/documents_as_subcollections",
-                "recipes/entity_callbacks"
-            ]
+                "recipes/entity_callbacks",
+            ],
         },
         "icons/icons",
         {
-            "type": "category",
-            "label": "UI components",
-            "collapsed": false,
+            type: "category",
+            label: "UI components",
+            collapsed: false,
             link: {
                 type: "doc",
-                id: "components"
+                id: "components",
             },
-            "items": [
+            items: [
                 "components/alert",
                 "components/avatar",
                 "components/badge",
@@ -225,12 +225,10 @@ module.exports = {
                 "components/table",
                 "components/tabs",
                 "components/text_field",
-                "components/textarea_autosize"
-            ]
+                "components/textarea_autosize",
+            ],
         },
         "changelog",
-
     ],
-    "typedocSidebar": typedocSidebar
-}
-
+    typedocSidebar: typedocSidebar,
+};

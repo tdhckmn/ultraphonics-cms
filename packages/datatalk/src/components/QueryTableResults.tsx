@@ -17,7 +17,7 @@ import {
     useAuthController,
     useCustomizationController,
     useNavigationController,
-    useSelectionController
+    useSelectionController,
 } from "@firecms/core";
 import { setIn } from "@firecms/formex";
 import { cmsToFirestoreModel, firestoreToCMSModel } from "@firecms/firebase";
@@ -27,15 +27,14 @@ import { getPropertiesFromData } from "@firecms/collection_editor_firebase";
 import { buildPropertiesOrder } from "@firecms/schema_inference";
 
 export function QueryTableResults({
-                                      querySnapshot,
-                                      priorityKeys,
-                                      collections
-                                  }: {
-    querySnapshot: QuerySnapshot,
-    priorityKeys?: string[],
-    collections?: EntityCollection[]
+    querySnapshot,
+    priorityKeys,
+    collections,
+}: {
+    querySnapshot: QuerySnapshot;
+    priorityKeys?: string[];
+    collections?: EntityCollection[];
 }) {
-
     const authController = useAuthController();
     const navigation = useNavigationController();
     const customizationController = useCustomizationController();
@@ -52,7 +51,7 @@ export function QueryTableResults({
         const entities = querySnapshot.docs.map((doc) => ({
             id: doc.id,
             path: doc.ref.path,
-            values: firestoreToCMSModel(doc.data())
+            values: firestoreToCMSModel(doc.data()),
         }));
 
         setPath(resultsPath);
@@ -69,11 +68,15 @@ export function QueryTableResults({
         const docs = querySnapshot.docs.map((doc: any) => doc.data());
         foundProperties = await getPropertiesFromData(docs);
 
-        foundPropertiesOrder = buildPropertiesOrder(foundProperties, foundPropertiesOrder, priorityKeys);
+        foundPropertiesOrder = buildPropertiesOrder(
+            foundProperties,
+            foundPropertiesOrder,
+            priorityKeys
+        );
 
         setQueryResults(entities);
         setProperties(foundProperties);
-        setPropertiesOrder(foundPropertiesOrder)
+        setPropertiesOrder(foundPropertiesOrder);
     }
 
     useEffect(() => {
@@ -87,30 +90,29 @@ export function QueryTableResults({
     const [collection, setCollection] = useState<EntityCollection | undefined>();
 
     const resolvedCollection = useMemo(() => {
-        return collection && path ? resolveCollection<any>({
-                collection,
-                path,
-                propertyConfigs: customizationController.propertyConfigs,
-                authController
-            })
+        return collection && path
+            ? resolveCollection<any>({
+                  collection,
+                  path,
+                  propertyConfigs: customizationController.propertyConfigs,
+                  authController,
+              })
             : undefined;
     }, [collection, path]);
 
     const selectionController = useSelectionController();
-    const displayedColumnIds = (propertiesOrder ?? Object.keys(properties ?? {}))
-        .map((key) => ({
-            key,
-            disabled: false
-        }));
+    const displayedColumnIds = (propertiesOrder ?? Object.keys(properties ?? {})).map((key) => ({
+        key,
+        disabled: false,
+    }));
 
     const onValueChange: OnCellValueChange<any, any> = ({
-                                                            value,
-                                                            propertyKey,
-                                                            onValueUpdated,
-                                                            setError,
-                                                            data: entity
-                                                        }) => {
-
+        value,
+        propertyKey,
+        onValueUpdated,
+        setError,
+        data: entity,
+    }) => {
         const updatedValues = setIn({ ...entity.values }, propertyKey, value);
 
         const firestore = getFirestore();
@@ -124,41 +126,38 @@ export function QueryTableResults({
                 console.error("Error updating document", error);
                 setError(error);
             });
-
     };
 
     if (!queryResults || !properties) return null;
 
     const getActionsForEntity = ({
-                                     entity,
-                                     customEntityActions
-                                 }: {
-        entity?: Entity<any>,
-        customEntityActions?: EntityAction[]
+        entity,
+        customEntityActions,
+    }: {
+        entity?: Entity<any>;
+        customEntityActions?: EntityAction[];
     }): EntityAction[] => {
         const actions: EntityAction[] = [editEntityAction];
         actions.push(copyEntityAction);
         actions.push(deleteEntityAction);
-        if (customEntityActions)
-            return mergeEntityActions(actions, customEntityActions);
+        if (customEntityActions) return mergeEntityActions(actions, customEntityActions);
         return actions;
     };
 
     const tableRowActionsBuilder = ({
-                                        entity,
-                                        size,
-                                        width,
-                                        frozen
-                                    }: {
-        entity: Entity<any>,
-        size: CollectionSize,
-        width: number,
-        frozen?: boolean
+        entity,
+        size,
+        width,
+        frozen,
+    }: {
+        entity: Entity<any>;
+        size: CollectionSize;
+        width: number;
+        frozen?: boolean;
     }) => {
-
         const actions = getActionsForEntity({
             entity,
-            customEntityActions: resolvedCollection?.entityActions
+            customEntityActions: resolvedCollection?.entityActions,
         });
 
         const path = entity.path.split("/").slice(0, -1).join("/");
@@ -176,32 +175,35 @@ export function QueryTableResults({
                 openEntityMode={"side_panel"}
             />
         );
-
     };
 
-    return <EntityCollectionTable
-        inlineEditing={true}
-        defaultSize={"s"}
-        selectionController={selectionController}
-        onValueChange={onValueChange}
-        filterable={false}
-        actionsStart={<Typography
-            variant={"caption"}>
-            {(queryResults ?? []).length} results
-        </Typography>}
-        actions={<BasicExportAction
-            data={queryResults}
+    return (
+        <EntityCollectionTable
+            inlineEditing={true}
+            defaultSize={"s"}
+            selectionController={selectionController}
+            onValueChange={onValueChange}
+            filterable={false}
+            actionsStart={
+                <Typography variant={"caption"}>{(queryResults ?? []).length} results</Typography>
+            }
+            actions={
+                <BasicExportAction
+                    data={queryResults}
+                    properties={properties}
+                    propertiesOrder={propertiesOrder ?? undefined}
+                />
+            }
+            enablePopupIcon={false}
+            sortable={false}
+            tableRowActionsBuilder={tableRowActionsBuilder}
+            tableController={{
+                data: queryResults,
+                dataLoading: false,
+                noMoreToLoad: true,
+            }}
+            displayedColumnIds={displayedColumnIds}
             properties={properties}
-            propertiesOrder={propertiesOrder ?? undefined}
-        />}
-        enablePopupIcon={false}
-        sortable={false}
-        tableRowActionsBuilder={tableRowActionsBuilder}
-        tableController={{
-            data: queryResults,
-            dataLoading: false,
-            noMoreToLoad: true
-        }}
-        displayedColumnIds={displayedColumnIds}
-        properties={properties}/>;
+        />
+    );
 }

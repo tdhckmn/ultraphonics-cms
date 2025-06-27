@@ -4,7 +4,6 @@ import { useLocation } from "react-router-dom";
 const scrollsMap: Record<string, number> = {};
 
 export function useRestoreScroll() {
-
     // const scrollsMap = React.useRef<Record<string, number>>({});
 
     const location = useLocation();
@@ -26,23 +25,21 @@ export function useRestoreScroll() {
         container.addEventListener("scroll", handleScroll, { passive: true });
 
         return () => {
-            if (container)
-                container.removeEventListener("scroll", handleScroll);
+            if (container) container.removeEventListener("scroll", handleScroll);
         };
     }, [containerRef, handleScroll, location]);
 
     useEffect(() => {
         if (!containerRef.current || !scrollsMap[location.key]) return;
-        containerRef.current.scrollTo(
-            {
-                top: scrollsMap[location.key],
-                behavior: "auto"
-            });
+        containerRef.current.scrollTo({
+            top: scrollsMap[location.key],
+            behavior: "auto",
+        });
     }, [location]);
 
     return {
         containerRef,
         scroll,
-        direction
+        direction,
     };
 }

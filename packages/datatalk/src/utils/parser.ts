@@ -21,7 +21,7 @@ export function parseMarkdown(text: string): MarkdownElement[] {
             if (buffer.length) {
                 elements.push({
                     type: "html",
-                    content: md.render(buffer.join("\n"))
+                    content: md.render(buffer.join("\n")),
                 });
                 buffer = [];
             }
@@ -32,7 +32,7 @@ export function parseMarkdown(text: string): MarkdownElement[] {
         else if (line.trim().startsWith("```") && inCodeBlock) {
             elements.push({
                 type: "code",
-                content: buffer.join("\n")
+                content: buffer.join("\n"),
             });
             buffer = [];
             inCodeBlock = false;
@@ -47,7 +47,7 @@ export function parseMarkdown(text: string): MarkdownElement[] {
     if (buffer.length) {
         elements.push({
             type: inCodeBlock ? "code" : "html",
-            content: inCodeBlock ? buffer.join("\n") : md.render(buffer.join("\n"))
+            content: inCodeBlock ? buffer.join("\n") : md.render(buffer.join("\n")),
         });
     }
 

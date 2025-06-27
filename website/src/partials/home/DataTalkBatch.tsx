@@ -4,30 +4,30 @@ import { ContainerInnerPaddingMixin } from "../styles";
 import { DataTalkDemo } from "./DataTalkDemo";
 
 export function DataTalkBatch(): JSX.Element {
-    return <Panel color={"dark_gray"} includePadding={false}>
-        <div className={clsx(ContainerInnerPaddingMixin, "text-white my-16")}>
-            <h2 className="relative items-center uppercase mt-8">
-                <span className="font-mono">Batch updates without scripts</span>
-            </h2>
+    return (
+        <Panel color={"dark_gray"} includePadding={false}>
+            <div className={clsx(ContainerInnerPaddingMixin, "text-white my-16")}>
+                <h2 className="relative items-center uppercase mt-8">
+                    <span className="font-mono">Batch updates without scripts</span>
+                </h2>
 
-            <div className="mt-8 text-xl md:text-2xl">
-                <p>
-                    Operate directly in your data, without the need of writing scripts
-                </p>
-                <p>
-                    <b>DataTalk</b> allows you to write queries and updates in a simple
-                    way, using the same syntax as your database.
-                </p>
-                <p>
-                    Export your custom reports to <b>CSV or JSON</b>
-                </p>
-            </div>
-            <DataTalkDemo exchanges={[
-                {
-                    query: "Update user status to 'active' for users who signed up last month",
-                    responseText:
-                        "This code updates the status of users who signed up in the last month to 'active'.",
-                    code: `export default async () => {
+                <div className="mt-8 text-xl md:text-2xl">
+                    <p>Operate directly in your data, without the need of writing scripts</p>
+                    <p>
+                        <b>DataTalk</b> allows you to write queries and updates in a simple way,
+                        using the same syntax as your database.
+                    </p>
+                    <p>
+                        Export your custom reports to <b>CSV or JSON</b>
+                    </p>
+                </div>
+                <DataTalkDemo
+                    exchanges={[
+                        {
+                            query: "Update user status to 'active' for users who signed up last month",
+                            responseText:
+                                "This code updates the status of users who signed up in the last month to 'active'.",
+                            code: `export default async () => {
   const firestore = getFirestore();
   const now = new Date();
   const lastMonth = new Date();
@@ -50,11 +50,12 @@ export function DataTalkBatch(): JSX.Element {
   await batch.commit();
   return snapshot.size; // Return number of updated users
 };`,
-                },
-                {
-                    query: "Aggregate total sales by region for the last quarter",
-                    responseText: "This query aggregates sales data by region for the last quarter and returns them sorted by total revenue.",
-                    code: `export default async () => {
+                        },
+                        {
+                            query: "Aggregate total sales by region for the last quarter",
+                            responseText:
+                                "This query aggregates sales data by region for the last quarter and returns them sorted by total revenue.",
+                            code: `export default async () => {
   const firestore = getFirestore();
   const now = new Date();
   const threeMonthsAgo = new Date();
@@ -97,8 +98,10 @@ export function DataTalkBatch(): JSX.Element {
   
   return result;
 };`,
-                },
-            ]}/>
-        </div>
-    </Panel>;
+                        },
+                    ]}
+                />
+            </div>
+        </Panel>
+    );
 }

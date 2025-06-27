@@ -10,7 +10,7 @@ at the **top level** of the navigation tree (the entries displayed in the home
 page and the navigation drawer), or as **subcollections**
 
 Once you have defined at least one entity collection, you can include it in a
-**collection**. 
+**collection**.
 
 You can find collection views as the first level of navigation in
 the main menu, or as subcollections inside other collections, following the
@@ -19,67 +19,67 @@ Firestore data schema.
 Check the full API reference
 in [Entity collections]
 
-* `name` The plural name of the view. E.g. 'products'.
+- `name` The plural name of the view. E.g. 'products'.
 
-* `path` Relative Firestore path of this view to its parent. If this
+- `path` Relative Firestore path of this view to its parent. If this
   view is in the root the path, it is equal to the absolute one. This path also
   determines the URL in FireCMS.
 
-* `subcollections` Following the Firestore document and collection model, you
+- `subcollections` Following the Firestore document and collection model, you
   can add subcollections to your entity in the same way you define the root
   collections.
 
-* `defaultSize` Default size of the rendered collection.
+- `defaultSize` Default size of the rendered collection.
 
-* `group` Optional field used to group top level navigation entries under a
+- `group` Optional field used to group top level navigation entries under a
   navigation view. If you set this value in a subcollection, it has no effect.
 
-* `description` Optional description of this view. You can use Markdown.
+- `description` Optional description of this view. You can use Markdown.
 
-* `properties` Properties displayed in this collection. If this prop is not
+- `properties` Properties displayed in this collection. If this prop is not
   set, every property is displayed.
 
-* `excludedProperties` Properties that should **not** get displayed in the
+- `excludedProperties` Properties that should **not** get displayed in the
   collection view. All the other properties from the entity are displayed. It
   has no effect if the `properties` value is set.
 
-* `filterCombinations` If you need to filter/sort by multiple properties in this
+- `filterCombinations` If you need to filter/sort by multiple properties in this
   collection, you can define the supported filter combinations here.
   In the case of Firestore, you need to create special indexes in the console to
   support filtering/sorting by more than one property. You can then
   specify here the indexes created.
 
-* `initialFilter` Initial filters applied to this collection.
+- `initialFilter` Initial filters applied to this collection.
 
-* `initialSort` Default sort applied to this collection. It takes tuples in the
+- `initialSort` Default sort applied to this collection. It takes tuples in the
   shape `["property_name", "asc"]` or `["property_name", "desc"]`
 
-* `extraActions` Builder for rendering additional components such as buttons in
+- `extraActions` Builder for rendering additional components such as buttons in
   the collection toolbar. The builder takes an object with
-  props `entityCollection`  and `selectedEntities` if any are set by the end
+  props `entityCollection` and `selectedEntities` if any are set by the end
   user.
 
-* `pagination` If enabled, content is loaded in batches. If `false` all entities
+- `pagination` If enabled, content is loaded in batches. If `false` all entities
   in the collection are loaded. You can specify a number to specify the
   pagination size (50 by default)
   Defaults to `true`
 
-* `additionalColumns` You can add additional columns to the collection view by
+- `additionalColumns` You can add additional columns to the collection view by
   implementing an additional column delegate.
 
-* `textSearchEnabled` Flag to indicate if a search bar should be displayed on top of
+- `textSearchEnabled` Flag to indicate if a search bar should be displayed on top of
   the collection table.
 
-* `permissions` You can specify an object with boolean permissions with the
+- `permissions` You can specify an object with boolean permissions with the
   shape `{edit:boolean; create:boolean; delete:boolean}` to indicate the actions
   the user can perform. You can also pass a [`PermissionsBuilder`]
   to customize the permissions based on user or entity.
 
-* `inlineEditing` Can the elements in this collection be edited inline in the
+- `inlineEditing` Can the elements in this collection be edited inline in the
   collection view. If this flag is set to false but `permissions.edit` is `true`
   , entities can still be edited in the side panel.
 
-* `exportable` Should the data in this collection view include an export button.
+- `exportable` Should the data in this collection view include an export button.
   You can also set an [`ExportConfig`]
   configuration object to customize the export and add additional values.
   Defaults to `true`
@@ -107,11 +107,10 @@ const productsCollection = buildCollection<Product>({
     permissions: ({ user, authController }) => ({
         edit: true,
         create: true,
-        delete: false
+        delete: false,
     }),
-    excludedProperties: ["related_products"]
+    excludedProperties: ["related_products"],
 });
-
 ```
 
 ### Additional columns
@@ -134,59 +133,52 @@ property values.
 #### Example
 
 ```tsx
-import {
-    buildCollection,
-    buildCollection,
-    AdditionalColumnDelegate
-} from "@camberi/firecms";
+import { buildCollection, buildCollection, AdditionalColumnDelegate } from "@camberi/firecms";
 
-type User = { name:string}
+type User = { name: string };
 
 export const fullNameAdditionalColumn: AdditionalColumnDelegate<User> = {
-        id: "full_name",
-        title: "Full Name",
-        builder: ({ entity }) => {
-            let values = entity.values;
-            return typeof values.name === "string" ? values.name.toUpperCase() : "No name provided";
-        },
-        dependencies: ["name"]
-    };
+    id: "full_name",
+    title: "Full Name",
+    builder: ({ entity }) => {
+        let values = entity.values;
+        return typeof values.name === "string" ? values.name.toUpperCase() : "No name provided";
+    },
+    dependencies: ["name"],
+};
 
 const usersCollection = buildCollection<User>({
     path: "users",
     collection: buildCollection<User>({
         name: "User",
         properties: {
-            name: { dataType: "string", title: "Name" }
-        }
+            name: { dataType: "string", title: "Name" },
+        },
     }),
     name: "Users",
-    additionalColumns: [
-        fullNameAdditionalColumn
-    ]
+    additionalColumns: [fullNameAdditionalColumn],
 });
 ```
 
 #### Advanced example
 
 ```tsx
-import {
-  buildCollection,
-  AdditionalColumnDelegate,
-  AsyncPreviewComponent
-} from "@camberi/firecms";
+import { buildCollection, AdditionalColumnDelegate, AsyncPreviewComponent } from "@camberi/firecms";
 
 export const productAdditionalColumn: AdditionalColumnDelegate<Product> = {
-  id: "spanish_title",
-  title: "Spanish title",
-  builder: ({ entity, context }) =>
-          <AsyncPreviewComponent builder={
-            context.dataSource.fetchEntity({
-              path: entity.path,
-              entityId: entity.id,
-              collection: localeSchema
-            }).then((entity) => entity.values.name)
-          }/>
+    id: "spanish_title",
+    title: "Spanish title",
+    builder: ({ entity, context }) => (
+        <AsyncPreviewComponent
+            builder={context.dataSource
+                .fetchEntity({
+                    path: entity.path,
+                    entityId: entity.id,
+                    collection: localeSchema,
+                })
+                .then((entity) => entity.values.name)}
+        />
+    ),
 };
 ```
 
@@ -230,8 +222,8 @@ const productsCollection = buildCollection<Product>({
     indexes: [
         {
             price: "asc",
-            available: "desc"
-        }
-    ]
+            available: "desc",
+        },
+    ],
 });
 ```

@@ -26,9 +26,9 @@ an override.
 
 The props provided by this hook are:
 
-* `close()` Close the last panel
-* `sidePanels` List of side entity panels currently open
-* `open (props: SideEntityPanelProps)`
+- `close()` Close the last panel
+- `sidePanels` List of side entity panels currently open
+- `open (props: SideEntityPanelProps)`
   Open a new entity sideDialog. By default, the schema and configuration of the
   view is fetched from the collections you have specified in the navigation. At
   least you need to pass the path of the entity you would like to
@@ -44,7 +44,6 @@ import React from "react";
 import { useSideEntityController } from "@firecms/core";
 
 export function ExampleCMSView() {
-
     const sideEntityController = useSideEntityController();
 
     // You don't need to provide a schema if the collection path is mapped in
@@ -55,25 +54,27 @@ export function ExampleCMSView() {
             name: {
                 name: "Name",
                 validation: { required: true },
-                dataType: "string"
+                dataType: "string",
             },
-        }
+        },
     });
 
     return (
         <Button
-            onClick={() => sideEntityController.open({
-                entityId: "B003WT1622",
-                path: "/products",
-                collection: customproductCollection
-            })}
-            color="primary">
+            onClick={() =>
+                sideEntityController.open({
+                    entityId: "B003WT1622",
+                    path: "/products",
+                    collection: customproductCollection,
+                })
+            }
+            color="primary"
+        >
             Open entity with custom schema
         </Button>
     );
 }
 ```
-
 
 ### Schema override handler
 
@@ -89,13 +90,12 @@ can specify a custom `schema` (including callbacks and custom views),
 import { buildCollection, SchemaOverrideHandler } from "@firecms/core";
 
 const customSchemaOverrideHandler: SchemaOverrideHandler = ({
-                                                  entityId,
-                                                  path
-                                              }: {
+    entityId,
+    path,
+}: {
     entityId?: string;
     path: string;
 }) => {
-
     if (entityId === "B0017TNJWY" && path === "products") {
         const customproductCollection = buildCollection({
             name: "Custom product",
@@ -104,9 +104,9 @@ const customSchemaOverrideHandler: SchemaOverrideHandler = ({
                     name: "Name",
                     description: "This entity is using a schema overridden by a schema resolver",
                     validation: { required: true },
-                    dataType: "string"
-                }
-            }
+                    dataType: "string",
+                },
+            },
         });
 
         return {

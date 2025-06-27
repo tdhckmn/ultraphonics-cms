@@ -1,5 +1,5 @@
 ---
-id: roles 
+id: roles
 title: Authentication, roles and permissions
 ---
 
@@ -18,11 +18,11 @@ const samplePermissions: Permissions = {
     read: true,
     create: true,
     edit: true,
-    delete: false
-}
+    delete: false,
+};
 ```
 
-These roles are set at the collection level. Keep in mind that you can also use 
+These roles are set at the collection level. Keep in mind that you can also use
 a `PermissionsBuilder` to modify permissions based on the entity being edited,
 or the logged-in user.
 
@@ -30,25 +30,24 @@ or the logged-in user.
 import { PermissionsBuilder } from "@firecms/core";
 
 const samplePermissions: PermissionsBuilder = ({
-                                                   pathSegments,
-                                                   user,
-                                                   collection,
-                                                   authController
-                                               }) => ({
+    pathSegments,
+    user,
+    collection,
+    authController,
+}) => ({
     edit: true,
     create: true,
-    delete: Boolean(authController.extra?.roles?.admin)
-})
+    delete: Boolean(authController.extra?.roles?.admin),
+});
 ```
-
 
 ### Roles config
 
 Users can be assigned multiple roles or none at all.
 
-:::note 
+:::note
 FireCMS can be used without specifying any roles. In that case all
-users can read and modify every collection. 
+users can read and modify every collection.
 :::
 
 Roles are identified by an ID, such as `admin` or `editor`.
@@ -60,17 +59,17 @@ permissions, and you can define the default permissions for every collection:
 import { Roles } from "@firecms/core";
 
 const roles: Roles = {
-    "admin": {
-        isAdmin: true
+    admin: {
+        isAdmin: true,
     },
-    "editor": {
+    editor: {
         defaultPermissions: {
             read: true,
             create: true,
             edit: true,
-            delete: false
-        }
-    }
+            delete: false,
+        },
+    },
 };
 ```
 
@@ -93,32 +92,32 @@ becomes `products::locales`
 import { Roles } from "@firecms/core";
 
 const roles: Roles = {
-    "admin": {
-        isAdmin: true
+    admin: {
+        isAdmin: true,
     },
-    "editor": {
+    editor: {
         isAdmin: false,
         defaultPermissions: {
             read: true,
             create: true,
             edit: true,
-            delete: false
+            delete: false,
         },
         collectionPermissions: {
-            "products": {
+            products: {
                 read: true,
                 create: true,
                 edit: true,
-                delete: true
+                delete: true,
             },
             "products::locales": {
                 read: true,
                 create: false,
                 edit: false,
-                delete: false
-            }
-        }
-    }
+                delete: false,
+            },
+        },
+    },
 };
 ```
 
@@ -131,50 +130,44 @@ You are responsible for implementing the logic of assigning roles to
 users. You can do it at any moment using an `AuthController` which you
 receive as a prop in most callbacks (either directly or under a `context` prop).
 
-If you are building a custom component, you can also use the hook 
+If you are building a custom component, you can also use the hook
 `useAuthController`.
 
-A good time to assign user roles is right after the authentication process is 
-completed. FireCMS provides an `Authenticator` component that allows the 
+A good time to assign user roles is right after the authentication process is
+completed. FireCMS provides an `Authenticator` component that allows the
 developer to allow or deny access to users, as well as defining roles.
 
 The `AuthController` has a method `setRoles` that allows you to define roles for
-a user. 
+a user.
 
 ```tsx
-import {
-    Authenticator,
-    FirebaseCMSApp,
-} from "@firecms/core";
+import { Authenticator, FirebaseCMSApp } from "@firecms/core";
 
 function App() {
     // ...
-    const myAuthenticator: Authenticator<FirebaseUser> = async ({
-                                                                    user,
-                                                                    authController
-                                                                }) => {
-    
-        if(user?.email?.includes("flanders")){
+    const myAuthenticator: Authenticator<FirebaseUser> = async ({ user, authController }) => {
+        if (user?.email?.includes("flanders")) {
             throw Error("Stupid Flanders!");
         }
-    
+
         // This is an example of retrieving async data related to the user
         // and storing it in the controller's extra field
         const sampleRoles = await Promise.resolve(["admin"]);
         authController.setRoles(sampleRoles);
-        
+
         console.log("Allowing access to", user);
         return true;
     };
 
-    return <FirebaseCMSApp
-        name={"My Online Shop"}
-        authentication={myAuthenticator}
-        // ...
-    />;
+    return (
+        <FirebaseCMSApp
+            name={"My Online Shop"}
+            authentication={myAuthenticator}
+            // ...
+        />
+    );
 }
 ```
-
 
 :::note
 If a user has multiple roles, with different permissions, they will
@@ -182,4 +175,3 @@ be merged on a collection basis into the least restrictive combination.
 If a user has one role that defines read permission for a collection, but also
 has a different role that denies it, he will be allowed to see it.
 :::
-

@@ -36,11 +36,11 @@ If you need to start a new project and don't want to spend too many resources in
 the backend, Firebase is the way to go. But this doesn't mean you can't build complex
 apps with it!
 
-If you are coming from a more traditional backend setup you will need to make a 
+If you are coming from a more traditional backend setup you will need to make a
 bit of a mind switch. You can extend the functionality of your backend using functions,
 and have triggers when the data in your database gets updated.
 
-Also, you are not forced to connect your apps to Firestore and you can build 
+Also, you are not forced to connect your apps to Firestore and you can build
 have a REST API or use callable functions to have your backend logic.
 
 And, even if you don't want to use any of the Firebase services, because you
@@ -49,10 +49,8 @@ project just to manage your content.
 
 > We built FireCMS out of necessity.
 
-
 If you are coming from a SQL background you will need to get used to de-normalising
 your data and having limited querying capabilities
-
 
 ## Where we are
 
@@ -68,11 +66,11 @@ some simple CRUD views over collections to a full-blown CMS that includes:
 - Awesome, performant and beautiful UI.
 - Form views with more than 20 different widgets, including advanced ones such
   as:
-  - File uploads
-  - Reference support for different collections
-  - Date time
-  - Enumerations
-  - ...and many more!
+    - File uploads
+    - Reference support for different collections
+    - Date time
+    - Enumerations
+    - ...and many more!
 - Possibility to customise your own form fields and how the underlying data is
   rendered.
 - Possibility to build fields based on other values.
@@ -90,12 +88,11 @@ established CMS like WordPress or Strapi, like the inline editing.
 We keep on getting amazed on how you are finding innovative ways to use
 FireCMS and we want to make it easier for you to do so.
 
-We are already working on version 2 of FireCMS and are improving on almost every 
+We are already working on version 2 of FireCMS and are improving on almost every
 aspect of it:
+
 - Forms layouts and performance.
 - Internal and external APIS
 - Reusability of internal components
 - Property builders at any level of your property tree, not just at the root.
 - Improved modularity and reusability of components
-
-

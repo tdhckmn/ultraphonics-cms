@@ -7,27 +7,26 @@ import { ChatMessage, FeedbackSlug, Session } from "./types";
 import { IntroComponent } from "./components/IntroComponent";
 
 export function DataTalkSession({
-                                    session,
-                                    initialPrompt,
-                                    apiEndpoint,
-                                    onAnalyticsEvent,
-                                    getAuthToken,
-                                    collections,
-                                    onMessagesChange,
-                                    autoRunCode,
-                                    setAutoRunCode
-                                }: {
-    session: Session,
-    initialPrompt?: string,
-    onAnalyticsEvent?: (event: string, params?: any) => void,
-    apiEndpoint: string,
-    getAuthToken: () => Promise<string>,
-    collections?: EntityCollection[],
-    onMessagesChange?: (messages: ChatMessage[]) => void,
-    autoRunCode: boolean,
-    setAutoRunCode: (value: boolean) => void
+    session,
+    initialPrompt,
+    apiEndpoint,
+    onAnalyticsEvent,
+    getAuthToken,
+    collections,
+    onMessagesChange,
+    autoRunCode,
+    setAutoRunCode,
+}: {
+    session: Session;
+    initialPrompt?: string;
+    onAnalyticsEvent?: (event: string, params?: any) => void;
+    apiEndpoint: string;
+    getAuthToken: () => Promise<string>;
+    collections?: EntityCollection[];
+    onMessagesChange?: (messages: ChatMessage[]) => void;
+    autoRunCode: boolean;
+    setAutoRunCode: (value: boolean) => void;
 }) {
-
     const [textInput, setTextInput] = useState<string>("");
 
     const [messages, setMessages] = useState<ChatMessage[]>(session.messages || []);
@@ -50,11 +49,7 @@ export function DataTalkSession({
     const handleScroll = () => {
         if (!scrollContainerRef.current) return;
 
-        const {
-            scrollTop,
-            scrollHeight,
-            clientHeight
-        } = scrollContainerRef.current;
+        const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
         // If user is not at the bottom
         if (scrollHeight - scrollTop > clientHeight + 50) {
             setIsUserScrolledUp(true);
@@ -64,13 +59,16 @@ export function DataTalkSession({
     };
 
     useEffect(() => {
-        const observer = new IntersectionObserver((entries, observer) => {
-            if (entries[0].isIntersecting && !isUserScrolledUp) {
-                scrollToBottom();
+        const observer = new IntersectionObserver(
+            (entries, observer) => {
+                if (entries[0].isIntersecting && !isUserScrolledUp) {
+                    scrollToBottom();
+                }
+            },
+            {
+                root: scrollContainerRef.current,
             }
-        }, {
-            root: scrollContainerRef.current,
-        });
+        );
         if (messagesEndRef.current) {
             observer.observe(messagesEndRef.current);
         }
@@ -115,8 +113,9 @@ export function DataTalkSession({
                 id: userMessageId,
                 text: messageText,
                 user: "USER",
-                date: new Date()
-            }];
+                date: new Date(),
+            },
+        ];
         onMessagesChange?.(newMessages);
         setMessages([
             ...newMessages,
@@ -125,8 +124,9 @@ export function DataTalkSession({
                 loading: true,
                 text: "",
                 user: "SYSTEM",
-                date: new Date()
-            }]);
+                date: new Date(),
+            },
+        ]);
 
         setTextInput("");
 
@@ -134,7 +134,8 @@ export function DataTalkSession({
         let currentMessageResponse = "";
 
         setMessageLoading(true);
-        streamDataTalkCommand(firebaseToken,
+        streamDataTalkCommand(
+            firebaseToken,
             messageText,
             apiEndpoint,
             session.id,
@@ -148,10 +149,11 @@ export function DataTalkSession({
                         loading: true,
                         text: currentMessageResponse,
                         user: "SYSTEM",
-                        date: new Date()
-                    }
+                        date: new Date(),
+                    },
                 ]);
-            })
+            }
+        )
             .then((newMessage) => {
                 const updatedMessages: ChatMessage[] = [
                     ...newMessages,
@@ -160,8 +162,8 @@ export function DataTalkSession({
                         loading: false,
                         text: newMessage,
                         user: "SYSTEM",
-                        date: new Date()
-                    }
+                        date: new Date(),
+                    },
                 ];
                 setMessages(updatedMessages);
                 onMessagesChange?.(updatedMessages);
@@ -175,15 +177,15 @@ export function DataTalkSession({
                         loading: false,
                         text: "There was an error processing your command: " + e.message,
                         user: "SYSTEM",
-                        date: new Date()
-                    }
+                        date: new Date(),
+                    },
                 ];
                 setMessages(updatedMessages);
                 onMessagesChange?.(updatedMessages);
-            }).finally(() => {
-            setMessageLoading(false);
-        });
-
+            })
+            .finally(() => {
+                setMessageLoading(false);
+            });
     };
 
     const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -200,7 +202,7 @@ export function DataTalkSession({
 
         const newMessages = [...messages];
         newMessages.splice(index);
-        const lastUserMessage = newMessages.filter(m => m.user === "USER").pop();
+        const lastUserMessage = newMessages.filter((m) => m.user === "USER").pop();
         newMessages.splice(index - 1);
 
         // get text from the last user message
@@ -209,11 +211,16 @@ export function DataTalkSession({
         }
     };
 
-    const saveFeedback = (message: ChatMessage, reason: FeedbackSlug | undefined, feedbackMessage: string | undefined, index: number) => {
+    const saveFeedback = (
+        message: ChatMessage,
+        reason: FeedbackSlug | undefined,
+        feedbackMessage: string | undefined,
+        index: number
+    ) => {
         if (onAnalyticsEvent) {
             onAnalyticsEvent("bad_response", {
                 reason,
-                feedbackMessage
+                feedbackMessage,
             });
         }
         // update the message with the feedback
@@ -222,7 +229,7 @@ export function DataTalkSession({
         if (messageToUpdate) {
             messageToUpdate.negative_feedback = {
                 reason,
-                message: feedbackMessage
+                message: feedbackMessage,
             };
             setMessages(newMessages);
             onMessagesChange?.(newMessages);
@@ -234,56 +241,64 @@ export function DataTalkSession({
         newMessages[index] = message;
         setMessages(newMessages);
         onMessagesChange?.(newMessages);
-    }
+    };
 
     return (
-
         <div className="h-full w-full flex flex-col bg-surface-50 dark:bg-surface-900">
-            <div className="h-full overflow-auto"
-                 onScroll={handleScroll}
-                 ref={scrollContainerRef}>
+            <div className="h-full overflow-auto" onScroll={handleScroll} ref={scrollContainerRef}>
                 <div className="container mx-auto px-4 md:px-6 py-8 flex-1 flex flex-col gap-4">
-
                     <Tooltip
                         asChild={true}
                         delayDuration={500}
-                        title={"Run snippets of code generated by DataTalk automatically.\nCaution: This can be risky since scripts may modify your data in ways you don't expect"}>
+                        title={
+                            "Run snippets of code generated by DataTalk automatically.\nCaution: This can be risky since scripts may modify your data in ways you don't expect"
+                        }
+                    >
                         <Label
                             className="self-end border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-surface-100 dark:[&:has(:checked)]:bg-surface-800 w-fit "
-                            htmlFor="autoRunCode">
-                            <Checkbox id="autoRunCode"
-                                      checked={autoRunCode}
-                                      size={"small"}
-                                      onCheckedChange={setAutoRunCode}/>
+                            htmlFor="autoRunCode"
+                        >
+                            <Checkbox
+                                id="autoRunCode"
+                                checked={autoRunCode}
+                                size={"small"}
+                                onCheckedChange={setAutoRunCode}
+                            />
                             Run code automatically
                         </Label>
                     </Tooltip>
 
-                    {(messages ?? []).length === 0 &&
-                        <IntroComponent onPromptSuggestionClick={(prompt) => submit(prompt)}/>}
+                    {(messages ?? []).length === 0 && (
+                        <IntroComponent onPromptSuggestionClick={(prompt) => submit(prompt)} />
+                    )}
 
                     {messages.map((message, index) => {
-                        return <MessageLayout key={message.date.toISOString() + index}
-                                              onRemove={() => {
-                                                  const newMessages = [...messages];
-                                                  newMessages.splice(index, 1);
-                                                  setMessages(newMessages);
-                                              }}
-                                              onFeedback={(reason, feedbackMessage) => {
-                                                  saveFeedback(message, reason, feedbackMessage, index);
-                                              }}
-                                              onUpdatedMessage={(message) => {
-                                                  updateMessage(message, index);
-                                              }}
-                                              collections={collections}
-                                              message={message}
-                                              canRegenerate={index === messages.length - 1 && message.user === "SYSTEM"}
-                                              onRegenerate={() => onRegenerate(message, index)}
-                                              autoRunCode={autoRunCode}/>;
+                        return (
+                            <MessageLayout
+                                key={message.date.toISOString() + index}
+                                onRemove={() => {
+                                    const newMessages = [...messages];
+                                    newMessages.splice(index, 1);
+                                    setMessages(newMessages);
+                                }}
+                                onFeedback={(reason, feedbackMessage) => {
+                                    saveFeedback(message, reason, feedbackMessage, index);
+                                }}
+                                onUpdatedMessage={(message) => {
+                                    updateMessage(message, index);
+                                }}
+                                collections={collections}
+                                message={message}
+                                canRegenerate={
+                                    index === messages.length - 1 && message.user === "SYSTEM"
+                                }
+                                onRegenerate={() => onRegenerate(message, index)}
+                                autoRunCode={autoRunCode}
+                            />
+                        );
                     })}
-
                 </div>
-                <div ref={messagesEndRef}/>
+                <div ref={messagesEndRef} />
             </div>
 
             <div className="container sticky bottom-0 right-0 left-0 mx-auto px-4 md:px-6 pb-8 pt-4">
@@ -291,11 +306,11 @@ export function DataTalkSession({
                     noValidate
                     onSubmit={(e: React.FormEvent) => {
                         e.preventDefault();
-                        if (!messageLoading && textInput)
-                            submit(textInput);
+                        if (!messageLoading && textInput) submit(textInput);
                     }}
                     autoComplete="off"
-                    className="relative bg-white dark:bg-surface-800 rounded-lg shadow-sm flex items-center gap-2 ">
+                    className="relative bg-white dark:bg-surface-800 rounded-lg shadow-sm flex items-center gap-2 "
+                >
                     <TextareaAutosize
                         value={textInput}
                         autoFocus={true}
@@ -304,13 +319,16 @@ export function DataTalkSession({
                         className="flex-1 resize-none rounded-lg p-4 border-none focus:ring-0 dark:bg-surface-800 dark:text-surface-200 pr-[80px]"
                         placeholder="Type your message..."
                     />
-                    <Button className={"absolute right-0 top-0 m-1.5"} variant="text" type={"submit"}
-                            disabled={!textInput || messageLoading}>
-                        <SendIcon color={"primary"}/>
+                    <Button
+                        className={"absolute right-0 top-0 m-1.5"}
+                        variant="text"
+                        type={"submit"}
+                        disabled={!textInput || messageLoading}
+                    >
+                        <SendIcon color={"primary"} />
                     </Button>
                 </form>
             </div>
         </div>
-
-    )
+    );
 }

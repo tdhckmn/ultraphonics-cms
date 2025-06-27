@@ -12,4 +12,5 @@ import { SideEntityControllerContext } from "../contexts/SideEntityControllerCon
  * @see SideEntityController
  * @group Hooks and utilities
  */
-export const useSideEntityController = (): SideEntityController => useContext(SideEntityControllerContext);
+export const useSideEntityController = (): SideEntityController =>
+    useContext(SideEntityControllerContext);

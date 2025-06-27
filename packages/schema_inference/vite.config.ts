@@ -7,7 +7,7 @@ const isExternal = (id: string) => !id.startsWith(".") && !path.isAbsolute(id);
 
 export default defineConfig(() => ({
     esbuild: {
-        logOverride: { "this-is-undefined-in-esm": "silent" }
+        logOverride: { "this-is-undefined-in-esm": "silent" },
     },
     build: {
         lib: {
@@ -17,16 +17,16 @@ export default defineConfig(() => ({
                 if (format === "es") return "index.es.js";
                 if (format === "umd") return "index.umd.cjs";
                 return `index.${format}.js`;
-            }
+            },
         },
         target: "ESNEXT",
         sourcemap: true,
         minify: false,
         rollupOptions: {
-            external: isExternal
-        }
+            external: isExternal,
+        },
     },
     resolve: {
-        alias: {}
-    }
+        alias: {},
+    },
 }));

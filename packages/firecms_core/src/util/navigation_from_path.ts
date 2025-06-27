@@ -1,5 +1,8 @@
 import { EntityCollection, EntityCustomView } from "../types";
-import { getCollectionPathsCombinations, removeInitialAndTrailingSlashes } from "./navigation_utils";
+import {
+    getCollectionPathsCombinations,
+    removeInitialAndTrailingSlashes,
+} from "./navigation_utils";
 import { resolveEntityView } from "./resolutions";
 
 export type NavigationViewInternal<M extends Record<string, any> = any> =
@@ -35,19 +38,13 @@ export interface NavigationViewEntityCustomInternal<M extends Record<string, any
 }
 
 export function getNavigationEntriesFromPath(props: {
-    path: string,
-    collections: EntityCollection[] | undefined,
-    currentFullPath?: string,
-    currentFullIdPath?: string,
-    contextEntityViews?: EntityCustomView<any>[]
-}): NavigationViewInternal [] {
-
-    const {
-        path,
-        collections = [],
-        currentFullPath,
-        currentFullIdPath
-    } = props;
+    path: string;
+    collections: EntityCollection[] | undefined;
+    currentFullPath?: string;
+    currentFullIdPath?: string;
+    contextEntityViews?: EntityCustomView<any>[];
+}): NavigationViewInternal[] {
+    const { path, collections = [], currentFullPath, currentFullIdPath } = props;
 
     const subpaths = removeInitialAndTrailingSlashes(path).split("/");
     const subpathCombinations = getCollectionPathsCombinations(subpaths);
@@ -59,25 +56,30 @@ export function getNavigationEntriesFromPath(props: {
         let collection: EntityCollection<any> | undefined;
         collection = collections && collections.find((entry) => entry.id === subpathCombination);
         if (!collection) {
-            collection = collections && collections.find((entry) => entry.path === subpathCombination);
+            collection =
+                collections && collections.find((entry) => entry.path === subpathCombination);
         }
 
         if (collection) {
-            const collectionPath = currentFullPath && currentFullPath.length > 0
-                ? (currentFullPath + "/" + collection.path)
-                : collection.path;
-            const fullIdPath = currentFullIdPath && currentFullIdPath.length > 0
-                ? (currentFullIdPath + "/" + collection.id)
-                : collection.id;
+            const collectionPath =
+                currentFullPath && currentFullPath.length > 0
+                    ? currentFullPath + "/" + collection.path
+                    : collection.path;
+            const fullIdPath =
+                currentFullIdPath && currentFullIdPath.length > 0
+                    ? currentFullIdPath + "/" + collection.id
+                    : collection.id;
             result.push({
                 type: "collection",
                 id: collection.id,
                 path: collectionPath,
                 fullPath: collectionPath,
                 fullIdPath,
-                collection
+                collection,
             });
-            const restOfThePath = removeInitialAndTrailingSlashes(removeInitialAndTrailingSlashes(path).replace(subpathCombination, ""));
+            const restOfThePath = removeInitialAndTrailingSlashes(
+                removeInitialAndTrailingSlashes(path).replace(subpathCombination, "")
+            );
             const nextSegments = restOfThePath.length > 0 ? restOfThePath.split("/") : [];
             if (nextSegments.length > 0) {
                 const entityId = nextSegments[0];
@@ -88,7 +90,7 @@ export function getNavigationEntriesFromPath(props: {
                     path: collectionPath,
                     fullIdPath,
                     fullPath: fullPath,
-                    parentCollection: collection
+                    parentCollection: collection,
                 });
                 if (nextSegments.length > 1) {
                     const newPath = nextSegments.slice(1).join("/");
@@ -96,10 +98,12 @@ export function getNavigationEntriesFromPath(props: {
                         throw Error("collection not found resolving path: " + collection);
                     }
                     const entityViews = collection.entityViews;
-                    const customView = entityViews && entityViews
-                        .map((entry) => resolveEntityView(entry, props.contextEntityViews))
-                        .filter(Boolean)
-                        .find((entry) => entry!.key === newPath);
+                    const customView =
+                        entityViews &&
+                        entityViews
+                            .map((entry) => resolveEntityView(entry, props.contextEntityViews))
+                            .filter(Boolean)
+                            .find((entry) => entry!.key === newPath);
                     if (customView) {
                         result.push({
                             type: "custom_view",
@@ -107,22 +111,23 @@ export function getNavigationEntriesFromPath(props: {
                             entityId: entityId,
                             fullIdPath,
                             fullPath: fullPath + "/" + customView.key,
-                            view: customView
+                            view: customView,
                         });
                     } else if (collection.subcollections) {
-                        result.push(...getNavigationEntriesFromPath({
-                            path: newPath,
-                            collections: collection.subcollections,
-                            currentFullPath: fullPath,
-                            currentFullIdPath: fullIdPath,
-                            contextEntityViews: props.contextEntityViews
-                        }));
+                        result.push(
+                            ...getNavigationEntriesFromPath({
+                                path: newPath,
+                                collections: collection.subcollections,
+                                currentFullPath: fullPath,
+                                currentFullIdPath: fullIdPath,
+                                contextEntityViews: props.contextEntityViews,
+                            })
+                        );
                     }
                 }
             }
             break;
         }
-
     }
     return result;
 }

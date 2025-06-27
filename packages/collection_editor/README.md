@@ -39,25 +39,27 @@ import { useFirestoreCollectionsConfigController } from "@firecms/collection_edi
 export default function App() {
     // Controller to save collection configs in Firestore
     const collectionConfigController = useFirestoreCollectionsConfigController({
-        firebaseApp
+        firebaseApp,
     });
-    
+
     // Initialize the collection editor plugin
     const collectionEditorPlugin = useCollectionEditorPlugin({
-        collectionConfigController
+        collectionConfigController,
     });
-    
+
     const navigationController = useBuildNavigationController({
         // Your other config options
-        plugins: [collectionEditorPlugin]
+        plugins: [collectionEditorPlugin],
     });
-    
-    return <FireCMS
-        name={"My CMS"}
-        navigationController={navigationController}
-        authentication={myAuthenticator}
-        firebaseConfig={firebaseConfig}
-    />;
+
+    return (
+        <FireCMS
+            name={"My CMS"}
+            navigationController={navigationController}
+            authentication={myAuthenticator}
+            firebaseConfig={firebaseConfig}
+        />
+    );
 }
 ```
 
@@ -68,40 +70,40 @@ You can customize collection editor behavior with these options:
 ```tsx
 const collectionEditorPlugin = useCollectionEditorPlugin({
     collectionConfigController, // Required: controller that handles persistence
-    
+
     // Define permissions for collection operations
     configPermissions: ({ user }) => ({
         createCollections: user.roles?.includes("admin") ?? false,
         editCollections: user.roles?.includes("admin") ?? false,
-        deleteCollections: user.roles?.includes("admin") ?? false
+        deleteCollections: user.roles?.includes("admin") ?? false,
     }),
-    
+
     // Prevent these group names from being used
     reservedGroups: ["admin", "system"],
-    
+
     // Optional custom view to add to the editor
     extraView: {
         View: MyCustomView,
-        icon: <CustomIcon />
+        icon: <CustomIcon />,
     },
-    
+
     // Function to infer collection structure from existing data
     collectionInference: async ({ path }) => {
         // Return inferred schema based on data at path
     },
-    
+
     // Function to get sample data for a collection
     getData: async (path, parentPaths) => {
         // Return sample data for the specified path
     },
-    
+
     // Track collection editor events
     onAnalyticsEvent: (event, params) => {
         console.log("Collection editor event:", event, params);
     },
-    
+
     // Include introduction widget when no collections exist
-    includeIntroView: true
+    includeIntroView: true,
 });
 ```
 
@@ -115,7 +117,7 @@ import { mergeCollections } from "@firecms/collection_editor";
 const collectionsBuilder = useCallback(() => {
     // Collections defined in code
     const codeCollections = [productsCollection, ordersCollection];
-    
+
     // Merge with collections from the editor UI
     return mergeCollections(codeCollections, collectionConfigController.collections ?? []);
 }, [collectionConfigController.collections]);
@@ -133,19 +135,19 @@ To persist collections in Firestore:
 ```tsx
 const collectionConfigController = useFirestoreCollectionsConfigController({
     firebaseApp,
-    
+
     // Optional: specify where to save configs (default: "__FIRECMS/config/collections")
     configPath: "custom/config/path",
-    
+
     // Optional: define permissions for collections
     permissions: ({ user }) => ({
         // Your permissions logic
     }),
-    
+
     // Optional: custom property configurations
     propertyConfigs: [
         // Custom property types
-    ]
+    ],
 });
 ```
 

@@ -15,31 +15,31 @@ import { useAuthController } from "../../hooks";
  * @group Form fields
  */
 export function ArrayCustomShapedFieldBinding<T extends Array<any>>({
-                                                                        propertyKey,
-                                                                        value,
-                                                                        error,
-                                                                        showError,
-                                                                        isSubmitting,
-                                                                        setValue,
-                                                                        minimalistView: minimalistViewProp,
-                                                                        property,
-                                                                        includeDescription,
-                                                                        context,
-                                                                        disabled
-                                                                    }: FieldProps<T, any, any>) {
-
+    propertyKey,
+    value,
+    error,
+    showError,
+    isSubmitting,
+    setValue,
+    minimalistView: minimalistViewProp,
+    property,
+    includeDescription,
+    context,
+    disabled,
+}: FieldProps<T, any, any>) {
     const authController = useAuthController();
     const minimalistView = minimalistViewProp || property.minimalistView;
 
-    let resolvedProperties = "resolvedProperties" in property ? property.resolvedProperties : undefined;
+    let resolvedProperties =
+        "resolvedProperties" in property ? property.resolvedProperties : undefined;
     if (!resolvedProperties) {
         resolvedProperties = getArrayResolvedProperties({
             propertyValue: value,
             propertyKey,
             property,
             ignoreMissingFields: false,
-            authController
-        })
+            authController,
+        });
     }
 
     const expanded = property.expanded === undefined ? true : property.expanded;
@@ -47,18 +47,25 @@ export function ArrayCustomShapedFieldBinding<T extends Array<any>>({
     useClearRestoreValue({
         property,
         value,
-        setValue
+        setValue,
     });
 
-    const title = (<>
-        <LabelWithIconAndTooltip
-            propertyKey={propertyKey}
-            icon={getIconForProperty(property, "small")}
-            required={property.validation?.required}
-            title={property.name}
-            className={"h-8 flex-grow text-text-secondary dark:text-text-secondary-dark"}/>
-        {Array.isArray(value) && <Typography variant={"caption"} className={"px-4"}>({value.length})</Typography>}
-    </>);
+    const title = (
+        <>
+            <LabelWithIconAndTooltip
+                propertyKey={propertyKey}
+                icon={getIconForProperty(property, "small")}
+                required={property.validation?.required}
+                title={property.name}
+                className={"h-8 flex-grow text-text-secondary dark:text-text-secondary-dark"}
+            />
+            {Array.isArray(value) && (
+                <Typography variant={"caption"} className={"px-4"}>
+                    ({value.length})
+                </Typography>
+            )}
+        </>
+    );
 
     const body = resolvedProperties.map((childProperty, index) => {
         const thisDisabled = isReadOnly(childProperty) || Boolean(childProperty.disabled);
@@ -70,32 +77,36 @@ export function ArrayCustomShapedFieldBinding<T extends Array<any>>({
             context,
             partOfArray: true,
             minimalistView: false,
-            autoFocus: false
+            autoFocus: false,
         };
-        return <div key={`custom_shaped_array_${index}`} className="pb-4">
-            <PropertyFieldBinding {...fieldProps}/>
-        </div>;
+        return (
+            <div key={`custom_shaped_array_${index}`} className="pb-4">
+                <PropertyFieldBinding {...fieldProps} />
+            </div>
+        );
     });
 
     return (
-
         <>
-
-            {!minimalistView &&
-                <ExpandablePanel initiallyExpanded={expanded}
-                                 title={title}
-                                 innerClassName={"px-2 md:px-4 pb-2 md:pb-4 pt-1 md:pt-2"}>
+            {!minimalistView && (
+                <ExpandablePanel
+                    initiallyExpanded={expanded}
+                    title={title}
+                    innerClassName={"px-2 md:px-4 pb-2 md:pb-4 pt-1 md:pt-2"}
+                >
                     {body}
-                </ExpandablePanel>}
+                </ExpandablePanel>
+            )}
 
             {minimalistView && body}
 
-            <FieldHelperText includeDescription={includeDescription}
-                             showError={showError}
-                             error={error}
-                             disabled={disabled}
-                             property={property}/>
-
+            <FieldHelperText
+                includeDescription={includeDescription}
+                showError={showError}
+                error={error}
+                disabled={disabled}
+                property={property}
+            />
         </>
     );
 }

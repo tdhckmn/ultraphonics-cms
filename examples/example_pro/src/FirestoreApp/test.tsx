@@ -2,22 +2,16 @@ import {
     buildCollection,
     buildEntityCallbacks,
     EntityOnDeleteProps,
-    EntityOnSaveProps
+    EntityOnSaveProps,
 } from "@firecms/core";
 
 type Product = {
     name: string;
     uppercase_name: string;
-}
+};
 
 const productCallbacks = buildEntityCallbacks({
-    onPreSave: ({
-                    collection,
-                    path,
-                    entityId,
-                    values,
-                    status
-                }) => {
+    onPreSave: ({ collection, path, entityId, values, status }) => {
         values.uppercase_name = values.name?.toUpperCase();
         return values;
     },
@@ -31,20 +25,18 @@ const productCallbacks = buildEntityCallbacks({
     },
 
     onPreDelete: ({
-                      collection,
-                      path,
-                      entityId,
-                      entity,
-                      context
-                  }: EntityOnDeleteProps<Product>
-    ) => {
-        if (context.authController.user)
-            throw Error("Product deletion not allowed");
+        collection,
+        path,
+        entityId,
+        entity,
+        context,
+    }: EntityOnDeleteProps<Product>) => {
+        if (context.authController.user) throw Error("Product deletion not allowed");
     },
 
     onDelete: (props: EntityOnDeleteProps<Product>) => {
         console.log("onDelete", props);
-    }
+    },
 });
 
 const productCollection = buildCollection<Product>({
@@ -55,14 +47,14 @@ const productCollection = buildCollection<Product>({
         name: {
             name: "Name",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         uppercase_name: {
             name: "Uppercase Name",
             dataType: "string",
             disabled: true,
-            description: "This field gets updated with a preSave callback"
-        }
+            description: "This field gets updated with a preSave callback",
+        },
     },
-    callbacks: productCallbacks
+    callbacks: productCallbacks,
 });

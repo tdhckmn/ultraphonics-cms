@@ -7,5 +7,5 @@ export default async function Page() {
         limit: 10,
     });
 
-    return <BlogListView initialEntries={blogEntries}/>;
+    return <BlogListView initialEntries={blogEntries} />;
 }

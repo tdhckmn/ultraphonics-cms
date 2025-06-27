@@ -4,7 +4,7 @@ title: Properties
 ---
 
 Properties define each **field** in a form or column in a collection included in an
-entity collection. 
+entity collection.
 
 You can build properties by creating the object directly or by
 using the helper method `buildProperty` (just the identity function that uses

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from "react";
-import equal from "react-fast-compare"
+import equal from "react-fast-compare";
 
 import { UserManagement } from "../types";
 import {
@@ -10,14 +10,15 @@ import {
     PermissionsBuilder,
     removeUndefined,
     Role,
-    User
+    User,
 } from "@firecms/core";
 import { resolveUserRolePermissions } from "../utils";
 
 type UserWithRoleIds<USER extends User = any> = Omit<USER, "roles"> & { roles: string[] };
 
-export interface UserManagementParams<CONTROLLER extends AuthController<any> = AuthController<any>> {
-
+export interface UserManagementParams<
+    CONTROLLER extends AuthController<any> = AuthController<any>,
+> {
     authController: CONTROLLER;
 
     /**
@@ -49,7 +50,6 @@ export interface UserManagementParams<CONTROLLER extends AuthController<any> = A
      * Include the collection config permissions in the user management system.
      */
     includeCollectionConfigPermissions?: boolean;
-
 }
 
 /**
@@ -62,19 +62,21 @@ export interface UserManagementParams<CONTROLLER extends AuthController<any> = A
  * @param allowDefaultRolesCreation
  * @param includeCollectionConfigPermissions
  */
-export function useBuildUserManagement<CONTROLLER extends AuthController<any> = AuthController<any>,
-    USER extends User = CONTROLLER extends AuthController<infer U> ? U : any>
-({
-     authController,
-     dataSourceDelegate,
-     usersPath = "__FIRECMS/config/users",
-     rolesPath = "__FIRECMS/config/roles",
-     allowDefaultRolesCreation,
-     includeCollectionConfigPermissions
- }: UserManagementParams<CONTROLLER>): UserManagement<USER> & CONTROLLER {
-
+export function useBuildUserManagement<
+    CONTROLLER extends AuthController<any> = AuthController<any>,
+    USER extends User = CONTROLLER extends AuthController<infer U> ? U : any,
+>({
+    authController,
+    dataSourceDelegate,
+    usersPath = "__FIRECMS/config/users",
+    rolesPath = "__FIRECMS/config/roles",
+    allowDefaultRolesCreation,
+    includeCollectionConfigPermissions,
+}: UserManagementParams<CONTROLLER>): UserManagement<USER> & CONTROLLER {
     if (!authController) {
-        throw Error("useBuildUserManagement: You need to provide an authController since version 3.0.0-beta.11. Check https://firecms.co/docs/pro/migrating_from_v3_beta");
+        throw Error(
+            "useBuildUserManagement: You need to provide an authController since version 3.0.0-beta.11. Check https://firecms.co/docs/pro/migrating_from_v3_beta"
+        );
     }
 
     const [rolesLoading, setRolesLoading] = React.useState<boolean>(true);
@@ -82,10 +84,13 @@ export function useBuildUserManagement<CONTROLLER extends AuthController<any> = 
     const [roles, setRoles] = React.useState<Role[]>([]);
     const [usersWithRoleIds, setUsersWithRoleIds] = React.useState<UserWithRoleIds<USER>[]>([]);
 
-    const users = usersWithRoleIds.map(u => ({
-        ...u,
-        roles: roles.filter(r => u.roles?.includes(r.id))
-    }) as USER);
+    const users = usersWithRoleIds.map(
+        (u) =>
+            ({
+                ...u,
+                roles: roles.filter((r) => u.roles?.includes(r.id)),
+            }) as USER
+    );
 
     const [rolesError, setRolesError] = React.useState<Error | undefined>();
     const [usersError, setUsersError] = React.useState<Error | undefined>();
@@ -126,10 +131,14 @@ export function useBuildUserManagement<CONTROLLER extends AuthController<any> = 
                 console.error("Error loading roles", e);
                 setRolesError(e);
                 setRolesLoading(false);
-            }
+            },
         });
-
-    }, [dataSourceDelegate?.initialised, authController?.initialLoading, authController?.user?.uid, rolesPath]);
+    }, [
+        dataSourceDelegate?.initialised,
+        authController?.initialLoading,
+        authController?.user?.uid,
+        rolesPath,
+    ]);
 
     useEffect(() => {
         if (!dataSourceDelegate || !usersPath) return;
@@ -162,168 +171,204 @@ export function useBuildUserManagement<CONTROLLER extends AuthController<any> = 
                 setUsersWithRoleIds([]);
                 setUsersError(e);
                 setUsersLoading(false);
-            }
+            },
         });
+    }, [
+        dataSourceDelegate?.initialised,
+        authController?.initialLoading,
+        authController?.user?.uid,
+        usersPath,
+    ]);
 
-    }, [dataSourceDelegate?.initialised, authController?.initialLoading, authController?.user?.uid, usersPath]);
+    const saveUser = useCallback(
+        async (user: USER): Promise<USER> => {
+            if (!dataSourceDelegate) throw Error("useBuildUserManagement Firebase not initialised");
+            if (!usersPath) throw Error("useBuildUserManagement Firestore not initialised");
 
-    const saveUser = useCallback(async (user: USER): Promise<USER> => {
-        if (!dataSourceDelegate) throw Error("useBuildUserManagement Firebase not initialised");
-        if (!usersPath) throw Error("useBuildUserManagement Firestore not initialised");
+            console.debug("Persisting user", user);
 
-        console.debug("Persisting user", user);
+            const roleIds = user.roles?.map((r) => r.id);
+            const email = user.email?.toLowerCase().trim();
+            if (!email) throw Error("Email is required");
 
-        const roleIds = user.roles?.map(r => r.id);
-        const email = user.email?.toLowerCase().trim();
-        if (!email) throw Error("Email is required");
-
-        const userExists = users.find(u => u.email?.toLowerCase() === email);
-        const data = {
-            ...user,
-            roles: roleIds ?? []
-        };
-        if (!userExists) {
-            // @ts-ignore
-            data.created_on = new Date();
-        }
-        // delete the previous user entry if it exists and the uid has changed
-        if (userExists && userExists.uid !== user.uid) {
-            const entity: Entity<any> = {
-                values: {},
-                path: usersPath,
-                id: userExists.uid
+            const userExists = users.find((u) => u.email?.toLowerCase() === email);
+            const data = {
+                ...user,
+                roles: roleIds ?? [],
+            };
+            if (!userExists) {
+                // @ts-ignore
+                data.created_on = new Date();
             }
-            await dataSourceDelegate.deleteEntity({ entity })
-                .then(() => {
-                    console.debug("Deleted previous user", userExists);
+            // delete the previous user entry if it exists and the uid has changed
+            if (userExists && userExists.uid !== user.uid) {
+                const entity: Entity<any> = {
+                    values: {},
+                    path: usersPath,
+                    id: userExists.uid,
+                };
+                await dataSourceDelegate
+                    .deleteEntity({ entity })
+                    .then(() => {
+                        console.debug("Deleted previous user", userExists);
+                    })
+                    .catch((e) => {
+                        console.error("Error deleting user", e);
+                    });
+            }
+
+            return dataSourceDelegate
+                .saveEntity({
+                    status: "existing",
+                    path: usersPath,
+                    entityId: email,
+                    values: removeUndefined(data),
                 })
-                .catch(e => {
-                    console.error("Error deleting user", e);
+                .then(() => user);
+        },
+        [usersPath, dataSourceDelegate?.initialised]
+    );
+
+    const saveRole = useCallback(
+        (role: Role): Promise<void> => {
+            if (!dataSourceDelegate) throw Error("useBuildUserManagement Firebase not initialised");
+            if (!rolesPath) throw Error("useBuildUserManagement Firestore not initialised");
+            console.debug("Persisting role", role);
+            const { id, ...roleData } = role;
+            return dataSourceDelegate
+                .saveEntity({
+                    status: "existing",
+                    path: rolesPath,
+                    entityId: id,
+                    values: removeUndefined(roleData),
+                })
+                .then(() => {
+                    return;
                 });
+        },
+        [rolesPath, dataSourceDelegate?.initialised]
+    );
 
-        }
+    const deleteUser = useCallback(
+        async (user: User): Promise<void> => {
+            if (!dataSourceDelegate) throw Error("useBuildUserManagement Firebase not initialised");
+            if (!usersPath) throw Error("useBuildUserManagement Firestore not initialised");
+            console.debug("Deleting", user);
+            const { uid } = user;
+            const entity: Entity<any> = {
+                path: usersPath,
+                id: uid,
+                values: {},
+            };
+            await dataSourceDelegate.deleteEntity({ entity });
+        },
+        [usersPath, dataSourceDelegate?.initialised]
+    );
 
-        return dataSourceDelegate.saveEntity({
-            status: "existing",
-            path: usersPath,
-            entityId: email,
-            values: removeUndefined(data)
-        }).then(() => user);
-    }, [usersPath, dataSourceDelegate?.initialised]);
+    const deleteRole = useCallback(
+        async (role: Role): Promise<void> => {
+            if (!dataSourceDelegate) throw Error("useBuildUserManagement Firebase not initialised");
+            if (!rolesPath) throw Error("useBuildUserManagement Firestore not initialised");
+            console.debug("Deleting", role);
+            const { id } = role;
+            const entity: Entity<any> = {
+                path: rolesPath,
+                id: id,
+                values: {},
+            };
+            await dataSourceDelegate.deleteEntity({ entity });
+        },
+        [rolesPath, dataSourceDelegate?.initialised]
+    );
 
-    const saveRole = useCallback((role: Role): Promise<void> => {
-        if (!dataSourceDelegate) throw Error("useBuildUserManagement Firebase not initialised");
-        if (!rolesPath) throw Error("useBuildUserManagement Firestore not initialised");
-        console.debug("Persisting role", role);
-        const {
-            id,
-            ...roleData
-        } = role;
-        return dataSourceDelegate.saveEntity({
-            status: "existing",
-            path: rolesPath,
-            entityId: id,
-            values: removeUndefined(roleData)
-        }).then(() => {
-            return;
-        });
-    }, [rolesPath, dataSourceDelegate?.initialised]);
+    const collectionPermissions: PermissionsBuilder = useCallback(
+        ({ collection, user }) =>
+            resolveUserRolePermissions({
+                collection,
+                user,
+            }),
+        []
+    );
 
-    const deleteUser = useCallback(async (user: User): Promise<void> => {
-        if (!dataSourceDelegate) throw Error("useBuildUserManagement Firebase not initialised");
-        if (!usersPath) throw Error("useBuildUserManagement Firestore not initialised");
-        console.debug("Deleting", user);
-        const { uid } = user;
-        const entity: Entity<any> = {
-            path: usersPath,
-            id: uid,
-            values: {}
-        };
-        await dataSourceDelegate.deleteEntity({ entity })
-    }, [usersPath, dataSourceDelegate?.initialised]);
+    const defineRolesFor: (user: User) => Role[] | undefined = useCallback(
+        (user) => {
+            if (!usersWithRoleIds) throw Error("Users not loaded");
+            const users = usersWithRoleIds.map(
+                (u) =>
+                    ({
+                        ...u,
+                        roles: roles.filter((r) => u.roles?.includes(r.id)),
+                    }) as User
+            );
+            const mgmtUser = users.find(
+                (u) => u.email?.toLowerCase() === user?.email?.toLowerCase()
+            );
+            return mgmtUser?.roles;
+        },
+        [roles, usersWithRoleIds]
+    );
 
-    const deleteRole = useCallback(async (role: Role): Promise<void> => {
-        if (!dataSourceDelegate) throw Error("useBuildUserManagement Firebase not initialised");
-        if (!rolesPath) throw Error("useBuildUserManagement Firestore not initialised");
-        console.debug("Deleting", role);
-        const { id } = role;
-        const entity: Entity<any> = {
-            path: rolesPath,
-            id: id,
-            values: {}
-        };
-        await dataSourceDelegate.deleteEntity({ entity })
-    }, [rolesPath, dataSourceDelegate?.initialised]);
-
-    const collectionPermissions: PermissionsBuilder = useCallback(({
-                                                                       collection,
-                                                                       user
-                                                                   }) =>
-        resolveUserRolePermissions({
-            collection,
-            user
-        }), []);
-
-    const defineRolesFor: ((user: User) => Role[] | undefined) = useCallback((user) => {
-        if (!usersWithRoleIds) throw Error("Users not loaded");
-        const users = usersWithRoleIds.map(u => ({
-            ...u,
-            roles: roles.filter(r => u.roles?.includes(r.id))
-        }) as User);
-        const mgmtUser = users.find(u => u.email?.toLowerCase() === user?.email?.toLowerCase());
-        return mgmtUser?.roles;
-    }, [roles, usersWithRoleIds]);
-
-    const authenticator: Authenticator<USER> = useCallback(({ user }) => {
-
-        if (loading) {
-            return false;
-        }
-        if (user === null) {
-            console.warn("User is null, returning");
-            return false;
-        }
-
-        if (users.length === 0) {
-            console.warn("No users created yet");
-            return true; // If there are no users created yet, we allow access to every user
-        }
-
-        const mgmtUser = users.find(u => u.email?.toLowerCase() === user?.email?.toLowerCase());
-        if (mgmtUser) {
-            // check if the uid is updated in the user management system
-            if (mgmtUser.uid !== user.uid) {
-                console.warn("User uid has changed, updating user in user management system");
-                saveUser({
-                    ...mgmtUser,
-                    uid: user.uid
-                }).then(() => {
-                    console.debug("User updated in user management system", mgmtUser);
-                }).catch(e => {
-                    console.error("Error updating user in user management system", e);
-                });
+    const authenticator: Authenticator<USER> = useCallback(
+        ({ user }) => {
+            if (loading) {
+                return false;
             }
-            console.debug("User found in user management system", mgmtUser);
-            return true;
-        }
+            if (user === null) {
+                console.warn("User is null, returning");
+                return false;
+            }
 
-        throw Error("Could not find a user with the provided email in the user management system.");
-    }, [loading, users]);
+            if (users.length === 0) {
+                console.warn("No users created yet");
+                return true; // If there are no users created yet, we allow access to every user
+            }
+
+            const mgmtUser = users.find(
+                (u) => u.email?.toLowerCase() === user?.email?.toLowerCase()
+            );
+            if (mgmtUser) {
+                // check if the uid is updated in the user management system
+                if (mgmtUser.uid !== user.uid) {
+                    console.warn("User uid has changed, updating user in user management system");
+                    saveUser({
+                        ...mgmtUser,
+                        uid: user.uid,
+                    })
+                        .then(() => {
+                            console.debug("User updated in user management system", mgmtUser);
+                        })
+                        .catch((e) => {
+                            console.error("Error updating user in user management system", e);
+                        });
+                }
+                console.debug("User found in user management system", mgmtUser);
+                return true;
+            }
+
+            throw Error(
+                "Could not find a user with the provided email in the user management system."
+            );
+        },
+        [loading, users]
+    );
 
     const userRoles = authController.user ? defineRolesFor(authController.user) : undefined;
-    const isAdmin = (userRoles ?? []).some(r => r.id === "admin");
+    const isAdmin = (userRoles ?? []).some((r) => r.id === "admin");
 
-    const userRoleIds = userRoles?.map(r => r.id);
+    const userRoleIds = userRoles?.map((r) => r.id);
     useEffect(() => {
         console.debug("Setting roles", userRoles);
         authController.setUserRoles?.(userRoles ?? []);
     }, [userRoleIds]);
 
-    const getUser = useCallback((uid: string): USER | null => {
-        if (!users) return null;
-        const user = users.find(u => u.uid === uid);
-        return user ?? null;
-    }, [users]);
+    const getUser = useCallback(
+        (uid: string): USER | null => {
+            if (!users) return null;
+            const user = users.find((u) => u.uid === uid);
+            return user ?? null;
+        },
+        [users]
+    );
 
     return {
         loading,
@@ -336,7 +381,8 @@ export function useBuildUserManagement<CONTROLLER extends AuthController<any> = 
         deleteRole,
         usersError,
         isAdmin,
-        allowDefaultRolesCreation: allowDefaultRolesCreation === undefined ? true : allowDefaultRolesCreation,
+        allowDefaultRolesCreation:
+            allowDefaultRolesCreation === undefined ? true : allowDefaultRolesCreation,
         includeCollectionConfigPermissions: Boolean(includeCollectionConfigPermissions),
         collectionPermissions,
         defineRolesFor,
@@ -345,29 +391,34 @@ export function useBuildUserManagement<CONTROLLER extends AuthController<any> = 
         initialLoading: authController.initialLoading || loading,
         userRoles: userRoles,
         getUser,
-        user: authController.user ? {
-            ...authController.user,
-            roles: userRoles
-        } : null
-    }
+        user: authController.user
+            ? {
+                  ...authController.user,
+                  roles: userRoles,
+              }
+            : null,
+    };
 }
 
-const entitiesToUsers = (docs: Entity<Omit<UserWithRoleIds, "id">>[]): (UserWithRoleIds)[] => {
+const entitiesToUsers = (docs: Entity<Omit<UserWithRoleIds, "id">>[]): UserWithRoleIds[] => {
     return docs.map((doc) => {
         const data = doc.values as any;
         const newVar = {
             uid: doc.id,
             ...data,
             created_on: data?.created_on,
-            updated_on: data?.updated_on
+            updated_on: data?.updated_on,
         };
-        return newVar as (UserWithRoleIds);
+        return newVar as UserWithRoleIds;
     });
-}
+};
 
 const entityToRoles = (entities: Entity<Omit<Role, "id">>[]): Role[] => {
-    return entities.map((doc) => ({
-        id: doc.id,
-        ...doc.values
-    } as Role));
-}
+    return entities.map(
+        (doc) =>
+            ({
+                id: doc.id,
+                ...doc.values,
+            }) as Role
+    );
+};

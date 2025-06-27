@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function FlutterDashIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"flutter_dash"}/>
+    return <Icon {...props} iconKey={"flutter_dash"} />;
 }

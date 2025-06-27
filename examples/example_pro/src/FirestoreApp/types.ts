@@ -3,7 +3,7 @@ import { EntityReference } from "@firecms/core";
 export type Product = {
     name: string;
     main_image: string;
-    category:string;
+    category: string;
     available: boolean;
     price: number;
     currency: string;
@@ -16,17 +16,17 @@ export type Product = {
     publisher: {
         name: string;
         external_id: string;
-    },
-    available_locales: string[],
-    uppercase_name: string,
+    };
+    available_locales: string[];
+    uppercase_name: string;
     added_on: Date;
     tags: string[];
-    metadata: Record<string, any>,
-}
+    metadata: Record<string, any>;
+};
 
 export type Locale = {
-    name: string,
-    description: string,
-    selectable?: boolean,
-    video: string
-}
+    name: string;
+    description: string;
+    selectable?: boolean;
+    video: string;
+};

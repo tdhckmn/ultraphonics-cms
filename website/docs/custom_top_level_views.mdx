@@ -29,35 +29,34 @@ By default, it will show in the main navigation view.
 
 For custom views you can define the following props:
 
-* `path` string
+- `path` string
 
 CMS Path you can reach this view from.
 If you include multiple paths, only the first one will be included in the
 main menu
 
-* `name`: string
+- `name`: string
 
 Name of this view
 
-* `description`?: string
+- `description`?: string
 
 Optional description of this view. You can use Markdown
 
-* `hideFromNavigation`?: boolean
+- `hideFromNavigation`?: boolean
 
 Should this view be hidden from the main navigation panel.
 It will still be accessible if you reach the specified path
 
-* `view`: React.ReactNode
+- `view`: React.ReactNode
 
 Component to be rendered. This can be any React component, and can use any
 of the provided hooks
 
-* `group`?: string
+- `group`?: string
 
 Optional field used to group top level navigation entries under a
 navigation view.
-
 
 ### Example self-hosted FireCMS
 
@@ -67,32 +66,36 @@ In the callback, you can use the `user` object to conditionally show or hide vie
 as access the `authentication` and `navigation` hooks.
 
 ```tsx
-import {CMSView, useBuildNavigationController} from "@firecms/core";
-import {useMemo} from "react";
+import { CMSView, useBuildNavigationController } from "@firecms/core";
+import { useMemo } from "react";
 
 // rest of you main app code
 
-    const customViews: CMSView[] = useMemo([{
-        path: "additional",
-        name: "Additional view",
-        description: "This is an example of an additional view that is defined by the user",
-        // This can be any React component
-        view: <ExampleCMSView/>
-    }], []);
-
-    const navigationController = useBuildNavigationController({
-        views: ({ user }) =>{
-            if(!user) {
-                return [];
-            }
-            return customViews;
+const customViews: CMSView[] = useMemo(
+    [
+        {
+            path: "additional",
+            name: "Additional view",
+            description: "This is an example of an additional view that is defined by the user",
+            // This can be any React component
+            view: <ExampleCMSView />,
         },
-        collections,
-        authController,
-        dataSourceDelegate: firestoreDelegate
-    });
-```
+    ],
+    []
+);
 
+const navigationController = useBuildNavigationController({
+    views: ({ user }) => {
+        if (!user) {
+            return [];
+        }
+        return customViews;
+    },
+    collections,
+    authController,
+    dataSourceDelegate: firestoreDelegate,
+});
+```
 
 ### Example FireCMS Cloud
 
@@ -100,22 +103,15 @@ In FireCMS Cloud, you can define your custom top level views by adding them to y
 use a callback or add them directly to the `views` property. The callback includes the logged in `user`, so you can
 use it to conditionally show or hide views based on the user role.
 
-
-
 import CodeBlock from "@theme/CodeBlock";
 import CustomViewSampleCloud from "!!raw-loader!../samples/samples_v3/custom_cms_view/CustomViewSampleCloud";
 import ExampleCMSView from "!!raw-loader!../samples/samples_v3/custom_cms_view/ExampleCMSView";
 
 <CodeBlock language="tsx">{CustomViewSampleCloud}</CodeBlock>
 
-
-
 ### Example Additional view
 
 Your custom view is implemented as any regular React component.
 You can use any of the provided hooks, including authentication, navigation, datasource, storage, app stage, etc.
 
-
-
 <CodeBlock language="tsx">{ExampleCMSView}</CodeBlock>
-

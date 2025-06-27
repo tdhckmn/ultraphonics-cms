@@ -7,7 +7,7 @@ import {
     PropertyConfig,
     PropertyOrBuilder,
     ResolvedProperties,
-    ResolvedProperty
+    ResolvedProperty,
 } from "../types";
 import { isPropertyBuilder } from "./entities";
 import { resolveProperty } from "./resolutions";
@@ -17,12 +17,13 @@ import { getFieldConfig } from "../core";
 export function isReferenceProperty(
     authController: AuthController,
     propertyOrBuilder: PropertyOrBuilder,
-    fields: Record<string, PropertyConfig>) {
+    fields: Record<string, PropertyConfig>
+) {
     const resolvedProperty = resolveProperty({
         propertyKey: "ignore", // TODO
         propertyOrBuilder,
         propertyConfigs: fields,
-        authController
+        authController,
     });
     if (!resolvedProperty) return null;
     if (resolvedProperty.dataType === "reference") {
@@ -30,19 +31,21 @@ export function isReferenceProperty(
     }
     if (resolvedProperty.dataType === "array") {
         if (Array.isArray(resolvedProperty.of)) return false;
-        else return resolvedProperty.of?.dataType === "reference"
+        else return resolvedProperty.of?.dataType === "reference";
     }
     return false;
 }
 
 export function getIdIcon(size: "small" | "medium" | "large"): React.ReactNode {
-    return <CircleIcon size={size}/>;
+    return <CircleIcon size={size} />;
 }
 
-export function getIconForWidget(widget: PropertyConfig | undefined,
-                                 size: "small" | "medium" | "large") {
+export function getIconForWidget(
+    widget: PropertyConfig | undefined,
+    size: "small" | "medium" | "large"
+) {
     const Icon = widget?.Icon ?? CircleIcon;
-    return <Icon size={size}/>;
+    return <Icon size={size} />;
 }
 
 export function getIconForProperty(
@@ -50,16 +53,18 @@ export function getIconForProperty(
     size: "small" | "medium" | "large" = "small",
     fields: Record<string, PropertyConfig> = {}
 ): React.ReactNode {
-
     if (isPropertyBuilder(property)) {
-        return <FunctionsIcon size={size}/>;
+        return <FunctionsIcon size={size} />;
     } else {
         const widget = getFieldConfig(property, fields);
         return getIconForWidget(widget, size);
     }
 }
 
-export function getColorForProperty(property: PropertyOrBuilder, fields: Record<string, PropertyConfig>): string {
+export function getColorForProperty(
+    property: PropertyOrBuilder,
+    fields: Record<string, PropertyConfig>
+): string {
     if (isPropertyBuilder(property)) {
         return "#888";
     } else {
@@ -74,7 +79,10 @@ export function getColorForProperty(property: PropertyOrBuilder, fields: Record<
  * @param properties
  * @param path
  */
-export function getPropertyInPath<M extends Record<string, any>>(properties: PropertiesOrBuilders<M> | ResolvedProperties, path: string): PropertyOrBuilder<any, M> | undefined {
+export function getPropertyInPath<M extends Record<string, any>>(
+    properties: PropertiesOrBuilders<M> | ResolvedProperties,
+    path: string
+): PropertyOrBuilder<any, M> | undefined {
     if (typeof properties === "object") {
         if (path in properties) {
             return properties[path];
@@ -82,15 +90,22 @@ export function getPropertyInPath<M extends Record<string, any>>(properties: Pro
         if (path.includes(".")) {
             const pathSegments = path.split(".");
             const childProperty = properties[pathSegments[0]];
-            if (typeof childProperty === "object" && childProperty.dataType === "map" && childProperty.properties) {
-                return getPropertyInPath(childProperty.properties, pathSegments.slice(1).join("."))
+            if (
+                typeof childProperty === "object" &&
+                childProperty.dataType === "map" &&
+                childProperty.properties
+            ) {
+                return getPropertyInPath(childProperty.properties, pathSegments.slice(1).join("."));
             }
         }
     }
     return undefined;
 }
 
-export function getResolvedPropertyInPath(properties: Record<string, ResolvedProperty>, path: string): ResolvedProperty | undefined {
+export function getResolvedPropertyInPath(
+    properties: Record<string, ResolvedProperty>,
+    path: string
+): ResolvedProperty | undefined {
     if (typeof properties === "object") {
         if (path in properties) {
             return properties[path];
@@ -99,7 +114,10 @@ export function getResolvedPropertyInPath(properties: Record<string, ResolvedPro
             const pathSegments = path.split(".");
             const childProperty = properties[pathSegments[0]];
             if (childProperty.dataType === "map" && childProperty.properties) {
-                return getResolvedPropertyInPath(childProperty.properties, pathSegments.slice(1).join("."))
+                return getResolvedPropertyInPath(
+                    childProperty.properties,
+                    pathSegments.slice(1).join(".")
+                );
             }
         }
     }
@@ -117,16 +135,22 @@ export function getBracketNotation(path: string): string {
  * @param properties
  * @param propertiesOrder
  */
-export function getPropertiesWithPropertiesOrder<M extends Record<string, any>>(properties: PropertiesOrBuilders<M>, propertiesOrder?: Extract<keyof M, string>[]): PropertiesOrBuilders<M> {
+export function getPropertiesWithPropertiesOrder<M extends Record<string, any>>(
+    properties: PropertiesOrBuilders<M>,
+    propertiesOrder?: Extract<keyof M, string>[]
+): PropertiesOrBuilders<M> {
     if (!propertiesOrder) return properties;
     const result: PropertiesOrBuilders<any> = {};
-    propertiesOrder.filter(Boolean).forEach(path => {
+    propertiesOrder.filter(Boolean).forEach((path) => {
         const property = getPropertyInPath(properties, path);
         if (typeof property === "object" && property.dataType === "map" && property.properties) {
             result[path] = {
                 ...property,
-                properties: getPropertiesWithPropertiesOrder(property.properties, property.propertiesOrder ?? [])
-            }
+                properties: getPropertiesWithPropertiesOrder(
+                    property.properties,
+                    property.propertiesOrder ?? []
+                ),
+            };
         }
         if (property) {
             result[path] = property;
@@ -137,5 +161,8 @@ export function getPropertiesWithPropertiesOrder<M extends Record<string, any>>(
 
 export function getDefaultPropertiesOrder(collection: EntityCollection<any>): string[] {
     if (collection.propertiesOrder) return collection.propertiesOrder;
-    return [...Object.keys(collection.properties), ...(collection.additionalFields ?? []).map(field => field.key)];
+    return [
+        ...Object.keys(collection.properties),
+        ...(collection.additionalFields ?? []).map((field) => field.key),
+    ];
 }

@@ -1,6 +1,11 @@
 import React, { useDeferredValue, useEffect, useState } from "react";
 
-import { FieldCaption, FireCMSLogo, useBrowserTitleAndIcon, useSnackbarController } from "@firecms/core";
+import {
+    FieldCaption,
+    FireCMSLogo,
+    useBrowserTitleAndIcon,
+    useSnackbarController,
+} from "@firecms/core";
 import {
     BooleanSwitch,
     BooleanSwitchWithLabel,
@@ -19,28 +24,26 @@ import { SecurityRulesInstructions } from "../SecurityRulesInstructions";
 import { AppCheckSettingsView } from "./AppCheckSettingsView";
 
 export function ProjectSettings() {
-
     const { backendUid } = useFireCMSBackend();
 
     const projectConfig = useProjectConfig();
 
-    useBrowserTitleAndIcon("Project settings")
+    useBrowserTitleAndIcon("Project settings");
 
     if (!backendUid) {
         throw new Error("No backendUid in ProjectSettings");
     }
 
     return (
-        <Container maxWidth={"6xl"}
-                   className={"w-full flex flex-col gap-16 px-4 py-16"}>
-
-            <ProjectSubscriptionPlans/>
+        <Container maxWidth={"6xl"} className={"w-full flex flex-col gap-16 px-4 py-16"}>
+            <ProjectSubscriptionPlans />
 
             <div className={"flex flex-col gap-4"}>
+                <Typography variant={"h4"} className="mt-4 mb-2">
+                    Settings
+                </Typography>
 
-                <Typography variant={"h4"} className="mt-4 mb-2">Settings</Typography>
-
-                <ProjectNameTextField/>
+                <ProjectNameTextField />
 
                 <div className={"col-span-12"}>
                     <BooleanSwitchWithLabel
@@ -51,10 +54,10 @@ export function ProjectSettings() {
                     />
 
                     <FieldCaption>
-                        Enable local text search for all collections. This will allow you to search text fields in your
-                        collections using the FireCMS search bar.
-                        Note that this feature can incur in higher read counts, as it will index all text fields in your
-                        collections.
+                        Enable local text search for all collections. This will allow you to search
+                        text fields in your collections using the FireCMS search bar. Note that this
+                        feature can incur in higher read counts, as it will index all text fields in
+                        your collections.
                     </FieldCaption>
                 </div>
                 <div className={"col-span-12"}>
@@ -66,31 +69,27 @@ export function ProjectSettings() {
                     />
 
                     <FieldCaption>
-                        When true, all collections will have the history enabled by default. You can override this
-                        setting in each collection.
-                        History will be saved in the <code>__history</code> subcollection of each document.
+                        When true, all collections will have the history enabled by default. You can
+                        override this setting in each collection. History will be saved in the{" "}
+                        <code>__history</code> subcollection of each document.
                     </FieldCaption>
                 </div>
 
-                <ThemeColors/>
-
+                <ThemeColors />
             </div>
 
             <div className={"flex flex-col gap-2"}>
-                <SecurityRulesInstructions/>
+                <SecurityRulesInstructions />
             </div>
 
-            <AppCheckSettingsView/>
+            <AppCheckSettingsView />
 
             {/*<AutoSetupCollectionsSettings/>*/}
-
         </Container>
     );
-
 }
 
 function ProjectNameTextField() {
-
     const projectConfig = useProjectConfig();
     const [name, setName] = useState(projectConfig.projectName ?? "");
     const deferredName = useDeferredValue(name);
@@ -98,116 +97,112 @@ function ProjectNameTextField() {
         if (deferredName) projectConfig.updateProjectName(deferredName);
     }, [deferredName]);
 
-    return <TextField value={name}
-                      label={"Project name"}
-                      onChange={e => setName(e.target.value)}
-                      onBlur={() => {
-                          if (name) projectConfig.updateProjectName(name);
-                      }}/>;
-
+    return (
+        <TextField
+            value={name}
+            label={"Project name"}
+            onChange={(e) => setName(e.target.value)}
+            onBlur={() => {
+                if (name) projectConfig.updateProjectName(name);
+            }}
+        />
+    );
 }
 
 function LogoUploadField() {
-
-    const {
-        logo,
-        uploadLogo
-    } = useProjectConfig();
+    const { logo, uploadLogo } = useProjectConfig();
 
     const snackbarContext = useSnackbarController();
 
     const onFilesAdded = async (acceptedFiles: File[]) => {
-        if (!acceptedFiles.length)
-            return;
+        if (!acceptedFiles.length) return;
 
         uploadLogo(acceptedFiles[0]);
-    }
+    };
 
     const onFilesRejected: OnFileUploadRejected = (fileRejections, event) => {
         for (const fileRejection of fileRejections) {
             for (const error of fileRejection.errors) {
                 snackbarContext.open({
                     type: "error",
-                    message: `Error uploading file: ${error.message}`
+                    message: `Error uploading file: ${error.message}`,
                 });
             }
         }
     };
 
-    return <FileUpload
-        size={"large"}
-        accept={{ "*/image": [] }}
-        maxSize={2048 * 1024}
-        onFilesAdded={onFilesAdded}
-        onFilesRejected={onFilesRejected}
-        uploadDescription={"Drag and drop your logo here"}
-    >
-        {logo && <img
-            className={"w-40 h-40 p-4"}
-            src={logo}/>}
+    return (
+        <FileUpload
+            size={"large"}
+            accept={{ "*/image": [] }}
+            maxSize={2048 * 1024}
+            onFilesAdded={onFilesAdded}
+            onFilesRejected={onFilesRejected}
+            uploadDescription={"Drag and drop your logo here"}
+        >
+            {logo && <img className={"w-40 h-40 p-4"} src={logo} />}
 
-        {!logo && <FireCMSLogo
-            className={"w-40 h-40 p-4"}/>}
-    </FileUpload>;
-
+            {!logo && <FireCMSLogo className={"w-40 h-40 p-4"} />}
+        </FileUpload>
+    );
 }
 
 function SampleComponents() {
     const [checked, setChecked] = useState<boolean>(true);
-    return <div className={"p-4 mt-4 flex flex-col items-center gap-2"}>
-        <Typography variant={"label"}>Sample theme components</Typography>
-        <div className={"flex flex-row gap-4 items-center justify-center"}>
-            <Button> Button </Button>
-            <Button variant={"outlined"}> Button </Button>
-            <BooleanSwitch value={checked} onValueChange={setChecked}/>
-            <Checkbox checked={checked} onCheckedChange={setChecked}/>
-            <Checkbox color={"secondary"} checked={checked} onCheckedChange={setChecked}/>
+    return (
+        <div className={"p-4 mt-4 flex flex-col items-center gap-2"}>
+            <Typography variant={"label"}>Sample theme components</Typography>
+            <div className={"flex flex-row gap-4 items-center justify-center"}>
+                <Button> Button </Button>
+                <Button variant={"outlined"}> Button </Button>
+                <BooleanSwitch value={checked} onValueChange={setChecked} />
+                <Checkbox checked={checked} onCheckedChange={setChecked} />
+                <Checkbox color={"secondary"} checked={checked} onCheckedChange={setChecked} />
+            </div>
         </div>
-    </div>;
+    );
 }
 
 function ThemeColors() {
-
     const projectConfig = useProjectConfig();
-    return <div className={"flex flex-col gap-2 mt-4 mb-2"}>
+    return (
+        <div className={"flex flex-col gap-2 mt-4 mb-2"}>
+            <Typography variant={"h4"} className="mt-4 mb-2">
+                Theme
+            </Typography>
+            <div className={"grid grid-cols-12 gap-4"}>
+                <div className={"col-span-12 md:col-span-6"}>
+                    <LogoUploadField />
+                </div>
 
-        <Typography variant={"h4"} className="mt-4 mb-2">Theme</Typography>
-        <div className={"grid grid-cols-12 gap-4"}>
-
-            <div className={"col-span-12 md:col-span-6"}>
-                <LogoUploadField/>
-            </div>
-
-            <div className={"col-span-12 md:col-span-6"}>
-                <Paper className={"flex flex-col gap-2 p-4"}>
-
-                    <div className={"flex flex-row gap-4 justify-center mt-4"}>
-                        <div className={"flex flex-row gap-2"}>
-                            <input
-                                type="color"
-                                value={projectConfig.primaryColor}
-                                onChange={e => {
-                                    return projectConfig.updatePrimaryColor(e.target.value);
-                                }}
-                            />
-                            <Typography variant={"subtitle2"}>Primary color</Typography>
+                <div className={"col-span-12 md:col-span-6"}>
+                    <Paper className={"flex flex-col gap-2 p-4"}>
+                        <div className={"flex flex-row gap-4 justify-center mt-4"}>
+                            <div className={"flex flex-row gap-2"}>
+                                <input
+                                    type="color"
+                                    value={projectConfig.primaryColor}
+                                    onChange={(e) => {
+                                        return projectConfig.updatePrimaryColor(e.target.value);
+                                    }}
+                                />
+                                <Typography variant={"subtitle2"}>Primary color</Typography>
+                            </div>
+                            <div className={"flex flex-row gap-2"}>
+                                <input
+                                    type="color"
+                                    value={projectConfig.secondaryColor}
+                                    onChange={(e) => {
+                                        return projectConfig.updateSecondaryColor(e.target.value);
+                                    }}
+                                />
+                                <Typography variant={"subtitle2"}>Secondary color</Typography>
+                            </div>
                         </div>
-                        <div className={"flex flex-row gap-2"}>
-                            <input
-                                type="color"
-                                value={projectConfig.secondaryColor}
-                                onChange={e => {
-                                    return projectConfig.updateSecondaryColor(e.target.value);
-                                }}
-                            />
-                            <Typography variant={"subtitle2"}>Secondary color</Typography>
-                        </div>
-                    </div>
-                    <SampleComponents/>
-                </Paper>
+                        <SampleComponents />
+                    </Paper>
+                </div>
             </div>
         </div>
-
-    </div>
-
+    );
 }

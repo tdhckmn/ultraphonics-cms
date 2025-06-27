@@ -3,7 +3,7 @@ import { buildCollection } from "@firecms/core";
 export type Page = {
     title: string;
     slug: string;
-}
+};
 
 export const pagesCollection = buildCollection<Page>({
     name: "Pages",
@@ -13,12 +13,12 @@ export const pagesCollection = buildCollection<Page>({
         title: {
             name: "Title",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         slug: {
             name: "Slug",
             dataType: "string",
             readOnly: true,
-        }
-    }
+        },
+    },
 });

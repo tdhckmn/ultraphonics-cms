@@ -5,7 +5,7 @@ import {
     NavigationGroup,
     SmallNavigationCard,
     useCustomizationController,
-    useNavigationController
+    useNavigationController,
 } from "@firecms/core";
 import { Paywall, SubscriptionPlanWidget } from "./subscriptions";
 import { ADMIN_VIEWS_CONFIG } from "../utils";
@@ -20,43 +20,60 @@ import { CenteredView } from "@firecms/ui";
  * @group Components
  */
 export function FireCMSCloudHomePage() {
-
     const navigation = useNavigationController();
     const { plugins } = useCustomizationController();
-    const {
-        isTrialOver,
-    } = useProjectConfig();
+    const { isTrialOver } = useProjectConfig();
 
     const pluginActions: React.ReactNode[] = [];
     if (plugins) {
-        pluginActions.push(...plugins.map((plugin, i) => (
-            <React.Fragment key={plugin.key}>{plugin.homePage?.additionalActions ?? null}</React.Fragment>
-        )).filter(Boolean));
+        pluginActions.push(
+            ...plugins
+                .map((plugin, i) => (
+                    <React.Fragment key={plugin.key}>
+                        {plugin.homePage?.additionalActions ?? null}
+                    </React.Fragment>
+                ))
+                .filter(Boolean)
+        );
     }
     const showSubscriptionWidget = (navigation.collections ?? []).length > 0;
 
     if (isTrialOver) {
-        return <CenteredView>
-            <Paywall trialOver={isTrialOver}/>
-        </CenteredView>;
+        return (
+            <CenteredView>
+                <Paywall trialOver={isTrialOver} />
+            </CenteredView>
+        );
     }
-    return <DefaultHomePage
-        additionalActions={<> {pluginActions} </>}
-        additionalChildrenStart={showSubscriptionWidget
-            ? <SubscriptionPlanWidget/>
-            : undefined}
-        additionalChildrenEnd={
-            <NavigationGroup group={"ADMIN"}>
-                <div className={"grid grid-cols-12 gap-2"}>
-                    {ADMIN_VIEWS_CONFIG.map((view) => <div className={"col-span-12 sm:col-span-6 lg:col-span-4"}
-                                                           key={`nav_${view.path}`}>
-                        <SmallNavigationCard
-                            name={view.name}
-                            url={view.path}
-                            icon={<IconForView collectionOrView={view}
-                                               className={"text-surface-400 dark:text-surface-600"}/>}/>
-                    </div>)}
-                </div>
-            </NavigationGroup>
-        }/>;
+    return (
+        <DefaultHomePage
+            additionalActions={<> {pluginActions} </>}
+            additionalChildrenStart={
+                showSubscriptionWidget ? <SubscriptionPlanWidget /> : undefined
+            }
+            additionalChildrenEnd={
+                <NavigationGroup group={"ADMIN"}>
+                    <div className={"grid grid-cols-12 gap-2"}>
+                        {ADMIN_VIEWS_CONFIG.map((view) => (
+                            <div
+                                className={"col-span-12 sm:col-span-6 lg:col-span-4"}
+                                key={`nav_${view.path}`}
+                            >
+                                <SmallNavigationCard
+                                    name={view.name}
+                                    url={view.path}
+                                    icon={
+                                        <IconForView
+                                            collectionOrView={view}
+                                            className={"text-surface-400 dark:text-surface-600"}
+                                        />
+                                    }
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </NavigationGroup>
+            }
+        />
+    );
 }

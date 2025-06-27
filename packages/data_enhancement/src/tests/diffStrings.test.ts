@@ -10,8 +10,8 @@ describe("diffStrings", () => {
         const expected: Change[] = [
             {
                 type: "equal",
-                value: "This is a test string"
-            }
+                value: "This is a test string",
+            },
         ];
         expect(diffStrings(oldStr, newStr)).toEqual(expected);
     });
@@ -22,16 +22,16 @@ describe("diffStrings", () => {
         const expected: Change[] = [
             {
                 type: "equal",
-                value: "This is a"
+                value: "This is a",
             },
             {
                 type: "insert",
-                value: " new"
+                value: " new",
             },
             {
                 type: "equal",
-                value: " test string"
-            }
+                value: " test string",
+            },
         ];
         expect(diffStrings(oldStr, newStr)).toEqual(expected);
     });
@@ -42,16 +42,16 @@ describe("diffStrings", () => {
         const expected: Change[] = [
             {
                 type: "equal",
-                value: "This is a"
+                value: "This is a",
             },
             {
                 type: "delete",
-                value: "n old"
+                value: "n old",
             },
             {
                 type: "equal",
-                value: " test string"
-            }
+                value: " test string",
+            },
         ];
         expect(diffStrings(oldStr, newStr)).toEqual(expected);
     });
@@ -62,20 +62,20 @@ describe("diffStrings", () => {
         const expected: Change[] = [
             {
                 type: "equal",
-                value: "This is a"
+                value: "This is a",
             },
             {
                 type: "delete",
-                value: "n old"
+                value: "n old",
             },
             {
                 type: "insert",
-                value: " new modified"
+                value: " new modified",
             },
             {
                 type: "equal",
-                value: " test string"
-            }
+                value: " test string",
+            },
         ];
         console.log(diffStrings(oldStr, newStr));
         expect(diffStrings(oldStr, newStr)).toEqual(expected);
@@ -87,16 +87,16 @@ describe("diffStrings", () => {
         const expected: Change[] = [
             {
                 type: "delete",
-                value: "Old"
+                value: "Old",
             },
             {
                 type: "insert",
-                value: "New"
+                value: "New",
             },
             {
                 type: "equal",
-                value: " string"
-            }
+                value: " string",
+            },
         ];
         expect(diffStrings(oldStr, newStr)).toEqual(expected);
     });

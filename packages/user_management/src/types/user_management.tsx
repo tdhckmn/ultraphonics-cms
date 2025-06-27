@@ -1,7 +1,6 @@
 import { Authenticator, PermissionsBuilder, Role, User } from "@firecms/core";
 
 export type UserManagement<USER extends User = User> = {
-
     authenticator?: Authenticator<USER>;
 
     loading: boolean;
@@ -49,5 +48,4 @@ export type UserManagement<USER extends User = User> = {
      * @param uid
      */
     getUser: (uid: string) => User | null;
-
 };

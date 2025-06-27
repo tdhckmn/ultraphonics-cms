@@ -6,7 +6,6 @@ import { EntityFormProps } from "../form";
  * @group Hooks and utilities
  */
 export interface SideDialogsController {
-
     /**
      * Close the last panel
      */
@@ -41,7 +40,6 @@ export interface SideDialogsController {
  * @group Hooks and utilities
  */
 export interface SideDialogPanelProps {
-
     /**
      * A key that identifies this panel
      */
@@ -79,5 +77,4 @@ export interface SideDialogPanelProps {
      * Use this prop to store additional data in the panel
      */
     additional?: any;
-
 }

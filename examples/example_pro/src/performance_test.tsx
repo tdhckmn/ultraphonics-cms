@@ -1,6 +1,6 @@
 import React, { Profiler } from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css"
+import "./index.css";
 
 import { App } from "./FirestoreApp/App";
 
@@ -15,8 +15,7 @@ const dod = () => {
     }
     setTimeout(() => {
         // @ts-ignore
-        if (!e)
-            dod();
+        if (!e) dod();
         // @ts-ignore
         else if (e.scrollTop <= 15000) {
             dod();
@@ -24,15 +23,15 @@ const dod = () => {
             onFinished();
         }
     }, 1);
-}
+};
 
-const measurements: number[] = []
+const measurements: number[] = [];
 
 function onFinished() {
     console.log("finished");
     //print average measurement
     const sum = measurements.reduce((a, b) => a + b, 0);
-    const avg = (sum / measurements.length) || 0;
+    const avg = sum / measurements.length || 0;
     alert(`"finished, avg: ${avg}, count: ${measurements.length}`);
 }
 
@@ -44,7 +43,7 @@ function onRenderCallback(
     startTime: number,
     commitTime: number
 ) {
-    measurements.push(actualDuration)
+    measurements.push(actualDuration);
     // if (actualDuration > 10)
     //     // Aggregate or log render timings...
     //     console.log(id, phase, actualDuration, baseDuration, startTime, commitTime, interactions);
@@ -55,7 +54,7 @@ const root = createRoot(container as any);
 root.render(
     <React.StrictMode>
         <Profiler id="App" onRender={onRenderCallback}>
-            <App/>
+            <App />
         </Profiler>
     </React.StrictMode>
 );

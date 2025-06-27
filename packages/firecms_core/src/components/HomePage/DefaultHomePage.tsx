@@ -1,13 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Fuse from "fuse.js";
 import { Container, SearchBar } from "@firecms/ui";
-import { useCustomizationController, useFireCMSContext, useNavigationController } from "../../hooks";
+import {
+    useCustomizationController,
+    useFireCMSContext,
+    useNavigationController,
+} from "../../hooks";
 import {
     CMSAnalyticsEvent,
     NavigationEntry,
     NavigationGroupMapping,
     PluginGenericProps,
-    PluginHomePageAdditionalCardsProps
+    PluginHomePageAdditionalCardsProps,
 } from "../../types";
 import { toArray } from "../../util/arrays";
 import { FavouritesView } from "./FavouritesView";
@@ -18,7 +22,7 @@ import {
     NewGroupDropZone,
     SortableNavigationCard,
     SortableNavigationGroup,
-    useHomePageDnd
+    useHomePageDnd,
 } from "./HomePageDnD";
 import { DndContext, DragOverlay, MeasuringStrategy } from "@dnd-kit/core";
 import { NavigationCardBinding } from "./NavigationCardBinding";
@@ -30,10 +34,10 @@ export const DEFAULT_GROUP_NAME = "Views";
 export const ADMIN_GROUP_NAME = "Admin";
 
 export function DefaultHomePage({
-                                    additionalActions,
-                                    additionalChildrenStart,
-                                    additionalChildrenEnd
-                                }: {
+    additionalActions,
+    additionalChildrenStart,
+    additionalChildrenEnd,
+}: {
     additionalActions?: React.ReactNode;
     additionalChildrenStart?: React.ReactNode;
     additionalChildrenEnd?: React.ReactNode;
@@ -42,14 +46,13 @@ export function DefaultHomePage({
     const customizationController = useCustomizationController();
     const navigationController = useNavigationController();
 
-    if (!navigationController.topLevelNavigation)
-        throw Error("Navigation not ready");
+    if (!navigationController.topLevelNavigation) throw Error("Navigation not ready");
 
     const {
         allowDragAndDrop,
         navigationEntries: rawNavigationEntries,
         groups: groupOrderFromNavController,
-        onNavigationEntriesUpdate
+        onNavigationEntriesUpdate,
     } = navigationController.topLevelNavigation;
 
     const fuse = useRef<Fuse<NavigationEntry> | null>(null);
@@ -62,7 +65,7 @@ export function DefaultHomePage({
 
     useEffect(() => {
         fuse.current = new Fuse(rawNavigationEntries, {
-            keys: ["name", "description", "group", "path"]
+            keys: ["name", "description", "group", "path"],
         });
     }, [rawNavigationEntries]);
 
@@ -75,56 +78,45 @@ export function DefaultHomePage({
     /* ───────────────────────────────────────────────────────────────
        Build groups (all items) + isolate Admin
        ─────────────────────────────────────────────────────────────── */
-    const [items, setItems] = useState<
-        { name: string; entries: NavigationEntry[] }[]
-    >([]);
+    const [items, setItems] = useState<{ name: string; entries: NavigationEntry[] }[]>([]);
     const [adminGroupData, setAdminGroupData] = useState<{
         name: string;
         entries: NavigationEntry[];
     } | null>(null);
 
     useEffect(() => {
-        const src = performingSearch
-            ? filteredNavigationEntries
-            : rawNavigationEntries;
+        const src = performingSearch ? filteredNavigationEntries : rawNavigationEntries;
 
         const entriesByGroup: Record<string, NavigationEntry[]> = {};
         src.forEach((e) => {
-            const g =
-                e.type === "admin"
-                    ? ADMIN_GROUP_NAME
-                    : e.group ?? DEFAULT_GROUP_NAME;
+            const g = e.type === "admin" ? ADMIN_GROUP_NAME : (e.group ?? DEFAULT_GROUP_NAME);
             (entriesByGroup[g] ??= []).push(e);
         });
 
         let allProcessed: { name: string; entries: NavigationEntry[] }[];
 
         if (performingSearch) {
-            const ordered = [
-                ...new Set(src.map((e) => e.group ?? DEFAULT_GROUP_NAME))
-            ];
+            const ordered = [...new Set(src.map((e) => e.group ?? DEFAULT_GROUP_NAME))];
             allProcessed = ordered
                 .map((name) => ({
                     name,
-                    entries: entriesByGroup[name] || []
+                    entries: entriesByGroup[name] || [],
                 }))
                 .filter((g) => g.entries.length);
         } else {
             allProcessed = groupOrderFromNavController.map((g) => ({
                 name: g,
-                entries: entriesByGroup[g] || []
+                entries: entriesByGroup[g] || [],
             }));
             Object.keys(entriesByGroup).forEach((g) => {
                 if (!groupOrderFromNavController.includes(g))
                     allProcessed.push({
                         name: g,
-                        entries: entriesByGroup[g]
+                        entries: entriesByGroup[g],
                     });
             });
             allProcessed = allProcessed.filter(
-                (g) =>
-                    g.entries.length ||
-                    groupOrderFromNavController.includes(g.name)
+                (g) => g.entries.length || groupOrderFromNavController.includes(g.name)
             );
         }
 
@@ -140,7 +132,7 @@ export function DefaultHomePage({
         performingSearch,
         filteredNavigationEntries,
         rawNavigationEntries,
-        groupOrderFromNavController
+        groupOrderFromNavController,
     ]);
 
     /* ───────────────────────────────────────────────────────────────
@@ -150,28 +142,26 @@ export function DefaultHomePage({
         updater:
             | { name: string; entries: NavigationEntry[] }[]
             | ((
-            prev: { name: string; entries: NavigationEntry[] }[]
-        ) => { name: string; entries: NavigationEntry[] }[])
+                  prev: { name: string; entries: NavigationEntry[] }[]
+              ) => { name: string; entries: NavigationEntry[] }[])
     ) => {
         setItems(updater); // local only
     };
 
-    const persistNavigationGroups = (
-        latest: { name: string; entries: NavigationEntry[] }[]
-    ) => {
+    const persistNavigationGroups = (latest: { name: string; entries: NavigationEntry[] }[]) => {
         const draggable: NavigationGroupMapping[] = latest.map((g) => ({
             name: g.name,
-            entries: g.entries.map((e) => e.path)
+            entries: g.entries.map((e) => e.path),
         }));
 
         const all: NavigationGroupMapping[] = adminGroupData
             ? [
-                ...draggable,
-                {
-                    name: adminGroupData.name,
-                    entries: adminGroupData.entries.map((e) => e.path)
-                }
-            ]
+                  ...draggable,
+                  {
+                      name: adminGroupData.name,
+                      entries: adminGroupData.entries.map((e) => e.path),
+                  },
+              ]
             : draggable;
 
         onNavigationEntriesUpdate(all);
@@ -198,7 +188,7 @@ export function DefaultHomePage({
         setDialogOpenForGroup,
         handleRenameGroup,
         isHoveringNewGroupDropZone,
-        setIsHoveringNewGroupDropZone
+        setIsHoveringNewGroupDropZone,
     } = useHomePageDnd({
         items,
         setItems: updateItems,
@@ -206,22 +196,17 @@ export function DefaultHomePage({
         onPersist: persistNavigationGroups, // ——► persistence here
         onGroupMoved: (g) =>
             context.analyticsController?.onAnalyticsEvent?.("home_move_group", {
-                name: g
+                name: g,
             }),
         onCardMovedBetweenGroups: (card) =>
             context.analyticsController?.onAnalyticsEvent?.("home_move_card", {
-                id: card.id
+                id: card.id,
             }),
         onNewGroupDrop: () =>
-            context.analyticsController?.onAnalyticsEvent?.(
-                "home_drop_new_group"
-            )
+            context.analyticsController?.onAnalyticsEvent?.("home_drop_new_group"),
     });
 
-    const {
-        containerRef,
-        direction
-    } = useRestoreScroll();
+    const { containerRef, direction } = useRestoreScroll();
 
     const dndDisabled = !allowDragAndDrop || performingSearch;
 
@@ -246,9 +231,7 @@ export function DefaultHomePage({
                 {customizationController.plugins
                     .filter((p) => p.homePage?.includeSection)
                     .map((plugin) => {
-                        const section = plugin.homePage!.includeSection!(
-                            sectionProps
-                        );
+                        const section = plugin.homePage!.includeSection!(sectionProps);
                         return (
                             <NavigationGroup
                                 group={section.title}
@@ -307,7 +290,7 @@ export function DefaultHomePage({
                     {additionalActions}
                 </div>
 
-                <FavouritesView hidden={performingSearch}/>
+                <FavouritesView hidden={performingSearch} />
 
                 {additionalChildrenStart}
                 {additionalPluginChildrenStart}
@@ -319,8 +302,8 @@ export function DefaultHomePage({
                     measuring={{
                         droppable: {
                             strategy: MeasuringStrategy.Always,
-                            frequency: 500
-                        }
+                            frequency: 500,
+                        },
                     }}
                     onDragStart={onDragStart}
                     onDragOver={onDragOver}
@@ -341,17 +324,12 @@ export function DefaultHomePage({
                                 [];
                             customizationController.plugins?.forEach((p) => {
                                 if (p.homePage?.AdditionalCards)
-                                    AdditionalCards.push(
-                                        ...toArray(p.homePage.AdditionalCards)
-                                    );
+                                    AdditionalCards.push(...toArray(p.homePage.AdditionalCards));
                             });
 
                             const actionProps: PluginHomePageAdditionalCardsProps = {
-                                group:
-                                    groupKey === DEFAULT_GROUP_NAME
-                                        ? undefined
-                                        : groupKey,
-                                context
+                                group: groupKey === DEFAULT_GROUP_NAME ? undefined : groupKey,
+                                context,
                             };
 
                             if (
@@ -369,17 +347,12 @@ export function DefaultHomePage({
                                 >
                                     <NavigationGroup
                                         group={
-                                            groupKey === DEFAULT_GROUP_NAME
-                                                ? undefined
-                                                : groupKey
+                                            groupKey === DEFAULT_GROUP_NAME ? undefined : groupKey
                                         }
                                         minimised={
-                                            draggingGroupId === groupKey &&
-                                            !isDraggingCardOnly
+                                            draggingGroupId === groupKey && !isDraggingCardOnly
                                         }
-                                        isPotentialCardDropTarget={
-                                            isDraggingCardOnly
-                                        }
+                                        isPotentialCardDropTarget={isDraggingCardOnly}
                                         dndDisabled={dndDisabled}
                                         onEditGroup={() => {
                                             if (dndDisabled) return;
@@ -388,62 +361,44 @@ export function DefaultHomePage({
                                     >
                                         <NavigationGroupDroppable
                                             id={groupKey}
-                                            itemIds={entriesInGroup.map(
-                                                (e) => e.url
-                                            )}
-                                            isPotentialCardDropTarget={
-                                                isDraggingCardOnly
-                                            }
+                                            itemIds={entriesInGroup.map((e) => e.url)}
+                                            isPotentialCardDropTarget={isDraggingCardOnly}
                                         >
                                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
-                                                {entriesInGroup.map(
-                                                    (entry) => (
-                                                        <SortableNavigationCard
-                                                            key={entry.url}
-                                                            entry={entry}
-                                                            onClick={() => {
-                                                                let event: CMSAnalyticsEvent =
-                                                                    "unmapped_event";
-                                                                if (
-                                                                    entry.type ===
-                                                                    "collection"
-                                                                )
-                                                                    event =
-                                                                        "home_navigate_to_collection";
-                                                                else if (
-                                                                    entry.type ===
-                                                                    "view"
-                                                                )
-                                                                    event =
-                                                                        "home_navigate_to_view";
-                                                                else if (
-                                                                    entry.type ===
-                                                                    "admin"
-                                                                )
-                                                                    event =
-                                                                        "home_navigate_to_admin_view";
+                                                {entriesInGroup.map((entry) => (
+                                                    <SortableNavigationCard
+                                                        key={entry.url}
+                                                        entry={entry}
+                                                        onClick={() => {
+                                                            let event: CMSAnalyticsEvent =
+                                                                "unmapped_event";
+                                                            if (entry.type === "collection")
+                                                                event =
+                                                                    "home_navigate_to_collection";
+                                                            else if (entry.type === "view")
+                                                                event = "home_navigate_to_view";
+                                                            else if (entry.type === "admin")
+                                                                event =
+                                                                    "home_navigate_to_admin_view";
 
-                                                                context.analyticsController?.onAnalyticsEvent?.(
-                                                                    event,
-                                                                    {
-                                                                        path: entry.path
-                                                                    }
-                                                                );
-                                                            }}
-                                                        />
-                                                    )
-                                                )}
+                                                            context.analyticsController?.onAnalyticsEvent?.(
+                                                                event,
+                                                                {
+                                                                    path: entry.path,
+                                                                }
+                                                            );
+                                                        }}
+                                                    />
+                                                ))}
                                                 {!performingSearch &&
                                                     groupKey.toLowerCase() !==
-                                                    ADMIN_GROUP_NAME.toLowerCase() &&
-                                                    AdditionalCards.map(
-                                                        (C, i) => (
-                                                            <C
-                                                                key={`extra_${groupKey}_${i}`}
-                                                                {...actionProps}
-                                                            />
-                                                        )
-                                                    )}
+                                                        ADMIN_GROUP_NAME.toLowerCase() &&
+                                                    AdditionalCards.map((C, i) => (
+                                                        <C
+                                                            key={`extra_${groupKey}_${i}`}
+                                                            {...actionProps}
+                                                        />
+                                                    ))}
                                             </div>
                                         </NavigationGroupDroppable>
                                     </NavigationGroup>
@@ -458,19 +413,17 @@ export function DefaultHomePage({
                     />
 
                     <DragOverlay adjustScale={false} dropAnimation={dropAnimation}>
-                        {activeGroupData &&
-                        draggingGroupId === activeGroupData.name ? (
+                        {activeGroupData && draggingGroupId === activeGroupData.name ? (
                             <div
                                 className="rounded-lg bg-transparent"
                                 style={{
                                     padding: 0,
-                                    margin: 0
+                                    margin: 0,
                                 }}
                             >
                                 <NavigationGroup
                                     group={
-                                        activeGroupData.name ===
-                                        DEFAULT_GROUP_NAME
+                                        activeGroupData.name === DEFAULT_GROUP_NAME
                                             ? undefined
                                             : activeGroupData.name
                                     }
@@ -495,21 +448,17 @@ export function DefaultHomePage({
                                     key={entry.url}
                                     {...entry}
                                     onClick={() => {
-                                        let event: CMSAnalyticsEvent =
-                                            "unmapped_event";
+                                        let event: CMSAnalyticsEvent = "unmapped_event";
                                         if (entry.type === "collection")
-                                            event =
-                                                "home_navigate_to_collection";
+                                            event = "home_navigate_to_collection";
                                         else if (entry.type === "view")
                                             event = "home_navigate_to_view";
                                         else if (entry.type === "admin")
-                                            event =
-                                                "home_navigate_to_admin_view";
+                                            event = "home_navigate_to_admin_view";
 
-                                        context.analyticsController?.onAnalyticsEvent?.(
-                                            event,
-                                            { path: entry.path }
-                                        );
+                                        context.analyticsController?.onAnalyticsEvent?.(event, {
+                                            path: entry.path,
+                                        });
                                     }}
                                 />
                             ))}

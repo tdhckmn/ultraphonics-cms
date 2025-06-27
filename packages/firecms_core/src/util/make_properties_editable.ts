@@ -19,7 +19,7 @@ export function makePropertiesNonEditable(properties: PropertiesOrBuilders): Pro
         if (!isPropertyBuilder(property) && property.dataType === "map" && property.properties) {
             const updated = {
                 ...property,
-                properties: makePropertiesNonEditable(property.properties as PropertiesOrBuilders)
+                properties: makePropertiesNonEditable(property.properties as PropertiesOrBuilders),
             };
             acc[key] = updated;
         }
@@ -28,10 +28,9 @@ export function makePropertiesNonEditable(properties: PropertiesOrBuilders): Pro
         } else {
             acc[key] = {
                 ...property,
-                editable: false
+                editable: false,
             };
         }
         return acc;
     }, {} as PropertiesOrBuilders);
-
 }

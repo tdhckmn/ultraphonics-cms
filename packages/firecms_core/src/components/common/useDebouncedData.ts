@@ -10,7 +10,6 @@ import equal from "react-fast-compare";
  * @param timeoutMs
  */
 export function useDebouncedData<T>(data: T[], deps: any, timeoutMs = 5000) {
-
     const [deferredData, setDeferredData] = React.useState(data);
     const dataLength = React.useRef(deferredData.length ?? 0);
     const pendingUpdate = React.useRef(false);
@@ -20,7 +19,6 @@ export function useDebouncedData<T>(data: T[], deps: any, timeoutMs = 5000) {
     const immediateUpdate = data.length >= dataLength.current || haveDepsChanged;
 
     React.useEffect(() => {
-
         const performUpdate = () => {
             if (!equal(deferredData, data)) {
                 currentDeps.current = deps;
@@ -33,15 +31,12 @@ export function useDebouncedData<T>(data: T[], deps: any, timeoutMs = 5000) {
         pendingUpdate.current = true;
 
         let handler: any;
-        if (immediateUpdate)
-            performUpdate()
-        else
-            handler = setTimeout(performUpdate, timeoutMs);
+        if (immediateUpdate) performUpdate();
+        else handler = setTimeout(performUpdate, timeoutMs);
 
         return () => {
             clearTimeout(handler);
-            if (pendingUpdate.current && immediateUpdate)
-                performUpdate();
+            if (pendingUpdate.current && immediateUpdate) performUpdate();
         };
     }, [data, timeoutMs, deps, immediateUpdate]);
 

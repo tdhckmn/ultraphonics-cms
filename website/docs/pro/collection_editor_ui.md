@@ -10,7 +10,7 @@ Firestore collections. The Collection Editor UI Plugin provides an interface for
 collections, with support for customizable permissions and configuration options.
 
 Typically, collections in FireCMS are defined in code, and passed as a prop to the `NavigationController` on
-initialization. The Collection Editor UI Plugin allows you to manage collections directly in the application, providing 
+initialization. The Collection Editor UI Plugin allows you to manage collections directly in the application, providing
 a more user-friendly and flexible way to organize and configure your Firestore collections.
 
 In this document, we will cover how to set up and use this plugin in your FireCMS application.
@@ -23,7 +23,9 @@ FireCMS and Firebase set up in your project.
 ```sh
 yarn add @firecms/collection_editor
 ```
+
 or
+
 ```sh
 npm install @firecms/collection_editor
 ```
@@ -64,7 +66,7 @@ The controller includes methods you can use in your components to manage the col
 
 ```jsx
 const collectionConfigController = useFirestoreCollectionsConfigController({
-    firebaseApp
+    firebaseApp,
 });
 ```
 
@@ -80,7 +82,7 @@ import { productsCollection } from "./collections/products_collection";
 const collectionsBuilder = useCallback(() => {
     // Define a sample collection in code.
     const collections = [
-        productsCollection
+        productsCollection,
         // Your collections here
     ];
     // Merge collections defined in the collection editor (UI) with your own collections
@@ -92,7 +94,7 @@ To add the Collection Editor UI Plugin, include it in the list of plugins passed
 
 ```jsx
 const collectionEditorPlugin = useCollectionEditorPlugin({
-    collectionConfigController
+    collectionConfigController,
 });
 ```
 
@@ -120,7 +122,7 @@ const collectionEditorPlugin = useCollectionEditorPlugin({
     onAnalyticsEvent: (event, params) => {
         // Handle analytics events
         logAnalyticsEvent(event, params);
-    }
+    },
 });
 ```
 
@@ -140,34 +142,34 @@ import {
     useFirebaseAuthController,
     useFirestoreDelegate,
     useInitialiseFirebase,
-    useValidateAuthenticator
+    useValidateAuthenticator,
 } from "@firecms/firebase";
-import { useBuildUserManagement, userManagementAdminViews, useUserManagementPlugin } from "@firecms/user_management";
+import {
+    useBuildUserManagement,
+    userManagementAdminViews,
+    useUserManagementPlugin,
+} from "@firecms/user_management";
 import { productsCollection } from "./collections/products_collection";
 import { customPermissionsBuilder } from "./config/permissions";
 import { CustomCollectionView } from "./views/CustomCollectionView";
 import { CollectionIcon } from "./components/CollectionIcon";
 
 function App() {
-    const {
-        firebaseApp,
-        firebaseConfigLoading,
-        configError
-    } = useInitialiseFirebase({
-        firebaseConfig
+    const { firebaseApp, firebaseConfigLoading, configError } = useInitialiseFirebase({
+        firebaseConfig,
     });
 
     const firestoreDelegate = useFirestoreDelegate({
-        firebaseApp
+        firebaseApp,
     });
 
     const authController = useFirebaseAuthController({
         firebaseApp,
-        signInOptions: ["google.com", "password"]
+        signInOptions: ["google.com", "password"],
     });
 
     const collectionConfigController = useFirestoreCollectionsConfigController({
-        firebaseApp
+        firebaseApp,
     });
 
     const collectionEditorPlugin = useCollectionEditorPlugin({
@@ -176,13 +178,13 @@ function App() {
         reservedGroups: ["admin"],
         extraView: {
             View: CustomCollectionView,
-            icon: <CollectionIcon/>
-        }
+            icon: <CollectionIcon />,
+        },
     });
 
     const userManagement = useBuildUserManagement({
         dataSourceDelegate: firestoreDelegate,
-        authController: authController
+        authController: authController,
     });
 
     const userManagementPlugin = useUserManagementPlugin({ userManagement });
@@ -197,11 +199,8 @@ function App() {
         return mergeCollections(collections, collectionConfigController.collections ?? []);
     }, [collectionConfigController.collections]);
 
-    const plugins = [
-        collectionEditorPlugin,
-        userManagementPlugin
-    ];
-    
+    const plugins = [collectionEditorPlugin, userManagementPlugin];
+
     const navigationController = useBuildNavigationController({
         collections: collectionsBuilder(),
         views: customViews,
@@ -209,27 +208,23 @@ function App() {
         collectionPermissions: collectionEditorPlugin.collectionPermissions,
         authController,
         dataSourceDelegate: firestoreDelegate,
-        plugins
+        plugins,
     });
 
-    const {
-        authLoading,
-        canAccessMainView,
-        notAllowedError
-    } = useValidateAuthenticator({
+    const { authLoading, canAccessMainView, notAllowedError } = useValidateAuthenticator({
         disabled: collectionEditorPlugin.loading,
         authController: authController,
         authenticator: customAuthenticator,
         dataSourceDelegate: firestoreDelegate,
-        storageSource
+        storageSource,
     });
 
     if (firebaseConfigLoading) {
-        return <LoadingIndicator/>;
+        return <LoadingIndicator />;
     }
 
     if (configError) {
-        return <ErrorDisplay error={configError}/>;
+        return <ErrorDisplay error={configError} />;
     }
 
     return (
@@ -238,17 +233,14 @@ function App() {
             authController={authController}
             dataSourceDelegate={firestoreDelegate}
         >
-            {({
-                  context,
-                  loading
-              }) => {
+            {({ context, loading }) => {
                 if (loading || authLoading) {
-                    return <LoadingSpinner/>;
+                    return <LoadingSpinner />;
                 }
                 if (!canAccessMainView) {
-                    return <AccessDenied message={notAllowedError}/>;
+                    return <AccessDenied message={notAllowedError} />;
                 }
-                return <MainAppLayout/>;
+                return <MainAppLayout />;
             }}
         </FireCMS>
     );
@@ -273,8 +265,8 @@ const collectionEditorPlugin = useCollectionEditorPlugin({
     reservedGroups: ["admin"],
     extraView: {
         View: CustomCollectionView,
-        icon: <CollectionIcon/>
-    }
+        icon: <CollectionIcon />,
+    },
 });
 
 // Include the plugin in your FireCMS configuration
@@ -285,7 +277,7 @@ const collectionEditorPlugin = useCollectionEditorPlugin({
     plugins={[userManagementPlugin, collectionEditorPlugin]}
 >
     {/* Your application components */}
-</FireCMS>
+</FireCMS>;
 ```
 
 ## Authenticating Users
@@ -299,24 +291,20 @@ levels.
 ```jsx
 import { useValidateAuthenticator } from "@firecms/core";
 
-const {
-    authLoading,
-    canAccessMainView,
-    notAllowedError
-} = useValidateAuthenticator({
+const { authLoading, canAccessMainView, notAllowedError } = useValidateAuthenticator({
     disabled: collectionEditorPlugin.loading,
     authController: authController,
     authenticator: customAuthenticator,
     dataSourceDelegate: firestoreDelegate,
-    storageSource: storageSource
+    storageSource: storageSource,
 });
 
 if (authLoading) {
-    return <LoadingIndicator/>;
+    return <LoadingIndicator />;
 }
 
 if (!canAccessMainView) {
-    return <AccessDeniedError message={notAllowedError}/>;
+    return <AccessDeniedError message={notAllowedError} />;
 }
 
 // Render your main application view
@@ -337,7 +325,7 @@ const navigationController = useBuildNavigationController({
     adminViews: userManagementAdminViews,
     collectionPermissions: collectionEditorPlugin.collectionPermissions,
     authController,
-    dataSourceDelegate: firestoreDelegate
+    dataSourceDelegate: firestoreDelegate,
 });
 ```
 
@@ -352,11 +340,11 @@ The plugin provides error handling through properties such as `configError` and 
 
 ```jsx
 if (collectionEditorPlugin.configError) {
-    return <ErrorDisplay error={collectionEditorPlugin.configError}/>;
+    return <ErrorDisplay error={collectionEditorPlugin.configError} />;
 }
 
 if (collectionEditorPlugin.collectionErrors) {
-    return <ErrorDisplay error={collectionEditorPlugin.collectionErrors}/>;
+    return <ErrorDisplay error={collectionEditorPlugin.collectionErrors} />;
 }
 ```
 
@@ -394,22 +382,20 @@ import { useCollectionEditorPlugin } from "@firecms/collection_editor";
 const collectionEditor = useCollectionEditorPlugin({
     collectionConfigController,
     configPermissions: customPermissionsBuilder,
-    reservedGroups: ["admin"]
+    reservedGroups: ["admin"],
 });
 
 // Use collectionEditor properties and functions
 if (collectionEditor.loading) {
-    return <LoadingIndicator/>;
+    return <LoadingIndicator />;
 }
 
 return (
     <div>
-        {collectionEditor.collections.map(collection => (
-            <CollectionCard key={collection.id} collection={collection}/>
+        {collectionEditor.collections.map((collection) => (
+            <CollectionCard key={collection.id} collection={collection} />
         ))}
-        <Button onClick={() => collectionEditor.createCollection()}>
-            Create New Collection
-        </Button>
+        <Button onClick={() => collectionEditor.createCollection()}>Create New Collection</Button>
     </div>
 );
 ```
@@ -427,8 +413,8 @@ import CustomDatabaseFieldComponent from "./components/CustomDatabaseFieldCompon
 const collectionEditorPlugin = useCollectionEditorPlugin({
     collectionConfigController,
     components: {
-        DatabaseField: CustomDatabaseFieldComponent
-    }
+        DatabaseField: CustomDatabaseFieldComponent,
+    },
 });
 ```
 
@@ -440,7 +426,7 @@ Define custom permissions logic to control what users can do within the collecti
 const customPermissionsBuilder = ({ user }) => ({
     createCollections: user?.isAdmin === true,
     editCollections: user?.roles.includes("editor"),
-    deleteCollections: user?.isAdmin === true
+    deleteCollections: user?.isAdmin === true,
 });
 ```
 
@@ -636,4 +622,3 @@ export function App() {
   );
 }
 ```
-

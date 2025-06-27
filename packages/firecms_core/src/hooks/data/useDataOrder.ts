@@ -11,16 +11,12 @@ export interface DataOrderProps<M extends Record<string, any>> {
  * @param entitiesDisplayedFirst
  * @group Hooks and utilities
  */
-export function useDataOrder<M extends Record<string, any>>(
-    {
-        data,
-        entitiesDisplayedFirst
-    }: DataOrderProps<M>): Entity<M>[] {
-
-    if (!entitiesDisplayedFirst)
-        return data;
+export function useDataOrder<M extends Record<string, any>>({
+    data,
+    entitiesDisplayedFirst,
+}: DataOrderProps<M>): Entity<M>[] {
+    if (!entitiesDisplayedFirst) return data;
 
     const displayedFirstId = new Set(entitiesDisplayedFirst.map((e) => e.id));
     return [...entitiesDisplayedFirst, ...data.filter((e) => !displayedFirstId.has(e.id))];
-
 }

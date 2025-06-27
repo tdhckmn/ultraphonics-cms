@@ -1,13 +1,8 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "sourceMap": true,
-    "paths": {}
-  },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "../ui/src",
-    "../formex/src",
-  ],
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "sourceMap": true,
+        "paths": {}
+    },
+    "exclude": ["node_modules", "dist", "../ui/src", "../formex/src"]
 }

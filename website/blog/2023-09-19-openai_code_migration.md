@@ -30,22 +30,22 @@ Note that you can apply the same approach to any other **code migration**.
 <!-- truncate -->
 
 ```tsx
-import {Button} from "@mui/material";
+import { Button } from "@mui/material";
 
 const MyButton = () => {
-    return <Button sx={{backgroundColor: "red"}}>Click me</Button>
-}
+    return <Button sx={{ backgroundColor: "red" }}>Click me</Button>;
+};
 ```
 
 - Contrarily, tailwindcss uses CSS classes to define styles, as shown in the following code snippet, which defines a
   similarly-styled button:
 
 ```tsx
-import {Button} from "@mui/material";
+import { Button } from "@mui/material";
 
 const MyButton = () => {
-    return <Button className="bg-red-500">Click me</Button>
-}
+    return <Button className="bg-red-500">Click me</Button>;
+};
 ```
 
 The goal is to construct a script capable of automating the conversion of code from `emotion` to `tailwindcss` style
@@ -53,7 +53,7 @@ definitions.
 
 ## Automating Code Migration through AI
 
-The Node.js script illustrated here traverses the source code's folder structure and replaces `emotion` styles with 
+The Node.js script illustrated here traverses the source code's folder structure and replaces `emotion` styles with
 `tailwindcss` styles. This process involves identifying JSX ot TSX elements containing the `sx` prop and replacing them with
 their corresponding `className` prop.
 
@@ -63,7 +63,10 @@ Here's a simple function that recursively traverses the source code's folder str
 their contents:
 
 ```typescript
-const getRecursiveFileReads = async (dir: string, onFileRead: (filePath: string, content: string) => void) => {
+const getRecursiveFileReads = async (
+    dir: string,
+    onFileRead: (filePath: string, content: string) => void
+) => {
     const files = await fs.readdir(dir);
     for (const file of files) {
         const filePath = path.join(dir, file);
@@ -75,7 +78,7 @@ const getRecursiveFileReads = async (dir: string, onFileRead: (filePath: string,
         const content = await fs.readFile(filePath, { encoding: "utf8" });
         onFileRead(filePath, content);
     }
-}
+};
 ```
 
 ### Detecting Emotion Styles
@@ -125,27 +128,29 @@ We will use the OpenAI library to make the corresponding call:
 ```typescript
 import { Configuration, CreateChatCompletionRequest, OpenAIApi } from "openai";
 
-export const openai = new OpenAIApi(new Configuration({
-    apiKey: "YOUR_API_KEY"
-}));
+export const openai = new OpenAIApi(
+    new Configuration({
+        apiKey: "YOUR_API_KEY",
+    })
+);
 
 async function getOpenAiReplacement(input: string) {
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: [
-      {
-        role: "system",
-        content: systemInstructions
-      },
-      {
-        role: "user",
-        content: input
-      }
-    ],
-    temperature: 0.7,
-    top_p: 1,
-  });
-  return completion.choices[0].message?.content;
+    const completion = await openai.chat.completions.create({
+        model: "gpt-4",
+        messages: [
+            {
+                role: "system",
+                content: systemInstructions,
+            },
+            {
+                role: "user",
+                content: input,
+            },
+        ],
+        temperature: 0.7,
+        top_p: 1,
+    });
+    return completion.choices[0].message?.content;
 }
 ```
 
@@ -167,13 +172,16 @@ import { Configuration, CreateChatCompletionRequest, OpenAIApi } from "openai";
 const FOLDER = "../src";
 
 const openai = new OpenAI({
-    apiKey: "YOUR_API_KEY"
+    apiKey: "YOUR_API_KEY",
 });
 
 const dryRun = false;
 const sxRegexp = /(sx=\{(?:[^{}]|\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\})*\})/g;
 
-const getRecursiveFileReads = async (dir: string, onFileRead: (filePath: string, content: string) => void) => {
+const getRecursiveFileReads = async (
+    dir: string,
+    onFileRead: (filePath: string, content: string) => void
+) => {
     const files = await fs.readdir(dir);
     for (const file of files) {
         const filePath = path.join(dir, file);
@@ -185,32 +193,30 @@ const getRecursiveFileReads = async (dir: string, onFileRead: (filePath: string,
         const content = await fs.readFile(filePath, { encoding: "utf8" });
         onFileRead(filePath, content);
     }
-}
+};
 
 let count = 0;
 
-getRecursiveFileReads(FOLDER,
-    async (filePath, content,) => {
-        if (content.includes("sx={")) {
-            let newContent = content;
-            let match;
-            while ((match = sxRegexp.exec(content)) !== null) {
-                const sxData = match[1];
-                console.log(sxData);
-                if (!dryRun) {
-                    const replacement = await getOpenAiReplacement(sxData);
-                    if (replacement) {
-                        console.log(replacement);
-                        newContent = newContent.replace(sxData, replacement);
-                    }
+getRecursiveFileReads(FOLDER, async (filePath, content) => {
+    if (content.includes("sx={")) {
+        let newContent = content;
+        let match;
+        while ((match = sxRegexp.exec(content)) !== null) {
+            const sxData = match[1];
+            console.log(sxData);
+            if (!dryRun) {
+                const replacement = await getOpenAiReplacement(sxData);
+                if (replacement) {
+                    console.log(replacement);
+                    newContent = newContent.replace(sxData, replacement);
                 }
             }
-            fs.writeFile(filePath, newContent);
-            count++;
-            console.log("Processed files", count);
         }
-    });
-
+        fs.writeFile(filePath, newContent);
+        count++;
+        console.log("Processed files", count);
+    }
+});
 
 async function getOpenAiReplacement(input: string) {
     const completionParams: CreateChatCompletionRequest = {
@@ -218,12 +224,12 @@ async function getOpenAiReplacement(input: string) {
         messages: [
             {
                 role: "system",
-                content: systemInstructions
+                content: systemInstructions,
             },
             {
                 role: "user",
-                content: input
-            }
+                content: input,
+            },
         ],
         temperature: 0.7,
         top_p: 1,
@@ -250,8 +256,7 @@ converts to:
 className="flex items-center justify-center w-full h-screen bg-red-500"
 
 Return exclusively results in the form of 'className="..."' or 'style={{...}}'
-since your output will be injected into a tsx file.`
-
+since your output will be injected into a tsx file.`;
 ```
 
 ## Conclusion
@@ -264,5 +269,3 @@ Of course, you can think of ways of improving this script. For example, you coul
 content, so it can generate the classes based on your configuration.
 
 I hope you enjoyed this article and that it will help you in your next code migration!
-
-

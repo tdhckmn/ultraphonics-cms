@@ -12,7 +12,6 @@ export type SnackbarMessageType = "success" | "info" | "warning" | "error";
  * @group Hooks and utilities
  */
 export interface SnackbarController {
-
     /**
      * Close the currently open snackbar
      */
@@ -27,7 +26,6 @@ export interface SnackbarController {
         message: React.ReactNode;
         autoHideDuration?: number;
     }) => void;
-
 }
 
 /**
@@ -40,36 +38,33 @@ export interface SnackbarController {
  * @group Hooks and utilities
  */
 export const useSnackbarController = () => {
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
-    const {
-        enqueueSnackbar,
-        closeSnackbar
-    } = useSnackbar();
-
-    const open = useCallback((props: {
-        type: SnackbarMessageType;
-        message: React.ReactNode;
-        autoHideDuration?: number;
-    }) => {
-        const {
-            type,
-            message,
-            autoHideDuration
-        } = props;
-        enqueueSnackbar({
-            message,
-            variant: type,
-            autoHideDuration
-        })
-    }, []);
+    const open = useCallback(
+        (props: {
+            type: SnackbarMessageType;
+            message: React.ReactNode;
+            autoHideDuration?: number;
+        }) => {
+            const { type, message, autoHideDuration } = props;
+            enqueueSnackbar({
+                message,
+                variant: type,
+                autoHideDuration,
+            });
+        },
+        []
+    );
 
     const close = useCallback(() => {
         closeSnackbar();
     }, []);
 
-    return useMemo(() => ({
-        open,
-        close
-    }), [open, close]);
-
+    return useMemo(
+        () => ({
+            open,
+            close,
+        }),
+        [open, close]
+    );
 };

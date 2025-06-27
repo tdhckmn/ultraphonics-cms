@@ -4,7 +4,6 @@ import { ProjectsApi } from "../api/projects";
 import { FireCMSProject } from "./projects";
 
 export type FireCMSBackend = {
-
     backendUid?: string;
     backendFirebaseApp?: FirebaseApp;
     backendApiHost: string;
@@ -30,6 +29,6 @@ export type FireCMSBackend = {
     authLoading: boolean;
     authProviderError?: any;
 
-    getProject: (projectId: string) => Promise<FireCMSProject | null>,
+    getProject: (projectId: string) => Promise<FireCMSProject | null>;
     projects: FireCMSProject[] | undefined;
-}
+};

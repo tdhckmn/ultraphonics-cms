@@ -5,18 +5,22 @@ import {
     isPropertyBuilder,
     PropertiesOrBuilders,
     Property,
-    PropertyOrBuilder
+    PropertyOrBuilder,
 } from "@firecms/core";
 import { InputProperty } from "../types/data_enhancement_controller";
 
-export function getSimplifiedProperties<M extends Record<string, any>>(properties: PropertiesOrBuilders<M>, values: M, path = ""): Record<string, InputProperty> {
+export function getSimplifiedProperties<M extends Record<string, any>>(
+    properties: PropertiesOrBuilders<M>,
+    values: M,
+    path = "",
+): Record<string, InputProperty> {
     if (!properties) return {};
     return Object.entries(properties)
         .map(([key, property]) => {
             if (isPropertyBuilder(property)) return {};
             const fullKey = path ? `${path}.${key}` : key;
             const valueInPath = getValueInPath(values, fullKey);
-            return getSimplifiedProperty(property, fullKey, valueInPath)
+            return getSimplifiedProperty(property, fullKey, valueInPath);
         })
         .reduce((a, b) => ({ ...a, ...b }), {});
 }
@@ -32,17 +36,15 @@ function getSimpleProperty(property: Property): InputProperty {
         description: property.description,
         dataType: property.dataType,
         fieldConfigId: fieldId,
-        enumValues: "enumValues" in property && property.enumValues
-            ? getSimpleEnumValues(property.enumValues)
-            : undefined,
-        disabled: Boolean(property.disabled || property.readOnly)
+        enumValues:
+            "enumValues" in property && property.enumValues ? getSimpleEnumValues(property.enumValues) : undefined,
+        disabled: Boolean(property.disabled || property.readOnly),
     };
 }
 
 function getSimplifiedProperty(property: PropertyOrBuilder, path: string, value?: any): Record<string, InputProperty> {
     if (isPropertyBuilder(property)) return {};
     if (property.dataType === "array") {
-
         if (property.of && !isPropertyBuilder(property.of as PropertyOrBuilder)) {
             const arrayParentProperty: InputProperty = {
                 name: property.name,
@@ -50,7 +52,7 @@ function getSimplifiedProperty(property: PropertyOrBuilder, path: string, value?
                 dataType: property.dataType,
                 fieldConfigId: "repeat",
                 disabled: Boolean(property.disabled || property.readOnly),
-                of: getSimpleProperty(property.of as Property)
+                of: getSimpleProperty(property.of as Property),
             };
 
             const result = { [path]: arrayParentProperty };
@@ -75,7 +77,6 @@ function getSimplifiedProperty(property: PropertyOrBuilder, path: string, value?
 
             return result;
         } else if (property.oneOf) {
-
             const arrayParentProperty: InputProperty = {
                 name: property.name,
                 description: property.description,
@@ -87,30 +88,36 @@ function getSimplifiedProperty(property: PropertyOrBuilder, path: string, value?
                     valueField: property.oneOf.valueField,
                     properties: Object.entries(property.oneOf.properties)
                         .map(([key, prop]) => ({ [key]: getSimpleProperty(prop) }))
-                        .reduce((a, b) => ({ ...a, ...b }), {})
-                }
+                        .reduce((a, b) => ({ ...a, ...b }), {}),
+                },
             };
 
             if (!Array.isArray(value)) {
                 return { [path]: arrayParentProperty };
             }
 
-            return value.map((v, i) => {
-                const typeKey = property.oneOf!.typeField ?? "type";
-                const oneOfType = v[typeKey];
-                const valueKey = property.oneOf!.valueField ?? "value";
-                const oneOfValue = v[valueKey];
-                const childProperty = property.oneOf!.properties[oneOfType];
-                if (childProperty === undefined) {
-                    console.error(`No property found for type ${oneOfType}`, property.oneOf!.properties);
-                    return {};
-                }
-                const simplifiedProperty = getSimplifiedProperty(childProperty, `${path}.${i}.${valueKey}`, oneOfValue);
-                return {
-                    [`${path}.${i}.${typeKey}`]: oneOfType,
-                    ...simplifiedProperty
-                };
-            }).reduce((a, b) => ({ ...a, ...b }), { [path]: arrayParentProperty });
+            return value
+                .map((v, i) => {
+                    const typeKey = property.oneOf!.typeField ?? "type";
+                    const oneOfType = v[typeKey];
+                    const valueKey = property.oneOf!.valueField ?? "value";
+                    const oneOfValue = v[valueKey];
+                    const childProperty = property.oneOf!.properties[oneOfType];
+                    if (childProperty === undefined) {
+                        console.error(`No property found for type ${oneOfType}`, property.oneOf!.properties);
+                        return {};
+                    }
+                    const simplifiedProperty = getSimplifiedProperty(
+                        childProperty,
+                        `${path}.${i}.${valueKey}`,
+                        oneOfValue,
+                    );
+                    return {
+                        [`${path}.${i}.${typeKey}`]: oneOfType,
+                        ...simplifiedProperty,
+                    };
+                })
+                .reduce((a, b) => ({ ...a, ...b }), { [path]: arrayParentProperty });
         }
     } else if (property.dataType === "map") {
         if (property.properties) {
@@ -119,7 +126,7 @@ function getSimplifiedProperty(property: PropertyOrBuilder, path: string, value?
                     const childValue = value?.[key];
                     return getSimplifiedProperty(childProperty, key, childValue);
                 })
-                .map(o => attachPathToKeys(o, path))
+                .map((o) => attachPathToKeys(o, path))
                 .reduce((a, b) => ({ ...a, ...b }), {});
 
             if (Object.keys(mapProperties).length === 0) return {};
@@ -128,11 +135,11 @@ function getSimplifiedProperty(property: PropertyOrBuilder, path: string, value?
                 description: property.description,
                 dataType: property.dataType,
                 fieldConfigId: "group",
-                disabled: Boolean(property.disabled || property.readOnly)
+                disabled: Boolean(property.disabled || property.readOnly),
             };
             return {
                 [path]: mapParentProperty,
-                ...mapProperties
+                ...mapProperties,
             } as Record<string, InputProperty>;
         }
     } else {
@@ -142,7 +149,7 @@ function getSimplifiedProperty(property: PropertyOrBuilder, path: string, value?
             return {};
         }
         return {
-            [path]: getSimpleProperty(property)
+            [path]: getSimpleProperty(property),
         };
     }
     return {};
@@ -159,9 +166,7 @@ function attachPathToKeys(obj: Record<string, any>, path = ""): Record<string, a
 }
 
 function getSimpleEnumValues(enumValues: EnumValues): string[] {
-    if (Array.isArray(enumValues))
-        return enumValues.map(v => String(v.id));
-    if (typeof enumValues === "object")
-        return Object.keys(enumValues);
+    if (Array.isArray(enumValues)) return enumValues.map((v) => String(v.id));
+    if (typeof enumValues === "object") return Object.keys(enumValues);
     throw Error("getSimpleEnumValues: Invalid enumValues");
 }

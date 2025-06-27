@@ -17,7 +17,7 @@ import {
     useBuildLocalConfigurationPersistence,
     useBuildModeController,
     useBuildNavigationController,
-    useValidateAuthenticator
+    useValidateAuthenticator,
 } from "@firecms/core";
 import {
     FirebaseAuthController,
@@ -32,7 +32,11 @@ import {
 import { useDataEnhancementPlugin } from "@firecms/data_enhancement";
 import { useImportPlugin } from "@firecms/data_import";
 import { useExportPlugin } from "@firecms/data_export";
-import { useBuildUserManagement, userManagementAdminViews, useUserManagementPlugin } from "@firecms/user_management";
+import {
+    useBuildUserManagement,
+    userManagementAdminViews,
+    useUserManagementPlugin,
+} from "@firecms/user_management";
 import { booksCollection } from "./books_collection";
 import { useFirestoreCollectionsConfigController } from "@firecms/collection_editor_firebase";
 import { mergeCollections, useCollectionEditorPlugin } from "@firecms/collection_editor";
@@ -45,36 +49,30 @@ export const firebaseConfig = {
     storageBucket: "firecms-demo-27150.appspot.com",
     messagingSenderId: "837544933711",
     appId: "1:837544933711:web:75822ffc0840e3ae01ad3a",
-    measurementId: "G-8HRE8MVXZJ"
+    measurementId: "G-8HRE8MVXZJ",
 };
 
 function ProSample() {
-
     // Use your own authentication logic here
-    const myAuthenticator: Authenticator<FirebaseUserWrapper> = useCallback(async ({
-                                                                                       user,
-                                                                                       authController
-                                                                                   }) => {
+    const myAuthenticator: Authenticator<FirebaseUserWrapper> = useCallback(
+        async ({ user, authController }) => {
+            if (user?.email?.includes("flanders")) {
+                throw Error("Stupid Flanders!");
+            }
 
-        if (user?.email?.includes("flanders")) {
-            throw Error("Stupid Flanders!");
-        }
+            // This is an example of retrieving async data related to the user
+            // and storing it in the controller's extra field
+            const idTokenResult = await user?.firebaseUser?.getIdTokenResult();
+            const userIsAdmin = idTokenResult?.claims.admin || user?.email?.endsWith("@firecms.co");
 
-        // This is an example of retrieving async data related to the user
-        // and storing it in the controller's extra field
-        const idTokenResult = await user?.firebaseUser?.getIdTokenResult();
-        const userIsAdmin = idTokenResult?.claims.admin || user?.email?.endsWith("@firecms.co");
+            console.log("Allowing access to", user);
+            return Boolean(userIsAdmin);
+        },
+        []
+    );
 
-        console.log("Allowing access to", user);
-        return Boolean(userIsAdmin);
-    }, []);
-
-    const {
-        firebaseApp,
-        firebaseConfigLoading,
-        configError
-    } = useInitialiseFirebase({
-        firebaseConfig
+    const { firebaseApp, firebaseConfigLoading, configError } = useInitialiseFirebase({
+        firebaseConfig,
     });
 
     // Controller used to manage the dark or light color mode
@@ -87,43 +85,39 @@ function ProSample() {
 
     // Delegate used for fetching and saving data in Firestore
     const firestoreDelegate = useFirestoreDelegate({
-        firebaseApp
+        firebaseApp,
     });
 
     // Controller used for saving and fetching files in storage
     const storageSource = useFirebaseStorageSource({
-        firebaseApp
+        firebaseApp,
     });
 
     const collectionConfigController = useFirestoreCollectionsConfigController({
-        firebaseApp
+        firebaseApp,
     });
 
     // Controller for managing authentication
     const firebaseAuthController: FirebaseAuthController = useFirebaseAuthController({
         firebaseApp,
-        signInOptions
+        signInOptions,
     });
 
     // controller in charge of user management
     const userManagement = useBuildUserManagement({
         dataSourceDelegate: firestoreDelegate,
-        authController: firebaseAuthController
+        authController: firebaseAuthController,
     });
 
     const authController = userManagement;
 
-    const {
-        authLoading,
-        canAccessMainView,
-        notAllowedError
-    } = useValidateAuthenticator({
+    const { authLoading, canAccessMainView, notAllowedError } = useValidateAuthenticator({
         disabled: userManagement.loading,
         authenticator: userManagement.authenticator,
         authController,
         // authenticator: myAuthenticator,
         dataSourceDelegate: firestoreDelegate,
-        storageSource
+        storageSource,
     });
 
     const collectionsBuilder = useCallback(() => {
@@ -139,15 +133,14 @@ function ProSample() {
         collectionPermissions: userManagement.collectionPermissions,
         adminViews: userManagementAdminViews,
         authController,
-        dataSourceDelegate: firestoreDelegate
+        dataSourceDelegate: firestoreDelegate,
     });
 
     const dataEnhancementPlugin = useDataEnhancementPlugin({
         getConfigForPath: ({ path }) => {
-            if (path === "books")
-                return true;
+            if (path === "books") return true;
             return false;
-        }
+        },
     });
 
     const userManagementPlugin = useUserManagementPlugin({ userManagement });
@@ -156,11 +149,11 @@ function ProSample() {
     const exportPlugin = useExportPlugin();
 
     const collectionEditorPlugin = useCollectionEditorPlugin({
-        collectionConfigController
+        collectionConfigController,
     });
 
     if (firebaseConfigLoading || !firebaseApp) {
-        return <CircularProgressCenter/>;
+        return <CircularProgressCenter />;
     }
 
     if (configError) {
@@ -175,36 +168,42 @@ function ProSample() {
                     userConfigPersistence={userConfigPersistence}
                     dataSourceDelegate={firestoreDelegate}
                     storageSource={storageSource}
-                    plugins={[dataEnhancementPlugin, importPlugin, exportPlugin, userManagementPlugin, collectionEditorPlugin]}
+                    plugins={[
+                        dataEnhancementPlugin,
+                        importPlugin,
+                        exportPlugin,
+                        userManagementPlugin,
+                        collectionEditorPlugin,
+                    ]}
                 >
-                    {({
-                          context,
-                          loading
-                      }) => {
-
+                    {({ context, loading }) => {
                         if (loading || authLoading) {
-                            return <CircularProgressCenter size={"large"}/>;
+                            return <CircularProgressCenter size={"large"} />;
                         }
                         if (!canAccessMainView) {
-                            return <FirebaseLoginView authController={authController}
-                                                      firebaseApp={firebaseApp}
-                                                      signInOptions={signInOptions}
-                                                      notAllowedError={notAllowedError}/>;
+                            return (
+                                <FirebaseLoginView
+                                    authController={authController}
+                                    firebaseApp={firebaseApp}
+                                    signInOptions={signInOptions}
+                                    notAllowedError={notAllowedError}
+                                />
+                            );
                         }
 
-                        return <Scaffold
-                            autoOpenDrawer={false}>
-                            <AppBar title={"My demo app"}/>
-                            <Drawer/>
-                            <NavigationRoutes/>
-                            <SideDialogs/>
-                        </Scaffold>;
+                        return (
+                            <Scaffold autoOpenDrawer={false}>
+                                <AppBar title={"My demo app"} />
+                                <Drawer />
+                                <NavigationRoutes />
+                                <SideDialogs />
+                            </Scaffold>
+                        );
                     }}
                 </FireCMS>
             </ModeControllerProvider>
         </SnackbarProvider>
     );
-
 }
 
 export default ProSample;

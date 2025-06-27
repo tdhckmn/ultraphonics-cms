@@ -24,9 +24,9 @@ import { CMSAnalyticsEvent } from "./analytics";
  * @group Models
  */
 export type EntityCollectionsBuilder<EC extends EntityCollection = EntityCollection> = (params: {
-    user: User | null,
-    authController: AuthController,
-    dataSource: DataSourceDelegate
+    user: User | null;
+    authController: AuthController;
+    dataSource: DataSourceDelegate;
 }) => EC[] | Promise<EC[]>;
 
 /**
@@ -39,16 +39,15 @@ export type EntityCollectionsBuilder<EC extends EntityCollection = EntityCollect
  * @group Models
  */
 export type CMSViewsBuilder = (params: {
-    user: User | null,
-    authController: AuthController,
-    dataSource: DataSourceDelegate
+    user: User | null;
+    authController: AuthController;
+    dataSource: DataSourceDelegate;
 }) => CMSView[] | Promise<CMSView[]>;
 
 /**
  * @group Models
  */
 export type FireCMSProps<USER extends User> = {
-
     /**
      * Use this function to return the components you want to render under
      * FireCMS
@@ -145,14 +144,11 @@ export type FireCMSProps<USER extends User> = {
     entityLinkBuilder?: EntityLinkBuilder;
 
     components?: {
-
         /**
          * Component to render when a reference is missing
          */
         missingReference?: React.ComponentType<{
-            path: string,
+            path: string;
         }>;
-
-    }
-
+    };
 };

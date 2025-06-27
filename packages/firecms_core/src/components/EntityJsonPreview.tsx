@@ -48,18 +48,22 @@ export function EntityJsonPreview({ values }: { values: object }) {
                     ref={preRef}
                     style={{
                         ...style,
-                        backgroundColor: "inherit"
+                        backgroundColor: "inherit",
                     }}
                     className="max-w-6xl mx-auto p-8 rounded text-sm"
                 >
-          {tokens.map((line, i) => (
-              <div key={i} {...getLineProps({ line })} className="text-wrap">
-                  {line.map((token, key) => (
-                      <span key={key} {...getTokenProps({ token })} className="word-break" />
-                  ))}
-              </div>
-          ))}
-        </pre>
+                    {tokens.map((line, i) => (
+                        <div key={i} {...getLineProps({ line })} className="text-wrap">
+                            {line.map((token, key) => (
+                                <span
+                                    key={key}
+                                    {...getTokenProps({ token })}
+                                    className="word-break"
+                                />
+                            ))}
+                        </div>
+                    ))}
+                </pre>
             )}
         </Highlight>
     );

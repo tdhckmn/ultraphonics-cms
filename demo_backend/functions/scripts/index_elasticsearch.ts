@@ -16,7 +16,8 @@ const firestore = admin.firestore();
 //         }
 //     });
 
-firestore.collection("/users")
+firestore
+    .collection("/users")
     .get()
     .then(async (snapshot) => {
         for (const d of snapshot.docs) {

@@ -1,6 +1,14 @@
-import React, { createContext, forwardRef, RefObject, useCallback, useEffect, useRef, useState } from "react";
+import React, {
+    createContext,
+    forwardRef,
+    RefObject,
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 
-import equal from "react-fast-compare"
+import equal from "react-fast-compare";
 
 // @ts-ignore
 import { FixedSizeList as List } from "react-window";
@@ -12,7 +20,7 @@ import {
     VirtualTableColumn,
     VirtualTableFilterValues,
     VirtualTableProps,
-    VirtualTableWhereFilterOp
+    VirtualTableWhereFilterOp,
 } from "./VirtualTableProps";
 
 import { VirtualTableContextProps } from "./types";
@@ -26,16 +34,13 @@ const VirtualListContext = createContext<VirtualTableContextProps<any>>({} as an
 VirtualListContext.displayName = "VirtualListContext";
 
 type InnerElementProps = {
-    children: React.ReactNode,
-    style: any
+    children: React.ReactNode;
+    style: any;
 };
 
 // eslint-disable-next-line react/display-name
-const innerElementType = forwardRef<HTMLDivElement, InnerElementProps>(({
-                                                                            children,
-                                                                            ...rest
-                                                                        }: InnerElementProps, ref) => {
-
+const innerElementType = forwardRef<HTMLDivElement, InnerElementProps>(
+    ({ children, ...rest }: InnerElementProps, ref) => {
         return (
             <VirtualListContext.Consumer>
                 {(virtualTableProps) => {
@@ -46,39 +51,44 @@ const innerElementType = forwardRef<HTMLDivElement, InnerElementProps>(({
                                 id={"virtual-table"}
                                 style={{
                                     position: "relative",
-                                    height: "100%"
-                                }}>
+                                    height: "100%",
+                                }}
+                            >
                                 <div
                                     ref={ref}
                                     {...rest}
                                     style={{
                                         ...rest?.style,
                                         minHeight: "100%",
-                                        position: "relative"
-                                    }}>
-                                    <VirtualTableHeaderRow {...virtualTableProps}/>
+                                        position: "relative",
+                                    }}
+                                >
+                                    <VirtualTableHeaderRow {...virtualTableProps} />
                                     {!customView && children}
                                 </div>
-
                             </div>
 
-                            {customView && <div style={{
-                                position: "sticky",
-                                top: "48px",
-                                flexGrow: 1,
-                                height: "calc(100% - 48px)",
-                                marginTop: "calc(48px - 100vh)",
-                                left: 0
-                            }}>{customView}</div>}
-
+                            {customView && (
+                                <div
+                                    style={{
+                                        position: "sticky",
+                                        top: "48px",
+                                        flexGrow: 1,
+                                        height: "calc(100% - 48px)",
+                                        marginTop: "calc(48px - 100vh)",
+                                        left: 0,
+                                    }}
+                                >
+                                    {customView}
+                                </div>
+                            )}
                         </>
                     );
                 }}
             </VirtualListContext.Consumer>
         );
-    })
-;
-
+    }
+);
 /**
  * This is a Table component that allows displaying arbitrary data, not
  * necessarily related to entities or properties. It is the component
@@ -87,131 +97,133 @@ const innerElementType = forwardRef<HTMLDivElement, InnerElementProps>(({
  *
  * @group Components
  */
-export const VirtualTable = React.memo<VirtualTableProps<any>>(
-    function VirtualTable<T extends Record<string, any>>({
-                                                             data,
-                                                             onResetPagination,
-                                                             onEndReached,
-                                                             endOffset = 600,
-                                                             rowHeight = 54,
-                                                             columns: columnsProp,
-                                                             onRowClick,
-                                                             onColumnResize,
-                                                             filter: filterInput,
-                                                             checkFilterCombination,
-                                                             onFilterUpdate,
-                                                             sortBy,
-                                                             error,
-                                                             emptyComponent,
-                                                             onSortByUpdate,
-                                                             onScroll: onScrollProp,
-                                                             loading,
-                                                             cellRenderer,
-                                                             hoverRow,
-                                                             createFilterField,
-                                                             rowClassName,
-                                                             style,
-                                                             className,
-                                                             endAdornment,
-                                                             AddColumnComponent,
-                                                             initialScroll = 0,
-                                                         }: VirtualTableProps<T>) {
+export const VirtualTable = React.memo<VirtualTableProps<any>>(function VirtualTable<
+    T extends Record<string, any>,
+>({
+    data,
+    onResetPagination,
+    onEndReached,
+    endOffset = 600,
+    rowHeight = 54,
+    columns: columnsProp,
+    onRowClick,
+    onColumnResize,
+    filter: filterInput,
+    checkFilterCombination,
+    onFilterUpdate,
+    sortBy,
+    error,
+    emptyComponent,
+    onSortByUpdate,
+    onScroll: onScrollProp,
+    loading,
+    cellRenderer,
+    hoverRow,
+    createFilterField,
+    rowClassName,
+    style,
+    className,
+    endAdornment,
+    AddColumnComponent,
+    initialScroll = 0,
+}: VirtualTableProps<T>) {
+    const sortByProperty: string | undefined = sortBy ? sortBy[0] : undefined;
+    const currentSort: "asc" | "desc" | undefined = sortBy ? sortBy[1] : undefined;
 
-        const sortByProperty: string | undefined = sortBy ? sortBy[0] : undefined;
-        const currentSort: "asc" | "desc" | undefined = sortBy ? sortBy[1] : undefined;
+    const [columns, setColumns] = useState(columnsProp);
 
-        const [columns, setColumns] = useState(columnsProp);
+    const tableRef = useRef<HTMLDivElement>(null);
+    const endReachCallbackThreshold = useRef<number>(0);
 
-        const tableRef = useRef<HTMLDivElement>(null);
-        const endReachCallbackThreshold = useRef<number>(0);
+    const debouncedScroll = useDebounceCallback(onScrollProp, 200);
 
-        const debouncedScroll = useDebounceCallback(onScrollProp, 200);
+    // Set initial scroll position
+    useEffect(() => {
+        if (tableRef.current && initialScroll) {
+            const { scrollLeft } = tableRef.current;
+            tableRef.current.scrollTo(scrollLeft, initialScroll);
+        }
+    }, [tableRef, initialScroll]);
 
-        // Set initial scroll position
-        useEffect(() => {
-            if (tableRef.current && initialScroll) {
-                const { scrollLeft } = tableRef.current;
-                tableRef.current.scrollTo(scrollLeft, initialScroll);
-            }
-        }, [tableRef, initialScroll]);
+    useEffect(() => {
+        setColumns(columnsProp);
+    }, [columnsProp]);
 
-        useEffect(() => {
-            setColumns(columnsProp);
-        }, [columnsProp]);
+    const [_, setForceUpdate] = useState(false);
+    useEffect(() => {
+        // Create a ResizeObserver to detect size changes more aggressively
+        if (tableRef.current) {
+            const resizeObserver = new ResizeObserver(() => {
+                // Force a re-render when size changes
+                setForceUpdate((prev) => !prev);
+            });
 
-        const [_, setForceUpdate] = useState(false);
-        useEffect(() => {
-            // Create a ResizeObserver to detect size changes more aggressively
-            if (tableRef.current) {
-                const resizeObserver = new ResizeObserver(() => {
-                    // Force a re-render when size changes
-                    setForceUpdate(prev => !prev);
-                });
+            resizeObserver.observe(tableRef.current);
 
-                resizeObserver.observe(tableRef.current);
-
-                return () => {
-                    if (tableRef.current) {
-                        resizeObserver.unobserve(tableRef.current);
-                    }
-                    resizeObserver.disconnect();
-                };
-            }
             return () => {
-            }
-        }, [tableRef]);
+                if (tableRef.current) {
+                    resizeObserver.unobserve(tableRef.current);
+                }
+                resizeObserver.disconnect();
+            };
+        }
+        return () => {};
+    }, [tableRef]);
 
-        const [measureRef, bounds] = useMeasure({
-            debounce: 50,
-            polyfill: ResizeObserver,
-            scroll: true,
-            // This is important for handling zooming in react-flow
-            offsetSize: true
-        });
+    const [measureRef, bounds] = useMeasure({
+        debounce: 50,
+        polyfill: ResizeObserver,
+        scroll: true,
+        // This is important for handling zooming in react-flow
+        offsetSize: true,
+    });
 
-        const onColumnResizeInternal = useCallback((params: OnVirtualTableColumnResizeParams) => {
-            setColumns(prevColumns =>
-                prevColumns.map((column) =>
-                    column.key === params.column.key ? params.column : column
-                )
+    const onColumnResizeInternal = useCallback((params: OnVirtualTableColumnResizeParams) => {
+        setColumns((prevColumns) =>
+            prevColumns.map((column) => (column.key === params.column.key ? params.column : column))
+        );
+    }, []);
+
+    const onColumnResizeEndInternal = useCallback(
+        (params: OnVirtualTableColumnResizeParams) => {
+            setColumns(
+                columns.map((column) => (column.key === params.column.key ? params.column : column))
             );
-        }, []);
-
-        const onColumnResizeEndInternal = useCallback((params: OnVirtualTableColumnResizeParams) => {
-            setColumns(columns.map((column) => column.key === params.column.key ? params.column : column));
             if (onColumnResize) {
                 onColumnResize(params);
             }
-        }, [columns, onColumnResize]);
+        },
+        [columns, onColumnResize]
+    );
 
-        // saving the current filter as a ref as a workaround for header closure
-        const filterRef = useRef<VirtualTableFilterValues<any> | undefined>();
+    // saving the current filter as a ref as a workaround for header closure
+    const filterRef = useRef<VirtualTableFilterValues<any> | undefined>();
 
-        useEffect(() => {
-            filterRef.current = filterInput;
-        }, [filterInput]);
+    useEffect(() => {
+        filterRef.current = filterInput;
+    }, [filterInput]);
 
-        const scrollToTop = useCallback(() => {
-            endReachCallbackThreshold.current = 0;
-            if (tableRef.current) {
-                tableRef.current.scrollTo(tableRef.current?.scrollLeft, 0);
-            }
-        }, []);
+    const scrollToTop = useCallback(() => {
+        endReachCallbackThreshold.current = 0;
+        if (tableRef.current) {
+            tableRef.current.scrollTo(tableRef.current?.scrollLeft, 0);
+        }
+    }, []);
 
-        const onColumnSort = useCallback((key: string) => {
-
+    const onColumnSort = useCallback(
+        (key: string) => {
             const isDesc = sortByProperty === key && currentSort === "desc";
             const isAsc = sortByProperty === key && currentSort === "asc";
-            const newSort = isAsc ? "desc" : (isDesc ? undefined : "asc");
+            const newSort = isAsc ? "desc" : isDesc ? undefined : "asc";
             const newSortProperty: string | undefined = isDesc ? undefined : key;
 
             const filter = filterRef.current;
 
-            const newSortBy: [string, "asc" | "desc"] | undefined = newSort && newSortProperty ? [newSortProperty, newSort] : undefined;
+            const newSortBy: [string, "asc" | "desc"] | undefined =
+                newSort && newSortProperty ? [newSortProperty, newSort] : undefined;
             if (filter) {
                 if (checkFilterCombination && !checkFilterCombination(filter, newSortBy)) {
-                    if (onFilterUpdate)
-                        onFilterUpdate(undefined);
+                    if (onFilterUpdate) onFilterUpdate(undefined);
                 }
             }
 
@@ -224,39 +236,59 @@ export const VirtualTable = React.memo<VirtualTableProps<any>>(
             }
 
             scrollToTop();
-        }, [checkFilterCombination, currentSort, onFilterUpdate, onResetPagination, onSortByUpdate, scrollToTop, sortByProperty]);
+        },
+        [
+            checkFilterCombination,
+            currentSort,
+            onFilterUpdate,
+            onResetPagination,
+            onSortByUpdate,
+            scrollToTop,
+            sortByProperty,
+        ]
+    );
 
-        const maxScroll = Math.max((data?.length ?? 0) * rowHeight - bounds.height, 0);
+    const maxScroll = Math.max((data?.length ?? 0) * rowHeight - bounds.height, 0);
 
-        const onEndReachedInternal = useCallback((scrollOffset: number) => {
-            if (onEndReached && (data?.length ?? 0) > 0 && scrollOffset > endReachCallbackThreshold.current + endOffset) {
+    const onEndReachedInternal = useCallback(
+        (scrollOffset: number) => {
+            if (
+                onEndReached &&
+                (data?.length ?? 0) > 0 &&
+                scrollOffset > endReachCallbackThreshold.current + endOffset
+            ) {
                 endReachCallbackThreshold.current = scrollOffset;
                 onEndReached();
             }
-        }, [data?.length, onEndReached]);
+        },
+        [data?.length, onEndReached]
+    );
 
-        const onScroll = useCallback(({
-                                          scrollDirection,
-                                          scrollOffset,
-                                          scrollUpdateWasRequested
-                                      }: {
-            scrollDirection: "forward" | "backward",
-            scrollOffset: number,
+    const onScroll = useCallback(
+        ({
+            scrollDirection,
+            scrollOffset,
+            scrollUpdateWasRequested,
+        }: {
+            scrollDirection: "forward" | "backward";
+            scrollOffset: number;
             scrollUpdateWasRequested: boolean;
         }) => {
             if (onScrollProp) {
                 debouncedScroll({
                     scrollDirection,
                     scrollOffset,
-                    scrollUpdateWasRequested
-                })
+                    scrollUpdateWasRequested,
+                });
             }
-            if (!scrollUpdateWasRequested && (scrollOffset >= maxScroll - endOffset))
+            if (!scrollUpdateWasRequested && scrollOffset >= maxScroll - endOffset)
                 onEndReachedInternal(scrollOffset);
-        }, [maxScroll, onEndReachedInternal]);
+        },
+        [maxScroll, onEndReachedInternal]
+    );
 
-        const onFilterUpdateInternal = useCallback((column: VirtualTableColumn, filterForProperty?: [VirtualTableWhereFilterOp, any]) => {
-
+    const onFilterUpdateInternal = useCallback(
+        (column: VirtualTableColumn, filterForProperty?: [VirtualTableWhereFilterOp, any]) => {
             endReachCallbackThreshold.current = 0;
             const filter = filterRef.current;
             let newFilterValue: VirtualTableFilterValues<any> = filter ? { ...filter } : {};
@@ -266,182 +298,185 @@ export const VirtualTable = React.memo<VirtualTableProps<any>>(
             } else {
                 newFilterValue[column.key] = filterForProperty;
             }
-            const newSortBy: [string, "asc" | "desc"] | undefined = sortByProperty && currentSort ? [sortByProperty, currentSort] : undefined;
-            const isNewFilterCombinationValid = !checkFilterCombination || checkFilterCombination(newFilterValue, newSortBy);
+            const newSortBy: [string, "asc" | "desc"] | undefined =
+                sortByProperty && currentSort ? [sortByProperty, currentSort] : undefined;
+            const isNewFilterCombinationValid =
+                !checkFilterCombination || checkFilterCombination(newFilterValue, newSortBy);
             if (!isNewFilterCombinationValid) {
-                newFilterValue = filterForProperty ? { [column.key]: filterForProperty } as VirtualTableFilterValues<Extract<keyof T, string>> : {};
+                newFilterValue = filterForProperty
+                    ? ({ [column.key]: filterForProperty } as VirtualTableFilterValues<
+                          Extract<keyof T, string>
+                      >)
+                    : {};
             }
 
             if (onFilterUpdate) onFilterUpdate(newFilterValue);
-        }, [checkFilterCombination, currentSort, onFilterUpdate, sortByProperty]);
+        },
+        [checkFilterCombination, currentSort, onFilterUpdate, sortByProperty]
+    );
 
-        const empty = !loading && (data?.length ?? 0) === 0;
-        const customView = error
-            ? <CenteredView maxWidth={"2xl"}
-                            className="flex flex-col gap-2">
+    const empty = !loading && (data?.length ?? 0) === 0;
+    const customView = error ? (
+        <CenteredView maxWidth={"2xl"} className="flex flex-col gap-2">
+            <Typography variant={"h6"}>{"Error"}</Typography>
 
-                <Typography variant={"h6"}>
-                    {"Error"}
-                </Typography>
-
-                {error?.message && <SafeLinkRenderer text={error.message}/>}
-
-            </CenteredView>
-            : (empty
-                ? (loading
-                    ? <CircularProgressCenter/>
-                    : <div
-                        className="flex flex-col overflow-auto items-center justify-center p-2 gap-2 h-full">
-                        <AssignmentIcon/>
-                        {emptyComponent}
-                    </div>)
-                : undefined);
-
-        const virtualListController = {
-            data,
-            rowHeight: rowHeight,
-            cellRenderer,
-            columns,
-            currentSort,
-            onRowClick,
-            customView,
-            onColumnResize: onColumnResizeInternal,
-            onColumnResizeEnd: onColumnResizeEndInternal,
-            filter: filterRef.current,
-            onColumnSort,
-            onFilterUpdate: onFilterUpdateInternal,
-            sortByProperty,
-            hoverRow: hoverRow ?? false,
-            createFilterField,
-            rowClassName,
-            endAdornment,
-            AddColumnComponent
-        };
-
-        return (
-            <div
-                ref={measureRef}
-                style={style}
-                className={cls("h-full w-full", className)}>
-                <VirtualListContext.Provider
-                    value={virtualListController}>
-
-                    <MemoizedList
-                        outerRef={tableRef}
-                        key={rowHeight}
-                        width={bounds.width}
-                        height={bounds.height}
-                        itemCount={(data?.length ?? 0) + (endAdornment ? 1 : 0)}
-                        onScroll={onScroll}
-                        includeAddColumn={Boolean(AddColumnComponent)}
-                        itemSize={rowHeight}/>
-
-                </VirtualListContext.Provider>
+            {error?.message && <SafeLinkRenderer text={error.message} />}
+        </CenteredView>
+    ) : empty ? (
+        loading ? (
+            <CircularProgressCenter />
+        ) : (
+            <div className="flex flex-col overflow-auto items-center justify-center p-2 gap-2 h-full">
+                <AssignmentIcon />
+                {emptyComponent}
             </div>
-        );
-    },
-    equal
-);
+        )
+    ) : undefined;
+
+    const virtualListController = {
+        data,
+        rowHeight: rowHeight,
+        cellRenderer,
+        columns,
+        currentSort,
+        onRowClick,
+        customView,
+        onColumnResize: onColumnResizeInternal,
+        onColumnResizeEnd: onColumnResizeEndInternal,
+        filter: filterRef.current,
+        onColumnSort,
+        onFilterUpdate: onFilterUpdateInternal,
+        sortByProperty,
+        hoverRow: hoverRow ?? false,
+        createFilterField,
+        rowClassName,
+        endAdornment,
+        AddColumnComponent,
+    };
+
+    return (
+        <div ref={measureRef} style={style} className={cls("h-full w-full", className)}>
+            <VirtualListContext.Provider value={virtualListController}>
+                <MemoizedList
+                    outerRef={tableRef}
+                    key={rowHeight}
+                    width={bounds.width}
+                    height={bounds.height}
+                    itemCount={(data?.length ?? 0) + (endAdornment ? 1 : 0)}
+                    onScroll={onScroll}
+                    includeAddColumn={Boolean(AddColumnComponent)}
+                    itemSize={rowHeight}
+                />
+            </VirtualListContext.Provider>
+        </div>
+    );
+}, equal);
 
 function MemoizedList({
-                          outerRef,
-                          width,
-                          height,
-                          itemCount,
-                          onScroll,
-                          itemSize,
-                          includeAddColumn
-                      }: {
+    outerRef,
+    width,
+    height,
+    itemCount,
+    onScroll,
+    itemSize,
+    includeAddColumn,
+}: {
     outerRef: RefObject<HTMLDivElement>;
     width: number;
     height: number;
     itemCount: number;
     onScroll: (params: {
-        scrollDirection: "forward" | "backward",
-        scrollOffset: number,
+        scrollDirection: "forward" | "backward";
+        scrollOffset: number;
         scrollUpdateWasRequested: boolean;
     }) => void;
     itemSize: number;
     includeAddColumn?: boolean;
 }) {
+    const Row = useCallback(({ index, style }: any) => {
+        return (
+            <VirtualListContext.Consumer>
+                {({
+                    onRowClick,
+                    data,
+                    columns,
+                    rowHeight = 54,
+                    cellRenderer,
+                    hoverRow,
+                    rowClassName,
+                    endAdornment,
+                }) => {
+                    if (endAdornment && index === (data ?? []).length) {
+                        return (
+                            <div
+                                style={{
+                                    ...style,
+                                    height: "auto",
+                                    position: "sticky",
+                                    bottom: 0,
+                                    zIndex: 1,
+                                }}
+                            >
+                                {endAdornment}
+                            </div>
+                        );
+                    }
 
-    const Row = useCallback(({
-                                 index,
-                                 style
-                             }: any) => {
-        return <VirtualListContext.Consumer>
-            {({
-                  onRowClick,
-                  data,
-                  columns,
-                  rowHeight = 54,
-                  cellRenderer,
-                  hoverRow,
-                  rowClassName,
-                  endAdornment
-              }) => {
+                    const rowData = data && data[index];
+                    return (
+                        <VirtualTableRow
+                            key={`row_${index}`}
+                            rowData={rowData}
+                            rowIndex={index}
+                            onRowClick={onRowClick}
+                            columns={columns}
+                            hoverRow={hoverRow}
+                            rowClassName={rowClassName}
+                            style={{
+                                ...style,
+                                top: `calc(${style.top}px + 48px)`,
+                            }}
+                            rowHeight={rowHeight}
+                        >
+                            {columns.map((column: VirtualTableColumn, columnIndex: number) => {
+                                const cellData = rowData && rowData[column.key];
+                                return (
+                                    <VirtualTableCell
+                                        key={`cell_${column.key}`}
+                                        dataKey={column.key}
+                                        cellRenderer={cellRenderer}
+                                        column={column}
+                                        columns={columns}
+                                        rowData={rowData}
+                                        cellData={cellData}
+                                        rowIndex={index}
+                                        columnIndex={columnIndex}
+                                    />
+                                );
+                            })}
 
-                if (endAdornment && index === (data ?? []).length) {
-                    return <div style={{
-                        ...style,
-                        height: "auto",
-                        position: "sticky",
-                        bottom: 0,
-                        zIndex: 1
-                    }}>
-                        {endAdornment}
-                    </div>;
-                }
-
-                const rowData = data && data[index];
-                return (
-                    <VirtualTableRow
-                        key={`row_${index}`}
-                        rowData={rowData}
-                        rowIndex={index}
-                        onRowClick={onRowClick}
-                        columns={columns}
-                        hoverRow={hoverRow}
-                        rowClassName={rowClassName}
-                        style={{
-                            ...style,
-                            top: `calc(${style.top}px + 48px)`
-                        }}
-                        rowHeight={rowHeight}>
-
-                        {columns.map((column: VirtualTableColumn, columnIndex: number) => {
-                            const cellData = rowData && rowData[column.key];
-                            return <VirtualTableCell
-                                key={`cell_${column.key}`}
-                                dataKey={column.key}
-                                cellRenderer={cellRenderer}
-                                column={column}
-                                columns={columns}
-                                rowData={rowData}
-                                cellData={cellData}
-                                rowIndex={index}
-                                columnIndex={columnIndex}/>;
-                        })}
-
-                        {includeAddColumn && <div className={"w-20"}/>}
-
-                    </VirtualTableRow>
-                );
-            }}
-        </VirtualListContext.Consumer>;
+                            {includeAddColumn && <div className={"w-20"} />}
+                        </VirtualTableRow>
+                    );
+                }}
+            </VirtualListContext.Consumer>
+        );
     }, []);
 
-    return <List
-        outerRef={outerRef}
-        innerElementType={innerElementType}
-        width={width}
-        height={height}
-        overscanCount={4}
-        itemCount={itemCount}
-        onScroll={onScroll}
-        itemSize={itemSize}>
-        {Row}
-    </List>;
+    return (
+        <List
+            outerRef={outerRef}
+            innerElementType={innerElementType}
+            width={width}
+            height={height}
+            overscanCount={4}
+            itemCount={itemCount}
+            onScroll={onScroll}
+            itemSize={itemSize}
+        >
+            {Row}
+        </List>
+    );
 }
 
 const SafeLinkRenderer: React.FC<{
@@ -453,7 +488,5 @@ const SafeLinkRenderer: React.FC<{
         return `<a href="${url}" class="underline" target="_blank">Link</a><br/>`;
     });
 
-    return (
-        <div className={"break-all"} dangerouslySetInnerHTML={{ __html: htmlContent }}/>
-    );
+    return <div className={"break-all"} dangerouslySetInnerHTML={{ __html: htmlContent }} />;
 };

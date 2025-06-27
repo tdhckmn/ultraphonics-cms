@@ -1,10 +1,6 @@
-import React from 'react';
-import { TextareaAutosize } from '@firecms/ui';
+import React from "react";
+import { TextareaAutosize } from "@firecms/ui";
 
 export default function TextareaAutosizeBasicDemo() {
-    return (
-        <TextareaAutosize 
-            placeholder="Type your text here..."
-        />
-    );
+    return <TextareaAutosize placeholder="Type your text here..." />;
 }

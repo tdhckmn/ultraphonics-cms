@@ -13,11 +13,12 @@ import { useNavigationController } from "./useNavigationController";
  * This is the same hook used internally when a reference property is defined.
  * @group Hooks and utilities
  */
-export function useReferenceDialog<M extends Record<string, any>>(referenceDialogProps: Omit<ReferenceSelectionInnerProps<M>, "path"> & {
-    path?: string | false;
-    onClose?: () => void;
-}): { open: () => void; close: () => void } {
-
+export function useReferenceDialog<M extends Record<string, any>>(
+    referenceDialogProps: Omit<ReferenceSelectionInnerProps<M>, "path"> & {
+        path?: string | false;
+        onClose?: () => void;
+    }
+): { open: () => void; close: () => void } {
     const navigation = useNavigationController();
     const sideDialogsController = useSideDialogsController();
 
@@ -27,20 +28,27 @@ export function useReferenceDialog<M extends Record<string, any>>(referenceDialo
             if (!usedCollection)
                 usedCollection = navigation.getCollection(referenceDialogProps.path);
             if (!usedCollection)
-                throw Error("Not able to resolve the collection in useReferenceDialog. Make sure a collection is registered in path " + referenceDialogProps.path);
+                throw Error(
+                    "Not able to resolve the collection in useReferenceDialog. Make sure a collection is registered in path " +
+                        referenceDialogProps.path
+                );
             sideDialogsController.open({
                 key: `reference_${referenceDialogProps.path}`,
-                component:
+                component: (
                     <ReferenceSelectionTable
                         collection={usedCollection}
-                        {...referenceDialogProps as ReferenceSelectionInnerProps<M>}/>,
+                        {...(referenceDialogProps as ReferenceSelectionInnerProps<M>)}
+                    />
+                ),
                 width: "90vw",
                 onClose: () => {
                     referenceDialogProps.onClose?.();
-                }
+                },
             });
         } else {
-            throw Error("useReferenceDialog: You are trying to open a reference dialog, but have not declared the `path`")
+            throw Error(
+                "useReferenceDialog: You are trying to open a reference dialog, but have not declared the `path`"
+            );
         }
     }, [navigation, referenceDialogProps, sideDialogsController]);
 
@@ -50,7 +58,6 @@ export function useReferenceDialog<M extends Record<string, any>>(referenceDialo
 
     return {
         open,
-        close
-    }
-
+        close,
+    };
 }

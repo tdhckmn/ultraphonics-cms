@@ -8,12 +8,11 @@ export type Product = {
     tax_code: string;
     metadata: {
         type: SubscriptionType;
-    }
-
-}
+    };
+};
 export type ProductWithPrices = Product & {
     prices: ProductPrice[];
-}
+};
 
 export type CurrencyOption = {
     custom_unit_amount: number | null;
@@ -33,8 +32,8 @@ export type ProductPrice = {
     metadata: {
         product: string;
         type: "per_user" | "per_project";
-    }
-    currency_options: Record<"eur" | "usd", CurrencyOption>
+    };
+    currency_options: Record<"eur" | "usd", CurrencyOption>;
     tiers: ProductPriceTier[];
     default: boolean;
     tax_behavior: string;
@@ -45,10 +44,9 @@ export type ProductPrice = {
         interval: "month";
         interval_count: number;
         trial_period_days: number;
-        usage_type: "metered"
-    }
-
-}
+        usage_type: "metered";
+    };
+};
 
 export type ProductPriceTier = {
     flat_amount: number | null;
@@ -56,12 +54,12 @@ export type ProductPriceTier = {
     up_to: number;
     unit_amount_decimal: string;
     flat_amount_decimal: number | null;
-}
+};
 
 export type SubscriptionType = "openai" | "cloud_plus" | "pro";
 
 export type SubscriptionStatus =
-    "active"
+    | "active"
     | "canceled"
     | "incomplete"
     | "incomplete_expired"
@@ -82,11 +80,11 @@ export type Subscription = {
     metadata: {
         projectId?: string;
         licenseId?: string;
-        type: SubscriptionType
-    },
+        type: SubscriptionType;
+    };
     created: Timestamp;
     cancel_at_period_end: boolean;
     cancel_at: Timestamp;
     canceled_at: Timestamp;
     current_period_end?: Timestamp;
-}
+};

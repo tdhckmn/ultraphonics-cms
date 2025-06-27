@@ -16,7 +16,7 @@ import {
     useBuildLocalConfigurationPersistence,
     useBuildModeController,
     useBuildNavigationController,
-    useValidateAuthenticator
+    useValidateAuthenticator,
 } from "@firecms/core";
 
 import { FireCMSFirebaseAppProps } from "./FireCMSFirebaseAppProps";
@@ -31,9 +31,7 @@ import {
 import { CenteredView } from "@firecms/ui";
 import { FirebaseAuthController } from "../types";
 
-const DEFAULT_SIGN_IN_OPTIONS = [
-    GoogleAuthProvider.PROVIDER_ID
-];
+const DEFAULT_SIGN_IN_OPTIONS = [GoogleAuthProvider.PROVIDER_ID];
 
 /**
  * This is the default implementation of a FireCMS app using the Firebase services
@@ -53,50 +51,45 @@ const DEFAULT_SIGN_IN_OPTIONS = [
  * @category Firebase
  */
 export function FireCMSFirebaseApp({
-                                       name,
-                                       logo,
-                                       logoDark,
-                                       authenticator,
-                                       collections,
-                                       views,
-                                       adminViews,
-                                       textSearchControllerBuilder,
-                                       allowSkipLogin,
-                                       signInOptions = DEFAULT_SIGN_IN_OPTIONS,
-                                       firebaseConfig,
-                                       onFirebaseInit,
-                                       appCheckOptions,
-                                       dateTimeFormat,
-                                       locale,
-                                       basePath,
-                                       baseCollectionPath,
-                                       onAnalyticsEvent,
-                                       propertyConfigs: propertyConfigsProp,
-                                       plugins,
-                                       autoOpenDrawer,
-                                       firestoreIndexesBuilder,
-                                       components,
-                                       localTextSearchEnabled = false,
-                                   }: FireCMSFirebaseAppProps) {
-
+    name,
+    logo,
+    logoDark,
+    authenticator,
+    collections,
+    views,
+    adminViews,
+    textSearchControllerBuilder,
+    allowSkipLogin,
+    signInOptions = DEFAULT_SIGN_IN_OPTIONS,
+    firebaseConfig,
+    onFirebaseInit,
+    appCheckOptions,
+    dateTimeFormat,
+    locale,
+    basePath,
+    baseCollectionPath,
+    onAnalyticsEvent,
+    propertyConfigs: propertyConfigsProp,
+    plugins,
+    autoOpenDrawer,
+    firestoreIndexesBuilder,
+    components,
+    localTextSearchEnabled = false,
+}: FireCMSFirebaseAppProps) {
     /**
      * Update the browser title and icon
      */
     useBrowserTitleAndIcon(name, logo);
 
     const propertyConfigs: Record<string, PropertyConfig> = (propertyConfigsProp ?? [])
-        .map(pc => ({
-            [pc.key]: pc
+        .map((pc) => ({
+            [pc.key]: pc,
         }))
         .reduce((a, b) => ({ ...a, ...b }), {});
 
-    const {
-        firebaseApp,
-        firebaseConfigLoading,
-        configError
-    } = useInitialiseFirebase({
+    const { firebaseApp, firebaseConfigLoading, configError } = useInitialiseFirebase({
         onFirebaseInit,
-        firebaseConfig
+        firebaseConfig,
     });
 
     /**
@@ -104,13 +97,9 @@ export function FireCMSFirebaseApp({
      */
     const modeController = useBuildModeController();
 
-    const {
-        loading,
-        appCheckVerified,
-        error
-    } = useAppCheck({
+    const { loading, appCheckVerified, error } = useAppCheck({
         firebaseApp,
-        options: appCheckOptions
+        options: appCheckOptions,
     });
 
     /**
@@ -118,7 +107,7 @@ export function FireCMSFirebaseApp({
      */
     const authController: FirebaseAuthController = useFirebaseAuthController({
         firebaseApp,
-        signInOptions
+        signInOptions,
     });
 
     /**
@@ -130,28 +119,24 @@ export function FireCMSFirebaseApp({
         firebaseApp,
         textSearchControllerBuilder: textSearchControllerBuilder,
         firestoreIndexesBuilder: firestoreIndexesBuilder,
-        localTextSearchEnabled
-    })
+        localTextSearchEnabled,
+    });
 
     /**
      * Controller used for saving and fetching files in storage
      */
     const storageSource = useFirebaseStorageSource({
-        firebaseApp
+        firebaseApp,
     });
 
     /**
      * Validate authenticator
      */
-    const {
-        authLoading,
-        canAccessMainView,
-        notAllowedError
-    } = useValidateAuthenticator({
+    const { authLoading, canAccessMainView, notAllowedError } = useValidateAuthenticator({
         authController,
         authenticator,
         dataSourceDelegate: firestoreDelegate,
-        storageSource
+        storageSource,
     });
 
     const navigationController = useBuildNavigationController({
@@ -161,13 +146,15 @@ export function FireCMSFirebaseApp({
         baseCollectionPath,
         authController,
         adminViews,
-        dataSourceDelegate: firestoreDelegate
+        dataSourceDelegate: firestoreDelegate,
     });
 
     if (firebaseConfigLoading || !firebaseApp || loading) {
-        return <>
-            <CircularProgressCenter/>
-        </>;
+        return (
+            <>
+                <CircularProgressCenter />
+            </>
+        );
     }
 
     if (configError) {
@@ -177,7 +164,6 @@ export function FireCMSFirebaseApp({
     return (
         <SnackbarProvider>
             <ModeControllerProvider value={modeController}>
-
                 <FireCMS
                     authController={authController}
                     navigationController={navigationController}
@@ -185,21 +171,21 @@ export function FireCMSFirebaseApp({
                     dateTimeFormat={dateTimeFormat}
                     dataSourceDelegate={firestoreDelegate}
                     storageSource={storageSource}
-                    entityLinkBuilder={({ entity }) => `https://console.firebase.google.com/project/${firebaseApp.options.projectId}/firestore/data/${entity.path}/${entity.id}`}
+                    entityLinkBuilder={({ entity }) =>
+                        `https://console.firebase.google.com/project/${firebaseApp.options.projectId}/firestore/data/${entity.path}/${entity.id}`
+                    }
                     locale={locale}
                     onAnalyticsEvent={onAnalyticsEvent}
                     plugins={plugins}
-                    propertyConfigs={propertyConfigs}>
-                    {({
-                          context,
-                          loading
-                      }) => {
-
+                    propertyConfigs={propertyConfigs}
+                >
+                    {({ context, loading }) => {
                         let component;
                         if (loading || authLoading) {
-                            component = <CircularProgressCenter size={"large"}/>;
+                            component = <CircularProgressCenter size={"large"} />;
                         } else {
-                            const usedLogo = modeController.mode === "dark" && logoDark ? logoDark : logo;
+                            const usedLogo =
+                                modeController.mode === "dark" && logoDark ? logoDark : logo;
                             if (!canAccessMainView) {
                                 const LoginViewUsed = components?.LoginView ?? FirebaseLoginView;
                                 component = (
@@ -209,18 +195,22 @@ export function FireCMSFirebaseApp({
                                         signInOptions={signInOptions ?? DEFAULT_SIGN_IN_OPTIONS}
                                         firebaseApp={firebaseApp}
                                         authController={authController}
-                                        notAllowedError={notAllowedError}/>
+                                        notAllowedError={notAllowedError}
+                                    />
                                 );
                             } else {
                                 component = (
-                                    <Scaffold
-                                        logo={usedLogo}
-                                        autoOpenDrawer={autoOpenDrawer}>
-                                        <AppBar title={name} logo={usedLogo}/>
+                                    <Scaffold logo={usedLogo} autoOpenDrawer={autoOpenDrawer}>
+                                        <AppBar title={name} logo={usedLogo} />
                                         <Drawer />
                                         <NavigationRoutes
-                                            homePage={components?.HomePage ? <components.HomePage/> : undefined}/>
-                                        <SideDialogs/>
+                                            homePage={
+                                                components?.HomePage ? (
+                                                    <components.HomePage />
+                                                ) : undefined
+                                            }
+                                        />
+                                        <SideDialogs />
                                     </Scaffold>
                                 );
                             }

@@ -4,7 +4,6 @@ title: Additional columns/fields
 sidebar_label: Additional columns/fields
 ---
 
-
 If you would like to include a column that does not map directly to a property,
 you can use the `additionalFields` field, providing a
 `AdditionalFieldDelegate`, which includes an id, a title, and a builder that
@@ -23,13 +22,9 @@ property values.
 #### Example
 
 ```tsx
-import {
-    buildCollection,
-    buildCollection,
-    AdditionalFieldDelegate
-} from "@firecms/core";
+import { buildCollection, buildCollection, AdditionalFieldDelegate } from "@firecms/core";
 
-type User = { name: string }
+type User = { name: string };
 
 export const fullNameAdditionalField: AdditionalFieldDelegate<User> = {
     key: "full_name",
@@ -38,41 +33,38 @@ export const fullNameAdditionalField: AdditionalFieldDelegate<User> = {
         let values = entity.values;
         return typeof values.name === "string" ? values.name.toUpperCase() : "No name provided";
     },
-    dependencies: ["name"]
+    dependencies: ["name"],
 };
 
 const usersCollection = buildCollection<User>({
     path: "users",
     name: "User",
     properties: {
-        name: { dataType: "string", name: "Name" }
+        name: { dataType: "string", name: "Name" },
     },
-    additionalFields: [
-        fullNameAdditionalField
-    ]
+    additionalFields: [fullNameAdditionalField],
 });
 ```
 
 #### Advanced example
 
 ```tsx
-import {
-    buildCollection,
-    AdditionalFieldDelegate,
-    AsyncPreviewComponent
-} from "@firecms/core";
+import { buildCollection, AdditionalFieldDelegate, AsyncPreviewComponent } from "@firecms/core";
 
 export const productAdditionalField: AdditionalFieldDelegate<Product> = {
     key: "spanish_title",
     name: "Spanish title",
-    Builder: ({ entity, context }) =>
-        <AsyncPreviewComponent builder={
-            context.dataSource.fetchEntity({
-                path: entity.path,
-                entityId: entity.id,
-                collection: localeSchema
-            }).then((entity) => entity.values.name)
-        }/>
+    Builder: ({ entity, context }) => (
+        <AsyncPreviewComponent
+            builder={context.dataSource
+                .fetchEntity({
+                    path: entity.path,
+                    entityId: entity.id,
+                    collection: localeSchema,
+                })
+                .then((entity) => entity.values.name)}
+        />
+    ),
 };
 ```
 

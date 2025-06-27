@@ -10,14 +10,8 @@ import { Editor, InputRule } from "@tiptap/core";
 import { loadingDecorationKey } from "./TextLoadingDecorationExtension";
 
 const PlaceholderExtension = Placeholder.configure({
-    placeholder: ({
-                      node,
-                      editor
-                  }) => {
-        const {
-            from,
-            to
-        } = editor.state.selection;
+    placeholder: ({ node, editor }) => {
+        const { from, to } = editor.state.selection;
 
         function hasLoadingDecoration(editor: Editor): boolean {
             const pluginState = loadingDecorationKey.get(editor.state);
@@ -37,7 +31,7 @@ const PlaceholderExtension = Placeholder.configure({
         }
         return "";
     },
-    includeChildren: true
+    includeChildren: true,
 });
 
 const Horizontal = HorizontalRule.extend({
@@ -45,10 +39,7 @@ const Horizontal = HorizontalRule.extend({
         return [
             new InputRule({
                 find: /^(?:---|—-|___\s|\*\*\*\s)$/,
-                handler: ({
-                              state,
-                              range
-                          }) => {
+                handler: ({ state, range }) => {
                     const attributes = {};
 
                     const { tr } = state;
@@ -59,10 +50,10 @@ const Horizontal = HorizontalRule.extend({
                         tr.mapping.map(start),
                         tr.mapping.map(end)
                     );
-                }
-            })
+                },
+            }),
         ];
-    }
+    },
 });
 
 export {
@@ -73,7 +64,7 @@ export {
     TiptapImage,
     TaskItem,
     TaskList,
-    InputRule
+    InputRule,
 };
 
 export { getPrevText } from "../utils/utils";

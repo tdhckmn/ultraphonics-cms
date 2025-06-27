@@ -3,12 +3,14 @@ import {
     DeleteCollectionParams,
     PersistedCollection,
     SaveCollectionParams,
-    UpdateCollectionParams
+    UpdateCollectionParams,
 } from "@firecms/collection_editor";
-import { DeletePropertyParams, SavePropertyParams } from "@firecms/collection_editor/dist/types/config_controller";
+import {
+    DeletePropertyParams,
+    SavePropertyParams,
+} from "@firecms/collection_editor/dist/types/config_controller";
 
 export function useBuildMockCollectionsConfigController(): CollectionsConfigController {
-
     return {
         deleteProperty(params: DeletePropertyParams): Promise<void> {
             return Promise.resolve(undefined);
@@ -29,7 +31,7 @@ export function useBuildMockCollectionsConfigController(): CollectionsConfigCont
         loading: false,
         saveCollection(params: SaveCollectionParams<any>): Promise<void> {
             throw new Error("Function not implemented.");
-        }
+        },
     };
 }
 
@@ -50,7 +52,7 @@ export const productsCollection: PersistedCollection = {
             description: "Name of this product",
             clearable: true,
             validation: {
-                required: true
+                required: true,
             },
             editable: true,
         },
@@ -62,15 +64,15 @@ export const productsCollection: PersistedCollection = {
                 acceptedFiles: ["image/*"],
                 maxSize: 1024 * 1024,
                 metadata: {
-                    cacheControl: "max-age=1000000"
+                    cacheControl: "max-age=1000000",
                 },
                 imageCompression: {
-                    maxHeight: 200
-                }
+                    maxHeight: 200,
+                },
             },
             description: "Upload field for images",
             validation: {
-                required: true
+                required: true,
             },
             editable: true,
         },
@@ -101,7 +103,7 @@ export const productsCollection: PersistedCollection = {
             validation: {
                 requiredMessage: "You must set a price between 0 and 1000",
                 min: 0,
-                max: 1000
+                max: 1000,
             },
             editable: true,
         },
@@ -109,7 +111,7 @@ export const productsCollection: PersistedCollection = {
             dataType: "string",
             name: "Currency",
             validation: {
-                required: true
+                required: true,
             },
             editable: true,
         },
@@ -124,7 +126,7 @@ export const productsCollection: PersistedCollection = {
             dataType: "string",
             name: "Brand",
             validation: {
-                required: true
+                required: true,
             },
             description: "This field uses a custom component defined by the developer",
             editable: true,
@@ -152,9 +154,9 @@ export const productsCollection: PersistedCollection = {
                     storagePath: "images",
                     acceptedFiles: ["image/*"],
                     metadata: {
-                        cacheControl: "max-age=1000000"
-                    }
-                }
+                        cacheControl: "max-age=1000000",
+                    },
+                },
             },
             description: "This fields allows uploading multiple images at once",
             editable: true,
@@ -165,7 +167,7 @@ export const productsCollection: PersistedCollection = {
             description: "Reference to self",
             of: {
                 dataType: "reference",
-                path: "ppp"
+                path: "ppp",
             },
             editable: true,
         },
@@ -176,12 +178,12 @@ export const productsCollection: PersistedCollection = {
             properties: {
                 name: {
                     name: "Name",
-                    dataType: "string"
+                    dataType: "string",
                 },
                 external_id: {
                     name: "External id",
-                    dataType: "string"
-                }
+                    dataType: "string",
+                },
             },
             editable: true,
         },
@@ -205,7 +207,6 @@ export const productsCollection: PersistedCollection = {
                 dataType: "string",
             },
             editable: true,
-        }
-    }
-
+        },
+    },
 };

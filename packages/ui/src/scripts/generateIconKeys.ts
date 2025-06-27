@@ -24,7 +24,9 @@ const extractIconKeys = (cssData: string): string[] => {
 // }
 export async function generateIconKeys() {
     // fetch from https://raw.githubusercontent.com/google/material-design-icons/refs/heads/master/font/MaterialIconsRound-Regular.codepoints
-    const file = await fetch("https://raw.githubusercontent.com/google/material-design-icons/refs/heads/master/font/MaterialIconsRound-Regular.codepoints");
+    const file = await fetch(
+        "https://raw.githubusercontent.com/google/material-design-icons/refs/heads/master/font/MaterialIconsRound-Regular.codepoints"
+    );
     const data = await file.text();
     const keys = data.split("\n").map((line) => line.split(" ")[0]);
     saveIconKeys(keys);
@@ -33,7 +35,10 @@ export async function generateIconKeys() {
 
 function saveIconKeys(keys: string[]) {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    fs.writeFileSync(path.join(__dirname, "../icons/icon_keys.ts"), `export const iconKeys = ${JSON.stringify(keys, null, 4)};`);
+    fs.writeFileSync(
+        path.join(__dirname, "../icons/icon_keys.ts"),
+        `export const iconKeys = ${JSON.stringify(keys, null, 4)};`
+    );
 }
 
 generateIconKeys();

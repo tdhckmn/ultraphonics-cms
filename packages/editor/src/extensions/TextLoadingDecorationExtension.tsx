@@ -19,13 +19,13 @@ interface LoadingDecorationState {
     hasDecoration: boolean;
 }
 
- // this decoration is used to display streaming content from an LLM, called withing the slash command
+// this decoration is used to display streaming content from an LLM, called withing the slash command
 const TextLoadingDecorationExtension = Extension.create({
     name: "loadingDecoration",
 
     addOptions() {
         return {
-            pluginKey: loadingDecorationKey
+            pluginKey: loadingDecorationKey,
         };
     },
 
@@ -40,7 +40,7 @@ const TextLoadingDecorationExtension = Extension.create({
                     init() {
                         return {
                             decorationSet: DecorationSet.empty,
-                            hasDecoration: false
+                            hasDecoration: false,
                         };
                     },
 
@@ -53,7 +53,7 @@ const TextLoadingDecorationExtension = Extension.create({
                             if (remove) {
                                 return {
                                     decorationSet: DecorationSet.empty,
-                                    hasDecoration: false
+                                    hasDecoration: false,
                                 };
                             }
 
@@ -75,62 +75,66 @@ const TextLoadingDecorationExtension = Extension.create({
 
                             return {
                                 decorationSet: DecorationSet.empty.add(tr.doc, [decoration]),
-                                hasDecoration: true
+                                hasDecoration: true,
                             };
                         }
 
                         return {
                             decorationSet: oldState.decorationSet.map(tr.mapping, tr.doc),
-                            hasDecoration: oldState.hasDecoration
+                            hasDecoration: oldState.hasDecoration,
                         };
-                    }
+                    },
                 },
 
                 props: {
                     decorations(state) {
                         return this.getState(state)?.decorationSet || DecorationSet.empty;
-                    }
-                }
-            })
+                    },
+                },
+            }),
         ];
     },
 
     addCommands() {
         return {
-            toggleLoadingDecoration: (loadingHtml?: string): Command => ({ state, dispatch }) => {
-                const { selection } = state;
-                const pos = selection.from;
+            toggleLoadingDecoration:
+                (loadingHtml?: string): Command =>
+                ({ state, dispatch }) => {
+                    const { selection } = state;
+                    const pos = selection.from;
 
-                if (!dispatch) return false;
+                    if (!dispatch) return false;
 
-                const pluginKey = this.options.pluginKey;
+                    const pluginKey = this.options.pluginKey;
 
-                const tr = state.tr.setMeta(pluginKey, {
-                    pos,
-                    type: "loadingDecoration",
-                    remove: false,
-                    loadingHtml
-                });
+                    const tr = state.tr.setMeta(pluginKey, {
+                        pos,
+                        type: "loadingDecoration",
+                        remove: false,
+                        loadingHtml,
+                    });
 
-                dispatch(tr);
-                return true;
-            },
+                    dispatch(tr);
+                    return true;
+                },
 
-            removeLoadingDecoration: (): Command => ({ state, dispatch }) => {
-                if (!dispatch) return false;
+            removeLoadingDecoration:
+                (): Command =>
+                ({ state, dispatch }) => {
+                    if (!dispatch) return false;
 
-                const pluginKey = this.options.pluginKey;
-                const tr = state.tr.setMeta(pluginKey, {
-                    pos: 0, // We can pass any position as it will remove the entire decoration set
-                    type: "loadingDecoration",
-                    remove: true
-                });
+                    const pluginKey = this.options.pluginKey;
+                    const tr = state.tr.setMeta(pluginKey, {
+                        pos: 0, // We can pass any position as it will remove the entire decoration set
+                        type: "loadingDecoration",
+                        remove: true,
+                    });
 
-                dispatch(tr);
-                return true;
-            }
+                    dispatch(tr);
+                    return true;
+                },
         };
-    }
+    },
 });
 
 export default TextLoadingDecorationExtension;

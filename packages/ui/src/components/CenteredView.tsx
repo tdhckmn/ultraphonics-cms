@@ -11,25 +11,26 @@ export type CenteredViewProps = {
     fullScreen?: boolean;
 };
 
-export const CenteredView = React.forwardRef<HTMLDivElement, CenteredViewProps>(({
-                                                                                     children,
-                                                                                     maxWidth,
-                                                                                     outerClassName,
-                                                                                     className,
-                                                                                     fullScreen,
-                                                                                     ...rest
-                                                                                 }, ref) => { // Notice how the ref is now received as the second argument
+export const CenteredView = React.forwardRef<HTMLDivElement, CenteredViewProps>(
+    ({ children, maxWidth, outerClassName, className, fullScreen, ...rest }, ref) => {
+        // Notice how the ref is now received as the second argument
 
-    return (
-        <div ref={ref}
-             className={cls("flex flex-col flex-grow", fullScreen ? "h-screen" : "h-full", outerClassName)}
-             {...rest}>
-            <Container className={cls("m-auto", className)} maxWidth={maxWidth}>
-                {children}
-            </Container>
-        </div>
-    );
-
-});
+        return (
+            <div
+                ref={ref}
+                className={cls(
+                    "flex flex-col flex-grow",
+                    fullScreen ? "h-screen" : "h-full",
+                    outerClassName
+                )}
+                {...rest}
+            >
+                <Container className={cls("m-auto", className)} maxWidth={maxWidth}>
+                    {children}
+                </Container>
+            </div>
+        );
+    }
+);
 
 CenteredView.displayName = "CenteredView";

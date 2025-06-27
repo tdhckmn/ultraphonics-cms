@@ -7,7 +7,6 @@ import { CMSType, PropertyOrBuilder } from "./properties";
  * collections' configuration, but you can define your own to be used.
  */
 export type PropertyConfig<T extends CMSType = any> = {
-
     /**
      * Key used to identify this property config.
      */
@@ -43,29 +42,28 @@ export type PropertyConfig<T extends CMSType = any> = {
      * Description of this field type.
      */
     description?: string;
-
-}
+};
 
 export type PropertyConfigId =
-    "text_field" |
-    "multiline" |
-    "markdown" |
-    "url" |
-    "email" |
-    "select" |
-    "multi_select" |
-    "number_input" |
-    "number_select" |
-    "multi_number_select" |
-    "file_upload" |
-    "multi_file_upload" |
-    "group" |
-    "key_value" |
-    "reference" |
-    "reference_as_string" |
-    "multi_references" |
-    "switch" |
-    "date_time" |
-    "repeat" |
-    "custom_array" |
-    "block";
+    | "text_field"
+    | "multiline"
+    | "markdown"
+    | "url"
+    | "email"
+    | "select"
+    | "multi_select"
+    | "number_input"
+    | "number_select"
+    | "multi_number_select"
+    | "file_upload"
+    | "multi_file_upload"
+    | "group"
+    | "key_value"
+    | "reference"
+    | "reference_as_string"
+    | "multi_references"
+    | "switch"
+    | "date_time"
+    | "repeat"
+    | "custom_array"
+    | "block";

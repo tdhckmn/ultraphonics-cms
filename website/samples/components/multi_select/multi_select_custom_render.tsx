@@ -9,15 +9,21 @@ export default function MultiSelectCustomRenderDemo() {
             value={selectedValues}
             onValueChange={setSelectedValues}
             label="Custom Render MultiSelect"
-            renderValues={(values) => (values.map((value, index) =>
-                <span key={index} style={{
-                    marginRight: 8,
-                    background: "#eee",
-                    padding: 4
-                }}>
-                    {value}
-                </span>)
-            )}>
+            renderValues={(values) =>
+                values.map((value, index) => (
+                    <span
+                        key={index}
+                        style={{
+                            marginRight: 8,
+                            background: "#eee",
+                            padding: 4,
+                        }}
+                    >
+                        {value}
+                    </span>
+                ))
+            }
+        >
             <MultiSelectItem value="red">Red</MultiSelectItem>
             <MultiSelectItem value="green">Green</MultiSelectItem>
             <MultiSelectItem value="blue">Blue</MultiSelectItem>

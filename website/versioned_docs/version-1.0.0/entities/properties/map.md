@@ -17,7 +17,7 @@ const ctaProperty = buildProperty({
             title: "Name",
             description: "Text that will be shown on the button",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         type: {
             title: "Type",
@@ -27,30 +27,34 @@ const ctaProperty = buildProperty({
             config: {
                 enumValues: {
                     complete: "Complete",
-                    continue: "Continue"
-                }
-            }
-        }
-    }
+                    continue: "Continue",
+                },
+            },
+        },
+    },
 });
 ```
 
-##  `properties`
+## `properties`
+
 Record of properties included in this map.
 
 ## `previewProperties`
+
 List of properties rendered as this map preview. Defaults to first 3.
 
 ## `validation`
 
-* `required` Should this field be compulsory.
-* `requiredMessage` Message to be displayed as a validation error.
+- `required` Should this field be compulsory.
+- `requiredMessage` Message to be displayed as a validation error.
 
 ---
 
 The widget that gets created is
+
 - [`MapField`] Field that renders the children
-property fields
+  property fields
 
 Links:
+
 - [API]

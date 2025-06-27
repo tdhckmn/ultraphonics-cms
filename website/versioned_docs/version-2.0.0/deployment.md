@@ -27,28 +27,24 @@ look similar to this (remember to replace `[YOUR_SITE_HERE]`).
 
 ```json5
 {
-    "hosting": {
-        "site": "[YOUR_SITE_HERE]",
-        "public": "dist",
-        "ignore": [
-            "firebase.json",
-            "**/.*",
-            "**/node_modules/**"
-        ],
-        "rewrites": [
+    hosting: {
+        site: "[YOUR_SITE_HERE]",
+        public: "dist",
+        ignore: ["firebase.json", "**/.*", "**/node_modules/**"],
+        rewrites: [
             {
-                "source": "**",
-                "destination": "/index.html"
-            }
-        ]
-    }
+                source: "**",
+                destination: "/index.html",
+            },
+        ],
+    },
 }
-
 ```
 
 Then simply run:
+
 ```
 yarn run build && firebase deploy --only hosting
 ```
-to deploy.
 
+to deploy.

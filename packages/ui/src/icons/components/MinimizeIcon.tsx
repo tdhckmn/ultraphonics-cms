@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function MinimizeIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"minimize"}/>
+    return <Icon {...props} iconKey={"minimize"} />;
 }

@@ -1,3 +1,1 @@
-export function FormsFeatures() {
-
-}
+export function FormsFeatures() {}

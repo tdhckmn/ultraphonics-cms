@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function BluetoothDriveIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"bluetooth_drive"}/>
+    return <Icon {...props} iconKey={"bluetooth_drive"} />;
 }

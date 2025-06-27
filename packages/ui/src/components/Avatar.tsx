@@ -13,16 +13,7 @@ export interface AvatarProps {
 }
 
 const AvatarInner: React.ForwardRefRenderFunction<HTMLButtonElement, AvatarProps> = (
-    {
-        src,
-        alt,
-        children,
-        className,
-        style,
-        outerClassName,
-        hover = true,
-        ...props
-    },
+    { src, alt, children, className, style, outerClassName, hover = true, ...props },
     ref
 ) => {
     const [isImageError, setIsImageError] = useState(false);
@@ -63,8 +54,8 @@ const AvatarInner: React.ForwardRefRenderFunction<HTMLButtonElement, AvatarProps
                         className
                     )}
                 >
-          {children}
-        </span>
+                    {children}
+                </span>
             )}
         </button>
     );

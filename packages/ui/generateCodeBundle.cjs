@@ -27,10 +27,11 @@ function readFilesRecursively(folderPath, outputFile, allowedExtensions, exclude
                             console.error(err);
                             return;
                         }
-                        const formattedContent = JSON.stringify({ messages: [{ role: 'system', content }] }) + EOL;
+                        const formattedContent =
+                            JSON.stringify({ messages: [{ role: "system", content }] }) + EOL;
 
                         if (!filePath.endsWith("index.d.ts"))
-                        fs.appendFileSync(outputFile, formattedContent);
+                            fs.appendFileSync(outputFile, formattedContent);
                         console.log(`Content of '${filePath}' written to '${outputFile}'`);
                     });
                 }

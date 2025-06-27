@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import equal from "react-fast-compare"
+import equal from "react-fast-compare";
 
 import {
     ApplicationVerifier,
@@ -20,10 +20,15 @@ import {
     signInWithPopup,
     signOut,
     TwitterAuthProvider,
-    User as FirebaseUser
+    User as FirebaseUser,
 } from "@firebase/auth";
 import { FirebaseApp } from "@firebase/app";
-import { FirebaseAuthController, FirebaseSignInOption, FirebaseSignInProvider, FirebaseUserWrapper } from "../types";
+import {
+    FirebaseAuthController,
+    FirebaseSignInOption,
+    FirebaseSignInProvider,
+    FirebaseUserWrapper,
+} from "../types";
 import { Role, User } from "@firecms/core";
 
 export interface FirebaseAuthControllerProps {
@@ -39,13 +44,12 @@ export interface FirebaseAuthControllerProps {
  * @group Firebase
  */
 export const useFirebaseAuthController = <USER extends FirebaseUserWrapper = any, ExtraData = any>({
-                                                                                                       loading,
-                                                                                                       firebaseApp,
-                                                                                                       signInOptions,
-                                                                                                       onSignOut: onSignOutProp,
-                                                                                                       defineRolesFor
-                                                                                                   }: FirebaseAuthControllerProps): FirebaseAuthController<USER, ExtraData> => {
-
+    loading,
+    firebaseApp,
+    signInOptions,
+    onSignOut: onSignOutProp,
+    defineRolesFor,
+}: FirebaseAuthControllerProps): FirebaseAuthController<USER, ExtraData> => {
     const [loggedUser, setLoggedUser] = useState<FirebaseUser | null | undefined>(undefined); // logged user, anonymous or logged out
     const [authError, setAuthError] = useState<any>();
     const [authProviderError, setAuthProviderError] = useState<any>();
@@ -56,36 +60,45 @@ export const useFirebaseAuthController = <USER extends FirebaseUserWrapper = any
     const [userRoles, _setUserRoles] = useState<Role[] | undefined>();
     const [extra, setExtra] = useState<any>();
 
-    const setUserRoles = useCallback((roles: Role[] | undefined) => {
-        const currentRoleIds = userRoles?.map(r => r.id);
-        const newRoleIds = roles?.map(r => r.id);
-        if (!equal(currentRoleIds, newRoleIds)) {
-            _setUserRoles(roles);
-        }
-    }, [userRoles]);
+    const setUserRoles = useCallback(
+        (roles: Role[] | undefined) => {
+            const currentRoleIds = userRoles?.map((r) => r.id);
+            const newRoleIds = roles?.map((r) => r.id);
+            if (!equal(currentRoleIds, newRoleIds)) {
+                _setUserRoles(roles);
+            }
+        },
+        [userRoles]
+    );
 
     const authRef = useRef(firebaseApp ? getAuth(firebaseApp) : null);
 
-    const updateUser = useCallback(async (user: FirebaseUser | null, initialize?: boolean) => {
-        if (loading) return;
-        if (defineRolesFor && user) {
-            setUserRoles(await defineRolesFor(user));
-        }
-        setLoggedUser(user);
-        setAuthLoading(false);
-        if (initialize) {
-            setInitialLoading(false);
-        }
-    }, [loading]);
-
-    const updateRoles = useCallback(async (user: User | null) => {
-        if (defineRolesFor && user) {
-            const userRoles = await defineRolesFor(user);
-            if (!equal(userRoles, userRoles)) {
-                setUserRoles(userRoles);
+    const updateUser = useCallback(
+        async (user: FirebaseUser | null, initialize?: boolean) => {
+            if (loading) return;
+            if (defineRolesFor && user) {
+                setUserRoles(await defineRolesFor(user));
             }
-        }
-    }, [defineRolesFor, userRoles]);
+            setLoggedUser(user);
+            setAuthLoading(false);
+            if (initialize) {
+                setInitialLoading(false);
+            }
+        },
+        [loading]
+    );
+
+    const updateRoles = useCallback(
+        async (user: User | null) => {
+            if (defineRolesFor && user) {
+                const userRoles = await defineRolesFor(user);
+                if (!equal(userRoles, userRoles)) {
+                    setUserRoles(userRoles);
+                }
+            }
+        },
+        [defineRolesFor, userRoles]
+    );
 
     useEffect(() => {
         if (updateRoles && loggedUser) {
@@ -99,20 +112,19 @@ export const useFirebaseAuthController = <USER extends FirebaseUserWrapper = any
             const auth = getAuth(firebaseApp);
             authRef.current = auth;
             setAuthError(undefined);
-            updateUser(auth.currentUser, false)
+            updateUser(auth.currentUser, false);
             return onAuthStateChanged(
                 auth,
                 async (user) => {
                     console.debug("User state changed", user);
                     await updateUser(user, true);
                 },
-                error => setAuthProviderError(error)
+                (error) => setAuthProviderError(error)
             );
         } catch (e) {
             setAuthError(e);
             setInitialLoading(false);
-            return () => {
-            };
+            return () => {};
         }
     }, [firebaseApp, updateUser]);
 
@@ -122,25 +134,27 @@ export const useFirebaseAuthController = <USER extends FirebaseUserWrapper = any
         }
     }, [loading, updateUser]);
 
-    const getProviderOptions = useCallback((providerId: FirebaseSignInProvider): FirebaseSignInOption | undefined => {
-        return signInOptions?.find((option) => {
-            if (option === null) throw Error("useFirebaseAuthController");
-            if (typeof option === "object" && option.provider === providerId)
-                return option as FirebaseSignInOption;
-            return undefined;
-        }) as FirebaseSignInOption | undefined;
-    }, []);
+    const getProviderOptions = useCallback(
+        (providerId: FirebaseSignInProvider): FirebaseSignInOption | undefined => {
+            return signInOptions?.find((option) => {
+                if (option === null) throw Error("useFirebaseAuthController");
+                if (typeof option === "object" && option.provider === providerId)
+                    return option as FirebaseSignInOption;
+                return undefined;
+            }) as FirebaseSignInOption | undefined;
+        },
+        []
+    );
 
     const googleLogin = useCallback(() => {
         const provider = new GoogleAuthProvider();
         const options = getProviderOptions("google.com");
-        if (options?.scopes)
-            options.scopes.forEach((scope) => provider.addScope(scope));
+        if (options?.scopes) options.scopes.forEach((scope) => provider.addScope(scope));
         if (options?.customParameters) {
             provider.setCustomParameters(options.customParameters);
         } else {
             provider.setCustomParameters({
-                prompt: "select_account"
+                prompt: "select_account",
             });
         }
         const auth = authRef.current;
@@ -149,8 +163,7 @@ export const useFirebaseAuthController = <USER extends FirebaseUserWrapper = any
     }, [getProviderOptions]);
 
     const getAuthToken = useCallback(async (): Promise<string> => {
-        if (!loggedUser)
-            throw Error("No client user is logged in");
+        if (!loggedUser) throw Error("No client user is logged in");
         if (!loggedUser.getIdToken) {
             throw Error("No getIdToken method available");
         }
@@ -178,38 +191,47 @@ export const useFirebaseAuthController = <USER extends FirebaseUserWrapper = any
     const sendPasswordResetEmail = useCallback((email: string) => {
         const auth = authRef.current;
         if (!auth) throw Error("No auth");
-        return sendPasswordResetEmailFirebase(auth, email)
+        return sendPasswordResetEmailFirebase(auth, email);
     }, []);
 
     const fetchSignInMethodsForEmail = useCallback((email: string): Promise<string[]> => {
         const auth = authRef.current;
         if (!auth) throw Error("No auth");
         setAuthLoading(true);
-        return fetchSignInMethodsForEmailFirebase(auth, email)
-            .then((res) => {
-                setAuthLoading(false);
-                return res;
-            });
+        return fetchSignInMethodsForEmailFirebase(auth, email).then((res) => {
+            setAuthLoading(false);
+            return res;
+        });
     }, []);
 
     const onSignOut = useCallback(async () => {
         const auth = authRef.current;
         if (!auth) throw Error("No auth");
-        await signOut(auth)
-            .then(_ => {
-                setLoggedUser(null);
-                setUserRoles(undefined);
-                setAuthProviderError(null);
-                onSignOutProp?.();
-            });
+        await signOut(auth).then((_) => {
+            setLoggedUser(null);
+            setUserRoles(undefined);
+            setAuthProviderError(null);
+            onSignOutProp?.();
+        });
         setLoginSkipped(false);
     }, [onSignOutProp]);
 
-    const doOauthLogin = useCallback((auth: Auth, provider: OAuthProvider | FacebookAuthProvider | GithubAuthProvider | TwitterAuthProvider) => {
-        setAuthLoading(true);
-        signInWithPopup(auth, provider)
-            .catch(setAuthProviderError).then(() => setAuthLoading(false));
-    }, []);
+    const doOauthLogin = useCallback(
+        (
+            auth: Auth,
+            provider:
+                | OAuthProvider
+                | FacebookAuthProvider
+                | GithubAuthProvider
+                | TwitterAuthProvider
+        ) => {
+            setAuthLoading(true);
+            signInWithPopup(auth, provider)
+                .catch(setAuthProviderError)
+                .then(() => setAuthLoading(false));
+        },
+        []
+    );
 
     const anonymousLogin = useCallback(() => {
         const auth = authRef.current;
@@ -235,10 +257,8 @@ export const useFirebaseAuthController = <USER extends FirebaseUserWrapper = any
     const appleLogin = useCallback(() => {
         const provider = new OAuthProvider("apple.com");
         const options = getProviderOptions("apple.com");
-        if (options?.scopes)
-            options.scopes.forEach((scope) => provider.addScope(scope));
-        if (options?.customParameters)
-            provider.setCustomParameters(options.customParameters);
+        if (options?.scopes) options.scopes.forEach((scope) => provider.addScope(scope));
+        if (options?.customParameters) provider.setCustomParameters(options.customParameters);
         const auth = authRef.current;
         if (!auth) throw Error("No auth");
         doOauthLogin(auth, provider);
@@ -247,10 +267,8 @@ export const useFirebaseAuthController = <USER extends FirebaseUserWrapper = any
     const facebookLogin = useCallback(() => {
         const provider = new FacebookAuthProvider();
         const options = getProviderOptions("facebook.com");
-        if (options?.scopes)
-            options.scopes.forEach((scope) => provider.addScope(scope));
-        if (options?.customParameters)
-            provider.setCustomParameters(options.customParameters);
+        if (options?.scopes) options.scopes.forEach((scope) => provider.addScope(scope));
+        if (options?.customParameters) provider.setCustomParameters(options.customParameters);
         const auth = authRef.current;
         if (!auth) throw Error("No auth");
         doOauthLogin(auth, provider);
@@ -259,10 +277,8 @@ export const useFirebaseAuthController = <USER extends FirebaseUserWrapper = any
     const githubLogin = useCallback(() => {
         const provider = new GithubAuthProvider();
         const options = getProviderOptions("github.com");
-        if (options?.scopes)
-            options.scopes.forEach((scope) => provider.addScope(scope));
-        if (options?.customParameters)
-            provider.setCustomParameters(options.customParameters);
+        if (options?.scopes) options.scopes.forEach((scope) => provider.addScope(scope));
+        if (options?.customParameters) provider.setCustomParameters(options.customParameters);
         const auth = authRef.current;
         if (!auth) throw Error("No auth");
         doOauthLogin(auth, provider);
@@ -271,10 +287,8 @@ export const useFirebaseAuthController = <USER extends FirebaseUserWrapper = any
     const microsoftLogin = useCallback(() => {
         const provider = new OAuthProvider("microsoft.com");
         const options = getProviderOptions("microsoft.com");
-        if (options?.scopes)
-            options.scopes.forEach((scope) => provider.addScope(scope));
-        if (options?.customParameters)
-            provider.setCustomParameters(options.customParameters);
+        if (options?.scopes) options.scopes.forEach((scope) => provider.addScope(scope));
+        if (options?.customParameters) provider.setCustomParameters(options.customParameters);
         const auth = authRef.current;
         if (!auth) throw Error("No auth");
         doOauthLogin(auth, provider);
@@ -283,8 +297,7 @@ export const useFirebaseAuthController = <USER extends FirebaseUserWrapper = any
     const twitterLogin = useCallback(() => {
         const provider = new TwitterAuthProvider();
         const options = getProviderOptions("twitter.com");
-        if (options?.customParameters)
-            provider.setCustomParameters(options.customParameters);
+        if (options?.customParameters) provider.setCustomParameters(options.customParameters);
         const auth = authRef.current;
         if (!auth) throw Error("No auth");
         doOauthLogin(auth, provider);
@@ -298,10 +311,10 @@ export const useFirebaseAuthController = <USER extends FirebaseUserWrapper = any
 
     const firebaseUserWrapper: FirebaseUserWrapper | null = loggedUser
         ? {
-            ...loggedUser,
-            roles: userRoles,
-            firebaseUser: loggedUser
-        }
+              ...loggedUser,
+              roles: userRoles,
+              firebaseUser: loggedUser,
+          }
         : null;
 
     return {
@@ -329,6 +342,6 @@ export const useFirebaseAuthController = <USER extends FirebaseUserWrapper = any
         twitterLogin,
         confirmationResult,
         extra,
-        setExtra
+        setExtra,
     };
 };

@@ -9,19 +9,18 @@ import { CMSType, Property, ResolvedProperty } from "../types";
  * @ignore
  */
 export function useClearRestoreValue<T extends CMSType>({
-                                                            property,
-                                                            value,
-                                                            setValue
-                                                        }:
-                                                            {
-                                                                property: Property<T> | ResolvedProperty<T>,
-                                                                value: T,
-                                                                setValue: (value: T | null, shouldValidate?: boolean) => void
-                                                            }) {
-
+    property,
+    value,
+    setValue,
+}: {
+    property: Property<T> | ResolvedProperty<T>;
+    value: T;
+    setValue: (value: T | null, shouldValidate?: boolean) => void;
+}) {
     const clearedValueRef = useRef<T | null>(null);
     useEffect(() => {
-        const shouldClearValueIfDisabled = typeof property.disabled === "object" && Boolean(property.disabled.clearOnDisabled);
+        const shouldClearValueIfDisabled =
+            typeof property.disabled === "object" && Boolean(property.disabled.clearOnDisabled);
         if (shouldClearValueIfDisabled) {
             if (value != null) {
                 clearedValueRef.current = value;

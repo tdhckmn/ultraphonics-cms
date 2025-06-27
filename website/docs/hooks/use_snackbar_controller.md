@@ -16,30 +16,31 @@ a type and an optional title.
 
 The props provided by this hook are:
 
-* `isOpen` Is there currently an open snackbar
-* `close()` Close the currently open snackbar
-* `open ({ type: "success" | "info" | "warning" | "error"; title?: string; message: string; })`
+- `isOpen` Is there currently an open snackbar
+- `close()` Close the currently open snackbar
+- `open ({ type: "success" | "info" | "warning" | "error"; title?: string; message: string; })`
   Display a new snackbar. You need to specify the type and message. You can
   optionally specify a title
 
 Example:
 
 ```tsx
-
 import React from "react";
 import { useSnackbarController } from "@firecms/core";
 
 export function ExampleCMSView() {
-
     const snackbarController = useSnackbarController();
 
     return (
         <Button
-            onClick={() => snackbarController.open({
-                type: "success",
-                title: "Hey!",
-                message: "Test snackbar"
-            })}>
+            onClick={() =>
+                snackbarController.open({
+                    type: "success",
+                    title: "Hey!",
+                    message: "Test snackbar",
+                })
+            }
+        >
             Click me
         </Button>
     );

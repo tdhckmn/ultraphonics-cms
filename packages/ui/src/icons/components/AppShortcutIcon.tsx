@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function AppShortcutIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"app_shortcut"}/>
+    return <Icon {...props} iconKey={"app_shortcut"} />;
 }

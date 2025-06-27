@@ -5,7 +5,6 @@ import arg from "arg";
 import { createFireCMSApp } from "./commands/init";
 
 export async function entry(args) {
-
     if (args.length < 2) {
         printHelp();
         return;
@@ -22,8 +21,7 @@ export async function entry(args) {
     } else if (command === "deploy") {
         await deployArgs(args);
     } else {
-        if (command)
-            console.log("Unknown command", command)
+        if (command) console.log("Unknown command", command);
         printHelp();
         return;
     }
@@ -33,7 +31,7 @@ async function loginArgs(rawArgs) {
     const args = arg(
         {
             "--env": String,
-            "--debug": Boolean
+            "--debug": Boolean,
         },
         {
             argv: rawArgs.slice(2),
@@ -53,7 +51,7 @@ async function logoutArgs(rawArgs) {
     const args = arg(
         {
             "--env": String,
-            "--debug": Boolean
+            "--debug": Boolean,
         },
         {
             argv: rawArgs.slice(2),
@@ -74,7 +72,7 @@ async function deployArgs(rawArgs) {
         {
             "--project": String,
             "--env": String,
-            "--debug": Boolean
+            "--debug": Boolean,
         },
         {
             argv: rawArgs.slice(2),
@@ -104,7 +102,6 @@ async function deployArgs(rawArgs) {
 }
 
 async function printHelp(env: "prod" | "dev" = "prod", debug: boolean = false) {
-
     console.log(`
 ${chalk.red.bold("Welcome to the FireCMS CLI 🔥🔥🔥")}
 
@@ -123,7 +120,6 @@ ${chalk.blue.bold("deploy")} - Deploy an existing CMS project
 ${currentCredentials["email"]}
 `);
     }
-
 }
 
 // function debugPaths() {

@@ -16,6 +16,7 @@ yarn
 ```
 
 And run the project locally:
+
 ```bash
 yarn dev
 ```
@@ -30,4 +31,3 @@ All the configuration is already set up for you. You just need to run:
 ```bash
 yarn deploy
 ```
-

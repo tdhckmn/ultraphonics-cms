@@ -23,56 +23,52 @@ You can check all the props [`FieldProps`]
 This is an example of a custom TextField that takes the background color as a prop
 
 ```tsx
-
 import React from "react";
 import { TextField } from "@mui/material";
 import { FieldDescription, FieldProps } from "@camberi/firecms";
 
 interface CustomColorTextFieldProps {
-    color: string
+    color: string;
 }
 
 export default function CustomColorTextField({
-                                                 property,
-                                                 value,
-                                                 setValue,
-                                                 customProps,
-                                                 touched,
-                                                 error,
-                                                 isSubmitting,
-                                                 context, // the rest of the entity values here
-                                                 ...props
-                                             }: FieldProps<string, CustomColorTextFieldProps>) {
-
-
+    property,
+    value,
+    setValue,
+    customProps,
+    touched,
+    error,
+    isSubmitting,
+    context, // the rest of the entity values here
+    ...props
+}: FieldProps<string, CustomColorTextFieldProps>) {
     return (
         <>
-            <TextField required={property.validation?.required}
-                       sx={{
-                           backgroundColor: customProps.color
-                       }}
-                       error={!!error}
-                       disabled={isSubmitting}
-                       label={property.title}
-                       value={value ?? ""}
-                       onChange={(evt: any) => {
-                           setValue(
-                               evt.target.value
-                           );
-                       }}
-                       helperText={error}
-                       fullWidth
-                       variant={"filled"}/>
+            <TextField
+                required={property.validation?.required}
+                sx={{
+                    backgroundColor: customProps.color,
+                }}
+                error={!!error}
+                disabled={isSubmitting}
+                label={property.title}
+                value={value ?? ""}
+                onChange={(evt: any) => {
+                    setValue(evt.target.value);
+                }}
+                helperText={error}
+                fullWidth
+                variant={"filled"}
+            />
 
-            <FieldDescription property={property}/>
+            <FieldDescription property={property} />
         </>
-
     );
-
 }
 ```
 
 ...and how it is used:
+
 ```tsx
 export const blogSchema = buildCollection({
     name: "Blog entry",
@@ -85,10 +81,10 @@ export const blogSchema = buildCollection({
             config: {
                 Field: CustomColorTextField,
                 customProps: {
-                    color: "gold"
-                }
-            }
-        }
-    }
+                    color: "gold",
+                },
+            },
+        },
+    },
 });
 ```

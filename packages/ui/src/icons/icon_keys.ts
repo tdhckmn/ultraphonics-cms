@@ -2199,5 +2199,5 @@ export const iconKeys = [
     "zoom_in_map",
     "zoom_out",
     "zoom_out_map",
-    ""
+    "",
 ];

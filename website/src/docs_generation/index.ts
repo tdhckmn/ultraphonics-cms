@@ -32,21 +32,20 @@ export async function generateDocsForFile(filePath: string) {
             console.log("Saving tsx content to", `./samples/components/${slug}/${filename}`);
             try {
                 fs.mkdirSync(`./samples/components/${slug}`);
-            } catch (e) {
-            }
+            } catch (e) {}
             fs.writeFileSync(`./samples/components/${slug}/${filename}`, content);
         }
     };
 
-// Invoke the parser with the output and your processing callback.
+    // Invoke the parser with the output and your processing callback.
     parseChatGPTOutput(output, processFile);
 }
 
 function camelToSlug(input: string): string {
     // Step 1 & 2: Replace uppercase letters with underscore and lowercase version
-    const slug = input.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+    const slug = input.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
     // Step 3: Remove leading underscore if exists
     return slug.charAt(0) === "_" ? slug.slice(1) : slug;
 }
 
-generateDocsForFile("../packages/ui/src/components/Slider.tsx")
+generateDocsForFile("../packages/ui/src/components/Slider.tsx");

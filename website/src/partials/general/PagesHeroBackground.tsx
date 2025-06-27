@@ -6,15 +6,15 @@ const LazyHomeHeroNeatGradient = React.lazy(() => import("../../shape/HomeHeroNe
 // const LazyHomeHeroNeatGradient = React.lazy(() => import("../../shape/HeroNeatGradient"));
 
 export function PagesHeroBackground() {
-
-    return <>
-        <BrowserOnly
-            fallback={<div className={"absolute"}/>}>
-            {() => (
-                <Suspense fallback={<div/>}>
-                    <LazyHomeHeroNeatGradient/>
-                </Suspense>
-            )}
-        </BrowserOnly>
-    </>
+    return (
+        <>
+            <BrowserOnly fallback={<div className={"absolute"} />}>
+                {() => (
+                    <Suspense fallback={<div />}>
+                        <LazyHomeHeroNeatGradient />
+                    </Suspense>
+                )}
+            </BrowserOnly>
+        </>
+    );
 }

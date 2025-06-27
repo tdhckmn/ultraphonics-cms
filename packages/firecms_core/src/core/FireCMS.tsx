@@ -2,7 +2,13 @@
 
 import React, { useMemo } from "react";
 import { CenteredView, Typography } from "@firecms/ui";
-import { CustomizationController, FireCMSContext, FireCMSPlugin, FireCMSProps, User } from "../types";
+import {
+    CustomizationController,
+    FireCMSContext,
+    FireCMSPlugin,
+    FireCMSProps,
+    User,
+} from "../types";
 import { AuthControllerContext } from "../contexts";
 import { useBuildSideEntityController } from "../internal/useBuildSideEntityController";
 import { useCustomizationController, useFireCMSContext } from "../hooks";
@@ -34,7 +40,6 @@ import { BreadcrumbsProvider } from "../contexts/BreacrumbsContext";
  * @group Core
  */
 export function FireCMS<USER extends User>(props: FireCMSProps<USER>) {
-
     const {
         children,
         entityLinkBuilder,
@@ -50,19 +55,25 @@ export function FireCMS<USER extends User>(props: FireCMSProps<USER>) {
         entityViews,
         components,
         navigationController,
-        apiKey
+        apiKey,
     } = props;
 
     if (pluginsProp) {
-        console.warn("The `plugins` prop is deprecated in the FireCMS component. You should pass your plugins to `useBuildNavigationController` instead.");
+        console.warn(
+            "The `plugins` prop is deprecated in the FireCMS component. You should pass your plugins to `useBuildNavigationController` instead."
+        );
     }
 
     const plugins = navigationController.plugins ?? pluginsProp;
 
     const sideDialogsController = useBuildSideDialogsController();
-    const sideEntityController = useBuildSideEntityController(navigationController, sideDialogsController, authController);
+    const sideEntityController = useBuildSideEntityController(
+        navigationController,
+        sideDialogsController,
+        authController
+    );
 
-    const pluginsLoading = plugins?.some(p => p.loading) ?? false;
+    const pluginsLoading = plugins?.some((p) => p.loading) ?? false;
 
     const loading = authController.initialLoading || navigationController.loading || pluginsLoading;
 
@@ -73,18 +84,21 @@ export function FireCMS<USER extends User>(props: FireCMSProps<USER>) {
         plugins,
         entityViews: entityViews ?? [],
         propertyConfigs: propertyConfigs ?? {},
-        components
+        components,
     };
 
-    const analyticsController = useMemo(() => ({
-        onAnalyticsEvent
-    }), []);
+    const analyticsController = useMemo(
+        () => ({
+            onAnalyticsEvent,
+        }),
+        []
+    );
 
     const accessResponse = useProjectLog({
         apiKey,
         authController,
         dataSourceDelegate,
-        plugins
+        plugins,
     });
 
     /**
@@ -94,7 +108,7 @@ export function FireCMS<USER extends User>(props: FireCMSProps<USER>) {
         delegate: dataSourceDelegate,
         propertyConfigs,
         navigationController,
-        authController
+        authController,
     });
 
     if (accessResponse?.message) {
@@ -106,7 +120,8 @@ export function FireCMS<USER extends User>(props: FireCMSProps<USER>) {
             <CenteredView maxWidth={"md"}>
                 <ErrorView
                     title={"Error loading navigation"}
-                    error={navigationController.navigationLoadingError}/>
+                    error={navigationController.navigationLoadingError}
+                />
             </CenteredView>
         );
     }
@@ -114,9 +129,7 @@ export function FireCMS<USER extends User>(props: FireCMSProps<USER>) {
     if (authController.authError) {
         return (
             <CenteredView maxWidth={"md"}>
-                <ErrorView
-                    title={"Error loading auth"}
-                    error={authController.authError}/>
+                <ErrorView title={"Error loading auth"} error={authController.authError} />
             </CenteredView>
         );
     }
@@ -128,11 +141,10 @@ export function FireCMS<USER extends User>(props: FireCMSProps<USER>) {
                     License needed
                 </Typography>
                 <Typography>
-                    You need a valid license to use FireCMS PRO. Please reach out at <a
-                    href={"mailto:hello@firecms.co"}>hello@firecms.co</a> for more information.
+                    You need a valid license to use FireCMS PRO. Please reach out at{" "}
+                    <a href={"mailto:hello@firecms.co"}>hello@firecms.co</a> for more information.
                 </Typography>
-                {accessResponse?.message &&
-                    <Typography>{accessResponse?.message}</Typography>}
+                {accessResponse?.message && <Typography>{accessResponse?.message}</Typography>}
             </CenteredView>
         );
     }
@@ -140,24 +152,20 @@ export function FireCMS<USER extends User>(props: FireCMSProps<USER>) {
     return (
         <AnalyticsContext.Provider value={analyticsController}>
             <CustomizationControllerContext.Provider value={customizationController}>
-                <UserConfigurationPersistenceContext.Provider
-                    value={userConfigPersistence}>
-                    <StorageSourceContext.Provider
-                        value={storageSource}>
-                        <DataSourceContext.Provider
-                            value={dataSource}>
-                            <AuthControllerContext.Provider
-                                value={authController}>
+                <UserConfigurationPersistenceContext.Provider value={userConfigPersistence}>
+                    <StorageSourceContext.Provider value={storageSource}>
+                        <DataSourceContext.Provider value={dataSource}>
+                            <AuthControllerContext.Provider value={authController}>
                                 <SideDialogsControllerContext.Provider
-                                    value={sideDialogsController}>
+                                    value={sideDialogsController}
+                                >
                                     <SideEntityControllerContext.Provider
-                                        value={sideEntityController}>
-                                        <NavigationContext.Provider
-                                            value={navigationController}>
+                                        value={sideEntityController}
+                                    >
+                                        <NavigationContext.Provider value={navigationController}>
                                             <DialogsProvider>
                                                 <BreadcrumbsProvider>
-                                                    <FireCMSInternal
-                                                        loading={loading}>
+                                                    <FireCMSInternal loading={loading}>
                                                         {children}
                                                     </FireCMSInternal>
                                                 </BreadcrumbsProvider>
@@ -172,26 +180,21 @@ export function FireCMS<USER extends User>(props: FireCMSProps<USER>) {
             </CustomizationControllerContext.Provider>
         </AnalyticsContext.Provider>
     );
-
 }
 
 function FireCMSInternal({
-                             loading,
-                             children
-                         }: {
+    loading,
+    children,
+}: {
     loading: boolean;
-    children: (props: {
-        context: FireCMSContext;
-        loading: boolean;
-    }) => React.ReactNode;
+    children: (props: { context: FireCMSContext; loading: boolean }) => React.ReactNode;
 }) {
-
     const context = useFireCMSContext();
     const customizationController = useCustomizationController();
 
     let childrenResult = children({
         context,
-        loading
+        loading,
     });
 
     const plugins = customizationController.plugins;
@@ -199,8 +202,7 @@ function FireCMSInternal({
         plugins.forEach((plugin: FireCMSPlugin) => {
             if (plugin.provider) {
                 childrenResult = (
-                    <plugin.provider.Component {...plugin.provider.props}
-                                               context={context}>
+                    <plugin.provider.Component {...plugin.provider.props} context={context}>
                         {childrenResult}
                     </plugin.provider.Component>
                 );

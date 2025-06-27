@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function WbIridescentIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"wb_iridescent"}/>
+    return <Icon {...props} iconKey={"wb_iridescent"} />;
 }

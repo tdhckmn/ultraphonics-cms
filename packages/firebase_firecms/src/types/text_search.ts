@@ -23,19 +23,18 @@ export type FirestoreTextSearchController = {
      * @param props
      */
     init: (props: {
-        path: string,
-        databaseId?: string,
-        collection?: EntityCollection | ResolvedEntityCollection
-    }) => Promise<boolean>,
+        path: string;
+        databaseId?: string;
+        collection?: EntityCollection | ResolvedEntityCollection;
+    }) => Promise<boolean>;
     /**
      * Do the search and return a list of ids.
      * @param props
      */
     search: (props: {
-        searchString: string,
-        path: string,
-        currentUser?: FirebaseUser,
-        databaseId?: string
-    }) => (Promise<readonly string[] | undefined>),
-
+        searchString: string;
+        path: string;
+        currentUser?: FirebaseUser;
+        databaseId?: string;
+    }) => Promise<readonly string[] | undefined>;
 };

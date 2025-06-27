@@ -155,10 +155,3 @@ type `ExtraData`.
 **setUser**: A method to set the user object. Takes `user` of type `FirebaseUser` or `null` as a parameter.
 
 **setRoles**: A method to set roles for the logged-in user. Takes an array of `Role` objects as a parameter.
-
-
-
-
-
-
-

@@ -28,7 +28,9 @@ export const AutocompleteExtension = Node.create<
         suggestionDebounce: number;
     },
     {
-        getSuggestion: ((previousText: string, cb: (suggestion: string | null) => void) => void) | undefined;
+        getSuggestion:
+            | ((previousText: string, cb: (suggestion: string | null) => void) => void)
+            | undefined;
         suggestion: string | null;
     }
 >({
@@ -37,18 +39,21 @@ export const AutocompleteExtension = Node.create<
     addOptions() {
         return {
             suggestionDebounce: 1500,
-            previousTextLength: 4000
+            previousTextLength: 4000,
         };
     },
 
     addProseMirrorPlugins() {
         const pluginKey = new PluginKey<DecorationSet>("suggestion");
 
-        const getSuggestion = debounce(async (previousText: string, cb: (suggestion: string | null) => void) => {
-            const suggestion = await Promise.resolve("Test suggestion");
+        const getSuggestion = debounce(
+            async (previousText: string, cb: (suggestion: string | null) => void) => {
+                const suggestion = await Promise.resolve("Test suggestion");
 
-            cb(suggestion);
-        }, this.options.suggestionDebounce);
+                cb(suggestion);
+            },
+            this.options.suggestionDebounce
+        );
 
         return [
             new Plugin({
@@ -64,7 +69,7 @@ export const AutocompleteExtension = Node.create<
                             return decorations;
                         }
                         return tr.docChanged ? oldValue.map(tr.mapping, tr.doc) : oldValue;
-                    }
+                    },
                 },
                 view() {
                     return {
@@ -75,7 +80,11 @@ export const AutocompleteExtension = Node.create<
                             const nextNode = view.state.doc.nodeAt(cursorPos);
 
                             // If the cursor is not at the end of the block and we have a suggestion => hide the suggestion
-                            if (nextNode && !nextNode.isBlock && pluginKey.getState(view.state)?.find().length) {
+                            if (
+                                nextNode &&
+                                !nextNode.isBlock &&
+                                pluginKey.getState(view.state)?.find().length
+                            ) {
                                 const tr = view.state.tr;
                                 tr.setMeta("addToHistory", false);
                                 tr.setMeta(pluginKey, { decorations: DecorationSet.empty });
@@ -97,7 +106,9 @@ export const AutocompleteExtension = Node.create<
                             }, 0);
 
                             // fetch a new suggestion
-                            const previousText = view.state.doc.textBetween(0, view.state.doc.content.size, " ").slice(-4000);
+                            const previousText = view.state.doc
+                                .textBetween(0, view.state.doc.content.size, " ")
+                                .slice(-4000);
                             getSuggestion(previousText, (suggestion) => {
                                 if (!suggestion) return;
 
@@ -105,25 +116,33 @@ export const AutocompleteExtension = Node.create<
 
                                 const cursorPos = updatedState.selection.$head.pos;
                                 const suggestionDecoration = Decoration.widget(
-                                    cursorPos, () => {
+                                    cursorPos,
+                                    () => {
                                         const parentNode = document.createElement("span");
                                         const addSpace = nextNode && nextNode.isText ? " " : "";
                                         parentNode.innerHTML = `${addSpace}${suggestion}`;
-                                        parentNode.classList.add("text-surface-400", "dark:text-surface-500", "suggestion");
+                                        parentNode.classList.add(
+                                            "text-surface-400",
+                                            "dark:text-surface-500",
+                                            "suggestion"
+                                        );
                                         return parentNode;
-                                    }, {
+                                    },
+                                    {
                                         side: 1,
-                                        suggestionText: suggestion
+                                        suggestionText: suggestion,
                                     }
                                 );
 
-                                const decorations = DecorationSet.create(updatedState.doc, [suggestionDecoration]);
+                                const decorations = DecorationSet.create(updatedState.doc, [
+                                    suggestionDecoration,
+                                ]);
                                 const tr = view.state.tr;
                                 tr.setMeta("addToHistory", false);
                                 tr.setMeta(pluginKey, { decorations });
                                 view.dispatch(tr);
                             });
-                        }
+                        },
                     };
                 },
                 props: {
@@ -152,7 +171,9 @@ export const AutocompleteExtension = Node.create<
 
                                 // Clear decorations after applying suggestion
                                 const clearDecoTr = view.state.tr;
-                                clearDecoTr.setMeta(pluginKey, { decorations: DecorationSet.empty });
+                                clearDecoTr.setMeta(pluginKey, {
+                                    decorations: DecorationSet.empty,
+                                });
                                 view.dispatch(clearDecoTr);
 
                                 // Prevent default behavior of the keypress
@@ -161,9 +182,9 @@ export const AutocompleteExtension = Node.create<
                             }
                         }
                         return false;
-                    }
-                }
-            })
+                    },
+                },
+            }),
         ];
-    }
+    },
 });

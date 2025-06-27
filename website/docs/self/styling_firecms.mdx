@@ -22,8 +22,8 @@ export default {
     content: [
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",
-        "./node_modules/@firecms/**/*.{js,ts,jsx,tsx}"
-    ]
+        "./node_modules/@firecms/**/*.{js,ts,jsx,tsx}",
+    ],
 };
 ```
 
@@ -48,9 +48,9 @@ in your `index.css` file:
 @tailwind utilities;
 
 :root {
-    --fcms-primary: #0070F4;
+    --fcms-primary: #0070f4;
     --fcms-primary-bg: #0061e610;
-    --fcms-secondary: #FF5B79;
+    --fcms-secondary: #ff5b79;
 }
 
 body {
@@ -83,58 +83,57 @@ export default {
     content: [
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",
-        "./node_modules/@firecms/**/*.{js,ts,jsx,tsx}"
+        "./node_modules/@firecms/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {
         extend: {
             colors: {
-                "primary": "var(--fcms-primary)",
+                primary: "var(--fcms-primary)",
                 "primary-bg": "var(--fcms-primary-bg)",
-                "secondary": "var(--fcms-secondary)",
-                "field": {
-                    "disabled": "rgb(224 224 226)",
-                    "disabled-dark": "rgb(35 35 37)"
+                secondary: "var(--fcms-secondary)",
+                field: {
+                    disabled: "rgb(224 224 226)",
+                    "disabled-dark": "rgb(35 35 37)",
                 },
-                "text": {
-                    "primary": "rgba(0, 0, 0, 0.87)",
-                    "secondary": "rgba(0, 0, 0, 0.55)",
-                    "disabled": "rgba(0, 0, 0, 0.38)",
+                text: {
+                    primary: "rgba(0, 0, 0, 0.87)",
+                    secondary: "rgba(0, 0, 0, 0.55)",
+                    disabled: "rgba(0, 0, 0, 0.38)",
                     "primary-dark": "#ffffff",
                     "secondary-dark": "rgba(255, 255, 255, 0.60)",
-                    "disabled-dark": "rgba(255, 255, 255, 0.48)"
+                    "disabled-dark": "rgba(255, 255, 255, 0.48)",
                 },
-                "surface": {
-                    "50": "#f8f8fc",
-                    "100": "#E7E7EB",
-                    "200": "#CFCFD6",
-                    "300": "#B7B7BF",
-                    "400": "#A0A0A9",
-                    "500": "#87878F",
-                    "600": "#6B6B74",
-                    "700": "#454552",
-                    "800": "#292934",
-                    "900": "#18181C",
-                    "950": "#101013"
+                surface: {
+                    50: "#f8f8fc",
+                    100: "#E7E7EB",
+                    200: "#CFCFD6",
+                    300: "#B7B7BF",
+                    400: "#A0A0A9",
+                    500: "#87878F",
+                    600: "#6B6B74",
+                    700: "#454552",
+                    800: "#292934",
+                    900: "#18181C",
+                    950: "#101013",
                 },
                 "surface-accent": {
-                    "50": "#f8fafc",
-                    "100": "#f1f5f9",
-                    "200": "#e2e8f0",
-                    "300": "#cbd5e1",
-                    "400": "#94a3b8",
-                    "500": "#64748b",
-                    "600": "#475569",
-                    "700": "#334155",
-                    "800": "#1e293b",
-                    "900": "#0f172a",
-                    "950": "#020617"
-                }
-            }
-        }
-    }
+                    50: "#f8fafc",
+                    100: "#f1f5f9",
+                    200: "#e2e8f0",
+                    300: "#cbd5e1",
+                    400: "#94a3b8",
+                    500: "#64748b",
+                    600: "#475569",
+                    700: "#334155",
+                    800: "#1e293b",
+                    900: "#0f172a",
+                    950: "#020617",
+                },
+            },
+        },
+    },
 };
 ```
-
 
 ### Customizing typography
 
@@ -142,14 +141,17 @@ FireCMS uses the `Rubik` font by default, both for headings and body text. It al
 for code blocks.
 
 #### Adding new fonts
+
 If you would like to add a new font, you can install it using `npm` or `yarn`.
 
 For example, to add the `Noto Serif` font:
+
 ```bash
 yarn add @fontsource/noto-serif
 ```
 
 and import it in your `App.tsx` file:
+
 ```tsx
 import "@fontsource/noto-serif";
 ```
@@ -167,33 +169,17 @@ export default {
     content: [
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",
-        "./node_modules/@firecms/**/*.{js,ts,jsx,tsx}"
+        "./node_modules/@firecms/**/*.{js,ts,jsx,tsx}",
     ],
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: [
-          "Roboto",
-          "Helvetica",
-          "Arial",
-          "sans-serif"
-        ],
-        headers: [
-          "Noto Serif",
-          "Roboto",
-          "Helvetica",
-          "Arial",
-          "sans-serif"
-        ],
-        mono: [
-          "JetBrains Mono",
-          "Space Mono",
-          "Lucida Console",
-          "monospace"
-        ]
-      }
-    }
-  }
+    theme: {
+        extend: {
+            fontFamily: {
+                sans: ["Roboto", "Helvetica", "Arial", "sans-serif"],
+                headers: ["Noto Serif", "Roboto", "Helvetica", "Arial", "sans-serif"],
+                mono: ["JetBrains Mono", "Space Mono", "Lucida Console", "monospace"],
+            },
+        },
+    },
 };
 ```
 
@@ -261,8 +247,3 @@ Feel free to add any of this classes to your `index.css` file, to override the d
 ### Do you miss any customization?
 
 If you need to customize any other aspect of FireCMS, please [let us know](https://discord.gg/fxy7xsQm3m).
-
-
-
-
-

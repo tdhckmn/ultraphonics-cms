@@ -7,20 +7,19 @@ export const demoCollection = buildCollection({
     description: "This is a demo collection with many of the **available properties**",
     path: "demo",
     properties: {
-
         // string property with validation
         name: {
             dataType: "string",
             name: "Name",
             validation: {
-                required: true
-            }
+                required: true,
+            },
         },
 
         // simple boolean
         available: buildProperty({
             dataType: "boolean",
-            name: "Available"
+            name: "Available",
         }),
 
         // you can define this property dynamically, and modify it based on the values of other properties
@@ -30,13 +29,13 @@ export const demoCollection = buildCollection({
             validation: {
                 requiredMessage: "You must set a price between 0 and 1000",
                 min: 0,
-                max: 1000
+                max: 1000,
             },
             disabled: !values.available && {
                 clearOnDisabled: true,
-                disabledMessage: "You can only set the price on available items"
+                disabledMessage: "You can only set the price on available items",
             },
-            description: "Price with range validation"
+            description: "Price with range validation",
         }),
 
         // multiline
@@ -59,7 +58,7 @@ export const demoCollection = buildCollection({
             dataType: "array",
             of: {
                 dataType: "string",
-            }
+            },
         },
 
         // url
@@ -70,14 +69,14 @@ export const demoCollection = buildCollection({
             validation: {
                 required: true,
                 requiredMessage: "The amazon link is required",
-            }
+            },
         },
 
         // email
         user_email: {
             dataType: "string",
             name: "User email",
-            email: true
+            email: true,
         },
 
         // single selection
@@ -89,8 +88,8 @@ export const demoCollection = buildCollection({
                 backpacks: "Backpacks and bags",
                 bath: "Bath",
                 bicycle: "Bicycle",
-                books: "Books"
-            }
+                books: "Books",
+            },
         },
 
         // multiple selection
@@ -105,41 +104,39 @@ export const demoCollection = buildCollection({
                     fr: {
                         id: "fr",
                         label: "French",
-                        disabled: true
-                    }
-                }
+                        disabled: true,
+                    },
+                },
             },
-            defaultValue: [
-                "es"
-            ]
+            defaultValue: ["es"],
         },
 
         // date
         expiry: {
             dataType: "date",
             name: "Expiry date",
-            mode: "date"
+            mode: "date",
         },
 
         // date and time
         arrival_time: {
             dataType: "date",
             name: "Arrival time",
-            mode: "date_time"
+            mode: "date_time",
         },
 
         // auto update on create
         created_at: {
             dataType: "date",
             name: "Created at",
-            autoValue: "on_create"
+            autoValue: "on_create",
         },
 
         // auto update on update
         updated_on: {
             dataType: "date",
             name: "Updated at",
-            autoValue: "on_update"
+            autoValue: "on_update",
         },
 
         // storing a single image
@@ -148,14 +145,12 @@ export const demoCollection = buildCollection({
             name: "Main image",
             storage: {
                 storagePath: "images",
-                acceptedFiles: [
-                    "image/*"
-                ],
+                acceptedFiles: ["image/*"],
                 maxSize: 1000000,
                 metadata: {
-                    cacheControl: "max-age=1000000"
-                }
-            }
+                    cacheControl: "max-age=1000000",
+                },
+            },
         },
 
         // storing multiple images
@@ -166,15 +161,13 @@ export const demoCollection = buildCollection({
                 dataType: "string",
                 storage: {
                     storagePath: "images",
-                    acceptedFiles: [
-                        "image/*"
-                    ],
+                    acceptedFiles: ["image/*"],
                     metadata: {
-                        cacheControl: "max-age=1000000"
-                    }
-                }
+                        cacheControl: "max-age=1000000",
+                    },
+                },
             },
-            description: "This fields allows uploading multiple images at once"
+            description: "This fields allows uploading multiple images at once",
         },
 
         // group of properties
@@ -184,21 +177,21 @@ export const demoCollection = buildCollection({
             properties: {
                 street: {
                     name: "Street",
-                    dataType: "string"
+                    dataType: "string",
                 },
                 postal_code: {
                     name: "Postal code",
-                    dataType: "number"
-                }
+                    dataType: "number",
+                },
             },
-            expanded: true
+            expanded: true,
         },
 
         // reference to another collection
         client: {
             dataType: "reference",
             path: "users",
-            name: "Related client"
+            name: "Related client",
         },
 
         // multiple references to another collection
@@ -207,8 +200,8 @@ export const demoCollection = buildCollection({
             name: "Related products",
             of: {
                 dataType: "reference",
-                path: "products"
-            }
+                path: "products",
+            },
         },
 
         // block of content with dynamic properties
@@ -224,26 +217,24 @@ export const demoCollection = buildCollection({
                         name: "Image",
                         storage: {
                             storagePath: "images",
-                            acceptedFiles: [
-                                "image/*"
-                            ]
-                        }
+                            acceptedFiles: ["image/*"],
+                        },
                     },
                     text: {
                         dataType: "string",
                         name: "Text",
-                        markdown: true
+                        markdown: true,
                     },
                     products: {
                         name: "Products",
                         dataType: "array",
                         of: {
                             dataType: "reference",
-                            path: "products"
-                        }
-                    }
-                }
-            }
+                            path: "products",
+                        },
+                    },
+                },
+            },
         },
-    }
+    },
 });

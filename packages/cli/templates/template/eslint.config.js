@@ -15,8 +15,8 @@ export default [
             "no-shadow": "warn",
             "padded-blocks": "off",
             "brace-style": "off",
-            "curly": "off",
-            "semi": 0,
+            curly: "off",
+            semi: 0,
             "key-spacing": "warn",
             "no-trailing-spaces": "warn",
             "comma-dangle": "warn",
@@ -30,10 +30,14 @@ export default [
             "object-property-newline": "warn",
             "eol-last": "warn",
             "spaced-comment": "off",
-            "indent": [0, 4],
-            "quotes": [1, "double", {
-                avoidEscape: true,
-            }]
-        }
-    }
+            indent: [0, 4],
+            quotes: [
+                1,
+                "double",
+                {
+                    avoidEscape: true,
+                },
+            ],
+        },
+    },
 ];

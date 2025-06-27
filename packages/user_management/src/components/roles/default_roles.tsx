@@ -4,7 +4,7 @@ export const DEFAULT_ROLES: Role[] = [
     {
         id: "admin",
         name: "Admin",
-        isAdmin: true
+        isAdmin: true,
     },
     {
         id: "editor",
@@ -14,13 +14,13 @@ export const DEFAULT_ROLES: Role[] = [
             read: true,
             create: true,
             edit: true,
-            delete: true
+            delete: true,
         },
         config: {
             createCollections: true,
             editCollections: "own",
-            deleteCollections: "own"
-        }
+            deleteCollections: "own",
+        },
     },
     {
         id: "viewer",
@@ -30,7 +30,7 @@ export const DEFAULT_ROLES: Role[] = [
             read: true,
             create: false,
             edit: false,
-            delete: false
-        }
-    }
+            delete: false,
+        },
+    },
 ];

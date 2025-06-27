@@ -4,7 +4,6 @@ title: FireCMS enters the beta period
 authors: francesco
 ---
 
-
 > Exciting times for our project!
 
 After more than 60 releases, and numerous refinements of the internal components
@@ -84,6 +83,7 @@ behind their respective interfaces. This means you can replace any of those
 parts with your custom implementation!
 
 We have three new types that abstract away the services provided by Firebase:
+
 - AuthDelegate, in charge of handling
   the auth operation such as login or sign out, and build the logged-in user.
 - DataSource, in charge of handling data
@@ -117,6 +117,3 @@ from Firebase and is now much more maintainable and extendable.
 We have got a lot of PRs and support from out users and would love to foster
 that participation going forward. A cleaner code will help everyone involved
 and allow for more and better features!
-
-
-

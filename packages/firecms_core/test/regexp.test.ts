@@ -6,7 +6,6 @@ it("Serialize", () => {
     expect(serializeRegExp(/\d.*/g)).toEqual("/\\d.*/g");
 });
 
-
 it("Validate", () => {
     // expect(isValidRegExp("\\d.*")).toEqual(false);
     expect(isValidRegExp("/\\d.*/g")).toEqual(true);

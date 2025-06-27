@@ -1,18 +1,14 @@
 /** @private is the value an empty array? */
-export const isEmptyArray = (value?: any) =>
-    Array.isArray(value) && value.length === 0;
+export const isEmptyArray = (value?: any) => Array.isArray(value) && value.length === 0;
 
 /** @private is the given object a Function? */
-export const isFunction = (obj: any): obj is Function =>
-    typeof obj === "function";
+export const isFunction = (obj: any): obj is Function => typeof obj === "function";
 
 /** @private is the given object an Object? */
-export const isObject = (obj: any): obj is Object =>
-    obj !== null && typeof obj === "object";
+export const isObject = (obj: any): obj is Object => obj !== null && typeof obj === "object";
 
 /** @private is the given object an integer? */
-export const isInteger = (obj: any): boolean =>
-    String(Math.floor(Number(obj))) === obj;
+export const isInteger = (obj: any): boolean => String(Math.floor(Number(obj))) === obj;
 
 /** @private is the given object a NaN? */
 // eslint-disable-next-line no-self-compare
@@ -21,12 +17,7 @@ export const isNaN = (obj: any): boolean => obj !== obj;
 /**
  * Deeply get a value from an object via its path.
  */
-export function getIn(
-    obj: any,
-    key: string | string[],
-    def?: any,
-    p = 0
-) {
+export function getIn(obj: any, key: string | string[], def?: any, p = 0) {
     const path = toPath(key);
     while (obj && p < path.length) {
         obj = obj[path[p++]];
@@ -54,8 +45,7 @@ export function setIn(obj: any, path: string, value: any): any {
             resVal = resVal[currentPath] = clone(currentObj);
         } else {
             const nextPath: string = pathArray[i + 1];
-            resVal = resVal[currentPath] =
-                isInteger(nextPath) && Number(nextPath) >= 0 ? [] : {};
+            resVal = resVal[currentPath] = isInteger(nextPath) && Number(nextPath) >= 0 ? [] : {};
         }
     }
 
@@ -92,5 +82,9 @@ export function clone(value: any) {
 function toPath(value: string | string[]) {
     if (Array.isArray(value)) return value; // Already in path array form.
     // Replace brackets with dots, remove leading/trailing dots, then split by dot.
-    return value.replace(/\[(\d+)]/g, ".$1").replace(/^\./, "").replace(/\.$/, "").split(".");
+    return value
+        .replace(/\[(\d+)]/g, ".$1")
+        .replace(/^\./, "")
+        .replace(/\.$/, "")
+        .split(".");
 }

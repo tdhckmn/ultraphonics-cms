@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function ChecklistIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"checklist"}/>
+    return <Icon {...props} iconKey={"checklist"} />;
 }

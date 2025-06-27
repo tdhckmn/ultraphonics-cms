@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function NetworkPingIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"network_ping"}/>
+    return <Icon {...props} iconKey={"network_ping"} />;
 }

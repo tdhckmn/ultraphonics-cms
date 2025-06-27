@@ -9,22 +9,23 @@ import {
     Property,
     PropertyOrBuilder,
     ResolvedProperty,
-    resolveProperty
+    resolveProperty,
 } from "@firecms/core";
 import { unflattenObject } from "./file_to_json";
 import { getIn } from "@firecms/formex";
 import { inferTypeFromValue } from "@firecms/schema_inference";
 
-export function convertDataToEntity(authController: AuthController,
-                                    data: Record<any, any>,
-                                    idColumn: string | undefined,
-                                    headersMapping: Record<string, string | null>,
-                                    properties: Properties,
-                                    path: string,
-                                    defaultValues: Record<string, any>): Entity<any> {
+export function convertDataToEntity(
+    authController: AuthController,
+    data: Record<any, any>,
+    idColumn: string | undefined,
+    headersMapping: Record<string, string | null>,
+    properties: Properties,
+    path: string,
+    defaultValues: Record<string, any>,
+): Entity<any> {
     const flatObject = flattenEntry(data);
-    if (idColumn)
-        delete flatObject[idColumn];
+    if (idColumn) delete flatObject[idColumn];
     const mappedKeysObject = Object.entries(flatObject)
         .map(([key, value]) => {
             const mappedKey = getIn(headersMapping, key) ?? key;
@@ -34,9 +35,9 @@ export function convertDataToEntity(authController: AuthController,
                 return {};
             }
             const processedValue = processValueMapping(authController, value, mappedProperty);
-            return ({
-                [mappedKey]: processedValue
-            });
+            return {
+                [mappedKey]: processedValue,
+            };
         })
         .reduce((acc, curr) => ({ ...acc, ...curr }), {});
 
@@ -57,7 +58,7 @@ export function convertDataToEntity(authController: AuthController,
     return {
         id,
         values,
-        path
+        path,
     };
 }
 
@@ -65,7 +66,12 @@ export function flattenEntry(obj: any, parent = ""): any {
     return Object.keys(obj).reduce((acc, key) => {
         const prefixedKey = parent ? `${parent}.${key}` : key;
 
-        if (typeof obj[key] === "object" && !(obj[key] instanceof Date) && obj[key] !== null && !Array.isArray(obj[key])) {
+        if (
+            typeof obj[key] === "object" &&
+            !(obj[key] instanceof Date) &&
+            obj[key] !== null &&
+            !Array.isArray(obj[key])
+        ) {
             Object.assign(acc, flattenEntry(obj[key], prefixedKey));
         } else {
             // @ts-ignore
@@ -82,17 +88,29 @@ export function processValueMapping(authController: AuthController, value: any, 
     if (property === undefined) return value;
     const usedProperty: ResolvedProperty | null = resolveProperty({
         propertyOrBuilder: property,
-        authController
-    })
+        authController,
+    });
     if (usedProperty === null) return value;
     const from = inferTypeFromValue(value);
     const to = usedProperty.dataType;
 
-    if (from === "array" && to === "array" && Array.isArray(value) && usedProperty.of && !isPropertyBuilder(usedProperty.of as PropertyOrBuilder)) {
-        return value.map(v => processValueMapping(authController, v, usedProperty.of as Property));
+    if (
+        from === "array" &&
+        to === "array" &&
+        Array.isArray(value) &&
+        usedProperty.of &&
+        !isPropertyBuilder(usedProperty.of as PropertyOrBuilder)
+    ) {
+        return value.map((v) => processValueMapping(authController, v, usedProperty.of as Property));
     } else if (from === "string" && to === "number" && typeof value === "string") {
         return Number(value);
-    } else if (from === "string" && to === "array" && typeof value === "string" && usedProperty.of && !isPropertyBuilder(usedProperty.of as PropertyOrBuilder)) {
+    } else if (
+        from === "string" &&
+        to === "array" &&
+        typeof value === "string" &&
+        usedProperty.of &&
+        !isPropertyBuilder(usedProperty.of as PropertyOrBuilder)
+    ) {
         return value.split(",").map((v: string) => processValueMapping(authController, v, usedProperty.of));
     } else if (from === "string" && to === "boolean") {
         return value === "true";
@@ -125,7 +143,6 @@ export function processValueMapping(authController: AuthController, value: any, 
         const path = value.split("/").slice(0, -1).join("/");
         const entityId = value.split("/").slice(-1)[0];
         return new EntityReference(entityId, path);
-
     } else if (from === to) {
         return value;
     } else if (from === "array" && to === "string" && Array.isArray(value)) {

@@ -73,7 +73,3 @@ project ID in the Firebase console.
 
 You will receive an API key that you need to pass to your FireCMS component. If you are using the starter template, you
 can set it in the .env file.
-
-
-
-

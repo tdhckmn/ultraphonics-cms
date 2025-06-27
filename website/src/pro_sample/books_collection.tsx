@@ -15,7 +15,7 @@ const categories = {
     science: "Science",
     medical: "Medical",
     cooking: "Cooking",
-    travel: "Travel"
+    travel: "Travel",
 };
 
 export const booksCollection = buildCollection({
@@ -26,57 +26,58 @@ export const booksCollection = buildCollection({
     icon: "MenuBook",
     group: "Content",
     textSearchEnabled: true,
-    description: "Example of a books collection that allows data enhancement through the use of the **OpenAI plugin**",
+    description:
+        "Example of a books collection that allows data enhancement through the use of the **OpenAI plugin**",
     properties: {
         title: {
             name: "Title",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         authors: {
             name: "Authors",
-            dataType: "string"
+            dataType: "string",
         },
         description: {
             name: "Description",
             dataType: "string",
-            multiline: true
+            multiline: true,
         },
         spanish_description: {
             name: "Spanish description",
             dataType: "string",
-            multiline: true
+            multiline: true,
         },
         thumbnail: {
             name: "Thumbnail",
             dataType: "string",
-            url: "image"
+            url: "image",
         },
         category: {
             name: "Category",
             dataType: "string",
-            enumValues: categories
+            enumValues: categories,
         },
         tags: {
             name: "Tags",
             dataType: "array",
             of: {
-                dataType: "string"
-            }
+                dataType: "string",
+            },
         },
         published_year: {
             name: "Published Year",
             dataType: "number",
-            validation: { integer: true, min: 0 }
+            validation: { integer: true, min: 0 },
         },
         num_pages: {
             name: "Num pages",
-            dataType: "number"
+            dataType: "number",
         },
         created_at: {
             name: "Created at",
             dataType: "date",
-            autoValue: "on_create"
-        }
-    }
+            autoValue: "on_create",
+        },
+    },
 });

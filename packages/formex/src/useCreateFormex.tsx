@@ -5,16 +5,16 @@ import equal from "react-fast-compare";
 import { FormexController, FormexResetProps } from "./types";
 
 export function useCreateFormex<T extends object>({
-                                                      initialValues,
-                                                      initialErrors,
-                                                      initialDirty,
-                                                      validation,
-                                                      validateOnChange = false,
-                                                      validateOnInitialRender = false,
-                                                      onSubmit,
-                                                      onReset,
-                                                      debugId,
-                                                  }: {
+    initialValues,
+    initialErrors,
+    initialDirty,
+    validation,
+    validateOnChange = false,
+    validateOnInitialRender = false,
+    onSubmit,
+    onReset,
+    debugId,
+}: {
     initialValues: T;
     initialErrors?: Record<string, string>;
     initialDirty?: boolean;
@@ -22,11 +22,7 @@ export function useCreateFormex<T extends object>({
     validateOnInitialRender?: boolean;
     validation?: (
         values: T
-    ) =>
-        | Record<string, string>
-        | Promise<Record<string, string>>
-        | undefined
-        | void;
+    ) => Record<string, string> | Promise<Record<string, string>> | undefined | void;
     onSubmit?: (values: T, controller: FormexController<T>) => void | Promise<void>;
     onReset?: (controller: FormexController<T>) => void | Promise<void>;
     debugId?: string;
@@ -136,11 +132,14 @@ export function useCreateFormex<T extends object>({
         [setFieldValue, setFieldTouched, validateOnChange]
     );
 
-    const handleBlur = useCallback((event: React.FocusEvent) => {
-        const target = event.target as HTMLInputElement;
-        const name = target.name;
-        setFieldTouched(name, true);
-    }, [setFieldTouched]);
+    const handleBlur = useCallback(
+        (event: React.FocusEvent) => {
+            const target = event.target as HTMLInputElement;
+            const name = target.name;
+            setFieldTouched(name, true);
+        },
+        [setFieldTouched]
+    );
 
     const submit = useCallback(
         async (e?: React.FormEvent<HTMLFormElement>) => {
@@ -161,26 +160,29 @@ export function useCreateFormex<T extends object>({
         [onSubmit, validation]
     );
 
-    const resetForm = useCallback((props?: FormexResetProps<T>) => {
-        const {
-            submitCount: submitCountProp,
-            values: valuesProp,
-            errors: errorsProp,
-            touched: touchedProp
-        } = props ?? {};
-        valuesRef.current = valuesProp ?? initialValuesRef.current;
-        initialValuesRef.current = valuesProp ?? initialValuesRef.current;
-        setValuesInner(valuesProp ?? initialValuesRef.current);
-        setErrors(errorsProp ?? {});
-        setTouchedState(touchedProp ?? {});
-        setDirty(false);
-        setSubmitCount(submitCountProp ?? 0);
-        setVersion((prev) => prev + 1);
-        onReset?.(controllerRef.current);
-        // Reset history with refs
-        historyRef.current = [valuesProp ?? initialValuesRef.current];
-        historyIndexRef.current = 0;
-    }, [onReset]);
+    const resetForm = useCallback(
+        (props?: FormexResetProps<T>) => {
+            const {
+                submitCount: submitCountProp,
+                values: valuesProp,
+                errors: errorsProp,
+                touched: touchedProp,
+            } = props ?? {};
+            valuesRef.current = valuesProp ?? initialValuesRef.current;
+            initialValuesRef.current = valuesProp ?? initialValuesRef.current;
+            setValuesInner(valuesProp ?? initialValuesRef.current);
+            setErrors(errorsProp ?? {});
+            setTouchedState(touchedProp ?? {});
+            setDirty(false);
+            setSubmitCount(submitCountProp ?? 0);
+            setVersion((prev) => prev + 1);
+            onReset?.(controllerRef.current);
+            // Reset history with refs
+            historyRef.current = [valuesProp ?? initialValuesRef.current];
+            historyIndexRef.current = 0;
+        },
+        [onReset]
+    );
 
     const undo = useCallback(() => {
         if (historyIndexRef.current > 0) {

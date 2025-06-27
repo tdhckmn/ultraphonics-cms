@@ -12,10 +12,8 @@ export default function LoadingButtonBasicDemo() {
     };
 
     return (
-        <LoadingButton
-            loading={loading}
-            onClick={onClick}>
-                Click Me
+        <LoadingButton loading={loading} onClick={onClick}>
+            Click Me
         </LoadingButton>
     );
 }

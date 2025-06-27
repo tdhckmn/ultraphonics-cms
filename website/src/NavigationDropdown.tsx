@@ -1,9 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { defaultBorderMixin } from "./partials/styles";
 
-const DropdownPanelContent = ({ children }: {
-    children?: React.ReactNode;
-}) => {
+const DropdownPanelContent = ({ children }: { children?: React.ReactNode }) => {
     return (
         <div className={"relative max-w-full w-[84rem] mx-auto px-4 py-5 pl-[80px]"}>
             {children}
@@ -12,10 +10,10 @@ const DropdownPanelContent = ({ children }: {
 };
 
 const NavigationDropdown = ({
-                                trigger,
-                                children,
-                                dropdownClassName = ""
-                            }: {
+    trigger,
+    children,
+    dropdownClassName = "",
+}: {
     trigger: React.ReactNode;
     children: React.ReactNode;
     dropdownClassName?: string;
@@ -31,7 +29,7 @@ const NavigationDropdown = ({
                 const rect = containerRef.current.getBoundingClientRect();
                 setLeftOffset(rect.left);
             }
-        }
+        };
         if (isVisible) {
             calculateOffset();
             window.addEventListener("resize", calculateOffset);
@@ -41,7 +39,7 @@ const NavigationDropdown = ({
         return () => {
             window.removeEventListener("resize", calculateOffset);
             window.removeEventListener("scroll", calculateOffset, true);
-        }
+        };
     }, [isVisible]);
 
     const clearTimer = useCallback(() => {
@@ -72,14 +70,17 @@ const NavigationDropdown = ({
         }
     }, [clearTimer, isVisible]);
 
-    const handleBlur = useCallback((e: React.FocusEvent<HTMLDivElement>) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
-            clearTimer();
-            timerRef.current = setTimeout(() => {
-                setIsVisible(false);
-            }, 150);
-        }
-    }, [clearTimer]);
+    const handleBlur = useCallback(
+        (e: React.FocusEvent<HTMLDivElement>) => {
+            if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                clearTimer();
+                timerRef.current = setTimeout(() => {
+                    setIsVisible(false);
+                }, 150);
+            }
+        },
+        [clearTimer]
+    );
 
     useEffect(() => {
         return () => {
@@ -98,18 +99,21 @@ const NavigationDropdown = ({
         >
             {trigger}
 
-            {isVisible && <div
-                className={`absolute top-full left-0 w-screen bg-gray-900 shadow-lg z-50 transition-opacity duration-150 ease-in-out ${isVisible ? "opacity-100 visible" : "opacity-0 invisible"} ${dropdownClassName} border-b ` + defaultBorderMixin}
-                style={{ transform: `translateX(-${leftOffset}px) translateY(24px)` }}
-                role="region"
-                aria-label="Additional Information"
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-            >
-                <DropdownPanelContent>
-                    {children}
-                </DropdownPanelContent>
-            </div>}
+            {isVisible && (
+                <div
+                    className={
+                        `absolute top-full left-0 w-screen bg-gray-900 shadow-lg z-50 transition-opacity duration-150 ease-in-out ${isVisible ? "opacity-100 visible" : "opacity-0 invisible"} ${dropdownClassName} border-b ` +
+                        defaultBorderMixin
+                    }
+                    style={{ transform: `translateX(-${leftOffset}px) translateY(24px)` }}
+                    role="region"
+                    aria-label="Additional Information"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                >
+                    <DropdownPanelContent>{children}</DropdownPanelContent>
+                </div>
+            )}
         </div>
     );
 };

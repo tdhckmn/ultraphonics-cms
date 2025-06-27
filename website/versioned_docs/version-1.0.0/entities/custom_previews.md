@@ -20,6 +20,7 @@ type for any custom props you would like to pass to the preview, just like
 done when defining custom fields.
 
 ### Example
+
 Example of a custom preview for a `boolean` property:
 
 ```tsx
@@ -30,12 +31,11 @@ import CheckBoxOutlineBlank from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxOutlined from "@mui/icons-material/CheckBoxOutlined";
 
 export default function CustomBooleanPreview({
-                                                 value, property, size
-                                             }: PreviewComponentProps<boolean>)
-    : ReactElement {
-    return (
-        value ? <CheckBoxOutlined/> : <CheckBoxOutlineBlank/>
-    );
+    value,
+    property,
+    size,
+}: PreviewComponentProps<boolean>): ReactElement {
+    return value ? <CheckBoxOutlined /> : <CheckBoxOutlineBlank />;
 }
 ```
 
@@ -50,11 +50,9 @@ export const blogSchema = buildCollection({
             title: "Reviewed",
             dataType: "boolean",
             config: {
-                Preview: CustomBooleanPreview
-            }
+                Preview: CustomBooleanPreview,
+            },
         },
-    }
+    },
 });
 ```
-
-

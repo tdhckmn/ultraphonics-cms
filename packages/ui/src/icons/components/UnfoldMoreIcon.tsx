@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function UnfoldMoreIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"unfold_more"}/>
+    return <Icon {...props} iconKey={"unfold_more"} />;
 }

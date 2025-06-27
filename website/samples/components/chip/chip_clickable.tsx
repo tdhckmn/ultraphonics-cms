@@ -6,9 +6,5 @@ export default function ChipClickableDemo() {
         console.log("Chip clicked");
     };
 
-    return (
-        <Chip onClick={handleClick}>
-            Clickable Chip
-        </Chip>
-    );
+    return <Chip onClick={handleClick}>Clickable Chip</Chip>;
 }

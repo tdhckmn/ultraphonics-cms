@@ -2,11 +2,7 @@
     "hosting": {
         "public": "build",
         "site": "[REPLACE_WITH_PROJECT_ID]",
-        "ignore": [
-            "firebase.json",
-            "**/.*",
-            "**/node_modules/**"
-        ],
+        "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
         "rewrites": [
             {
                 "source": "**",

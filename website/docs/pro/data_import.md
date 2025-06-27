@@ -49,7 +49,6 @@ import { useFirebaseStorageSource } from "@firecms/firebase";
 import { useImportPlugin } from "@firecms/data_import";
 
 export function App() {
-
     const importPlugin = useImportPlugin({
         onAnalyticsEvent: (event, params) => {
             console.log(`Import Event: ${event}`, params);
@@ -57,16 +56,15 @@ export function App() {
         },
     });
 
-
     return (
-            <FireCMS
-                navigationController={navigationController}
-                /*... rest of your configuration */
-            >
-              {({ context, loading }) => {
-                  // ... your components
-              }}
-            </FireCMS>
+        <FireCMS
+            navigationController={navigationController}
+            /*... rest of your configuration */
+        >
+            {({ context, loading }) => {
+                // ... your components
+            }}
+        </FireCMS>
     );
 }
 
@@ -84,7 +82,7 @@ populate the collections.
 2. **Initiate Import**: Click on the **Import** action in the collection actions toolbar.
 3. **Upload File**: Select and upload the JSON or CSV file containing the data.
 4. **Data Type Mapping**: Select the data types and how your data should be mapped to the current structure.
-4. **Data Processing**: The plugin processes the file and adds the data to your collection.
+5. **Data Processing**: The plugin processes the file and adds the data to your collection.
 
 ## Types
 
@@ -95,7 +93,7 @@ Defines the properties for the `useImportPlugin` hook.
 ```typescript
 export type ImportPluginProps = {
     onAnalyticsEvent?: (event: string, params?: any) => void;
-}
+};
 ```
 
 ### `ImportAllowedParams`
@@ -103,10 +101,10 @@ export type ImportPluginProps = {
 Provides context for determining import permissions.
 
 ```typescript
-export type ImportAllowedParams = { 
-    collectionEntitiesCount: number; 
-    path: string; 
-    collection: EntityCollection; 
+export type ImportAllowedParams = {
+    collectionEntitiesCount: number;
+    path: string;
+    collection: EntityCollection;
 };
 ```
 
@@ -116,9 +114,8 @@ export type ImportAllowedParams = {
 const importPlugin = useImportPlugin({
     onAnalyticsEvent: (event, params) => {
         if (window && window.gtag) {
-            window.gtag('event', event, params);
+            window.gtag("event", event, params);
         }
     },
 });
 ```
-

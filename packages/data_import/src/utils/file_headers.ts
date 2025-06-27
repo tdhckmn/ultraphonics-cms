@@ -1,8 +1,9 @@
 import * as XLSX from "xlsx";
 export function getXLSXHeaders(sheet: any) {
-    let header = 0; let offset = 1;
+    let header = 0;
+    let offset = 1;
     const hdr = [];
-    const o:any = {};
+    const o: any = {};
     if (sheet == null || sheet["!ref"] == null) return [];
     const range = o.range !== undefined ? o.range : sheet["!ref"];
     let r;
@@ -44,18 +45,20 @@ export function getXLSXHeaders(sheet: any) {
     return hdr;
 }
 
-function safeDecodeRange(range:any) {
+function safeDecodeRange(range: any) {
     const o = {
         s: {
             c: 0,
-            r: 0
+            r: 0,
         },
         e: {
             c: 0,
-            r: 0
-        }
+            r: 0,
+        },
     };
-    let idx = 0; let i = 0; let cc = 0;
+    let idx = 0;
+    let i = 0;
+    let cc = 0;
     const len = range.length;
     for (idx = 0; i < len; ++i) {
         if ((cc = range.charCodeAt(i) - 64) < 1 || cc > 26) break;

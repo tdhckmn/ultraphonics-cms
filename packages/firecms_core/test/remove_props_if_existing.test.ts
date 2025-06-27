@@ -31,22 +31,22 @@ describe("removePropsIfExisting", () => {
             name: "ttt",
             properties: {
                 en: { dataType: "string", name: "English", editable: true },
-                es: { dataType: "string", name: "Español" }
-            }
+                es: { dataType: "string", name: "Español" },
+            },
         };
         const comparison = {
             key: "ttt",
             name: "ttt",
             properties: {
                 en: { dataType: "string", name: "English333111", editable: true },
-                es: { dataType: "string", name: "Español" }
-            }
+                es: { dataType: "string", name: "Español" },
+            },
         };
         expect(removePropsIfExisting(source, comparison)).toEqual({
             properties: {
                 en: { name: "English" },
-                es: {}
-            }
+                es: {},
+            },
         });
     });
 });

@@ -2,15 +2,11 @@ import React from "react";
 import { cls } from "../util";
 
 export type CircularProgressProps = {
-    size?: "smallest" | "small" | "medium" | "large",
-    className?: string
-}
+    size?: "smallest" | "small" | "medium" | "large";
+    className?: string;
+};
 
-export function CircularProgress({
-                                     size = "medium",
-                                     className
-                                 }: CircularProgressProps) {
-
+export function CircularProgress({ size = "medium", className }: CircularProgressProps) {
     let sizeClasses = "";
     if (size === "smallest") {
         sizeClasses = "w-4 h-4";
@@ -40,13 +36,13 @@ export function CircularProgress({
                 borderClasses,
                 "inline-block animate-spin rounded-full border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]",
                 "text-primary dark:text-primary",
-                className)}
-            role="status">
-              <span
-                  className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
-              >
-                  Loading...
-              </span>
+                className
+            )}
+            role="status"
+        >
+            <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                Loading...
+            </span>
         </div>
     );
 }

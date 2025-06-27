@@ -8,16 +8,21 @@ import { buildExternalSearchController } from "./text_search_controller";
  * @param query
  * @group Firebase
  */
-export function performAlgoliaTextSearch(client: any, indexName: string, query: string): Promise<readonly string[]> {
-
+export function performAlgoliaTextSearch(
+    client: any,
+    indexName: string,
+    query: string
+): Promise<readonly string[]> {
     console.debug("Performing Algolia query", client, query);
 
-    return client.searchSingleIndex({
-        indexName,
-        searchParams: { query },
-    }).then(({ hits }: any) => {
-        return hits.map((hit: any) => hit.objectID as string);
-    })
+    return client
+        .searchSingleIndex({
+            indexName,
+            searchParams: { query },
+        })
+        .then(({ hits }: any) => {
+            return hits.map((hit: any) => hit.objectID as string);
+        })
         .catch((err: any) => {
             console.error(err);
             return [];

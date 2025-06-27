@@ -6,14 +6,12 @@ export default function BadgeIconDemo() {
         <>
             <Badge color="error">
                 <IconButton>
-                    <AnchorIcon/>
+                    <AnchorIcon />
                 </IconButton>
             </Badge>
 
             <Badge color="secondary">
-                <Button>
-                    Fix
-                </Button>
+                <Button>Fix</Button>
             </Badge>
         </>
     );

@@ -53,4 +53,3 @@ function isFireCMSUser(){
 These rules will allow users that have a CMS role to read and write all the data in your Firestore database.
 The roles will be enforced in the frontend by FireCMS, but if it is a requirement for your project, you can also
 enforce them in the Firestore rules, by setting your own custom rules.
-

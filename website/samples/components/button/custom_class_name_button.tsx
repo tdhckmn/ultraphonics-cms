@@ -8,5 +8,5 @@ export default function CustomClassNameButtonDemo() {
                 Button with Custom Class
             </Button>
         </div>
-    )
+    );
 }

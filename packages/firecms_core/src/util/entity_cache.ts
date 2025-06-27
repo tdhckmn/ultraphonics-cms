@@ -11,7 +11,6 @@ const isLocalStorageAvailable = typeof localStorage !== "undefined";
 
 // Define custom replacer for JSON.stringify
 function customReplacer(key: string): any {
-
     // @ts-ignore
     const value = this[key];
 
@@ -104,10 +103,7 @@ export function saveEntityToCache(path: string, data: object): void {
             const entityString = JSON.stringify(data, customReplacer);
             localStorage.setItem(key, entityString);
         } catch (error) {
-            console.error(
-                `Failed to save entity for path "${path}" to localStorage:`,
-                error
-            );
+            console.error(`Failed to save entity for path "${path}" to localStorage:`, error);
         }
     }
 }
@@ -119,7 +115,6 @@ export function saveEntityToCache(path: string, data: object): void {
  * @returns The cached entity or `undefined` if not found.
  */
 export function getEntityFromCache(path: string): object | undefined {
-
     // Attempt to retrieve the entity from the in-memory cache
     if (entityCache.has(path)) {
         return entityCache.get(path);
@@ -136,10 +131,7 @@ export function getEntityFromCache(path: string): object | undefined {
                 return entity;
             }
         } catch (error) {
-            console.error(
-                `Failed to load entity for path "${path}" from localStorage:`,
-                error
-            );
+            console.error(`Failed to load entity for path "${path}" from localStorage:`, error);
         }
     }
 
@@ -156,8 +148,6 @@ export function hasEntityInCache(path: string): boolean {
  * @param path - The unique path/key for the entity to remove.
  */
 export function removeEntityFromCache(path: string): void {
-
-
     console.debug("Removing entity from cache", path);
 
     // Remove from the in-memory cache
@@ -169,10 +159,7 @@ export function removeEntityFromCache(path: string): void {
             const key = LOCAL_STORAGE_PREFIX + path;
             localStorage.removeItem(key);
         } catch (error) {
-            console.error(
-                `Failed to remove entity for path "${path}" from localStorage:`,
-                error
-            );
+            console.error(`Failed to remove entity for path "${path}" from localStorage:`, error);
         }
     }
 }

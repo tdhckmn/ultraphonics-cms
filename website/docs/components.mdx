@@ -29,14 +29,11 @@ If you have any questions, feel free to reach us at our [Discord channel](https:
 
 The list of components includes:
 
-
 import { UIComponentsShowcase } from "../src/partials/ui/UIComponentsShowcase";
 
-<UIComponentsShowcase/>
+<UIComponentsShowcase />
 
 and more (check the sidebar for the full list).
-
-
 
 ## Installation
 
@@ -48,7 +45,9 @@ To use the components in your own project, you need to install the `@firecms/ui`
 ```bash
 yarn add @firecms/ui
 ```
+
 or
+
 ```bash
 npm install @firecms/ui
 ```
@@ -75,10 +74,11 @@ export default {
     content: [
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",
-        "./node_modules/@firecms/**/src/**/*.{js,ts,jsx,tsx}"
-    ]
+        "./node_modules/@firecms/**/src/**/*.{js,ts,jsx,tsx}",
+    ],
 };
 ```
+
 (You might need to adjust the paths in the `content` array to match your project structure)
 
 Finally, you need to define your primary and secondary colors in your `index.css` file:
@@ -91,9 +91,8 @@ Finally, you need to define your primary and secondary colors in your `index.css
 @tailwind utilities;
 
 :root {
-    --fcms-primary: #0070F4;
+    --fcms-primary: #0070f4;
     --fcms-primary-bg: #0061e610;
-    --fcms-secondary: #FF5B79;
+    --fcms-secondary: #ff5b79;
 }
 ```
-

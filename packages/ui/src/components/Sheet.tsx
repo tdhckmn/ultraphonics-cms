@@ -21,20 +21,20 @@ interface SheetProps {
 }
 
 export const Sheet: React.FC<SheetProps> = ({
-                                                children,
-                                                side = "right",
-                                                title,
-                                                modal = true,
-                                                includeBackgroundOverlay = true,
-                                                open,
-                                                onOpenChange,
-                                                transparent,
-                                                className,
-                                                style,
-                                                overlayClassName,
-                                                overlayStyle,
-                                                ...props
-                                            }) => {
+    children,
+    side = "right",
+    title,
+    modal = true,
+    includeBackgroundOverlay = true,
+    open,
+    onOpenChange,
+    transparent,
+    className,
+    style,
+    overlayClassName,
+    overlayStyle,
+    ...props
+}) => {
     const [displayed, setDisplayed] = useState(false);
 
     useEffect(() => {
@@ -48,38 +48,38 @@ export const Sheet: React.FC<SheetProps> = ({
         top: "-translate-y-full",
         bottom: "translate-y-full",
         left: "-translate-x-full",
-        right: "translate-x-full"
+        right: "translate-x-full",
     };
 
     const borderClass: Record<string, string> = {
         top: "border-b",
         bottom: "border-t",
         left: "border-r",
-        right: "border-l"
+        right: "border-l",
     };
 
     return (
-        <DialogPrimitive.Root open={displayed || open}
-                              modal={modal}
-                              onOpenChange={onOpenChange}>
+        <DialogPrimitive.Root open={displayed || open} modal={modal} onOpenChange={onOpenChange}>
             <DialogPrimitive.Portal>
                 <DialogPrimitive.Title autoFocus tabIndex={0}>
                     {title ?? "Sheet"}
                 </DialogPrimitive.Title>
-                {includeBackgroundOverlay && <DialogPrimitive.Overlay
-                    className={cls(
-                        "outline-none",
-                        "fixed inset-0 transition-opacity z-20 ease-in-out duration-100 backdrop-blur-sm",
-                        "bg-black bg-opacity-50",
-                        "dark:bg-surface-900 dark:bg-opacity-60",
-                        displayed && open ? "opacity-100" : "opacity-0",
-                        overlayClassName
-                    )}
-                    style={{
-                        pointerEvents: displayed ? "auto" : "none",
-                        ...overlayStyle
-                    }}
-                />}
+                {includeBackgroundOverlay && (
+                    <DialogPrimitive.Overlay
+                        className={cls(
+                            "outline-none",
+                            "fixed inset-0 transition-opacity z-20 ease-in-out duration-100 backdrop-blur-sm",
+                            "bg-black bg-opacity-50",
+                            "dark:bg-surface-900 dark:bg-opacity-60",
+                            displayed && open ? "opacity-100" : "opacity-0",
+                            overlayClassName
+                        )}
+                        style={{
+                            pointerEvents: displayed ? "auto" : "none",
+                            ...overlayStyle,
+                        }}
+                    />
+                )}
                 <DialogPrimitive.Content
                     {...props}
                     onFocusCapture={(event) => event.preventDefault()}

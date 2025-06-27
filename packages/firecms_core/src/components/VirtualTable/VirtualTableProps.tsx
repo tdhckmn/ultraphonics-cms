@@ -5,7 +5,7 @@ import { FilterFormFieldProps } from "./VirtualTableHeader";
 export type OnRowClickParams<T extends Record<string, any>> = {
     rowData: T;
     rowIndex: number;
-    event: React.SyntheticEvent
+    event: React.SyntheticEvent;
 };
 
 /**
@@ -13,7 +13,6 @@ export type OnRowClickParams<T extends Record<string, any>> = {
  * @group Components
  */
 export interface VirtualTableProps<T extends Record<string, any>> {
-
     /**
      * Array of arbitrary data
      */
@@ -37,8 +36,10 @@ export interface VirtualTableProps<T extends Record<string, any>> {
      * @param filterValues
      * @param sortBy
      */
-    checkFilterCombination?: (filterValues: VirtualTableFilterValues<Extract<keyof T, string>>,
-                              sortBy?: [string, "asc" | "desc"]) => boolean;
+    checkFilterCombination?: (
+        filterValues: VirtualTableFilterValues<Extract<keyof T, string>>,
+        sortBy?: [string, "asc" | "desc"]
+    ) => boolean;
 
     /**
      * A callback function when scrolling the table to near the end
@@ -69,7 +70,7 @@ export interface VirtualTableProps<T extends Record<string, any>> {
     /**
      * Size of the table
      */
-    rowHeight?: number,
+    rowHeight?: number;
 
     /**
      * In case this table should have some filters set by default
@@ -87,9 +88,9 @@ export interface VirtualTableProps<T extends Record<string, any>> {
      * @param props
      */
     onScroll?: (props: {
-        scrollDirection: "forward" | "backward",
-        scrollOffset: number,
-        scrollUpdateWasRequested: boolean
+        scrollDirection: "forward" | "backward";
+        scrollOffset: number;
+        scrollUpdateWasRequested: boolean;
     }) => void;
 
     /**
@@ -161,7 +162,6 @@ export interface VirtualTableProps<T extends Record<string, any>> {
      * Initial scroll position
      */
     initialScroll?: number;
-
 }
 
 export type CellRendererParams<T = any> = {
@@ -179,7 +179,6 @@ export type CellRendererParams<T = any> = {
  * @group Components
  */
 export interface VirtualTableColumn<CustomProps = any> {
-
     /**
      * Data key for the cell value, could be "a.b.c"
      */
@@ -247,9 +246,9 @@ export interface VirtualTableColumn<CustomProps = any> {
  * @group Collection components
  */
 export type OnVirtualTableColumnResizeParams = {
-    width: number,
-    key: string,
-    column: VirtualTableColumn
+    width: number;
+    key: string;
+    column: VirtualTableColumn;
 };
 
 /**
@@ -262,7 +261,9 @@ export type VirtualTableSort = "asc" | "desc" | undefined;
  * @see Table
  * @group Components
  */
-export type VirtualTableFilterValues<Key extends string> = Partial<Record<Key, [WhereFilterOp, any]>>;
+export type VirtualTableFilterValues<Key extends string> = Partial<
+    Record<Key, [WhereFilterOp, any]>
+>;
 
 /**
  * Filter conditions in a `Query.where()` clause are specified using the

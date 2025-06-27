@@ -3,8 +3,8 @@ import { getXLSXHeaders } from "./file_headers";
 
 type ConversionResult = {
     data: object[];
-    propertiesOrder: string[]
-}
+    propertiesOrder: string[];
+};
 
 export function convertFileToJson(file: File): Promise<ConversionResult> {
     return new Promise((resolve, reject) => {
@@ -22,7 +22,7 @@ export function convertFileToJson(file: File): Promise<ConversionResult> {
                         const propertiesOrder = jsonData.length > 0 ? Object.keys(jsonData[0]) : [];
                         resolve({
                             data: jsonData,
-                            propertiesOrder
+                            propertiesOrder,
                         });
                     }
                 } catch (e) {
@@ -49,7 +49,7 @@ export function convertFileToJson(file: File): Promise<ConversionResult> {
                 const jsonData = cleanedData.map(unflattenObject);
                 resolve({
                     data: jsonData,
-                    propertiesOrder: headers
+                    propertiesOrder: headers,
                 });
             };
             reader.readAsArrayBuffer(file);
@@ -74,33 +74,34 @@ function mapJsonParse(obj: Record<string, any>) {
  * @param flatObj
  */
 export function unflattenObject(flatObj: { [key: string]: any }) {
-    return Object.keys(flatObj).reduce((nestedObj, key) => {
-        let currentObj = nestedObj;
-        const keyParts = key.split(".");
-        keyParts.forEach((keyPart, i) => {
+    return Object.keys(flatObj).reduce(
+        (nestedObj, key) => {
+            let currentObj = nestedObj;
+            const keyParts = key.split(".");
+            keyParts.forEach((keyPart, i) => {
+                if (/^[\w]+\[\d+\]$/.test(keyPart)) {
+                    const mainPropertyName = keyPart.slice(0, keyPart.indexOf("["));
+                    const index = parseInt(keyPart.slice(keyPart.indexOf("[") + 1, keyPart.indexOf("]")));
 
-            if (/^[\w]+\[\d+\]$/.test(keyPart)) {
-                const mainPropertyName = keyPart.slice(0, keyPart.indexOf("["));
-                const index = parseInt(keyPart.slice(keyPart.indexOf("[") + 1, keyPart.indexOf("]")));
+                    if (!currentObj[mainPropertyName]) {
+                        currentObj[mainPropertyName] = [];
+                    }
 
-                if (!currentObj[mainPropertyName]) {
-                    currentObj[mainPropertyName] = []
-                }
-
-                if (i !== keyParts.length - 1) {
-                    currentObj[mainPropertyName][index] = currentObj[mainPropertyName][index] || {};
-                    currentObj = currentObj[mainPropertyName][index];
+                    if (i !== keyParts.length - 1) {
+                        currentObj[mainPropertyName][index] = currentObj[mainPropertyName][index] || {};
+                        currentObj = currentObj[mainPropertyName][index];
+                    } else {
+                        currentObj[mainPropertyName][index] = flatObj[key];
+                    }
+                } else if (i !== keyParts.length - 1) {
+                    currentObj[keyPart] = currentObj[keyPart] || {};
+                    currentObj = currentObj[keyPart];
                 } else {
-                    currentObj[mainPropertyName][index] = flatObj[key];
+                    currentObj[keyPart] = flatObj[key];
                 }
-            } else if (i !== keyParts.length - 1) {
-                currentObj[keyPart] = currentObj[keyPart] || {};
-                currentObj = currentObj[keyPart];
-            } else {
-                currentObj[keyPart] = flatObj[key];
-            }
-
-        });
-        return nestedObj;
-    }, {} as { [key: string]: any });
+            });
+            return nestedObj;
+        },
+        {} as { [key: string]: any },
+    );
 }

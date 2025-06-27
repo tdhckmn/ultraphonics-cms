@@ -2,17 +2,18 @@ import { Button, FilterListOffIcon } from "@firecms/ui";
 import { EntityTableController } from "../types";
 
 export function ClearFilterSortButton({
-                                          tableController,
-                                          enabled
-                                      }: {
+    tableController,
+    enabled,
+}: {
     enabled: boolean;
-    tableController: EntityTableController
+    tableController: EntityTableController;
 }) {
     if (!enabled) {
         return null;
     }
 
-    const filterIsSet = !!tableController.filterValues && Object.keys(tableController.filterValues).length > 0;
+    const filterIsSet =
+        !!tableController.filterValues && Object.keys(tableController.filterValues).length > 0;
     const sortIsSet = !!tableController.sortBy && tableController.sortBy.length > 0;
 
     if ((filterIsSet || sortIsSet) && (tableController.clearFilter || tableController.setSortBy)) {
@@ -24,18 +25,21 @@ export function ClearFilterSortButton({
         } else {
             label = "Clear sort";
         }
-        return <Button
-            variant={"outlined"}
-            className="h-fit-content"
-            aria-label="filter clear"
-            onClick={() => {
-                tableController.clearFilter?.();
-                tableController.setSortBy?.(undefined);
-            }}
-            size={"small"}>
-            <FilterListOffIcon/>
-            {label}
-        </Button>
+        return (
+            <Button
+                variant={"outlined"}
+                className="h-fit-content"
+                aria-label="filter clear"
+                onClick={() => {
+                    tableController.clearFilter?.();
+                    tableController.setSortBy?.(undefined);
+                }}
+                size={"small"}
+            >
+                <FilterListOffIcon />
+                {label}
+            </Button>
+        );
     }
     return null;
 }

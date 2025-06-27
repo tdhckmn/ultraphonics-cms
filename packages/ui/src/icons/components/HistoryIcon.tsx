@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function HistoryIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"history"}/>
+    return <Icon {...props} iconKey={"history"} />;
 }

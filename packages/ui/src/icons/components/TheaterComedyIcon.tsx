@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function TheaterComedyIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"theater_comedy"}/>
+    return <Icon {...props} iconKey={"theater_comedy"} />;
 }

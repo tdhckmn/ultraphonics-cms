@@ -36,31 +36,31 @@ type TableCellInnerProps = {
     faded: boolean;
     fullHeight: boolean;
     children: React.ReactNode;
-}
+};
 
 const TableCellInner = ({
-                            justifyContent,
-                            scrollable,
-                            faded,
-                            fullHeight,
-                            children
-                        }: TableCellInnerProps) => {
+    justifyContent,
+    scrollable,
+    faded,
+    fullHeight,
+    children,
+}: TableCellInnerProps) => {
     return (
-        <div className={cls("flex flex-col max-h-full w-full",
-            {
-                "items-start": faded || scrollable
+        <div
+            className={cls("flex flex-col max-h-full w-full", {
+                "items-start": faded || scrollable,
             })}
-             style={{
-                 justifyContent,
-                 height: fullHeight ? "100%" : undefined,
-                 overflow: scrollable ? "auto" : undefined,
-                 WebkitMaskImage: faded
-                     ? "linear-gradient(to bottom, black 60%, transparent 100%)"
-                     : undefined,
-                 maskImage: faded
-                     ? "linear-gradient(to bottom, black 60%, transparent 100%)"
-                     : undefined
-             }}
+            style={{
+                justifyContent,
+                height: fullHeight ? "100%" : undefined,
+                overflow: scrollable ? "auto" : undefined,
+                WebkitMaskImage: faded
+                    ? "linear-gradient(to bottom, black 60%, transparent 100%)"
+                    : undefined,
+                maskImage: faded
+                    ? "linear-gradient(to bottom, black 60%, transparent 100%)"
+                    : undefined,
+            }}
         >
             {children}
         </div>
@@ -69,24 +69,23 @@ const TableCellInner = ({
 
 export const EntityTableCell = React.memo<EntityTableCellProps>(
     function EntityTableCell({
-                                 children,
-                                 actions,
-                                 size,
-                                 selected,
-                                 disabled,
-                                 disabledTooltip,
-                                 saved,
-                                 error,
-                                 align,
-                                 allowScroll,
-                                 removePadding,
-                                 fullHeight,
-                                 onSelect,
-                                 width,
-                                 hideOverflow = true,
-                                 showExpandIcon = true
-                             }: EntityTableCellProps) {
-
+        children,
+        actions,
+        size,
+        selected,
+        disabled,
+        disabledTooltip,
+        saved,
+        error,
+        align,
+        allowScroll,
+        removePadding,
+        fullHeight,
+        onSelect,
+        width,
+        hideOverflow = true,
+        showExpandIcon = true,
+    }: EntityTableCellProps) {
         const [measureRef, bounds] = useMeasure();
         const ref = useRef<HTMLDivElement>(null);
 
@@ -155,11 +154,14 @@ export const EntityTableCell = React.memo<EntityTableCellProps>(
             }
         }, [ref, onSelect, selected, disabled]);
 
-        const onFocus = useCallback((event: React.SyntheticEvent<HTMLDivElement>) => {
-            event.stopPropagation();
-            event.preventDefault();
-            onSelectCallback();
-        }, [onSelectCallback]);
+        const onFocus = useCallback(
+            (event: React.SyntheticEvent<HTMLDivElement>) => {
+                event.stopPropagation();
+                event.preventDefault();
+                onSelectCallback();
+            },
+            [onSelectCallback]
+        );
 
         const isOverflowing = useMemo(() => {
             if (bounds) {
@@ -179,82 +181,93 @@ export const EntityTableCell = React.memo<EntityTableCellProps>(
         const borderClass = showError
             ? "border-red-500"
             : internalSaved
-                ? "border-green-500"
-                : isSelected
-                    ? "border-primary"
-                    : "border-transparent";
+              ? "border-green-500"
+              : isSelected
+                ? "border-primary"
+                : "border-transparent";
 
-        const result = <>
-            <div
-                className={cls(
-                    "transition-colors duration-100 ease-in-out",
-                    `flex relative h-full rounded-md p-${p} border border-4  border-opacity-75`,
-                    onHover && !disabled ? "bg-surface-50 dark:bg-surface-900" : "",
-                    saved ? "bg-surface-100 bg-opacity-75 dark:bg-surface-800 dark:bg-opacity-75" : "",
-                    hideOverflow ? "overflow-hidden" : "",
-                    isSelected ? "bg-surface-50 dark:bg-surface-900" : "",
-                    borderClass
-                )}
-                ref={ref}
-                style={{
-                    justifyContent,
-                    alignItems: disabled || !isOverflowing ? "center" : undefined,
-                    width: width ?? "100%",
-                    textAlign: align
-                }}
-                tabIndex={selected || disabled ? undefined : 0}
-                onFocus={onFocus}
-                onMouseEnter={setOnHoverTrue}
-                onMouseMove={setOnHoverTrue}
-                onMouseLeave={setOnHoverFalse}
-            >
+        const result = (
+            <>
+                <div
+                    className={cls(
+                        "transition-colors duration-100 ease-in-out",
+                        `flex relative h-full rounded-md p-${p} border border-4  border-opacity-75`,
+                        onHover && !disabled ? "bg-surface-50 dark:bg-surface-900" : "",
+                        saved
+                            ? "bg-surface-100 bg-opacity-75 dark:bg-surface-800 dark:bg-opacity-75"
+                            : "",
+                        hideOverflow ? "overflow-hidden" : "",
+                        isSelected ? "bg-surface-50 dark:bg-surface-900" : "",
+                        borderClass
+                    )}
+                    ref={ref}
+                    style={{
+                        justifyContent,
+                        alignItems: disabled || !isOverflowing ? "center" : undefined,
+                        width: width ?? "100%",
+                        textAlign: align,
+                    }}
+                    tabIndex={selected || disabled ? undefined : 0}
+                    onFocus={onFocus}
+                    onMouseEnter={setOnHoverTrue}
+                    onMouseMove={setOnHoverTrue}
+                    onMouseLeave={setOnHoverFalse}
+                >
+                    <ErrorBoundary>
+                        {fullHeight && !faded && children}
 
-                <ErrorBoundary>
+                        {(!fullHeight || faded) && (
+                            <TableCellInner
+                                fullHeight={fullHeight ?? false}
+                                justifyContent={justifyContent}
+                                scrollable={scrollable ?? false}
+                                faded={faded}
+                            >
+                                {!fullHeight && (
+                                    <div
+                                        ref={measureRef}
+                                        style={{
+                                            display: "flex",
+                                            width: "100%",
+                                            justifyContent,
+                                            height: fullHeight ? "100%" : undefined,
+                                        }}
+                                    >
+                                        {children}
+                                    </div>
+                                )}
+                            </TableCellInner>
+                        )}
+                    </ErrorBoundary>
 
-                    {fullHeight && !faded && children}
+                    {actions}
 
-                    {(!fullHeight || faded) && <TableCellInner
-                        fullHeight={fullHeight ?? false}
-                        justifyContent={justifyContent}
-                        scrollable={scrollable ?? false}
-                        faded={faded}>
-
-                        {!fullHeight && <div ref={measureRef}
-                                             style={{
-                                                 display: "flex",
-                                                 width: "100%",
-                                                 justifyContent,
-                                                 height: fullHeight ? "100%" : undefined
-                                             }}>
-                            {children}
-                        </div>}
-
-                    </TableCellInner>}
-                </ErrorBoundary>
-
-                {actions}
-
-                {disabled && onHover && disabledTooltip &&
-                    <div className="absolute top-1 right-1 text-xs">
-                        <Tooltip title={disabledTooltip}>
-                            <DoNotDisturbOnIcon size={"smallest"} color={"disabled"} className={"text-surface-500"}/>
-                        </Tooltip>
-                    </div>}
-
-            </div>
-        </>;
+                    {disabled && onHover && disabledTooltip && (
+                        <div className="absolute top-1 right-1 text-xs">
+                            <Tooltip title={disabledTooltip}>
+                                <DoNotDisturbOnIcon
+                                    size={"smallest"}
+                                    color={"disabled"}
+                                    className={"text-surface-500"}
+                                />
+                            </Tooltip>
+                        </div>
+                    )}
+                </div>
+            </>
+        );
         if (showError) {
             return (
-                <ErrorTooltip
-                    align={"start"}
-                    title={error?.message ?? "Error"}>
+                <ErrorTooltip align={"start"} title={error?.message ?? "Error"}>
                     {result}
                 </ErrorTooltip>
             );
         }
         return result;
-    }, (a, b) => {
-        return a.error === b.error &&
+    },
+    (a, b) => {
+        return (
+            a.error === b.error &&
             a.value === b.value &&
             a.disabled === b.disabled &&
             a.saved === b.saved &&
@@ -266,5 +279,7 @@ export const EntityTableCell = React.memo<EntityTableCellProps>(
             a.showExpandIcon === b.showExpandIcon &&
             a.removePadding === b.removePadding &&
             a.fullHeight === b.fullHeight &&
-            a.selected === b.selected;
-    }) as React.FunctionComponent<EntityTableCellProps>;
+            a.selected === b.selected
+        );
+    }
+) as React.FunctionComponent<EntityTableCellProps>;

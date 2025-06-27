@@ -31,7 +31,7 @@ export const localeCollectionGroup = buildCollection({
         name: {
             name: "Name",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         // ...
     },
@@ -49,7 +49,7 @@ match /{path=**}/locales/{document=**} {
 ```
 
 When doing a collection group query, the path will be something like
-`/products/{productId}/locales/{localeId}`. But the query will go to all 
+`/products/{productId}/locales/{localeId}`. But the query will go to all
 the collections called `locales` in your database. That is why you might need
 to add a rule like the one above.
 :::

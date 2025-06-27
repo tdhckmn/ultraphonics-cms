@@ -15,7 +15,7 @@ import {
     useCustomizationController,
     User,
     useSelectionController,
-    useSnackbarController
+    useSnackbarController,
 } from "@firecms/core";
 import {
     Button,
@@ -41,14 +41,12 @@ import { ImportConfig } from "../types";
 type ImportState = "initial" | "mapping" | "preview" | "import_data_saving";
 
 export function ImportCollectionAction<M extends Record<string, any>, USER extends User>({
-                                                                                             collection,
-                                                                                             path,
-                                                                                             onAnalyticsEvent
-                                                                                         }: CollectionActionsProps<M, USER> & {
-                                                                                             onAnalyticsEvent?: (event: string, params?: any) => void;
-                                                                                         }
-) {
-
+    collection,
+    path,
+    onAnalyticsEvent,
+}: CollectionActionsProps<M, USER> & {
+    onAnalyticsEvent?: (event: string, params?: any) => void;
+}) {
     const authController = useAuthController();
     const customizationController = useCustomizationController();
 
@@ -105,145 +103,161 @@ export function ImportCollectionAction<M extends Record<string, any>, USER exten
         collection,
         path,
         propertyConfigs: customizationController.propertyConfigs,
-        authController
+        authController,
     });
 
-    const properties = getPropertiesWithPropertiesOrder<M>(resolvedCollection.properties, resolvedCollection.propertiesOrder as Extract<keyof M, string>[]) as ResolvedProperties<M>;
+    const properties = getPropertiesWithPropertiesOrder<M>(
+        resolvedCollection.properties,
+        resolvedCollection.propertiesOrder as Extract<keyof M, string>[],
+    ) as ResolvedProperties<M>;
 
-    const propertiesAndLevel = Object.entries(properties)
-        .flatMap(([key, property]) => getPropertiesAndLevel(key, property, 0));
-    const propertiesOrder = (resolvedCollection.propertiesOrder ?? Object.keys(resolvedCollection.properties)) as Extract<keyof M, string>[];
+    const propertiesAndLevel = Object.entries(properties).flatMap(([key, property]) =>
+        getPropertiesAndLevel(key, property, 0),
+    );
+    const propertiesOrder = (resolvedCollection.propertiesOrder ??
+        Object.keys(resolvedCollection.properties)) as Extract<keyof M, string>[];
     if (collection.collectionGroup) {
         return null;
     }
 
-    return <>
+    return (
+        <>
+            <Tooltip title={"Import"} asChild={true}>
+                <IconButton color={"primary"} onClick={handleClickOpen}>
+                    <UploadIcon />
+                </IconButton>
+            </Tooltip>
 
-        <Tooltip title={"Import"}
-                 asChild={true}>
-            <IconButton color={"primary"} onClick={handleClickOpen}>
-                <UploadIcon/>
-            </IconButton>
-        </Tooltip>
-
-        <Dialog open={open}
+            <Dialog
+                open={open}
                 fullWidth={step !== "initial"}
                 fullHeight={step !== "initial"}
-                maxWidth={step === "initial" ? "lg" : "7xl"}>
+                maxWidth={step === "initial" ? "lg" : "7xl"}
+            >
+                <DialogTitle variant={"h6"}>Import data</DialogTitle>
 
-            <DialogTitle variant={"h6"}>Import data</DialogTitle>
+                <DialogContent className={"flex flex-col gap-4 my-4"} fullHeight={step === "preview"}>
+                    {step === "initial" && (
+                        <>
+                            <Typography variant={"body2"}>
+                                Upload a CSV, Excel or JSON file and map it to your existing schema
+                            </Typography>
+                            <ImportFileUpload onDataAdded={onDataAdded} />
+                        </>
+                    )}
 
-            <DialogContent className={"flex flex-col gap-4 my-4"} fullHeight={step === "preview"}>
+                    {step === "mapping" && (
+                        <>
+                            <DataNewPropertiesMapping
+                                importConfig={importConfig}
+                                destinationProperties={properties}
+                                buildPropertyView={({ isIdColumn, property, propertyKey, importKey }) => {
+                                    return (
+                                        <PropertyTreeSelect
+                                            selectedPropertyKey={propertyKey ?? ""}
+                                            properties={properties}
+                                            propertiesAndLevel={propertiesAndLevel}
+                                            isIdColumn={isIdColumn}
+                                            onIdSelected={() => {
+                                                importConfig.setIdColumn(importKey);
+                                            }}
+                                            onPropertySelected={(newPropertyKey) => {
+                                                onAnalyticsEvent?.("import_mapping_field_updated");
+                                                const newHeadersMapping: Record<string, string | null> = Object.entries(
+                                                    importConfig.headersMapping,
+                                                )
+                                                    .map(([currentImportKey, currentPropertyKey]) => {
+                                                        if (currentPropertyKey === newPropertyKey) {
+                                                            return { [currentImportKey]: null };
+                                                        }
+                                                        if (currentImportKey === importKey) {
+                                                            return { [currentImportKey]: newPropertyKey };
+                                                        }
+                                                        return { [currentImportKey]: currentPropertyKey };
+                                                    })
+                                                    .reduce((acc, curr) => ({ ...acc, ...curr }), {});
+                                                importConfig.setHeadersMapping(
+                                                    newHeadersMapping as Record<string, string>,
+                                                );
 
-                {step === "initial" && <>
-                    <Typography variant={"body2"}>Upload a CSV, Excel or JSON file and map it to your existing
-                        schema</Typography>
-                    <ImportFileUpload onDataAdded={onDataAdded}/>
-                </>}
+                                                if (newPropertyKey === importConfig.idColumn) {
+                                                    importConfig.setIdColumn(undefined);
+                                                }
+                                            }}
+                                        />
+                                    );
+                                }}
+                            />
+                        </>
+                    )}
 
-                {step === "mapping" && <>
-                    <DataNewPropertiesMapping importConfig={importConfig}
-                                              destinationProperties={properties}
-                                              buildPropertyView={({
-                                                                      isIdColumn,
-                                                                      property,
-                                                                      propertyKey,
-                                                                      importKey,
-                                                                  }) => {
-                                                  return <PropertyTreeSelect
-                                                      selectedPropertyKey={propertyKey ?? ""}
-                                                      properties={properties}
-                                                      propertiesAndLevel={propertiesAndLevel}
-                                                      isIdColumn={isIdColumn}
-                                                      onIdSelected={() => {
-                                                          importConfig.setIdColumn(importKey);
-                                                      }}
-                                                      onPropertySelected={(newPropertyKey) => {
+                    {step === "preview" && (
+                        <ImportDataPreview
+                            importConfig={importConfig}
+                            properties={properties}
+                            propertiesOrder={propertiesOrder}
+                        />
+                    )}
 
-                                                          onAnalyticsEvent?.("import_mapping_field_updated");
-                                                          const newHeadersMapping: Record<string, string | null> = Object.entries(importConfig.headersMapping)
-                                                              .map(([currentImportKey, currentPropertyKey]) => {
-                                                                  if (currentPropertyKey === newPropertyKey) {
-                                                                      return { [currentImportKey]: null };
-                                                                  }
-                                                                  if (currentImportKey === importKey) {
-                                                                      return { [currentImportKey]: newPropertyKey };
-                                                                  }
-                                                                  return { [currentImportKey]: currentPropertyKey };
-                                                              })
-                                                              .reduce((acc, curr) => ({ ...acc, ...curr }), {});
-                                                          importConfig.setHeadersMapping(newHeadersMapping as Record<string, string>);
+                    {step === "import_data_saving" && importConfig && (
+                        <ImportSaveInProgress
+                            importConfig={importConfig}
+                            collection={collection}
+                            path={path}
+                            onImportSuccess={(importedCollection) => {
+                                handleClose();
+                                snackbarController.open({
+                                    type: "info",
+                                    message: "Data imported successfully",
+                                });
+                            }}
+                        />
+                    )}
+                </DialogContent>
+                <DialogActions>
+                    {step === "mapping" && (
+                        <Button onClick={() => setStep("initial")} variant={"text"}>
+                            Back
+                        </Button>
+                    )}
 
-                                                          if (newPropertyKey === importConfig.idColumn) {
-                                                              importConfig.setIdColumn(undefined);
-                                                          }
+                    {step === "preview" && (
+                        <Button onClick={() => setStep("mapping")} variant={"text"}>
+                            Back
+                        </Button>
+                    )}
 
-                                                      }}
-                                                  />;
-                                              }}/>
-                </>}
+                    <Button onClick={handleClose} variant={"text"}>
+                        Cancel
+                    </Button>
 
-                {step === "preview" && <ImportDataPreview importConfig={importConfig}
-                                                          properties={properties}
-                                                          propertiesOrder={propertiesOrder}/>}
+                    {step === "mapping" && (
+                        <Button variant="filled" onClick={onMappingComplete}>
+                            Next
+                        </Button>
+                    )}
 
-                {step === "import_data_saving" && importConfig &&
-                    <ImportSaveInProgress importConfig={importConfig}
-                                          collection={collection}
-                                          path={path}
-                                          onImportSuccess={(importedCollection) => {
-                                              handleClose();
-                                              snackbarController.open({
-                                                  type: "info",
-                                                  message: "Data imported successfully"
-                                              });
-                                          }}
-                    />}
-
-            </DialogContent>
-            <DialogActions>
-
-                {step === "mapping" && <Button onClick={() => setStep("initial")}
-                                               variant={"text"}>
-                    Back
-                </Button>}
-
-                {step === "preview" && <Button onClick={() => setStep("mapping")}
-                                               variant={"text"}>
-                    Back
-                </Button>}
-
-                <Button onClick={handleClose}
-                        variant={"text"}>
-                    Cancel
-                </Button>
-
-                {step === "mapping" && <Button variant="filled"
-                                               onClick={onMappingComplete}>
-                    Next
-                </Button>}
-
-                {step === "preview" && <Button variant="filled"
-                                               onClick={onPreviewComplete}>
-                    Save data
-                </Button>}
-
-            </DialogActions>
-        </Dialog>
-
-    </>;
+                    {step === "preview" && (
+                        <Button variant="filled" onClick={onPreviewComplete}>
+                            Save data
+                        </Button>
+                    )}
+                </DialogActions>
+            </Dialog>
+        </>
+    );
 }
 
 const internalIDValue = "__internal_id__";
 
 function PropertyTreeSelect({
-                                selectedPropertyKey,
-                                properties,
-                                onPropertySelected,
-                                onIdSelected,
-                                propertiesAndLevel,
-                                isIdColumn
-                            }: {
+    selectedPropertyKey,
+    properties,
+    onPropertySelected,
+    onIdSelected,
+    propertiesAndLevel,
+    isIdColumn,
+}: {
     selectedPropertyKey: string | null;
     properties: Record<string, Property>;
     onPropertySelected: (propertyKey: string | null) => void;
@@ -251,23 +265,30 @@ function PropertyTreeSelect({
     propertiesAndLevel: PropertyAndLevel[];
     isIdColumn?: boolean;
 }) {
-
     const selectedProperty = selectedPropertyKey ? getPropertyInPath(properties, selectedPropertyKey) : null;
 
-    const renderValue = useCallback((selectedPropertyKey: string) => {
+    const renderValue = useCallback(
+        (selectedPropertyKey: string) => {
+            if (selectedPropertyKey === internalIDValue) {
+                return (
+                    <Typography variant={"body2"} className={"p-4"}>
+                        Use this column as ID
+                    </Typography>
+                );
+            }
 
-        if (selectedPropertyKey === internalIDValue) {
-            return <Typography variant={"body2"} className={"p-4"}>Use this column as ID</Typography>;
-        }
+            if (!selectedPropertyKey || !selectedProperty) {
+                return (
+                    <Typography variant={"body2"} color="disabled" className={"p-4"}>
+                        Do not import this property
+                    </Typography>
+                );
+            }
 
-        if (!selectedPropertyKey || !selectedProperty) {
-            return <Typography variant={"body2"} color="disabled" className={"p-4"}>Do not import this
-                property</Typography>;
-        }
-
-        return <PropertySelectEntry propertyKey={selectedPropertyKey}
-                                    property={selectedProperty as Property}/>;
-    }, [selectedProperty]);
+            return <PropertySelectEntry propertyKey={selectedPropertyKey} property={selectedProperty as Property} />;
+        },
+        [selectedProperty],
+    );
 
     const onSelectValueChange = (value: string) => {
         if (value === internalIDValue) {
@@ -280,41 +301,41 @@ function PropertyTreeSelect({
         }
     };
 
-    return <Select value={isIdColumn ? internalIDValue : (selectedPropertyKey ?? undefined)}
-                   size={"large"}
-                   fullWidth={true}
-                   onValueChange={onSelectValueChange}
-                   renderValue={renderValue}>
+    return (
+        <Select
+            value={isIdColumn ? internalIDValue : (selectedPropertyKey ?? undefined)}
+            size={"large"}
+            fullWidth={true}
+            onValueChange={onSelectValueChange}
+            renderValue={renderValue}
+        >
+            <SelectItem value={"__do_not_import"}>
+                <Typography variant={"body2"} color={"disabled"} className={"p-4"}>
+                    Do not import this property
+                </Typography>
+            </SelectItem>
 
-        <SelectItem value={"__do_not_import"}>
-            <Typography variant={"body2"} color={"disabled"} className={"p-4"}>Do not import this property</Typography>
-        </SelectItem>
+            <SelectItem value={internalIDValue}>
+                <Typography variant={"body2"} className={"p-4"}>
+                    Use this column as ID
+                </Typography>
+            </SelectItem>
 
-        <SelectItem value={internalIDValue}>
-            <Typography variant={"body2"} className={"p-4"}>Use this column as ID</Typography>
-        </SelectItem>
-
-        {propertiesAndLevel.map(({
-                                     property,
-                                     level,
-                                     propertyKey
-                                 }) => {
-            return <SelectItem value={propertyKey}
-                               key={propertyKey}
-                               disabled={property.dataType === "map"}>
-                <PropertySelectEntry propertyKey={propertyKey}
-                                     property={property}
-                                     level={level}/>
-            </SelectItem>;
-        })}
-
-    </Select>;
+            {propertiesAndLevel.map(({ property, level, propertyKey }) => {
+                return (
+                    <SelectItem value={propertyKey} key={propertyKey} disabled={property.dataType === "map"}>
+                        <PropertySelectEntry propertyKey={propertyKey} property={property} level={level} />
+                    </SelectItem>
+                );
+            })}
+        </Select>
+    );
 }
 
 type PropertyAndLevel = {
-    property: Property,
-    level: number,
-    propertyKey: string
+    property: Property;
+    level: number;
+    propertyKey: string;
 };
 
 function getPropertiesAndLevel(key: string, property: Property, level: number): PropertyAndLevel[] {
@@ -322,7 +343,7 @@ function getPropertiesAndLevel(key: string, property: Property, level: number): 
     properties.push({
         property,
         level,
-        propertyKey: key
+        propertyKey: key,
     });
     if (property.dataType === "map" && property.properties) {
         Object.entries(property.properties).forEach(([childKey, value]) => {
@@ -333,87 +354,91 @@ function getPropertiesAndLevel(key: string, property: Property, level: number): 
 }
 
 export function PropertySelectEntry({
-                                        propertyKey,
-                                        property,
-                                        level = 0
-                                    }: {
+    propertyKey,
+    property,
+    level = 0,
+}: {
     propertyKey: string;
     property: Property;
     level?: number;
 }) {
-
     const { propertyConfigs } = useCustomizationController();
     const widget = getFieldConfig(property, propertyConfigs);
 
-    return <div
-        className="flex flex-row w-full text-start items-center h-full">
+    return (
+        <div className="flex flex-row w-full text-start items-center h-full">
+            {new Array(level).fill(0).map((_, index) => (
+                <div className={cls(defaultBorderMixin, "ml-8 border-l h-12")} key={index} />
+            ))}
 
-        {new Array(level).fill(0).map((_, index) =>
-            <div className={cls(defaultBorderMixin, "ml-8 border-l h-12")} key={index}/>)}
+            <div className={"m-4"}>
+                <Tooltip title={widget?.name}>
+                    <PropertyConfigBadge propertyConfig={widget} />
+                </Tooltip>
+            </div>
 
-        <div className={"m-4"}>
-            <Tooltip title={widget?.name}>
-                <PropertyConfigBadge propertyConfig={widget}/>
-            </Tooltip>
+            <div className={"flex flex-col flex-grow p-2 pl-2"}>
+                <Typography variant="body1" component="span" className="flex-grow pr-2">
+                    {property.name ? property.name : "\u00a0"}
+                </Typography>
+
+                <Typography className=" pr-2" variant={"body2"} component="span" color="secondary">
+                    {propertyKey}
+                </Typography>
+            </div>
         </div>
-
-        <div className={"flex flex-col flex-grow p-2 pl-2"}>
-            <Typography variant="body1"
-                        component="span"
-                        className="flex-grow pr-2">
-                {property.name
-                    ? property.name
-                    : "\u00a0"
-                }
-            </Typography>
-
-            <Typography className=" pr-2"
-                        variant={"body2"}
-                        component="span"
-                        color="secondary">
-                {propertyKey}
-            </Typography>
-        </div>
-
-    </div>;
-
+    );
 }
 
 export function ImportDataPreview<M extends Record<string, any>>({
-                                                                     importConfig,
-                                                                     properties,
-                                                                     propertiesOrder
-                                                                 }: {
-    importConfig: ImportConfig,
-    properties: ResolvedProperties<M>,
-    propertiesOrder: Extract<keyof M, string>[],
+    importConfig,
+    properties,
+    propertiesOrder,
+}: {
+    importConfig: ImportConfig;
+    properties: ResolvedProperties<M>;
+    propertiesOrder: Extract<keyof M, string>[];
 }) {
     const authController = useAuthController();
     useEffect(() => {
-        const mappedData = importConfig.importData.map(d => convertDataToEntity(authController, d, importConfig.idColumn, importConfig.headersMapping, properties, "TEMP_PATH", importConfig.defaultValues));
+        const mappedData = importConfig.importData.map((d) =>
+            convertDataToEntity(
+                authController,
+                d,
+                importConfig.idColumn,
+                importConfig.headersMapping,
+                properties,
+                "TEMP_PATH",
+                importConfig.defaultValues,
+            ),
+        );
         importConfig.setEntities(mappedData);
     }, []);
 
     const selectionController = useSelectionController();
 
-    return <EntityCollectionTable
-        title={<div>
-            <Typography variant={"subtitle2"}>Imported data preview</Typography>
-            <Typography variant={"caption"}>Entities with the same id will be overwritten</Typography>
-        </div>}
-        tableController={{
-            data: importConfig.entities,
-            dataLoading: false,
-            noMoreToLoad: false
-        }}
-        enablePopupIcon={false}
-        endAdornment={<div className={"h-12"}/>}
-        filterable={false}
-        sortable={false}
-        openEntityMode={"full_screen"}
-        selectionController={selectionController}
-        properties={properties}/>
-
+    return (
+        <EntityCollectionTable
+            title={
+                <div>
+                    <Typography variant={"subtitle2"}>Imported data preview</Typography>
+                    <Typography variant={"caption"}>Entities with the same id will be overwritten</Typography>
+                </div>
+            }
+            tableController={{
+                data: importConfig.entities,
+                dataLoading: false,
+                noMoreToLoad: false,
+            }}
+            enablePopupIcon={false}
+            endAdornment={<div className={"h-12"} />}
+            filterable={false}
+            sortable={false}
+            openEntityMode={"full_screen"}
+            selectionController={selectionController}
+            properties={properties}
+        />
+    );
 }
 
 function buildHeadersMappingFromData(objArr: object[], properties?: PropertiesOrBuilders<any>) {
@@ -424,7 +449,8 @@ function buildHeadersMappingFromData(objArr: object[], properties?: PropertiesOr
             const child = obj[key];
             if (typeof child === "object" && !Array.isArray(child)) {
                 const childProperty = properties?.[key];
-                const childProperties = childProperty && "properties" in childProperty ? childProperty.properties : undefined;
+                const childProperties =
+                    childProperty && "properties" in childProperty ? childProperty.properties : undefined;
                 const childHeadersMapping = buildHeadersMappingFromData([child], childProperties);
                 Object.entries(childHeadersMapping).forEach(([subKey, mapping]) => {
                     headersMapping[`${key}.${subKey}`] = `${key}.${mapping}`;
@@ -443,7 +469,6 @@ function buildHeadersMappingFromData(objArr: object[], properties?: PropertiesOr
                     headersMapping[key] = key;
                 }
             }
-
         });
     });
     return headersMapping;

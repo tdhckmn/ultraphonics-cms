@@ -32,7 +32,11 @@ export interface Permissions {
  * Props passed to a {@link PermissionsBuilder}
  * @group Models
  */
-export interface PermissionsBuilderProps<EC extends EntityCollection = EntityCollection, USER extends User = User, M extends object = InferCollectionType<EC>> {
+export interface PermissionsBuilderProps<
+    EC extends EntityCollection = EntityCollection,
+    USER extends User = User,
+    M extends object = InferCollectionType<EC>,
+> {
     /**
      * Entity being edited, might be null in some cases, when the operation
      * refers to the collection.
@@ -72,10 +76,13 @@ export interface PermissionsBuilderProps<EC extends EntityCollection = EntityCol
  * based on the logged user or collection.
  * @group Models
  */
-export type PermissionsBuilder<EC extends EntityCollection = EntityCollection, USER extends User = User, M extends object = InferCollectionType<EC>> =
-    (({
-          pathSegments,
-          user,
-          collection,
-          authController
-      }: PermissionsBuilderProps<EC, USER, M>) => Permissions | undefined);
+export type PermissionsBuilder<
+    EC extends EntityCollection = EntityCollection,
+    USER extends User = User,
+    M extends object = InferCollectionType<EC>,
+> = ({
+    pathSegments,
+    user,
+    collection,
+    authController,
+}: PermissionsBuilderProps<EC, USER, M>) => Permissions | undefined;

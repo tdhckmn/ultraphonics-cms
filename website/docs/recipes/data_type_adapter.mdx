@@ -19,6 +19,7 @@ FireCMS are based on the data type defined in your collection properties:
     dataType: "date",
 }
 ```
+
 > In this example, all fields related to created on will be displayed as a date picker, including tables,
 > forms, detail, and filter views.
 
@@ -36,7 +37,7 @@ to display this date as a human-readable date in the CMS.
 export type Exercise = {
     name: string;
     createdOn: Date;
-}
+};
 ```
 
 ### Converting data types when reading from the database
@@ -45,21 +46,16 @@ You can use the `onFetch` callback to convert the data type when reading from th
 a Unix timestamp to a date:
 
 ```typescript
-import {EntityCallbacks, EntityOnFetchProps} from "@firecms/core";
+import { EntityCallbacks, EntityOnFetchProps } from "@firecms/core";
 
 const exerciseCallbacks: EntityCallbacks = {
-    onFetch({
-                collection,
-                context,
-                entity,
-                path
-            }: EntityOnFetchProps) {
+    onFetch({ collection, context, entity, path }: EntityOnFetchProps) {
         const values = entity.values;
         if (values.createdOn) {
             values.createdOn = new Date(values.createdOn);
         }
         return entity;
-    }
+    },
 };
 ```
 
@@ -69,22 +65,15 @@ You can use the `onPreSave` callback to convert the data type when saving to the
 you can convert a date to a Unix timestamp:
 
 ```typescript
-import {EntityCallbacks} from "@firecms/core";
+import { EntityCallbacks } from "@firecms/core";
 
 const exerciseCallbacks: EntityCallbacks = {
-    onPreSave: ({
-                    collection,
-                    path,
-                    entityId,
-                    values,
-                    status,
-                    context
-                }) => {
+    onPreSave: ({ collection, path, entityId, values, status, context }) => {
         if (values.createdOn) {
             values.createdOn = values.createdOn.getTime();
         }
         return values;
-    }
+    },
 };
 ```
 
@@ -93,34 +82,27 @@ const exerciseCallbacks: EntityCallbacks = {
 You can use the `exerciseCallbacks` in your collection definition:
 
 ```typescript
-import {buildCollection, EntityCallbacks, EntityCollection, EntityOnFetchProps} from "@firecms/core";
+import {
+    buildCollection,
+    EntityCallbacks,
+    EntityCollection,
+    EntityOnFetchProps,
+} from "@firecms/core";
 
 const exerciseCallbacks: EntityCallbacks = {
-    onFetch({
-                collection,
-                context,
-                entity,
-                path
-            }: EntityOnFetchProps) {
+    onFetch({ collection, context, entity, path }: EntityOnFetchProps) {
         const values = entity.values;
         if (values.createdOn) {
             values.createdOn = new Date(values.createdOn);
         }
         return entity;
     },
-    onPreSave: ({
-                    collection,
-                    path,
-                    entityId,
-                    values,
-                    status,
-                    context
-                }) => {
+    onPreSave: ({ collection, path, entityId, values, status, context }) => {
         if (values.createdOn) {
             values.createdOn = values.createdOn.getTime();
         }
         return values;
-    }
+    },
 };
 
 // in order to use this collection with callbacks, add it to the collection definitions in the main app configuration
@@ -133,17 +115,16 @@ export const exerciseCollection: EntityCollection = buildCollection({
             title: "Name",
             dataType: "string",
             validation: {
-                required: true
-            }
+                required: true,
+            },
         },
         createdOn: {
             title: "Created on",
             dataType: "date", // this is the data type that will define the created views
             validation: {
-                required: true
-            }
-        }
-    }
+                required: true,
+            },
+        },
+    },
 });
 ```
-

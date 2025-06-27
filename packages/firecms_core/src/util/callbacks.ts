@@ -4,7 +4,6 @@ export const mergeCallbacks = (
     baseCallbacks: EntityCallbacks = {},
     pluginCallbacks: EntityCallbacks = {}
 ): EntityCallbacks | undefined => {
-
     if (!baseCallbacks && !pluginCallbacks) {
         return undefined;
     }
@@ -19,10 +18,12 @@ export const mergeCallbacks = (
                 entity = await Promise.resolve(baseCallbacks.onFetch(props));
             }
             if (pluginCallbacks.onFetch) {
-                entity = await Promise.resolve(pluginCallbacks.onFetch({
-                    ...props,
-                    entity
-                }));
+                entity = await Promise.resolve(
+                    pluginCallbacks.onFetch({
+                        ...props,
+                        entity,
+                    })
+                );
             }
             return entity;
         };
@@ -61,10 +62,12 @@ export const mergeCallbacks = (
                 values = { ...values, ...baseValues };
             }
             if (pluginCallbacks.onPreSave) {
-                const pluginValues = await Promise.resolve(pluginCallbacks.onPreSave({
-                    ...props,
-                    values
-                }));
+                const pluginValues = await Promise.resolve(
+                    pluginCallbacks.onPreSave({
+                        ...props,
+                        values,
+                    })
+                );
                 values = { ...values, ...pluginValues };
             }
             return values;
@@ -105,10 +108,12 @@ export const mergeCallbacks = (
             }
 
             if (pluginCallbacks.onIdUpdate) {
-                id = await Promise.resolve(pluginCallbacks.onIdUpdate({
-                    ...props,
-                    entityId: id
-                }));
+                id = await Promise.resolve(
+                    pluginCallbacks.onIdUpdate({
+                        ...props,
+                        entityId: id,
+                    })
+                );
             }
 
             return id;

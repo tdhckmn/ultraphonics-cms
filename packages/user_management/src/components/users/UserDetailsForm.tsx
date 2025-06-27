@@ -22,12 +22,18 @@ import { RoleChip } from "../roles";
 export const UserYupSchema = Yup.object().shape({
     displayName: Yup.string().required("Required"),
     email: Yup.string().email().required("Required"),
-    roles: Yup.array().min(1)
+    roles: Yup.array().min(1),
 });
 
-function canUserBeEdited(loggedUser: User, user: User, users: User[], roles: Role[], prevUser?: User) {
-    const admins = users.filter(u => u.roles?.map(r => r.id).includes("admin"));
-    const loggedUserIsAdmin = loggedUser.roles?.map(r => r.id).includes("admin");
+function canUserBeEdited(
+    loggedUser: User,
+    user: User,
+    users: User[],
+    roles: Role[],
+    prevUser?: User
+) {
+    const admins = users.filter((u) => u.roles?.map((r) => r.id).includes("admin"));
+    const loggedUserIsAdmin = loggedUser.roles?.map((r) => r.id).includes("admin");
     const didRolesChange = !prevUser || !areRolesEqual(prevUser.roles ?? [], user.roles ?? []);
 
     if (didRolesChange && !loggedUserIsAdmin) {
@@ -35,7 +41,10 @@ function canUserBeEdited(loggedUser: User, user: User, users: User[], roles: Rol
     }
 
     // was the admin role removed
-    const adminRoleRemoved = prevUser && prevUser.roles?.map(r => r.id).includes("admin") && !user.roles?.map(r => r.id).includes("admin");
+    const adminRoleRemoved =
+        prevUser &&
+        prevUser.roles?.map((r) => r.id).includes("admin") &&
+        !user.roles?.map((r) => r.id).includes("admin");
 
     // avoid removing the last admin
     if (adminRoleRemoved && admins.length === 1) {
@@ -45,49 +54,48 @@ function canUserBeEdited(loggedUser: User, user: User, users: User[], roles: Rol
 }
 
 export function UserDetailsForm({
-                                    open,
-                                    user: userProp,
-                                    handleClose
-                                }: {
-    open: boolean,
-    user?: User,
-    handleClose: () => void
+    open,
+    user: userProp,
+    handleClose,
+}: {
+    open: boolean;
+    user?: User;
+    handleClose: () => void;
 }) {
-
     const snackbarController = useSnackbarController();
-    const {
-        user: loggedInUser
-    } = useAuthController();
-    const {
-        saveUser,
-        users,
-        roles,
-    } = useUserManagement();
+    const { user: loggedInUser } = useAuthController();
+    const { saveUser, users, roles } = useUserManagement();
     const isNewUser = !userProp;
 
-    const onUserUpdated = useCallback((savedUser: User): Promise<User> => {
-        if (!loggedInUser) {
-            throw new Error("Logged user not found");
-        }
-        try {
-            canUserBeEdited(loggedInUser, savedUser, users, roles, userProp);
-            return saveUser(savedUser);
-        } catch (e: any) {
-            return Promise.reject(e);
-        }
-    }, [roles, saveUser, userProp, users, loggedInUser]);
+    const onUserUpdated = useCallback(
+        (savedUser: User): Promise<User> => {
+            if (!loggedInUser) {
+                throw new Error("Logged user not found");
+            }
+            try {
+                canUserBeEdited(loggedInUser, savedUser, users, roles, userProp);
+                return saveUser(savedUser);
+            } catch (e: any) {
+                return Promise.reject(e);
+            }
+        },
+        [roles, saveUser, userProp, users, loggedInUser]
+    );
 
     const formex = useCreateFormex({
-        initialValues: userProp ?? {
-            displayName: "",
-            email: "",
-            roles: roles.filter(r => r.id === "editor")
-        } as User,
+        initialValues:
+            userProp ??
+            ({
+                displayName: "",
+                email: "",
+                roles: roles.filter((r) => r.id === "editor"),
+            } as User),
         validation: (values) => {
             return UserYupSchema.validate(values, { abortEarly: false })
                 .then(() => {
                     return {};
-                }).catch((e) => {
+                })
+                .catch((e) => {
                     return e.inner.reduce((acc: any, error: any) => {
                         acc[error.path] = error.message;
                         return acc;
@@ -95,20 +103,20 @@ export function UserDetailsForm({
                 });
         },
         onSubmit: (user: User, formexController) => {
-
             return onUserUpdated(user)
                 .then(() => {
                     handleClose();
                     formexController.resetForm({
-                        values: user
+                        values: user,
                     });
-                }).catch((e) => {
+                })
+                .catch((e) => {
                     snackbarController.open({
                         type: "error",
-                        message: e.message
+                        message: e.message,
                     });
                 });
-        }
+        },
     });
 
     const {
@@ -120,13 +128,13 @@ export function UserDetailsForm({
         setFieldValue,
         dirty,
         handleSubmit,
-        submitCount
+        submitCount,
     } = formex;
 
     return (
         <Dialog
             open={open}
-            onOpenChange={(open) => !open ? handleClose() : undefined}
+            onOpenChange={(open) => (!open ? handleClose() : undefined)}
             maxWidth={"4xl"}
         >
             <Formex value={formex}>
@@ -138,16 +146,14 @@ export function UserDetailsForm({
                         display: "flex",
                         flexDirection: "column",
                         position: "relative",
-                        height: "100%"
-                    }}>
-
+                        height: "100%",
+                    }}
+                >
                     <DialogTitle variant={"h4"} gutterBottom={false}>
                         User
                     </DialogTitle>
                     <DialogContent className="h-full flex-grow">
-
                         <div className={"grid grid-cols-12 gap-8"}>
-
                             <div className={"col-span-12"}>
                                 <TextField
                                     name="displayName"
@@ -159,7 +165,9 @@ export function UserDetailsForm({
                                     label="Name"
                                 />
                                 <FieldCaption>
-                                    {submitCount > 0 && Boolean(errors.displayName) ? errors.displayName : "Name of this user"}
+                                    {submitCount > 0 && Boolean(errors.displayName)
+                                        ? errors.displayName
+                                        : "Name of this user"}
                                 </FieldCaption>
                             </div>
                             <div className={"col-span-12"}>
@@ -173,15 +181,24 @@ export function UserDetailsForm({
                                     label="Email"
                                 />
                                 <FieldCaption>
-                                    {submitCount > 0 && Boolean(errors.email) ? errors.email : "Email of this user"}
+                                    {submitCount > 0 && Boolean(errors.email)
+                                        ? errors.email
+                                        : "Email of this user"}
                                 </FieldCaption>
                             </div>
                             <div className={"col-span-12"}>
                                 <MultiSelect
                                     className={"w-full"}
                                     label="Roles"
-                                    value={values.roles?.map(r => r.id) ?? []}
-                                    onValueChange={(value: string[]) => setFieldValue("roles", value.map(id => roles.find(r => r.id === id) as Role))}
+                                    value={values.roles?.map((r) => r.id) ?? []}
+                                    onValueChange={(value: string[]) =>
+                                        setFieldValue(
+                                            "roles",
+                                            value.map(
+                                                (id) => roles.find((r) => r.id === id) as Role
+                                            )
+                                        )
+                                    }
                                     // renderValue={(value: string) => {
                                     //     const userRole = roles
                                     //         .find((role) => role.id === value);
@@ -191,23 +208,23 @@ export function UserDetailsForm({
                                     //     </div>;
                                     // }}
                                 >
-                                    {roles.map(userRole => <MultiSelectItem key={userRole.id}
-                                                                            value={userRole.id}>
-                                        <RoleChip key={userRole?.id} role={userRole}/>
-                                    </MultiSelectItem>)}
+                                    {roles.map((userRole) => (
+                                        <MultiSelectItem key={userRole.id} value={userRole.id}>
+                                            <RoleChip key={userRole?.id} role={userRole} />
+                                        </MultiSelectItem>
+                                    ))}
                                 </MultiSelect>
                             </div>
-
                         </div>
-
                     </DialogContent>
 
                     <DialogActions>
-
-                        <Button variant={"text"}
-                                onClick={() => {
-                                    handleClose();
-                                }}>
+                        <Button
+                            variant={"text"}
+                            onClick={() => {
+                                handleClose();
+                            }}
+                        >
                             Cancel
                         </Button>
 
@@ -217,14 +234,13 @@ export function UserDetailsForm({
                             type="submit"
                             disabled={!dirty}
                             loading={isSubmitting}
-                            startIcon={<CheckIcon/>}
+                            startIcon={<CheckIcon />}
                         >
                             {isNewUser ? "Create user" : "Update"}
                         </LoadingButton>
                     </DialogActions>
                 </form>
             </Formex>
-
         </Dialog>
     );
 }

@@ -4,18 +4,18 @@ import {
     joinCollectionLists,
     makePropertiesEditable,
     ModifyCollectionProps,
-    Properties
+    Properties,
 } from "@firecms/core";
 import { PersistedCollection } from "../types/persisted_collection";
 
 /**
  * Function in charge of merging collections defined in code with those stored in the backend.
  */
-export const mergeCollections = (baseCollections: EntityCollection[],
-                                 backendCollections: PersistedCollection[] = [],
-                                 modifyCollection?: (props: ModifyCollectionProps) => EntityCollection | void
+export const mergeCollections = (
+    baseCollections: EntityCollection[],
+    backendCollections: PersistedCollection[] = [],
+    modifyCollection?: (props: ModifyCollectionProps) => EntityCollection | void,
 ) => {
-
     const markAsEditable = (c: PersistedCollection) => {
         makePropertiesEditable(c.properties as Properties);
         c.subcollections?.forEach(markAsEditable);
@@ -27,8 +27,8 @@ export const mergeCollections = (baseCollections: EntityCollection[],
 
     // sort the collections so they are in the same order as the base collections
     result.sort((a, b) => {
-        const indexA = baseCollections.findIndex(c => c.id === a.id);
-        const indexB = baseCollections.findIndex(c => c.id === b.id);
+        const indexA = baseCollections.findIndex((c) => c.id === a.id);
+        const indexB = baseCollections.findIndex((c) => c.id === b.id);
 
         if (indexA === -1 && indexB === -1) {
             return 0; // Keep original order for items not in baseCollections
@@ -43,4 +43,4 @@ export const mergeCollections = (baseCollections: EntityCollection[],
     });
 
     return result;
-}
+};

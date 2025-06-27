@@ -31,31 +31,31 @@ type TableCellInnerProps = {
     faded: boolean;
     fullHeight: boolean;
     children: React.ReactNode;
-}
+};
 
 const TableCellInner = ({
-                            justifyContent,
-                            scrollable,
-                            faded,
-                            fullHeight,
-                            children
-                        }: TableCellInnerProps) => {
+    justifyContent,
+    scrollable,
+    faded,
+    fullHeight,
+    children,
+}: TableCellInnerProps) => {
     return (
-        <div className={cls("flex flex-col max-h-full w-full",
-            {
-                "items-start": faded || scrollable
+        <div
+            className={cls("flex flex-col max-h-full w-full", {
+                "items-start": faded || scrollable,
             })}
-             style={{
-                 justifyContent,
-                 height: fullHeight ? "100%" : undefined,
-                 overflow: scrollable ? "auto" : undefined,
-                 WebkitMaskImage: faded
-                     ? "linear-gradient(to bottom, black 60%, transparent 100%)"
-                     : undefined,
-                 maskImage: faded
-                     ? "linear-gradient(to bottom, black 60%, transparent 100%)"
-                     : undefined
-             }}
+            style={{
+                justifyContent,
+                height: fullHeight ? "100%" : undefined,
+                overflow: scrollable ? "auto" : undefined,
+                WebkitMaskImage: faded
+                    ? "linear-gradient(to bottom, black 60%, transparent 100%)"
+                    : undefined,
+                maskImage: faded
+                    ? "linear-gradient(to bottom, black 60%, transparent 100%)"
+                    : undefined,
+            }}
         >
             {children}
         </div>
@@ -64,21 +64,20 @@ const TableCellInner = ({
 
 export const DataTableCell = React.memo<DataTableCellProps>(
     function DataTableCell({
-                                 children,
-                                 actions,
-                                 selected,
-                                 disabled,
-                                 disabledTooltip,
-                                 saved,
-                                 error,
-                                 align = "left",
-                                 allowScroll,
-                                 fullHeight,
-                                 onSelect,
-                                 width,
-                                 hideOverflow = true,
-                             }: DataTableCellProps) {
-
+        children,
+        actions,
+        selected,
+        disabled,
+        disabledTooltip,
+        saved,
+        error,
+        align = "left",
+        allowScroll,
+        fullHeight,
+        onSelect,
+        width,
+        hideOverflow = true,
+    }: DataTableCellProps) {
         const [measureRef, bounds] = useMeasure();
         const ref = useRef<HTMLDivElement>(null);
 
@@ -132,11 +131,14 @@ export const DataTableCell = React.memo<DataTableCellProps>(
             }
         }, [ref, onSelect, selected, disabled]);
 
-        const onFocus = useCallback((event: React.SyntheticEvent<HTMLDivElement>) => {
-            event.stopPropagation();
-            event.preventDefault();
-            onSelectCallback();
-        }, [onSelectCallback]);
+        const onFocus = useCallback(
+            (event: React.SyntheticEvent<HTMLDivElement>) => {
+                event.stopPropagation();
+                event.preventDefault();
+                onSelectCallback();
+            },
+            [onSelectCallback]
+        );
 
         const isOverflowing = useMemo(() => {
             if (bounds) {
@@ -156,10 +158,10 @@ export const DataTableCell = React.memo<DataTableCellProps>(
         const borderClass = showError
             ? "border-red-500"
             : internalSaved
-                ? "border-green-500"
-                : isSelected
-                    ? "border-primary"
-                    : "border-transparent";
+              ? "border-green-500"
+              : isSelected
+                ? "border-primary"
+                : "border-transparent";
 
         return (
             <div
@@ -168,7 +170,9 @@ export const DataTableCell = React.memo<DataTableCellProps>(
                     "transition-colors duration-100 ease-in-out",
                     `flex relative h-full rounded-md p-${p} border-4  border-opacity-75`,
                     onHover && !disabled ? "bg-surface-50 dark:bg-surface-900" : "",
-                    saved ? "bg-surface-100 bg-opacity-75 dark:bg-surface-800 dark:bg-opacity-75" : "",
+                    saved
+                        ? "bg-surface-100 bg-opacity-75 dark:bg-surface-800 dark:bg-opacity-75"
+                        : "",
                     hideOverflow ? "overflow-hidden" : "",
                     isSelected ? "bg-surface-50 dark:bg-surface-900" : "",
                     borderClass
@@ -178,7 +182,7 @@ export const DataTableCell = React.memo<DataTableCellProps>(
                     justifyContent,
                     alignItems: disabled || !isOverflowing ? "center" : undefined,
                     width: width ?? "100%",
-                    textAlign: align
+                    textAlign: align,
                 }}
                 tabIndex={selected || disabled ? undefined : 0}
                 onFocus={onFocus}
@@ -186,43 +190,52 @@ export const DataTableCell = React.memo<DataTableCellProps>(
                 onMouseMove={setOnHoverTrue}
                 onMouseLeave={setOnHoverFalse}
             >
-
                 <ErrorBoundary>
-
                     {fullHeight && !faded && children}
 
-                    {(!fullHeight || faded) && <TableCellInner
-                        fullHeight={fullHeight ?? false}
-                        justifyContent={justifyContent}
-                        scrollable={scrollable ?? false}
-                        faded={faded}>
-
-                        {!fullHeight && <div ref={measureRef}
-                                             style={{
-                                                 display: "flex",
-                                                 width: "100%",
-                                                 justifyContent,
-                                                 height: fullHeight ? "100%" : undefined
-                                             }}>
-                            {children}
-                        </div>}
-
-                    </TableCellInner>}
+                    {(!fullHeight || faded) && (
+                        <TableCellInner
+                            fullHeight={fullHeight ?? false}
+                            justifyContent={justifyContent}
+                            scrollable={scrollable ?? false}
+                            faded={faded}
+                        >
+                            {!fullHeight && (
+                                <div
+                                    ref={measureRef}
+                                    style={{
+                                        display: "flex",
+                                        width: "100%",
+                                        justifyContent,
+                                        height: fullHeight ? "100%" : undefined,
+                                    }}
+                                >
+                                    {children}
+                                </div>
+                            )}
+                        </TableCellInner>
+                    )}
                 </ErrorBoundary>
 
                 {actions}
 
-                {disabled && onHover && disabledTooltip &&
+                {disabled && onHover && disabledTooltip && (
                     <div className="absolute top-1 right-1 text-xs">
                         <Tooltip title={disabledTooltip}>
-                            <RemoveCircleIcon size={"smallest"} color={"disabled"} className={"text-surface-500"}/>
+                            <RemoveCircleIcon
+                                size={"smallest"}
+                                color={"disabled"}
+                                className={"text-surface-500"}
+                            />
                         </Tooltip>
-                    </div>}
-
+                    </div>
+                )}
             </div>
         );
-    }, (a, b) => {
-        return a.error === b.error &&
+    },
+    (a, b) => {
+        return (
+            a.error === b.error &&
             a.value === b.value &&
             a.disabled === b.disabled &&
             a.saved === b.saved &&
@@ -231,5 +244,7 @@ export const DataTableCell = React.memo<DataTableCellProps>(
             a.disabledTooltip === b.disabledTooltip &&
             a.width === b.width &&
             a.fullHeight === b.fullHeight &&
-            a.selected === b.selected;
-    }) as React.FunctionComponent<DataTableCellProps>;
+            a.selected === b.selected
+        );
+    }
+) as React.FunctionComponent<DataTableCellProps>;

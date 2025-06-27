@@ -8,37 +8,35 @@ import { PersistedCollection } from "./persisted_collection";
  * @group Hooks and utilities
  */
 export interface CollectionEditorController {
-
     editCollection: (props: {
-        id?: string,
-        fullPath?: string,
-        parentCollectionIds: string[],
-        parentCollection?: PersistedCollection,
-        existingEntities?: Entity<any>[]
+        id?: string;
+        fullPath?: string;
+        parentCollectionIds: string[];
+        parentCollection?: PersistedCollection;
+        existingEntities?: Entity<any>[];
     }) => void;
 
     createCollection: (props: {
         initialValues?: {
-            group?: string,
-            path?: string,
-            name?: string
-        },
-        parentCollectionIds: string[],
-        parentCollection?: PersistedCollection,
-        redirect: boolean,
-        sourceClick?: string
+            group?: string;
+            path?: string;
+            name?: string;
+        };
+        parentCollectionIds: string[];
+        parentCollection?: PersistedCollection;
+        redirect: boolean;
+        sourceClick?: string;
     }) => void;
 
     editProperty: (props: {
-        propertyKey?: string,
-        property?: Property,
-        currentPropertiesOrder?: string[],
-        editedCollectionId: string,
-        parentCollectionIds: string[],
-        collection: PersistedCollection,
-        existingEntities: Entity<any>[]
+        propertyKey?: string;
+        property?: Property;
+        currentPropertiesOrder?: string[];
+        editedCollectionId: string;
+        parentCollectionIds: string[];
+        collection: PersistedCollection;
+        existingEntities: Entity<any>[];
     }) => void;
 
     configPermissions: CollectionEditorPermissionsBuilder;
-
 }

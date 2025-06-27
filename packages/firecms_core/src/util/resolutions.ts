@@ -21,7 +21,7 @@ import {
     ResolvedProperty,
     ResolvedStringProperty,
     StringProperty,
-    UserConfigurationPersistence
+    UserConfigurationPersistence,
 } from "../types";
 import { getValueInPath, mergeDeep } from "./objects";
 import { getDefaultValuesFor, isPropertyBuilder } from "./entities";
@@ -30,29 +30,27 @@ import { getIn } from "@firecms/formex";
 import { enumToObjectEntries } from "./enums";
 import { isDefaultFieldConfigId } from "../core";
 
-export const resolveCollection = <M extends Record<string, any>, >
-({
-     collection,
-     path,
-     entityId,
-     values,
-     previousValues,
-     userConfigPersistence,
-     propertyConfigs,
-     ignoreMissingFields = false,
-     authController
- }: {
+export const resolveCollection = <M extends Record<string, any>>({
+    collection,
+    path,
+    entityId,
+    values,
+    previousValues,
+    userConfigPersistence,
+    propertyConfigs,
+    ignoreMissingFields = false,
+    authController,
+}: {
     collection: EntityCollection<M> | ResolvedEntityCollection<M>;
-    path: string,
-    entityId?: string,
-    values?: Partial<EntityValues<M>>,
-    previousValues?: Partial<EntityValues<M>>,
+    path: string;
+    entityId?: string;
+    values?: Partial<EntityValues<M>>;
+    previousValues?: Partial<EntityValues<M>>;
     userConfigPersistence?: UserConfigurationPersistence;
     propertyConfigs?: Record<string, PropertyConfig>;
     ignoreMissingFields?: boolean;
     authController: AuthController;
 }): ResolvedEntityCollection<M> => {
-
     const collectionOverride = userConfigPersistence?.getCollectionConfig<M>(path);
     const storedProperties = getValueInPath(collectionOverride, "properties");
 
@@ -71,12 +69,12 @@ export const resolveCollection = <M extends Record<string, any>, >
                 entityId,
                 propertyConfigs: propertyConfigs,
                 ignoreMissingFields,
-                authController
+                authController,
             });
             if (!childResolvedProperty) return {};
-            return ({
-                [key]: childResolvedProperty
-            });
+            return {
+                [key]: childResolvedProperty,
+            };
         })
         .filter((a) => a !== null)
         .reduce((a, b) => ({ ...a, ...b }), {}) as ResolvedProperties<M>;
@@ -90,9 +88,8 @@ export const resolveCollection = <M extends Record<string, any>, >
     return {
         ...collection,
         properties: cleanedProperties,
-        originalCollection: collection
+        originalCollection: collection,
     } as ResolvedEntityCollection<M>;
-
 };
 
 /**
@@ -101,24 +98,23 @@ export const resolveCollection = <M extends Record<string, any>, >
  * @param propertyValue
  */
 export function resolveProperty<T extends CMSType = CMSType, M extends Record<string, any> = any>({
-                                                                                                      propertyOrBuilder,
-                                                                                                      fromBuilder = false,
-                                                                                                      ignoreMissingFields = false,
-                                                                                                      ...props
-                                                                                                  }: {
-    propertyKey?: string,
-    propertyOrBuilder: PropertyOrBuilder<T, M> | ResolvedProperty<T>,
-    values?: Partial<M>,
-    previousValues?: Partial<M>,
-    path?: string,
-    entityId?: string,
-    index?: number,
+    propertyOrBuilder,
+    fromBuilder = false,
+    ignoreMissingFields = false,
+    ...props
+}: {
+    propertyKey?: string;
+    propertyOrBuilder: PropertyOrBuilder<T, M> | ResolvedProperty<T>;
+    values?: Partial<M>;
+    previousValues?: Partial<M>;
+    path?: string;
+    entityId?: string;
+    index?: number;
     fromBuilder?: boolean;
     propertyConfigs?: Record<string, PropertyConfig<any>>;
     ignoreMissingFields?: boolean;
     authController: AuthController;
 }): ResolvedProperty<T> | null {
-
     if (typeof propertyOrBuilder === "object" && "resolved" in propertyOrBuilder) {
         return propertyOrBuilder as ResolvedProperty<T>;
     }
@@ -132,13 +128,15 @@ export function resolveProperty<T extends CMSType = CMSType, M extends Record<st
         if (!path)
             throw Error("Trying to resolve a property builder without specifying the entity path");
 
-        const usedPropertyValue = props.propertyKey ? getIn(props.values, props.propertyKey) : undefined;
+        const usedPropertyValue = props.propertyKey
+            ? getIn(props.values, props.propertyKey)
+            : undefined;
         const result: Property<T> | null = propertyOrBuilder({
             ...props,
             path,
             propertyValue: usedPropertyValue,
             values: props.values ?? {},
-            previousValues: props.previousValues ?? props.values ?? {}
+            previousValues: props.previousValues ?? props.values ?? {},
         });
 
         if (!result) {
@@ -149,7 +147,7 @@ export function resolveProperty<T extends CMSType = CMSType, M extends Record<st
             ...props,
             propertyOrBuilder: result,
             fromBuilder: true,
-            ignoreMissingFields
+            ignoreMissingFields,
         });
     } else {
         const property = propertyOrBuilder as Property<T>;
@@ -163,16 +161,19 @@ export function resolveProperty<T extends CMSType = CMSType, M extends Record<st
                 ...property,
                 resolved: true,
                 fromBuilder,
-                properties
+                properties,
             } as ResolvedProperty<T>;
         } else if (property.dataType === "array") {
             resolvedProperty = resolveArrayProperty({
                 property,
                 fromBuilder,
                 ignoreMissingFields,
-                ...props
+                ...props,
             }) as ResolvedProperty<any>;
-        } else if ((property.dataType === "string" || property.dataType === "number") && property.enumValues) {
+        } else if (
+            (property.dataType === "string" || property.dataType === "number") &&
+            property.enumValues
+        ) {
             resolvedProperty = resolvePropertyEnum(property, fromBuilder) as ResolvedProperty<any>;
         }
     }
@@ -181,18 +182,26 @@ export function resolveProperty<T extends CMSType = CMSType, M extends Record<st
         resolvedProperty = {
             ...propertyOrBuilder,
             resolved: true,
-            fromBuilder
+            fromBuilder,
         } as ResolvedProperty<T>;
     }
 
-    if (resolvedProperty.propertyConfig && !isDefaultFieldConfigId(resolvedProperty.propertyConfig)) {
+    if (
+        resolvedProperty.propertyConfig &&
+        !isDefaultFieldConfigId(resolvedProperty.propertyConfig)
+    ) {
         const cmsFields = props.propertyConfigs;
         if (!cmsFields && !ignoreMissingFields) {
-            throw Error(`Trying to resolve a property with key '${resolvedProperty.propertyConfig}' that inherits from a custom property config but no custom property configs were provided. Use the property 'propertyConfigs' in your app config to provide them`);
+            throw Error(
+                `Trying to resolve a property with key '${resolvedProperty.propertyConfig}' that inherits from a custom property config but no custom property configs were provided. Use the property 'propertyConfigs' in your app config to provide them`
+            );
         }
-        const customField: PropertyConfig | undefined = cmsFields?.[resolvedProperty.propertyConfig];
+        const customField: PropertyConfig | undefined =
+            cmsFields?.[resolvedProperty.propertyConfig];
         if (!customField) {
-            console.warn(`Trying to resolve a property with key '${resolvedProperty.propertyConfig}' that inherits from a custom property config but no custom property config with that key was found. Check the 'propertyConfigs' in your app config`)
+            console.warn(
+                `Trying to resolve a property with key '${resolvedProperty.propertyConfig}' that inherits from a custom property config but no custom property config with that key was found. Check the 'propertyConfigs' in your app config`
+            );
             console.warn("Available property configs", cmsFields);
             return null;
         }
@@ -204,33 +213,32 @@ export function resolveProperty<T extends CMSType = CMSType, M extends Record<st
             const customFieldProperty = resolveProperty<any>({
                 propertyOrBuilder: configPropertyOrBuilder,
                 ignoreMissingFields,
-                ...props
+                ...props,
             });
             if (customFieldProperty) {
                 resolvedProperty = mergeDeep(customFieldProperty, resolvedProperty);
             }
         }
-
     }
 
     return resolvedProperty
         ? {
-            ...resolvedProperty,
-            resolved: true
-        }
+              ...resolvedProperty,
+              resolved: true,
+          }
         : null;
 }
 
 export function getArrayResolvedProperties<M>({
-                                                  propertyKey,
-                                                  propertyValue,
-                                                  property,
-                                                  ...props
-                                              }: {
-    propertyValue: any,
-    propertyKey?: string,
-    property: ArrayProperty<any> | ResolvedArrayProperty<any>,
-    ignoreMissingFields: boolean,
+    propertyKey,
+    propertyValue,
+    property,
+    ...props
+}: {
+    propertyValue: any;
+    propertyKey?: string;
+    property: ArrayProperty<any> | ResolvedArrayProperty<any>;
+    ignoreMissingFields: boolean;
     values?: Partial<M>;
     previousValues?: Partial<M>;
     path?: string;
@@ -240,33 +248,34 @@ export function getArrayResolvedProperties<M>({
     propertyConfigs?: Record<string, PropertyConfig>;
     authController: AuthController;
 }) {
-
     const of = property.of;
     return Array.isArray(propertyValue)
-        ? propertyValue.map((v: any, index: number) => {
-            return resolveProperty({
-                propertyKey: `${propertyKey}.${index}`,
-                propertyOrBuilder: of,
-                ...props,
-                index
-            });
-        }).filter(e => Boolean(e)) as ResolvedProperty[]
+        ? (propertyValue
+              .map((v: any, index: number) => {
+                  return resolveProperty({
+                      propertyKey: `${propertyKey}.${index}`,
+                      propertyOrBuilder: of,
+                      ...props,
+                      index,
+                  });
+              })
+              .filter((e) => Boolean(e)) as ResolvedProperty[])
         : [];
 }
 
 export function resolveArrayProperty<T extends any[], M>({
-                                                             propertyKey,
-                                                             property,
-                                                             ignoreMissingFields = false,
-                                                             ...props
-                                                         }: {
-    propertyKey?: string,
-    property: ArrayProperty<T> | ResolvedArrayProperty<T>,
-    values?: Partial<M>,
-    previousValues?: Partial<M>,
-    path?: string,
-    entityId?: string,
-    index?: number,
+    propertyKey,
+    property,
+    ignoreMissingFields = false,
+    ...props
+}: {
+    propertyKey?: string;
+    property: ArrayProperty<T> | ResolvedArrayProperty<T>;
+    values?: Partial<M>;
+    previousValues?: Partial<M>;
+    path?: string;
+    entityId?: string;
+    index?: number;
     fromBuilder?: boolean;
     propertyConfigs?: Record<string, PropertyConfig>;
     ignoreMissingFields?: boolean;
@@ -288,7 +297,7 @@ export function resolveArrayProperty<T extends any[], M>({
                         ...props,
                         index,
                     });
-                })
+                }),
             } as ResolvedArrayProperty;
         } else {
             const of = property.of;
@@ -297,64 +306,69 @@ export function resolveArrayProperty<T extends any[], M>({
                 propertyKey,
                 property,
                 ignoreMissingFields,
-                ...props
+                ...props,
             });
             const ofProperty = resolveProperty({
                 propertyOrBuilder: of,
                 ignoreMissingFields,
-                ...props
+                ...props,
             });
             if (!ofProperty && !ignoreMissingFields)
-                throw Error("When using a property builder as the 'of' prop of an ArrayProperty, you must return a valid child property")
+                throw Error(
+                    "When using a property builder as the 'of' prop of an ArrayProperty, you must return a valid child property"
+                );
             return {
                 ...property,
                 resolved: true,
                 fromBuilder: props.fromBuilder,
                 of: ofProperty,
-                resolvedProperties
+                resolvedProperties,
             } as ResolvedArrayProperty;
         }
     } else if (property.oneOf) {
         const typeField = property.oneOf?.typeField ?? DEFAULT_ONE_OF_TYPE;
         const resolvedProperties: ResolvedProperty[] = Array.isArray(propertyValue)
-            ? propertyValue.map((v, index) => {
-                const type = v && v[typeField];
-                const childProperty = property.oneOf?.properties[type];
-                if (!type || !childProperty) return null;
-                return resolveProperty({
-                    propertyKey: `${propertyKey}.${index}`,
-                    propertyOrBuilder: childProperty,
-                    ignoreMissingFields,
-                    ...props
-                });
-            }).filter(e => Boolean(e)) as ResolvedProperty[]
+            ? (propertyValue
+                  .map((v, index) => {
+                      const type = v && v[typeField];
+                      const childProperty = property.oneOf?.properties[type];
+                      if (!type || !childProperty) return null;
+                      return resolveProperty({
+                          propertyKey: `${propertyKey}.${index}`,
+                          propertyOrBuilder: childProperty,
+                          ignoreMissingFields,
+                          ...props,
+                      });
+                  })
+                  .filter((e) => Boolean(e)) as ResolvedProperty[])
             : [];
         const properties = resolveProperties<any>({
             propertyKey,
             properties: property.oneOf.properties,
             ignoreMissingFields,
-            ...props
+            ...props,
         });
         return {
             ...property,
             resolved: true,
             oneOf: {
                 ...property.oneOf,
-                properties
+                properties,
             },
             fromBuilder: props.fromBuilder,
-            resolvedProperties
+            resolvedProperties,
         } as ResolvedArrayProperty;
     } else if (!property.Field) {
-        throw Error("The array property needs to declare an 'of' or a 'oneOf' property, or provide a custom `Field`")
+        throw Error(
+            "The array property needs to declare an 'of' or a 'oneOf' property, or provide a custom `Field`"
+        );
     } else {
         return {
             ...property,
             resolved: true,
-            fromBuilder: props.fromBuilder
+            fromBuilder: props.fromBuilder,
         } as ResolvedArrayProperty;
     }
-
 }
 
 /**
@@ -363,18 +377,18 @@ export function resolveArrayProperty<T extends any[], M>({
  * @param value
  */
 export function resolveProperties<M extends Record<string, any>>({
-                                                                     propertyKey,
-                                                                     properties,
-                                                                     ignoreMissingFields,
-                                                                     ...props
-                                                                 }: {
-    propertyKey?: string,
-    properties: PropertiesOrBuilders<M>,
-    values?: Partial<M>,
-    previousValues?: Partial<M>,
-    path?: string,
-    entityId?: string,
-    index?: number,
+    propertyKey,
+    properties,
+    ignoreMissingFields,
+    ...props
+}: {
+    propertyKey?: string;
+    properties: PropertiesOrBuilders<M>;
+    values?: Partial<M>;
+    previousValues?: Partial<M>;
+    path?: string;
+    entityId?: string;
+    index?: number;
     fromBuilder?: boolean;
     propertyConfigs?: Record<string, PropertyConfig>;
     ignoreMissingFields?: boolean;
@@ -386,11 +400,11 @@ export function resolveProperties<M extends Record<string, any>>({
                 propertyKey: propertyKey ? `${propertyKey}.${key}` : undefined,
                 propertyOrBuilder: property,
                 ignoreMissingFields,
-                ...props
+                ...props,
             });
             if (!childResolvedProperty) return {};
             return {
-                [key]: childResolvedProperty
+                [key]: childResolvedProperty,
             };
         })
         .filter((a) => a !== null)
@@ -402,14 +416,20 @@ export function resolveProperties<M extends Record<string, any>>({
  * @param property
  * @param fromBuilder
  */
-export function resolvePropertyEnum(property: StringProperty | NumberProperty, fromBuilder?: boolean): ResolvedStringProperty | ResolvedNumberProperty {
+export function resolvePropertyEnum(
+    property: StringProperty | NumberProperty,
+    fromBuilder?: boolean
+): ResolvedStringProperty | ResolvedNumberProperty {
     if (typeof property.enumValues === "object") {
         return {
             ...property,
             resolved: true,
-            enumValues: enumToObjectEntries(property.enumValues)?.filter((value) => value && (value.id || value.id === 0) && value.label) ?? [],
-            fromBuilder: fromBuilder ?? false
-        }
+            enumValues:
+                enumToObjectEntries(property.enumValues)?.filter(
+                    (value) => value && (value.id || value.id === 0) && value.label
+                ) ?? [],
+            fromBuilder: fromBuilder ?? false,
+        };
     }
     return property as ResolvedStringProperty | ResolvedNumberProperty;
 }
@@ -417,12 +437,13 @@ export function resolvePropertyEnum(property: StringProperty | NumberProperty, f
 export function resolveEnumValues(input: EnumValues): EnumValueConfig[] | undefined {
     if (typeof input === "object") {
         return Object.entries(input).map(([id, value]) =>
-            (typeof value === "string"
+            typeof value === "string"
                 ? {
-                    id,
-                    label: value
-                }
-                : value));
+                      id,
+                      label: value,
+                  }
+                : value
+        );
     } else if (Array.isArray(input)) {
         return input as EnumValueConfig[];
     } else {
@@ -430,7 +451,10 @@ export function resolveEnumValues(input: EnumValues): EnumValueConfig[] | undefi
     }
 }
 
-export function resolveEntityView(entityView: string | EntityCustomView<any>, contextEntityViews?: EntityCustomView<any>[]): EntityCustomView<any> | undefined {
+export function resolveEntityView(
+    entityView: string | EntityCustomView<any>,
+    contextEntityViews?: EntityCustomView<any>[]
+): EntityCustomView<any> | undefined {
     if (typeof entityView === "string") {
         return contextEntityViews?.find((entry) => entry.key === entityView);
     } else {
@@ -442,20 +466,22 @@ export function resolvedSelectedEntityView<M extends Record<string, any>>(
     customViews: (string | EntityCustomView<M>)[] | undefined,
     customizationController: CustomizationController,
     selectedTab?: string,
-    canEdit?: boolean,
+    canEdit?: boolean
 ) {
-    const resolvedEntityViews = customViews ? customViews
-            .map(e => resolveEntityView(e, customizationController.entityViews))
-            .filter((e): e is EntityCustomView<M> => Boolean(e))
-            // .filter((e) => canEdit || !e.includeActions)
-        : [];
+    const resolvedEntityViews = customViews
+        ? customViews
+              .map((e) => resolveEntityView(e, customizationController.entityViews))
+              .filter((e): e is EntityCustomView<M> => Boolean(e))
+        : // .filter((e) => canEdit || !e.includeActions)
+          [];
 
-    const selectedEntityView = resolvedEntityViews.find(e => e.key === selectedTab);
-    const selectedSecondaryForm = customViews
-        && resolvedEntityViews.filter(e => e.includeActions).find(e => e.key === selectedTab);
+    const selectedEntityView = resolvedEntityViews.find((e) => e.key === selectedTab);
+    const selectedSecondaryForm =
+        customViews &&
+        resolvedEntityViews.filter((e) => e.includeActions).find((e) => e.key === selectedTab);
     return {
         resolvedEntityViews,
         selectedEntityView,
-        selectedSecondaryForm
+        selectedSecondaryForm,
     };
 }

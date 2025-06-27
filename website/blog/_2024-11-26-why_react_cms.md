@@ -101,9 +101,9 @@ Starting with a React app and a headless CMS is straightforward. Here's a basic 
 and React:
 
 1. **Set Up Your React App**: Begin with a fresh React installation.
-   ```bash
-   yarn create firecms-app --pro
-   ```
+    ```bash
+    yarn create firecms-app --pro
+    ```
 2. **Connect Firebase**: Integrate Firebase for backend functionality.
 
 3. **Define and Structure Content**: Configure your data models within Firebase, specifying necessary relationships and

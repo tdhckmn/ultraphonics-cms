@@ -6,6 +6,7 @@ title: Changelog
 ## [1.0.3] - 2023-01-05
 
 ### Changed
+
 - [BREAKING] Added peer dependency @mui/x-date-pickers. You need to add this dependency
   if updating from previous versions
 - Updated internal dependencies fix blank initial screen.
@@ -27,6 +28,7 @@ title: Changelog
 - Fix for filter combinations bug
 
 ### Added
+
 - Enabled phone authentication
 - Added max size validation for file uploads
 
@@ -73,7 +75,6 @@ title: Changelog
 
 - Fix for "heap limit Allocation failed" error
 
-
 ## [1.0.0-beta11] - 2022-01-22
 
 ### Changed
@@ -86,7 +87,6 @@ title: Changelog
   popup view in the collection).
 - Changed page not found error message.
 
-
 ## [1.0.0-beta10] - 2022-01-11
 
 ### Changed
@@ -97,7 +97,6 @@ title: Changelog
 - Fix for latest version of `react-router` types
 - General dependencies update
 - Many internal React eslint warning fixes
-
 
 ## [1.0.0-beta9] - 2021-12-17
 
@@ -185,17 +184,16 @@ title: Changelog
   if you want to control the selected entities. If you are
   using `FirebaseCMSApp` as an entry point, you can define your
   `Autheticator` as:
+
 ```tsx
 import { User as FirebaseUser } from "firebase/auth";
-const myAuthenticator: Authenticator<FirebaseUser> = async ({
-                                                                user,
-                                                                authController
-                                                            }) => {
+const myAuthenticator: Authenticator<FirebaseUser> = async ({ user, authController }) => {
     console.log("Allowing access to", user?.email);
     // ...
     return true;
 };
 ```
+
 - Implemented dark mode for markdown fields
 - Column sizes and collections tables are now persisted in local storage
 
@@ -209,7 +207,7 @@ const myAuthenticator: Authenticator<FirebaseUser> = async ({
 - [BREAKING] `useCollectionFetch` now uses `sortBy` in the format
   `[Extract<keyof M, string>, "asc" | "desc"]` for consistency
 - [BREAKING] `extraActions` in `EntityCollection` now
-  receives `selectionController`  instead of `selectedEntities`.
+  receives `selectionController` instead of `selectedEntities`.
 - Fix for filters in tables including `enumValues`
 
 ## [1.0.0-beta3] - 2021-11-07
@@ -250,9 +248,9 @@ buildProperty({
     dataType: "string",
     title: "Hidden field",
     disabled: {
-        hidden: true
-    }
-})
+        hidden: true,
+    },
+});
 ```
 
 ## [1.0.0-beta1] - 2021-10-01
@@ -294,7 +292,7 @@ You are now encouraged to define your model like:
 type Product = {
     name: string;
     price: number;
-}
+};
 const productSchema = buildSchema<Product>({
     // ...
     properties: {
@@ -303,7 +301,7 @@ const productSchema = buildSchema<Product>({
             // ...
         },
         // ...
-    }
+    },
     // ...
 });
 ```
@@ -526,12 +524,12 @@ If you need more info: https://firecms.co/blog/types_refactor
 ### Changed
 
 - `CMSApp` has been split internally into 3 components:
-  - `CMSApp` which now is only in charge of initialising Firebase
-  - `CMSAppProvider` which is in charge of providing all the contexts used by
-    the CMS hooks.
-  - `CMSMainView` which includes the views of the app including login screen
-    and main collection and entity components. You can see an
-    example [here](https://github.com/Camberi/firecms/blob/v1/example/src/CustomCMSApp.tsx)
+    - `CMSApp` which now is only in charge of initialising Firebase
+    - `CMSAppProvider` which is in charge of providing all the contexts used by
+      the CMS hooks.
+    - `CMSMainView` which includes the views of the app including login screen
+      and main collection and entity components. You can see an
+      example [here](https://github.com/Camberi/firecms/blob/v1/example/src/CustomCMSApp.tsx)
 - Fix for a bug when saving entities.
 - [BREAKING] `AuthContextController` has been renamed to `AuthController`
 
@@ -789,11 +787,11 @@ If you need more info: https://firecms.co/blog/types_refactor
 
 - Inline editing of tables. Tables are now editable by default. There are two
   new parameters you can set in entity collection views.
-  - `editEnabled` defaults to true. If false, the users will not be able to
-    edit or create new entities.
-  - `inlineEditing` defaults to true. If false, the users can still edit the
-    content, but the inline editing is disabled. The side panel is still
-    enabled.
+    - `editEnabled` defaults to true. If false, the users will not be able to
+      edit or create new entities.
+    - `inlineEditing` defaults to true. If false, the users can still edit the
+      content, but the inline editing is disabled. The side panel is still
+      enabled.
 
 ### Changed
 

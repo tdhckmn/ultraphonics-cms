@@ -11,7 +11,7 @@ For example, we can build the data structure for a **blog** that you can
 then render using SSR (server side rendering) with a tool like
 next.js for blazing fast performance and SEO.
 
-In one of the recipes we show you how to add custom logic to copy entities 
+In one of the recipes we show you how to add custom logic to copy entities
 from one collection to another.
 
 Another usual problem is handling **localizations**, so we show you

@@ -6,16 +6,8 @@ export default function BooleanSwitchSizeDemo() {
 
     return (
         <>
-            <BooleanSwitch
-                value={value}
-                size="small"
-                onValueChange={setValue}
-            />
-            <BooleanSwitch
-                value={value}
-                size="medium"
-                onValueChange={setValue}
-            />
+            <BooleanSwitch value={value} size="small" onValueChange={setValue} />
+            <BooleanSwitch value={value} size="medium" onValueChange={setValue} />
         </>
     );
 }

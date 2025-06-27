@@ -10,14 +10,12 @@ export type TableProps = {
     style?: React.CSSProperties;
 } & React.TableHTMLAttributes<HTMLTableElement>;
 
-export const Table = ({
-                          children,
-                          className,
-                          style,
-                          ...rest
-                      }: TableProps) => (
+export const Table = ({ children, className, style, ...rest }: TableProps) => (
     <table
-        className={cls("text-left text-surface-800 dark:text-white rounded-md overflow-x-auto", className)}
+        className={cls(
+            "text-left text-surface-800 dark:text-white rounded-md overflow-x-auto",
+            className
+        )}
         style={style}
         {...rest}
     >
@@ -30,16 +28,15 @@ export type TableBodyProps = {
     className?: string;
 } & React.HTMLAttributes<HTMLTableSectionElement>;
 
-export const TableBody = ({
-                              children,
-                              className,
-                              ...rest
-                          }: TableBodyProps) => (
+export const TableBody = ({ children, className, ...rest }: TableBodyProps) => (
     <tbody
-        className={cls("bg-white dark:bg-surface-950 text-sm divide-y divide-surface-100 dark:divide-surface-700 dark:divide-opacity-70", className)}
+        className={cls(
+            "bg-white dark:bg-surface-950 text-sm divide-y divide-surface-100 dark:divide-surface-700 dark:divide-opacity-70",
+            className
+        )}
         {...rest}
     >
-    {children}
+        {children}
     </tbody>
 );
 
@@ -48,22 +45,18 @@ export type TableHeaderProps = {
     className?: string;
 } & React.HTMLAttributes<HTMLTableSectionElement>;
 
-export const TableHeader = ({
-                                children,
-                                className,
-                                ...rest
-                            }: TableHeaderProps) => (
+export const TableHeader = ({ children, className, ...rest }: TableHeaderProps) => (
     <thead {...rest}>
-    <tr
-        className={cls(
-            defaultBorderMixin,
-            "text-sm font-medium text-surface-700 dark:text-surface-accent-300",
-            "bg-surface-accent-50 border-b dark:bg-surface-900",
-            className
-        )}
-    >
-        {children}
-    </tr>
+        <tr
+            className={cls(
+                defaultBorderMixin,
+                "text-sm font-medium text-surface-700 dark:text-surface-accent-300",
+                "bg-surface-accent-50 border-b dark:bg-surface-900",
+                className
+            )}
+        >
+            {children}
+        </tr>
     </thead>
 );
 
@@ -74,19 +67,15 @@ export type TableRowProps = {
     style?: React.CSSProperties;
 } & React.HTMLAttributes<HTMLTableRowElement>;
 
-export const TableRow = ({
-                             children,
-                             className,
-                             onClick,
-                             style,
-                             ...rest
-                         }: TableRowProps) => (
+export const TableRow = ({ children, className, onClick, style, ...rest }: TableRowProps) => (
     <tr
         onClick={onClick}
         style={style}
         className={cls(
             "bg-white dark:bg-surface-950",
-            onClick ? "hover:bg-surface-accent-100 dark:hover:bg-surface-accent-800 cursor-pointer" : "",
+            onClick
+                ? "hover:bg-surface-accent-100 dark:hover:bg-surface-accent-800 cursor-pointer"
+                : "",
             className
         )}
         {...rest}
@@ -106,15 +95,15 @@ export type TableCellProps = {
 } & React.HTMLAttributes<HTMLTableCellElement>;
 
 export const TableCell = ({
-                              children,
-                              header = false,
-                              scope = "",
-                              align,
-                              className,
-                              style,
-                              colspan,
-                              ...rest
-                          }: TableCellProps) => {
+    children,
+    header = false,
+    scope = "",
+    align,
+    className,
+    style,
+    colspan,
+    ...rest
+}: TableCellProps) => {
     const ref = useRef<HTMLTableCellElement>(null);
     const Tag = header || getParentName(ref.current) === "TableHeader" ? "th" : "td";
     return (
@@ -125,7 +114,7 @@ export const TableCell = ({
             style={style}
             className={cls(
                 "px-4 py-3 text-clip ",
-                align === "center" ? "text-center" : (align === "right" ? "text-right" : "text-left"),
+                align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left",
                 className
             )}
             {...rest}
@@ -139,10 +128,7 @@ export const TableCell = ({
 function getParentName(element: HTMLElement | null): string | undefined {
     if (element) {
         const key = Object.keys(element).find((key) => {
-            return (
-                key.startsWith("__reactFiber$") ||
-                key.startsWith("__reactInternalInstance$")
-            );
+            return key.startsWith("__reactFiber$") || key.startsWith("__reactInternalInstance$");
         });
         // @ts-ignore
         const domFiber = element[key];

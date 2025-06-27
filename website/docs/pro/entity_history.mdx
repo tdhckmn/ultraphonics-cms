@@ -15,10 +15,10 @@ yarn add @firecms/entity_history
 
 ## Features
 
--   Adds a "History" tab to entity detail views.
--   Displays a log of changes for each entity.
--   Can be enabled globally or on a per-collection basis.
--   Allows customization of user display in the history log.
+- Adds a "History" tab to entity detail views.
+- Displays a log of changes for each entity.
+- Can be enabled globally or on a per-collection basis.
+- Allows customization of user display in the history log.
 
 ## Basic Usage
 
@@ -33,10 +33,9 @@ import { FireCMS } from "@firecms/core";
 import { useEntityHistoryPlugin } from "@firecms/entity_history";
 
 export default function App() {
-
     const userManagement = useBuildUserManagement({
         dataSourceDelegate: firestoreDelegate,
-        authController: authController
+        authController: authController,
     });
 
     const entityHistoryPlugin = useEntityHistoryPlugin({
@@ -45,25 +44,25 @@ export default function App() {
         defaultEnabled: true,
 
         // Provide a function to resolve user details from a UID
-        getUser: userManagement.getUser
+        getUser: userManagement.getUser,
     });
 
     const plugins = [entityHistoryPlugin];
 
     const navigationController = useBuildNavigationController({
         // ... rest of your config
-        plugins
+        plugins,
     });
 
     return (
-            <FireCMS
-                navigationController={navigationController}
-                /*... rest of your configuration */
-            >
-              {({ context, loading }) => {
-                  // ... your components
-              }}
-            </FireCMS>
+        <FireCMS
+            navigationController={navigationController}
+            /*... rest of your configuration */
+        >
+            {({ context, loading }) => {
+                // ... your components
+            }}
+        </FireCMS>
     );
 }
 ```
@@ -79,21 +78,20 @@ const productsCollection = buildCollection({
     properties: {
         name: {
             name: "Name",
-            dataType: "string"
-        }
+            dataType: "string",
+        },
         // ...other properties
     },
-    history: true // Enable history for this collection
+    history: true, // Enable history for this collection
 });
 ```
 
-
 ## Configuration Options
 
-| Option           | Type                                | Description                                                                                                                               |
-| ---------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `defaultEnabled` | `boolean`                           | If `true`, the history view will be enabled for all collections by default. Each collection can override this by setting its `history` property. |
-| `getUser`        | `(uid: string) => User \| null` | Optional function to get the user object (display name, photo, etc.) from a user ID to display in the history log.                        |
+| Option           | Type                            | Description                                                                                                                                      |
+| ---------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `defaultEnabled` | `boolean`                       | If `true`, the history view will be enabled for all collections by default. Each collection can override this by setting its `history` property. |
+| `getUser`        | `(uid: string) => User \| null` | Optional function to get the user object (display name, photo, etc.) from a user ID to display in the history log.                               |
 
 ## Collection Configuration
 
@@ -102,11 +100,11 @@ To enable or disable history for a specific collection, set the `history` proper
 ```tsx
 const sampleCollection = buildCollection({
     // ...
-    history: true // or false
+    history: true, // or false
 });
 ```
 
 ## Additional Notes
 
--   The plugin relies on callbacks to record entity changes. Ensure that your data persistence logic correctly triggers these callbacks.
--   The `getUser` function is crucial for displaying meaningful user information in the history log. If not provided, only user IDs might be shown.
+- The plugin relies on callbacks to record entity changes. Ensure that your data persistence logic correctly triggers these callbacks.
+- The `getUser` function is crucial for displaying meaningful user information in the history log. If not provided, only user IDs might be shown.

@@ -6,16 +6,16 @@ import { Paper } from "@firecms/ui";
  * Simple map field to test validation of custom fields
  */
 export const CustomField = ({
-                                property,
-                                value,
-                                propertyKey,
-                                minimalistView,
-                                error,
-                                showError,
-                                includeDescription,
-                                context,
-                                setValue
-                            }: FieldProps<Record<string, any>>) => {
+    property,
+    value,
+    propertyKey,
+    minimalistView,
+    error,
+    showError,
+    includeDescription,
+    context,
+    setValue,
+}: FieldProps<Record<string, any>>) => {
     useEffect(() => {
         if (!value) setValue({});
     }, [value, setValue]);
@@ -26,23 +26,24 @@ export const CustomField = ({
             name: "Sample",
             dataType: "string",
             validation: {
-                required: true
-            }
+                required: true,
+            },
         }),
-        context
+        context,
     };
 
     return (
         <>
             <Paper>
-                <PropertyFieldBinding {...fieldProps}/>
+                <PropertyFieldBinding {...fieldProps} />
             </Paper>
 
-            <FieldHelperText includeDescription={includeDescription}
-                             showError={showError}
-                             error={error}
-                             property={property}/>
-
+            <FieldHelperText
+                includeDescription={includeDescription}
+                showError={showError}
+                error={error}
+                property={property}
+            />
         </>
     );
 };

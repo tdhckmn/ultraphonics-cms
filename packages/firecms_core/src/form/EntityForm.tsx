@@ -11,7 +11,7 @@ import {
     PluginFormActionProps,
     PropertyConfig,
     PropertyFieldBindingProps,
-    ResolvedEntityCollection
+    ResolvedEntityCollection,
 } from "../types";
 import equal from "react-fast-compare";
 
@@ -24,7 +24,7 @@ import {
     isReadOnly,
     mergeDeep,
     resolveCollection,
-    useDebouncedCallback
+    useDebouncedCallback,
 } from "../util";
 
 import {
@@ -33,9 +33,19 @@ import {
     useCustomizationController,
     useDataSource,
     useFireCMSContext,
-    useSnackbarController
+    useSnackbarController,
 } from "../hooks";
-import { Alert, CheckIcon, Chip, cls, EditIcon, NotesIcon, paperMixin, Tooltip, Typography } from "@firecms/ui";
+import {
+    Alert,
+    CheckIcon,
+    Chip,
+    cls,
+    EditIcon,
+    NotesIcon,
+    paperMixin,
+    Tooltip,
+    Typography,
+} from "@firecms/ui";
 import { Formex, FormexController, getIn, setIn, useCreateFormex } from "@firecms/formex";
 import { useAnalyticsController } from "../hooks/useAnalyticsController";
 import { FormEntry, FormLayout, LabelWithIconAndTooltip, PropertyFieldBinding } from "../form";
@@ -47,12 +57,12 @@ import { CustomFieldValidator, getYupEntitySchema } from "../form/validation";
 import { EntityFormActions, EntityFormActionsProps } from "./EntityFormActions";
 
 export type OnUpdateParams = {
-    entity: Entity<any>,
-    status: EntityStatus,
-    path: string,
+    entity: Entity<any>;
+    status: EntityStatus;
+    path: string;
     entityId?: string;
     selectedTab?: string;
-    collection: EntityCollection<any>
+    collection: EntityCollection<any>;
 };
 
 export type EntityFormProps<M extends Record<string, any>> = {
@@ -96,34 +106,34 @@ export type EntityFormProps<M extends Record<string, any>> = {
 };
 
 export function EntityForm<M extends Record<string, any>>({
-                                                              path,
-                                                              fullIdPath,
-                                                              entityId: entityIdProp,
-                                                              collection,
-                                                              onValuesModified,
-                                                              onIdChange,
-                                                              onSaved,
-                                                              entity,
-                                                              initialDirtyValues,
-                                                              onFormContextReady,
-                                                              forceActionsAtTheBottom,
-                                                              initialStatus,
-                                                              className,
-                                                              onStatusChange,
-                                                              onEntityChange,
-                                                              openEntityMode = "full_screen",
-                                                              formex: formexProp,
-                                                              disabled: disabledProp,
-                                                              Builder,
-                                                              EntityFormActionsComponent = EntityFormActions,
-                                                              showDefaultActions = true,
-                                                              showEntityPath = true,
-                                                              children
-                                                          }: EntityFormProps<M>) {
-
-
+    path,
+    fullIdPath,
+    entityId: entityIdProp,
+    collection,
+    onValuesModified,
+    onIdChange,
+    onSaved,
+    entity,
+    initialDirtyValues,
+    onFormContextReady,
+    forceActionsAtTheBottom,
+    initialStatus,
+    className,
+    onStatusChange,
+    onEntityChange,
+    openEntityMode = "full_screen",
+    formex: formexProp,
+    disabled: disabledProp,
+    Builder,
+    EntityFormActionsComponent = EntityFormActions,
+    showDefaultActions = true,
+    showEntityPath = true,
+    children,
+}: EntityFormProps<M>) {
     if (collection.customId && collection.formAutoSave) {
-        console.warn(`The collection ${collection.path} has customId and formAutoSave enabled. This is not supported and formAutoSave will be ignored`);
+        console.warn(
+            `The collection ${collection.path} has customId and formAutoSave enabled. This is not supported and formAutoSave will be ignored`
+        );
     }
 
     const authController = useAuthController();
@@ -135,15 +145,20 @@ export function EntityForm<M extends Record<string, any>>({
     };
 
     const [valuesToBeSaved, setValuesToBeSaved] = useState<EntityValues<M> | undefined>(undefined);
-    useDebouncedCallback(valuesToBeSaved, () => {
-        if (valuesToBeSaved)
-            saveEntity({
-                entityId: entityIdProp,
-                collection,
-                path,
-                values: valuesToBeSaved
-            });
-    }, false, 2000);
+    useDebouncedCallback(
+        valuesToBeSaved,
+        () => {
+            if (valuesToBeSaved)
+                saveEntity({
+                    entityId: entityIdProp,
+                    collection,
+                    path,
+                    values: valuesToBeSaved,
+                });
+        },
+        false,
+        2000
+    );
 
     const dataSource = useDataSource(collection);
     const snackbarController = useSnackbarController();
@@ -155,8 +170,10 @@ export function EntityForm<M extends Record<string, any>>({
 
     const [customIdLoading, setCustomIdLoading] = useState<boolean>(false);
 
-    const mustSetCustomId: boolean = (status === "new" || status === "copy") &&
-        (Boolean(collection.customId) && collection.customId !== "optional");
+    const mustSetCustomId: boolean =
+        (status === "new" || status === "copy") &&
+        Boolean(collection.customId) &&
+        collection.customId !== "optional";
 
     const initialEntityId: string | undefined = useMemo((): string | undefined => {
         if (status === "new" || status === "copy") {
@@ -176,8 +193,10 @@ export function EntityForm<M extends Record<string, any>>({
 
     const autoSave = collection.formAutoSave && !collection.customId;
 
-    const onSubmit = (values: EntityValues<M>, formexController: FormexController<EntityValues<M>>) => {
-
+    const onSubmit = (
+        values: EntityValues<M>,
+        formexController: FormexController<EntityValues<M>>
+    ) => {
         if (mustSetCustomId && !entityId) {
             console.error("Missing custom Id");
             setEntityIdError(true);
@@ -189,7 +208,8 @@ export function EntityForm<M extends Record<string, any>>({
         setEntityIdError(false);
 
         if (status === "existing") {
-            if (!entity?.id) throw Error("Form misconfiguration when saving, no id for existing entity");
+            if (!entity?.id)
+                throw Error("Form misconfiguration when saving, no id for existing entity");
         } else if (status === "new" || status === "copy") {
             if (collection.customId) {
                 if (collection.customId !== "optional" && !entityId) {
@@ -201,11 +221,11 @@ export function EntityForm<M extends Record<string, any>>({
         }
 
         return save(values)
-            ?.then(_ => {
+            ?.then((_) => {
                 formexController.resetForm({
                     values,
                     submitCount: 0,
-                    touched: {}
+                    touched: {},
                 });
             })
             .finally(() => {
@@ -213,27 +233,37 @@ export function EntityForm<M extends Record<string, any>>({
             });
     };
 
-    const formex: FormexController<M> = formexProp ?? useCreateFormex<M>({
-        initialValues: (initialDirtyValues ?? getInitialEntityValues(authController, collection, path, status, entity, customizationController.propertyConfigs)) as M,
-        initialDirty: Boolean(initialDirtyValues),
-        onSubmit,
-        onReset: () => {
-            clearDirtyCache();
-            onValuesModified?.(false);
-        },
-        validation: (values) => {
-            return validationSchema?.validate(values, { abortEarly: false })
-                .then(() => {
-                    return {};
-                })
-                .catch((e: any) => {
-                    return yupToFormErrors(e);
-                });
-        }
-    });
+    const formex: FormexController<M> =
+        formexProp ??
+        useCreateFormex<M>({
+            initialValues: (initialDirtyValues ??
+                getInitialEntityValues(
+                    authController,
+                    collection,
+                    path,
+                    status,
+                    entity,
+                    customizationController.propertyConfigs
+                )) as M,
+            initialDirty: Boolean(initialDirtyValues),
+            onSubmit,
+            onReset: () => {
+                clearDirtyCache();
+                onValuesModified?.(false);
+            },
+            validation: (values) => {
+                return validationSchema
+                    ?.validate(values, { abortEarly: false })
+                    .then(() => {
+                        return {};
+                    })
+                    .catch((e: any) => {
+                        return yupToFormErrors(e);
+                    });
+            },
+        });
 
     useEffect(() => {
-
         const handleKeyDown = (e: KeyboardEvent) => {
             const isUndo = (e.metaKey || e.ctrlKey) && !e.shiftKey && e.key.toLowerCase() === "z";
             const isRedo =
@@ -251,34 +281,50 @@ export function EntityForm<M extends Record<string, any>>({
 
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-
     }, [formex]);
 
-    const resolvedCollection = useMemo(() => resolveCollection<M>({
-        collection,
-        path,
-        entityId,
-        values: formex.values,
-        previousValues: formex.initialValues,
-        propertyConfigs: customizationController.propertyConfigs,
-        authController
-    }), [collection, path, entityId, formex.values, formex.initialValues, customizationController.propertyConfigs]);
+    const resolvedCollection = useMemo(
+        () =>
+            resolveCollection<M>({
+                collection,
+                path,
+                entityId,
+                values: formex.values,
+                previousValues: formex.initialValues,
+                propertyConfigs: customizationController.propertyConfigs,
+                authController,
+            }),
+        [
+            collection,
+            path,
+            entityId,
+            formex.values,
+            formex.initialValues,
+            customizationController.propertyConfigs,
+        ]
+    );
 
-    const onPreSaveHookError = useCallback((e: Error) => {
-        snackbarController.open({
-            type: "error",
-            message: "Error before saving: " + e?.message
-        });
-        console.error(e);
-    }, [snackbarController]);
+    const onPreSaveHookError = useCallback(
+        (e: Error) => {
+            snackbarController.open({
+                type: "error",
+                message: "Error before saving: " + e?.message,
+            });
+            console.error(e);
+        },
+        [snackbarController]
+    );
 
-    const onSaveSuccessHookError = useCallback((e: Error) => {
-        snackbarController.open({
-            type: "error",
-            message: "Error after saving (entity is saved): " + e?.message
-        });
-        console.error(e);
-    }, [snackbarController]);
+    const onSaveSuccessHookError = useCallback(
+        (e: Error) => {
+            snackbarController.open({
+                type: "error",
+                message: "Error after saving (entity is saved): " + e?.message,
+            });
+            console.error(e);
+        },
+        [snackbarController]
+    );
 
     function clearDirtyCache() {
         if (status === "new" || status === "copy") {
@@ -289,13 +335,12 @@ export function EntityForm<M extends Record<string, any>>({
     }
 
     const onSaveSuccess = (updatedEntity: Entity<M>) => {
-
         clearDirtyCache();
         onValuesModified?.(false);
         if (!autoSave)
             snackbarController.open({
                 type: "success",
-                message: `${collection.singularName ?? collection.name}: Saved correctly`
+                message: `${collection.singularName ?? collection.name}: Saved correctly`,
             });
         onEntityChange?.(updatedEntity);
         updateStatus("existing");
@@ -307,32 +352,35 @@ export function EntityForm<M extends Record<string, any>>({
                 status,
                 path,
                 entityId: updatedEntity.id,
-                collection
+                collection,
             });
         }
     };
 
-    const onSaveFailure = useCallback((e: Error) => {
-        snackbarController.open({
-            type: "error",
-            message: "Error saving: " + e?.message
-        });
-        console.error("Error saving entity", path, entityId);
-        console.error(e);
-    }, [entityId, path, snackbarController]);
+    const onSaveFailure = useCallback(
+        (e: Error) => {
+            snackbarController.open({
+                type: "error",
+                message: "Error saving: " + e?.message,
+            });
+            console.error("Error saving entity", path, entityId);
+            console.error(e);
+        },
+        [entityId, path, snackbarController]
+    );
 
     const saveEntity = ({
-                            values,
-                            previousValues,
-                            entityId,
-                            collection,
-                            path
-                        }: {
-        collection: EntityCollection<M>,
-        path: string,
-        entityId: string | undefined,
-        values: M,
-        previousValues?: M,
+        values,
+        previousValues,
+        entityId,
+        collection,
+        path,
+    }: {
+        collection: EntityCollection<M>;
+        path: string;
+        entityId: string | undefined;
+        values: M;
+        previousValues?: M;
     }) => {
         return saveEntityWithCallbacks({
             path,
@@ -346,29 +394,28 @@ export function EntityForm<M extends Record<string, any>>({
             onSaveSuccess,
             onSaveFailure,
             onPreSaveHookError,
-            onSaveSuccessHookError
+            onSaveSuccessHookError,
         }).then();
     };
 
     type EntityFormSaveParams<M extends Record<string, any>> = {
-        collection: ResolvedEntityCollection<M>,
-        path: string,
-        entityId: string | undefined,
-        values: EntityValues<M>,
-        previousValues?: EntityValues<M>,
-        autoSave: boolean
+        collection: ResolvedEntityCollection<M>;
+        path: string;
+        entityId: string | undefined;
+        values: EntityValues<M>;
+        previousValues?: EntityValues<M>;
+        autoSave: boolean;
     };
 
     const onSaveEntityRequest = async ({
-                                           collection,
-                                           path,
-                                           entityId,
-                                           values,
-                                           previousValues,
-                                           autoSave
-                                       }: EntityFormSaveParams<M>): Promise<void> => {
-        if (!status)
-            return;
+        collection,
+        path,
+        entityId,
+        values,
+        previousValues,
+        autoSave,
+    }: EntityFormSaveParams<M>): Promise<void> => {
+        if (!status) return;
         if (autoSave) {
             setValuesToBeSaved(values);
         } else {
@@ -377,7 +424,7 @@ export function EntityForm<M extends Record<string, any>>({
                 path,
                 entityId,
                 values,
-                previousValues
+                previousValues,
             });
         }
     };
@@ -391,16 +438,23 @@ export function EntityForm<M extends Record<string, any>>({
             entityId,
             values,
             previousValues: entity?.values,
-            autoSave: autoSave ?? false
-        }).then((res) => {
-            const eventName: CMSAnalyticsEvent = status === "new"
-                ? "new_entity_saved"
-                : (status === "copy" ? "entity_copied" : (status === "existing" ? "entity_edited" : "unmapped_event"));
-            analyticsController.onAnalyticsEvent?.(eventName, { path });
-        }).catch(e => {
-            console.error(e);
-            setSavingError(e);
-        });
+            autoSave: autoSave ?? false,
+        })
+            .then((res) => {
+                const eventName: CMSAnalyticsEvent =
+                    status === "new"
+                        ? "new_entity_saved"
+                        : status === "copy"
+                          ? "entity_copied"
+                          : status === "existing"
+                            ? "entity_edited"
+                            : "unmapped_event";
+                analyticsController.onAnalyticsEvent?.(eventName, { path });
+            })
+            .catch((e) => {
+                console.error(e);
+                setSavingError(e);
+            });
     };
 
     const disabled = formex.isSubmitting || Boolean(disabledProp);
@@ -418,7 +472,7 @@ export function EntityForm<M extends Record<string, any>>({
         savingError,
         status,
         openEntityMode,
-        disabled
+        disabled,
     };
 
     useEffect(() => {
@@ -428,14 +482,18 @@ export function EntityForm<M extends Record<string, any>>({
     const onIdUpdateError = useCallback((error: any) => {
         snackbarController.open({
             type: "error",
-            message: "Error updating id, check the console"
+            message: "Error updating id, check the console",
         });
     }, []);
 
     const pluginActions: React.ReactNode[] = [];
     const plugins = customizationController.plugins;
 
-    const actionsDisabled = disabled || formex.isSubmitting || (status === "existing" && !formex.dirty) || Boolean(disabledProp);
+    const actionsDisabled =
+        disabled ||
+        formex.isSubmitting ||
+        (status === "existing" && !formex.dirty) ||
+        Boolean(disabledProp);
     if (plugins && collection) {
         const actionProps: PluginFormActionProps = {
             entityId,
@@ -448,18 +506,27 @@ export function EntityForm<M extends Record<string, any>>({
             openEntityMode,
             disabled: actionsDisabled,
         };
-        pluginActions.push(...plugins.map((plugin) => (
-            plugin.form?.Actions
-                ? <plugin.form.Actions
-                    key={`actions_${plugin.key}`} {...actionProps} />
-                : null
-        )).filter(Boolean));
+        pluginActions.push(
+            ...plugins
+                .map((plugin) =>
+                    plugin.form?.Actions ? (
+                        <plugin.form.Actions key={`actions_${plugin.key}`} {...actionProps} />
+                    ) : null
+                )
+                .filter(Boolean)
+        );
     }
 
-    const titlePropertyKey = getEntityTitlePropertyKey(resolvedCollection, customizationController.propertyConfigs);
-    const title = (formex.values && titlePropertyKey ? getValueInPath(formex.values, titlePropertyKey) : undefined)
-        ?? collection.singularName
-        ?? collection.name;
+    const titlePropertyKey = getEntityTitlePropertyKey(
+        resolvedCollection,
+        customizationController.propertyConfigs
+    );
+    const title =
+        (formex.values && titlePropertyKey
+            ? getValueInPath(formex.values, titlePropertyKey)
+            : undefined) ??
+        collection.singularName ??
+        collection.name;
 
     const onIdUpdate = collection.callbacks?.onIdUpdate;
     const doOnIdUpdate = useCallback(async () => {
@@ -471,7 +538,7 @@ export function EntityForm<M extends Record<string, any>>({
                     path,
                     entityId,
                     values: formex.values,
-                    context
+                    context,
                 });
                 setEntityId(updatedId);
             } catch (e) {
@@ -480,7 +547,16 @@ export function EntityForm<M extends Record<string, any>>({
             }
             setCustomIdLoading(false);
         }
-    }, [entityId, formex.values, status, onIdUpdate, resolvedCollection, path, context, onIdUpdateError]);
+    }, [
+        entityId,
+        formex.values,
+        status,
+        onIdUpdate,
+        resolvedCollection,
+        path,
+        context,
+        onIdUpdateError,
+    ]);
 
     useEffect(() => {
         doOnIdUpdate();
@@ -495,23 +571,22 @@ export function EntityForm<M extends Record<string, any>>({
     const deferredValues = useDeferredValue(formex.values);
     const modified = formex.dirty;
 
-    const uniqueFieldValidator: CustomFieldValidator = useCallback(({
-                                                                        name,
-                                                                        value,
-                                                                        property
-                                                                    }) => dataSource.checkUniqueField(path, name, value, entityId, collection),
-        [dataSource, path, entityId]);
+    const uniqueFieldValidator: CustomFieldValidator = useCallback(
+        ({ name, value, property }) =>
+            dataSource.checkUniqueField(path, name, value, entityId, collection),
+        [dataSource, path, entityId]
+    );
 
-    const validationSchema = useMemo(() => entityId
-            ? getYupEntitySchema(
-                entityId,
-                resolvedCollection.properties,
-                uniqueFieldValidator)
-            : undefined,
-        [entityId, resolvedCollection.properties, uniqueFieldValidator]);
+    const validationSchema = useMemo(
+        () =>
+            entityId
+                ? getYupEntitySchema(entityId, resolvedCollection.properties, uniqueFieldValidator)
+                : undefined,
+        [entityId, resolvedCollection.properties, uniqueFieldValidator]
+    );
 
     useEffect(() => {
-        const key = (status === "new" || status === "copy") ? path + "#new" : path + "/" + entityId;
+        const key = status === "new" || status === "copy" ? path + "#new" : path + "/" + entityId;
         if (modified) {
             saveEntityToCache(key, deferredValues);
         }
@@ -531,197 +606,264 @@ export function EntityForm<M extends Record<string, any>>({
                 }
             });
         }
-    }, [formex.isSubmitting, autoSave, underlyingChanges, entity, formex.values, formex.touched, formex.setFieldValue]);
+    }, [
+        formex.isSubmitting,
+        autoSave,
+        underlyingChanges,
+        entity,
+        formex.values,
+        formex.touched,
+        formex.setFieldValue,
+    ]);
 
     const formFieldKeys = getFormFieldKeys(resolvedCollection);
 
     const formFields = () => {
-
         if (Builder) {
-            return <Builder
-                collection={collection}
-                entity={entity}
-                modifiedValues={formex.values}
-                formContext={formContext}
-            />;
+            return (
+                <Builder
+                    collection={collection}
+                    entity={entity}
+                    modifiedValues={formex.values}
+                    formContext={formContext}
+                />
+            );
         }
         return (
             <FormLayout>
-                {formFieldKeys.map((key) => {
-                    const property = resolvedCollection.properties[key];
-                    if (property) {
-                        const underlyingValueHasChanged: boolean =
-                            !!underlyingChanges &&
-                            Object.keys(underlyingChanges).includes(key) &&
-                            formex.touched[key];
-                        const disabled = disabledProp || (!autoSave && formex.isSubmitting) || isReadOnly(property) || Boolean(property.disabled);
-                        const hidden = isHidden(property);
-                        if (hidden) return null;
-                        const widthPercentage = property.widthPercentage ?? 100;
-                        const cmsFormFieldProps: PropertyFieldBindingProps<any, M> = {
-                            propertyKey: key,
-                            disabled,
-                            property,
-                            includeDescription: property.description || property.longDescription,
-                            underlyingValueHasChanged: underlyingValueHasChanged && !autoSave,
-                            context: formContext,
-                            partOfArray: false,
-                            minimalistView: false,
-                            autoFocus: false
-                        };
+                {formFieldKeys
+                    .map((key) => {
+                        const property = resolvedCollection.properties[key];
+                        if (property) {
+                            const underlyingValueHasChanged: boolean =
+                                !!underlyingChanges &&
+                                Object.keys(underlyingChanges).includes(key) &&
+                                formex.touched[key];
+                            const disabled =
+                                disabledProp ||
+                                (!autoSave && formex.isSubmitting) ||
+                                isReadOnly(property) ||
+                                Boolean(property.disabled);
+                            const hidden = isHidden(property);
+                            if (hidden) return null;
+                            const widthPercentage = property.widthPercentage ?? 100;
+                            const cmsFormFieldProps: PropertyFieldBindingProps<any, M> = {
+                                propertyKey: key,
+                                disabled,
+                                property,
+                                includeDescription:
+                                    property.description || property.longDescription,
+                                underlyingValueHasChanged: underlyingValueHasChanged && !autoSave,
+                                context: formContext,
+                                partOfArray: false,
+                                minimalistView: false,
+                                autoFocus: false,
+                            };
 
-                        return (
-                            <FormEntry propertyKey={key}
-                                       widthPercentage={widthPercentage}
-                                       key={`field_${key}`}>
-                                <PropertyFieldBinding {...cmsFormFieldProps} />
-                            </FormEntry>
-                        );
-                    }
-
-                    const additionalField = resolvedCollection.additionalFields?.find(f => f.key === key);
-                    if (additionalField && entity) {
-                        const Builder = additionalField.Builder;
-                        if (!Builder && !additionalField.value) {
-                            throw new Error("When using additional fields you need to provide a Builder or a value");
-                        }
-                        const child = Builder
-                            ? <Builder entity={entity} context={context}/>
-                            : <div className={"w-full"}>
-                                {additionalField.value?.({
-                                    entity,
-                                    context
-                                })?.toString()}
-                            </div>;
-
-                        return (
-                            <div key={`additional_${key}`} className={"w-full"}>
-                                <LabelWithIconAndTooltip
+                            return (
+                                <FormEntry
                                     propertyKey={key}
-                                    icon={<NotesIcon size={"small"}/>}
-                                    title={additionalField.name}
-                                    className={"text-text-secondary dark:text-text-secondary-dark ml-3.5"}/>
-                                <div
-                                    className={cls(paperMixin, "w-full min-h-14 p-4 md:p-6 overflow-x-scroll no-scrollbar")}>
-                                    <ErrorBoundary>
-                                        {child}
-                                    </ErrorBoundary>
-                                </div>
-                            </div>
-                        );
-                    }
+                                    widthPercentage={widthPercentage}
+                                    key={`field_${key}`}
+                                >
+                                    <PropertyFieldBinding {...cmsFormFieldProps} />
+                                </FormEntry>
+                            );
+                        }
 
-                    console.warn(`Property ${key} not found in collection ${resolvedCollection.name} in properties or additional fields. Skipping.`);
-                    return null;
-                }).filter(Boolean)}
+                        const additionalField = resolvedCollection.additionalFields?.find(
+                            (f) => f.key === key
+                        );
+                        if (additionalField && entity) {
+                            const Builder = additionalField.Builder;
+                            if (!Builder && !additionalField.value) {
+                                throw new Error(
+                                    "When using additional fields you need to provide a Builder or a value"
+                                );
+                            }
+                            const child = Builder ? (
+                                <Builder entity={entity} context={context} />
+                            ) : (
+                                <div className={"w-full"}>
+                                    {additionalField
+                                        .value?.({
+                                            entity,
+                                            context,
+                                        })
+                                        ?.toString()}
+                                </div>
+                            );
+
+                            return (
+                                <div key={`additional_${key}`} className={"w-full"}>
+                                    <LabelWithIconAndTooltip
+                                        propertyKey={key}
+                                        icon={<NotesIcon size={"small"} />}
+                                        title={additionalField.name}
+                                        className={
+                                            "text-text-secondary dark:text-text-secondary-dark ml-3.5"
+                                        }
+                                    />
+                                    <div
+                                        className={cls(
+                                            paperMixin,
+                                            "w-full min-h-14 p-4 md:p-6 overflow-x-scroll no-scrollbar"
+                                        )}
+                                    >
+                                        <ErrorBoundary>{child}</ErrorBoundary>
+                                    </div>
+                                </div>
+                            );
+                        }
+
+                        console.warn(
+                            `Property ${key} not found in collection ${resolvedCollection.name} in properties or additional fields. Skipping.`
+                        );
+                        return null;
+                    })
+                    .filter(Boolean)}
             </FormLayout>
         );
     };
 
     const formRef = useRef<HTMLDivElement>(null);
 
-    const formView = <ErrorBoundary>
-        <>
-            {!Builder && <div className={"w-full py-2 flex flex-col items-start my-4 lg:my-6"}>
-                <Typography
-                    className={"my-4 flex-grow line-clamp-1 " + (collection.hideIdFromForm ? "mb-6" : "")}
-                    variant={"h4"}>
-                    {title ?? collection.singularName ?? collection.name}
-                </Typography>
-                {showEntityPath && <Alert color={"base"} className={"w-full"} size={"small"}>
-                    <code
-                        className={"text-xs select-all text-text-secondary dark:text-text-secondary-dark"}>
-                        {entity?.path ?? path}/{entityId}
-                    </code>
-                </Alert>}
-            </div>}
+    const formView = (
+        <ErrorBoundary>
+            <>
+                {!Builder && (
+                    <div className={"w-full py-2 flex flex-col items-start my-4 lg:my-6"}>
+                        <Typography
+                            className={
+                                "my-4 flex-grow line-clamp-1 " +
+                                (collection.hideIdFromForm ? "mb-6" : "")
+                            }
+                            variant={"h4"}
+                        >
+                            {title ?? collection.singularName ?? collection.name}
+                        </Typography>
+                        {showEntityPath && (
+                            <Alert color={"base"} className={"w-full"} size={"small"}>
+                                <code
+                                    className={
+                                        "text-xs select-all text-text-secondary dark:text-text-secondary-dark"
+                                    }
+                                >
+                                    {entity?.path ?? path}/{entityId}
+                                </code>
+                            </Alert>
+                        )}
+                    </div>
+                )}
 
-            {children}
+                {children}
 
-            {!Builder && !collection.hideIdFromForm &&
-                <CustomIdField customId={collection.customId}
-                               entityId={entityId}
-                               status={status}
-                               onChange={setEntityId}
-                               error={entityIdError}
-                               loading={customIdLoading}
-                               entity={entity}/>
-            }
+                {!Builder && !collection.hideIdFromForm && (
+                    <CustomIdField
+                        customId={collection.customId}
+                        entityId={entityId}
+                        status={status}
+                        onChange={setEntityId}
+                        error={entityIdError}
+                        loading={customIdLoading}
+                        entity={entity}
+                    />
+                )}
 
-            {entityId && formContext && <>
-                <div className="mt-12 flex flex-col gap-8" ref={formRef}>
-                    {formFields()}
-                    <ErrorFocus containerRef={formRef}/>
-                </div>
-            </>}
+                {entityId && formContext && (
+                    <>
+                        <div className="mt-12 flex flex-col gap-8" ref={formRef}>
+                            {formFields()}
+                            <ErrorFocus containerRef={formRef} />
+                        </div>
+                    </>
+                )}
 
-            {forceActionsAtTheBottom && <div className="h-16"/>}
-        </>
-    </ErrorBoundary>;
+                {forceActionsAtTheBottom && <div className="h-16" />}
+            </>
+        </ErrorBoundary>
+    );
 
     useEffect(() => {
-        if (entityId && onIdChange)
-            onIdChange(entityId);
+        if (entityId && onIdChange) onIdChange(entityId);
     }, [entityId, onIdChange]);
 
     if (!resolvedCollection || !path) {
         throw Error("INTERNAL: Collection and path must be defined in form context");
     }
 
-
-    const dialogActions = <EntityFormActionsComponent
-        collection={resolvedCollection}
-        path={path}
-        fullPath={path}
-        fullIdPath={fullIdPath}
-        entity={entity}
-        layout={forceActionsAtTheBottom ? "bottom" : "side"}
-        savingError={savingError}
-        formex={formex}
-        disabled={actionsDisabled}
-        status={status}
-        pluginActions={pluginActions ?? []}
-        openEntityMode={openEntityMode}
-        showDefaultActions={showDefaultActions}
-    />;
+    const dialogActions = (
+        <EntityFormActionsComponent
+            collection={resolvedCollection}
+            path={path}
+            fullPath={path}
+            fullIdPath={fullIdPath}
+            entity={entity}
+            layout={forceActionsAtTheBottom ? "bottom" : "side"}
+            savingError={savingError}
+            formex={formex}
+            disabled={actionsDisabled}
+            status={status}
+            pluginActions={pluginActions ?? []}
+            openEntityMode={openEntityMode}
+            showDefaultActions={showDefaultActions}
+        />
+    );
 
     return (
         <Formex value={formex}>
             <form
                 onSubmit={formex.handleSubmit}
-                onReset={() => formex.resetForm({
-                    values: getInitialEntityValues(authController, collection, path, status, entity, customizationController.propertyConfigs) as M
-                })}
+                onReset={() =>
+                    formex.resetForm({
+                        values: getInitialEntityValues(
+                            authController,
+                            collection,
+                            path,
+                            status,
+                            entity,
+                            customizationController.propertyConfigs
+                        ) as M,
+                    })
+                }
                 noValidate
-                className={cls("flex-1 flex flex-row w-full overflow-y-auto justify-center", className)}>
+                className={cls(
+                    "flex-1 flex flex-row w-full overflow-y-auto justify-center",
+                    className
+                )}
+            >
                 <div
                     id={`form_${path}`}
-                    className={cls("relative flex flex-row max-w-4xl lg:max-w-3xl xl:max-w-4xl 2xl:max-w-6xl w-full h-fit")}>
-
+                    className={cls(
+                        "relative flex flex-row max-w-4xl lg:max-w-3xl xl:max-w-4xl 2xl:max-w-6xl w-full h-fit"
+                    )}
+                >
                     <div className={cls("flex flex-col w-full pt-12 pb-16 px-4 sm:px-8 md:px-10")}>
-
-                        {formex.dirty
-                            ? <Tooltip title={"Local unsaved changes"}
-                                       className={"self-end sticky top-4 z-10"}>
+                        {formex.dirty ? (
+                            <Tooltip
+                                title={"Local unsaved changes"}
+                                className={"self-end sticky top-4 z-10"}
+                            >
                                 <Chip size={"small"} colorScheme={"orangeDarker"}>
-                                    <EditIcon size={"smallest"}/>
+                                    <EditIcon size={"smallest"} />
                                 </Chip>
                             </Tooltip>
-                            : <Tooltip title={"In sync with the database"}
-                                       className={"self-end sticky top-4 z-10"}>
+                        ) : (
+                            <Tooltip
+                                title={"In sync with the database"}
+                                className={"self-end sticky top-4 z-10"}
+                            >
                                 <Chip size={"small"}>
-                                    <CheckIcon size={"smallest"}/>
+                                    <CheckIcon size={"smallest"} />
                                 </Chip>
-                            </Tooltip>}
+                            </Tooltip>
+                        )}
 
                         {formView}
-
                     </div>
-
                 </div>
                 {dialogActions}
             </form>
-
         </Formex>
     );
 }
@@ -732,14 +874,14 @@ function getInitialEntityValues<M extends object>(
     path: string,
     status: "new" | "existing" | "copy",
     entity: Entity<M> | undefined,
-    propertyConfigs?: Record<string, PropertyConfig>,
+    propertyConfigs?: Record<string, PropertyConfig>
 ): Partial<EntityValues<M>> {
     const resolvedCollection = resolveCollection({
         collection,
         path,
         values: entity?.values,
         propertyConfigs,
-        authController
+        authController,
     });
     const properties = resolvedCollection.properties;
     if ((status === "existing" || status === "copy") && entity) {
@@ -754,7 +896,7 @@ function getInitialEntityValues<M extends object>(
     } else {
         console.error({
             status,
-            entity
+            entity,
         });
         throw new Error("Form has not been initialised with the correct parameters");
     }
@@ -775,7 +917,12 @@ export function yupToFormErrors(yupError: ValidationError): Record<string, any> 
     return errors;
 }
 
-function useOnAutoSave(autoSave: undefined | boolean, formex: FormexController<any>, lastSavedValues: any, save: (values: EntityValues<any>) => Promise<void>) {
+function useOnAutoSave(
+    autoSave: undefined | boolean,
+    formex: FormexController<any>,
+    lastSavedValues: any,
+    save: (values: EntityValues<any>) => Promise<void>
+) {
     if (!autoSave) return;
     useEffect(() => {
         if (autoSave) {
@@ -785,4 +932,3 @@ function useOnAutoSave(autoSave: undefined | boolean, formex: FormexController<a
         }
     }, [formex.values]);
 }
-

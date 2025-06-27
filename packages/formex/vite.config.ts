@@ -2,17 +2,17 @@
 import path from "path";
 
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react"
+import react from "@vitejs/plugin-react";
 
 const ReactCompilerConfig = {
-    target: "18"
+    target: "18",
 };
 
 const isExternal = (id: string) => !id.startsWith(".") && !path.isAbsolute(id);
 
 export default defineConfig(() => ({
     esbuild: {
-        logOverride: { "this-is-undefined-in-esm": "silent" }
+        logOverride: { "this-is-undefined-in-esm": "silent" },
     },
     build: {
         target: "ESNEXT",
@@ -23,17 +23,17 @@ export default defineConfig(() => ({
         lib: {
             entry: path.resolve(__dirname, "src/index.ts"),
             name: "Formex",
-            fileName: (format) => `index.${format}.js`
+            fileName: (format) => `index.${format}.js`,
         },
         rollupOptions: {
-            external: isExternal
-        }
+            external: isExternal,
+        },
     },
-    plugins: [react({
+    plugins: [
+        react({
             babel: {
-                plugins: [
-                    ["babel-plugin-react-compiler", ReactCompilerConfig],
-                ],
-            }
-        })]
+                plugins: [["babel-plugin-react-compiler", ReactCompilerConfig]],
+            },
+        }),
+    ],
 }));

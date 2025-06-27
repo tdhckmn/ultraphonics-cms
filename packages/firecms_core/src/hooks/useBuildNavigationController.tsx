@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import equal from "react-fast-compare"
+import equal from "react-fast-compare";
 import { useBlocker, useNavigate } from "react-router-dom";
 
 import {
@@ -18,7 +18,7 @@ import {
     NavigationResult,
     PermissionsBuilder,
     User,
-    UserConfigurationPersistence
+    UserConfigurationPersistence,
 } from "../types";
 import {
     applyPermissionsFunctionIfEmpty,
@@ -27,7 +27,7 @@ import {
     removeFunctions,
     removeInitialAndTrailingSlashes,
     resolveCollectionPathIds,
-    resolvePermissions
+    resolvePermissions,
 } from "../util";
 import { getParentReferencesFromPath } from "../util/parent_references_from_path";
 
@@ -42,12 +42,12 @@ export type BuildNavigationContextProps<EC extends EntityCollection, USER extend
      * Base path for the CMS, used to build the all the URLs.
      * Defaults to "/".
      */
-    basePath?: string,
+    basePath?: string;
     /**
      * Base path for the collections, used to build the collection URLs.
      * Defaults to "c" (e.g. "/c/products").
      */
-    baseCollectionPath?: string,
+    baseCollectionPath?: string;
     /**
      * The auth controller used to manage the user authentication and permissions.
      */
@@ -103,7 +103,9 @@ export type BuildNavigationContextProps<EC extends EntityCollection, USER extend
     viewsOrder?: string[];
 };
 
-export function useBuildNavigationController<EC extends EntityCollection, USER extends User>(props: BuildNavigationContextProps<EC, USER>): NavigationController {
+export function useBuildNavigationController<EC extends EntityCollection, USER extends User>(
+    props: BuildNavigationContextProps<EC, USER>
+): NavigationController {
     const {
         basePath = DEFAULT_BASE_PATH,
         baseCollectionPath = DEFAULT_COLLECTION_PATH,
@@ -117,7 +119,7 @@ export function useBuildNavigationController<EC extends EntityCollection, USER e
         userConfigPersistence,
         dataSourceDelegate,
         disabled,
-        navigationGroupMappings
+        navigationGroupMappings,
     } = props;
 
     const navigate = useNavigate();
@@ -129,190 +131,231 @@ export function useBuildNavigationController<EC extends EntityCollection, USER e
 
     const [initialised, setInitialised] = useState<boolean>(false);
 
-    const [topLevelNavigation, setTopLevelNavigation] = useState<NavigationResult | undefined>(undefined);
+    const [topLevelNavigation, setTopLevelNavigation] = useState<NavigationResult | undefined>(
+        undefined
+    );
     const [navigationLoading, setNavigationLoading] = useState<boolean>(true);
-    const [navigationLoadingError, setNavigationLoadingError] = useState<Error | undefined>(undefined);
+    const [navigationLoadingError, setNavigationLoadingError] = useState<Error | undefined>(
+        undefined
+    );
 
     const cleanBasePath = removeInitialAndTrailingSlashes(basePath);
     const cleanBaseCollectionPath = removeInitialAndTrailingSlashes(baseCollectionPath);
 
     const homeUrl = cleanBasePath ? `/${cleanBasePath}` : "/";
 
-    const fullCollectionPath = cleanBasePath ? `/${cleanBasePath}/${cleanBaseCollectionPath}` : `/${cleanBaseCollectionPath}`;
+    const fullCollectionPath = cleanBasePath
+        ? `/${cleanBasePath}/${cleanBaseCollectionPath}`
+        : `/${cleanBaseCollectionPath}`;
 
-    const buildCMSUrlPath = useCallback((path: string): string => cleanBasePath ? `/${cleanBasePath}/${encodePath(path)}` : `/${encodePath(path)}`,
-        [cleanBasePath]);
+    const buildCMSUrlPath = useCallback(
+        (path: string): string =>
+            cleanBasePath ? `/${cleanBasePath}/${encodePath(path)}` : `/${encodePath(path)}`,
+        [cleanBasePath]
+    );
 
-    const buildUrlCollectionPath = useCallback((path: string): string => `${removeInitialAndTrailingSlashes(baseCollectionPath)}/${encodePath(path)}`,
-        [baseCollectionPath]);
+    const buildUrlCollectionPath = useCallback(
+        (path: string): string =>
+            `${removeInitialAndTrailingSlashes(baseCollectionPath)}/${encodePath(path)}`,
+        [baseCollectionPath]
+    );
 
-    const allPluginGroups = plugins?.flatMap(plugin => plugin.homePage?.navigationEntries ? plugin.homePage.navigationEntries.map(e => e.name) : []) ?? [];
+    const allPluginGroups =
+        plugins?.flatMap((plugin) =>
+            plugin.homePage?.navigationEntries
+                ? plugin.homePage.navigationEntries.map((e) => e.name)
+                : []
+        ) ?? [];
     const pluginGroups = [...new Set(allPluginGroups)];
 
-    const onNavigationEntriesOrderUpdate = useCallback((entries: NavigationGroupMapping[]) => {
-        if (!plugins) {
-            return;
-        }
-        // remove all groups that have no entries
-        const filteredEntries = entries.filter(entry => entry.entries.length > 0);
-        if (plugins.some(plugin => plugin.homePage?.onNavigationEntriesUpdate)) {
-            plugins.forEach(plugin => {
-                if (plugin.homePage?.onNavigationEntriesUpdate) {
-                    plugin.homePage.onNavigationEntriesUpdate(filteredEntries);
-                }
+    const onNavigationEntriesOrderUpdate = useCallback(
+        (entries: NavigationGroupMapping[]) => {
+            if (!plugins) {
+                return;
+            }
+            // remove all groups that have no entries
+            const filteredEntries = entries.filter((entry) => entry.entries.length > 0);
+            if (plugins.some((plugin) => plugin.homePage?.onNavigationEntriesUpdate)) {
+                plugins.forEach((plugin) => {
+                    if (plugin.homePage?.onNavigationEntriesUpdate) {
+                        plugin.homePage.onNavigationEntriesUpdate(filteredEntries);
+                    }
+                });
+            }
+        },
+        [plugins]
+    );
+
+    const computeTopNavigation = useCallback(
+        (
+            collections: EntityCollection[],
+            views: CMSView[],
+            adminViews: CMSView[],
+            viewsOrder?: string[]
+        ): NavigationResult => {
+            const finalNavigationGroupMappings: NavigationGroupMapping[] = computeNavigationGroups({
+                navigationGroupMappings: navigationGroupMappings,
+                collections,
+                views,
+                plugins: plugins,
             });
-        }
 
-    }, [plugins]);
+            const allPluginNavigationEntries =
+                finalNavigationGroupMappings.map((g) => g.entries).flat() ?? [];
+            const navigationEntriesOrder = [...new Set(allPluginNavigationEntries)];
 
-    const computeTopNavigation = useCallback((collections: EntityCollection[], views: CMSView[], adminViews: CMSView[], viewsOrder?: string[]): NavigationResult => {
+            let navigationEntries: NavigationEntry[] = [
+                ...(collections ?? []).reduce((acc, collection) => {
+                    if (collection.hideFromNavigation) return acc;
 
-        const finalNavigationGroupMappings: NavigationGroupMapping[] = computeNavigationGroups({
-            navigationGroupMappings: navigationGroupMappings,
-            collections,
-            views,
-            plugins: plugins
-        });
+                    const pathKey = collection.id ?? collection.path;
+                    let groupName = getGroup(collection); // Initial group
 
-        const allPluginNavigationEntries = finalNavigationGroupMappings.map((g) => g.entries).flat() ?? [];
-        const navigationEntriesOrder = ([...new Set(allPluginNavigationEntries)]);
-
-        let navigationEntries: NavigationEntry[] = [
-            ...(collections ?? []).reduce((acc, collection) => {
-                if (collection.hideFromNavigation) return acc;
-
-                const pathKey = collection.id ?? collection.path;
-                let groupName = getGroup(collection); // Initial group
-
-                if (finalNavigationGroupMappings) {
-                    for (const pluginGroupDef of finalNavigationGroupMappings) {
-                        if (pluginGroupDef.entries.includes(pathKey)) {
-                            groupName = pluginGroupDef.name;
-                            break;
+                    if (finalNavigationGroupMappings) {
+                        for (const pluginGroupDef of finalNavigationGroupMappings) {
+                            if (pluginGroupDef.entries.includes(pathKey)) {
+                                groupName = pluginGroupDef.name;
+                                break;
+                            }
                         }
                     }
-                }
 
-                acc.push({
-                    id: `collection:${pathKey}`,
-                    url: buildUrlCollectionPath(pathKey),
-                    type: "collection",
-                    name: collection.name.trim(),
-                    path: pathKey,
-                    collection,
-                    description: collection.description?.trim(),
-                    group: groupName ?? NAVIGATION_DEFAULT_GROUP_NAME
-                });
-                return acc;
-            }, [] as NavigationEntry[]),
+                    acc.push({
+                        id: `collection:${pathKey}`,
+                        url: buildUrlCollectionPath(pathKey),
+                        type: "collection",
+                        name: collection.name.trim(),
+                        path: pathKey,
+                        collection,
+                        description: collection.description?.trim(),
+                        group: groupName ?? NAVIGATION_DEFAULT_GROUP_NAME,
+                    });
+                    return acc;
+                }, [] as NavigationEntry[]),
 
-            ...(views ?? []).reduce((acc, view) => {
-                if (view.hideFromNavigation) return acc;
+                ...(views ?? []).reduce((acc, view) => {
+                    if (view.hideFromNavigation) return acc;
 
-                const pathKey = Array.isArray(view.path) ? view.path[0] : view.path;
-                let groupName = getGroup(view); // Initial group
+                    const pathKey = Array.isArray(view.path) ? view.path[0] : view.path;
+                    let groupName = getGroup(view); // Initial group
 
-                if (finalNavigationGroupMappings) {
-                    for (const pluginGroupDef of finalNavigationGroupMappings) {
-                        if (pluginGroupDef.entries.includes(pathKey)) {
-                            groupName = pluginGroupDef.name;
-                            break;
+                    if (finalNavigationGroupMappings) {
+                        for (const pluginGroupDef of finalNavigationGroupMappings) {
+                            if (pluginGroupDef.entries.includes(pathKey)) {
+                                groupName = pluginGroupDef.name;
+                                break;
+                            }
                         }
                     }
-                }
 
-                acc.push({
-                    id: `view:${pathKey}`,
-                    url: buildCMSUrlPath(pathKey),
-                    name: view.name.trim(),
-                    type: "view",
-                    path: view.path,
-                    view,
-                    description: view.description?.trim(),
-                    group: groupName ?? NAVIGATION_DEFAULT_GROUP_NAME
-                });
-                return acc;
-            }, [] as NavigationEntry[]),
+                    acc.push({
+                        id: `view:${pathKey}`,
+                        url: buildCMSUrlPath(pathKey),
+                        name: view.name.trim(),
+                        type: "view",
+                        path: view.path,
+                        view,
+                        description: view.description?.trim(),
+                        group: groupName ?? NAVIGATION_DEFAULT_GROUP_NAME,
+                    });
+                    return acc;
+                }, [] as NavigationEntry[]),
 
-            ...(adminViews ?? []).reduce((acc, view) => {
-                if (view.hideFromNavigation) return acc;
+                ...(adminViews ?? []).reduce((acc, view) => {
+                    if (view.hideFromNavigation) return acc;
 
-                const pathKey = Array.isArray(view.path) ? view.path[0] : view.path;
-                const groupName = NAVIGATION_ADMIN_GROUP_NAME;
+                    const pathKey = Array.isArray(view.path) ? view.path[0] : view.path;
+                    const groupName = NAVIGATION_ADMIN_GROUP_NAME;
 
-                acc.push({
-                    id: `admin:${pathKey}`,
-                    url: buildCMSUrlPath(pathKey),
-                    name: view.name.trim(),
-                    type: "admin",
-                    path: view.path,
-                    view,
-                    description: view.description?.trim(),
-                    group: groupName
-                });
-                return acc;
-            }, [] as NavigationEntry[])
-        ];
+                    acc.push({
+                        id: `admin:${pathKey}`,
+                        url: buildCMSUrlPath(pathKey),
+                        name: view.name.trim(),
+                        type: "admin",
+                        path: view.path,
+                        view,
+                        description: view.description?.trim(),
+                        group: groupName,
+                    });
+                    return acc;
+                }, [] as NavigationEntry[]),
+            ];
 
-        const groupOrderValue = (groupName?: string): number => {
-            if (groupName === NAVIGATION_ADMIN_GROUP_NAME) return 1;
-            return 0; // Other groups
-        };
+            const groupOrderValue = (groupName?: string): number => {
+                if (groupName === NAVIGATION_ADMIN_GROUP_NAME) return 1;
+                return 0; // Other groups
+            };
 
-        navigationEntries = navigationEntries.sort((a, b) => {
-            return groupOrderValue(a.group) - groupOrderValue(b.group);
-        });
-
-        const usedViewsOrder = viewsOrder ?? navigationEntriesOrder;
-        if (usedViewsOrder) {
             navigationEntries = navigationEntries.sort((a, b) => {
-                const getSortPath = (navEntry: NavigationEntry) => typeof navEntry.path === "string" ? navEntry.path : navEntry.path[0];
-                const aIndex = usedViewsOrder.indexOf(getSortPath(a));
-                const bIndex = usedViewsOrder.indexOf(getSortPath(b));
-                if (aIndex === -1 && bIndex === -1) return 0;
-                if (aIndex === -1) return 1;
-                if (bIndex === -1) return -1;
-                return aIndex - bIndex;
+                return groupOrderValue(a.group) - groupOrderValue(b.group);
             });
-        }
 
-        const collectedGroupsFromEntries = navigationEntries
-            .map(e => e.group)
-            .filter(Boolean) as string[];
+            const usedViewsOrder = viewsOrder ?? navigationEntriesOrder;
+            if (usedViewsOrder) {
+                navigationEntries = navigationEntries.sort((a, b) => {
+                    const getSortPath = (navEntry: NavigationEntry) =>
+                        typeof navEntry.path === "string" ? navEntry.path : navEntry.path[0];
+                    const aIndex = usedViewsOrder.indexOf(getSortPath(a));
+                    const bIndex = usedViewsOrder.indexOf(getSortPath(b));
+                    if (aIndex === -1 && bIndex === -1) return 0;
+                    if (aIndex === -1) return 1;
+                    if (bIndex === -1) return -1;
+                    return aIndex - bIndex;
+                });
+            }
 
-        const allDefinedGroups = [
-            ...(pluginGroups ?? []),
-            ...collectedGroupsFromEntries
-        ];
+            const collectedGroupsFromEntries = navigationEntries
+                .map((e) => e.group)
+                .filter(Boolean) as string[];
 
-        const uniqueGroups = [...new Set(allDefinedGroups)]
-            .sort((a, b) => groupOrderValue(a) - groupOrderValue(b));
+            const allDefinedGroups = [...(pluginGroups ?? []), ...collectedGroupsFromEntries];
 
-        return {
-            allowDragAndDrop: plugins?.some(plugin => plugin.homePage?.allowDragAndDrop) ?? false,
-            navigationEntries,
-            groups: uniqueGroups,
-            onNavigationEntriesUpdate: onNavigationEntriesOrderUpdate,
-        };
-    }, [navigationGroupMappings, buildCMSUrlPath, buildUrlCollectionPath, pluginGroups, onNavigationEntriesOrderUpdate]);
+            const uniqueGroups = [...new Set(allDefinedGroups)].sort(
+                (a, b) => groupOrderValue(a) - groupOrderValue(b)
+            );
+
+            return {
+                allowDragAndDrop:
+                    plugins?.some((plugin) => plugin.homePage?.allowDragAndDrop) ?? false,
+                navigationEntries,
+                groups: uniqueGroups,
+                onNavigationEntriesUpdate: onNavigationEntriesOrderUpdate,
+            };
+        },
+        [
+            navigationGroupMappings,
+            buildCMSUrlPath,
+            buildUrlCollectionPath,
+            pluginGroups,
+            onNavigationEntriesOrderUpdate,
+        ]
+    );
 
     const refreshNavigation = useCallback(async () => {
-
-        if (disabled || authController.initialLoading)
-            return;
+        if (disabled || authController.initialLoading) return;
 
         console.debug("Refreshing navigation");
 
         try {
-
-            const [resolvedCollections = [], resolvedViews, resolvedAdminViews = []] = await Promise.all([
-                    resolveCollections(collectionsProp, collectionPermissions, authController, dataSourceDelegate, plugins),
+            const [resolvedCollections = [], resolvedViews, resolvedAdminViews = []] =
+                await Promise.all([
+                    resolveCollections(
+                        collectionsProp,
+                        collectionPermissions,
+                        authController,
+                        dataSourceDelegate,
+                        plugins
+                    ),
                     resolveCMSViews(viewsProp, authController, dataSourceDelegate),
-                    resolveCMSViews(adminViewsProp, authController, dataSourceDelegate)
-                ]
-            );
+                    resolveCMSViews(adminViewsProp, authController, dataSourceDelegate),
+                ]);
 
-            const computedTopLevelNav = computeTopNavigation(resolvedCollections, resolvedViews, resolvedAdminViews, viewsOrder);
+            const computedTopLevelNav = computeTopNavigation(
+                resolvedCollections,
+                resolvedViews,
+                resolvedAdminViews,
+                viewsOrder
+            );
 
             let shouldUpdateTopLevelNav = false;
             if (!areCollectionListsEqual(collectionsRef.current ?? [], resolvedCollections)) {
@@ -333,7 +376,7 @@ export function useBuildNavigationController<EC extends EntityCollection, USER e
                 shouldUpdateTopLevelNav = true;
             }
 
-            const navigationEntriesOrder = computedTopLevelNav.navigationEntries.map(e => e.id);
+            const navigationEntriesOrder = computedTopLevelNav.navigationEntries.map((e) => e.id);
             if (!equal(navigationEntriesOrderRef.current, navigationEntriesOrder)) {
                 navigationEntriesOrderRef.current = navigationEntriesOrder;
                 shouldUpdateTopLevelNav = true;
@@ -347,11 +390,8 @@ export function useBuildNavigationController<EC extends EntityCollection, USER e
             setNavigationLoadingError(e as any);
         }
 
-        if (navigationLoading)
-            setNavigationLoading(false);
-        if (!initialised)
-            setInitialised(true);
-
+        if (navigationLoading) setNavigationLoading(false);
+        if (!initialised) setInitialised(true);
     }, [
         collectionsProp,
         collectionPermissions,
@@ -367,100 +407,112 @@ export function useBuildNavigationController<EC extends EntityCollection, USER e
         refreshNavigation();
     }, [refreshNavigation]);
 
-    const getCollection = useCallback((
-        idOrPath: string,
-        includeUserOverride = false
-    ): EC | undefined => {
-        const collections = collectionsRef.current;
-        if (!collections)
-            return undefined;
+    const getCollection = useCallback(
+        (idOrPath: string, includeUserOverride = false): EC | undefined => {
+            const collections = collectionsRef.current;
+            if (!collections) return undefined;
 
-        const baseCollection = getCollectionByPathOrId(removeInitialAndTrailingSlashes(idOrPath), collections);
+            const baseCollection = getCollectionByPathOrId(
+                removeInitialAndTrailingSlashes(idOrPath),
+                collections
+            );
 
-        const userOverride = includeUserOverride ? userConfigPersistence?.getCollectionConfig(idOrPath) : undefined;
-        const overriddenCollection = baseCollection ? mergeDeep(baseCollection, userOverride ?? {}) : undefined;
+            const userOverride = includeUserOverride
+                ? userConfigPersistence?.getCollectionConfig(idOrPath)
+                : undefined;
+            const overriddenCollection = baseCollection
+                ? mergeDeep(baseCollection, userOverride ?? {})
+                : undefined;
 
-        let result: Partial<EntityCollection> | undefined = overriddenCollection;
+            let result: Partial<EntityCollection> | undefined = overriddenCollection;
 
-        if (overriddenCollection) {
-            const subcollections = overriddenCollection.subcollections;
-            const callbacks = overriddenCollection.callbacks;
-            const permissions = overriddenCollection.permissions;
-            result = {
-                ...result,
-                subcollections: result?.subcollections ?? subcollections,
-                callbacks: result?.callbacks ?? callbacks,
-                permissions: result?.permissions ?? permissions
-            };
-        }
+            if (overriddenCollection) {
+                const subcollections = overriddenCollection.subcollections;
+                const callbacks = overriddenCollection.callbacks;
+                const permissions = overriddenCollection.permissions;
+                result = {
+                    ...result,
+                    subcollections: result?.subcollections ?? subcollections,
+                    callbacks: result?.callbacks ?? callbacks,
+                    permissions: result?.permissions ?? permissions,
+                };
+            }
 
-        if (!result) return undefined;
+            if (!result) return undefined;
 
-        return { ...overriddenCollection, ...result } as EC;
-
-    }, [userConfigPersistence]);
+            return { ...overriddenCollection, ...result } as EC;
+        },
+        [userConfigPersistence]
+    );
 
     const getCollectionById = useCallback((id: string): EC | undefined => {
         const collections = collectionsRef.current;
         if (collections === undefined)
             throw Error("getCollectionById: Collections have not been initialised yet");
-        const collection: EntityCollection | undefined = collections.find(c => c.id === id);
-        if (!collection)
-            return undefined;
+        const collection: EntityCollection | undefined = collections.find((c) => c.id === id);
+        if (!collection) return undefined;
         return collection as EC;
     }, []);
 
-    const getCollectionFromPaths = useCallback(<EC extends EntityCollection>(pathSegments: string[]): EC | undefined => {
+    const getCollectionFromPaths = useCallback(
+        <EC extends EntityCollection>(pathSegments: string[]): EC | undefined => {
+            const collections = collectionsRef.current;
+            if (collections === undefined)
+                throw Error("getCollectionFromPaths: Collections have not been initialised yet");
+            let currentCollections: EntityCollection[] | undefined = [...(collections ?? [])];
 
-        const collections = collectionsRef.current;
-        if (collections === undefined)
-            throw Error("getCollectionFromPaths: Collections have not been initialised yet");
-        let currentCollections: EntityCollection[] | undefined = [...(collections ?? [])];
+            for (let i = 0; i < pathSegments.length; i++) {
+                const pathSegment = pathSegments[i];
+                const collection: EntityCollection | undefined = currentCollections!.find(
+                    (c) => c.id === pathSegment || c.path === pathSegment
+                );
+                if (!collection) return undefined;
+                currentCollections = collection.subcollections;
+                if (i === pathSegments.length - 1) return collection as EC;
+            }
 
-        for (let i = 0; i < pathSegments.length; i++) {
-            const pathSegment = pathSegments[i];
-            const collection: EntityCollection | undefined = currentCollections!.find(c => c.id === pathSegment || c.path === pathSegment);
-            if (!collection)
-                return undefined;
-            currentCollections = collection.subcollections;
-            if (i === pathSegments.length - 1)
-                return collection as EC;
-        }
+            return undefined;
+        },
+        []
+    );
 
-        return undefined;
+    const getCollectionFromIds = useCallback(
+        <EC extends EntityCollection>(ids: string[]): EC | undefined => {
+            const collections = collectionsRef.current;
+            if (collections === undefined)
+                throw Error("getCollectionFromIds: Collections have not been initialised yet");
+            let currentCollections: EntityCollection[] | undefined = [...(collections ?? [])];
 
-    }, []);
+            for (let i = 0; i < ids.length; i++) {
+                const id = ids[i];
+                const collection: EntityCollection | undefined = currentCollections!.find(
+                    (c) => c.id === id
+                );
+                if (!collection) return undefined;
+                currentCollections = collection.subcollections;
+                if (i === ids.length - 1) return collection as EC;
+            }
 
-    const getCollectionFromIds = useCallback(<EC extends EntityCollection>(ids: string[]): EC | undefined => {
-
-        const collections = collectionsRef.current;
-        if (collections === undefined)
-            throw Error("getCollectionFromIds: Collections have not been initialised yet");
-        let currentCollections: EntityCollection[] | undefined = [...(collections ?? [])];
-
-        for (let i = 0; i < ids.length; i++) {
-            const id = ids[i];
-            const collection: EntityCollection | undefined = currentCollections!.find(c => c.id === id);
-            if (!collection)
-                return undefined;
-            currentCollections = collection.subcollections;
-            if (i === ids.length - 1)
-                return collection as EC;
-        }
-
-        return undefined;
-
-    }, []);
+            return undefined;
+        },
+        []
+    );
 
     const isUrlCollectionPath = useCallback(
-        (path: string): boolean => removeInitialAndTrailingSlashes(path + "/").startsWith(removeInitialAndTrailingSlashes(fullCollectionPath) + "/"),
-        [fullCollectionPath]);
+        (path: string): boolean =>
+            removeInitialAndTrailingSlashes(path + "/").startsWith(
+                removeInitialAndTrailingSlashes(fullCollectionPath) + "/"
+            ),
+        [fullCollectionPath]
+    );
 
-    const urlPathToDataPath = useCallback((path: string): string => {
-        if (path.startsWith(fullCollectionPath))
-            return path.replace(fullCollectionPath, "");
-        throw Error("Expected path starting with " + fullCollectionPath);
-    }, [fullCollectionPath]);
+    const urlPathToDataPath = useCallback(
+        (path: string): string => {
+            if (path.startsWith(fullCollectionPath)) return path.replace(fullCollectionPath, "");
+            throw Error("Expected path starting with " + fullCollectionPath);
+        },
+        [fullCollectionPath]
+    );
 
     const resolveIdsFrom = useCallback((path: string): string => {
         const collections = collectionsRef.current ?? [];
@@ -471,40 +523,46 @@ export function useBuildNavigationController<EC extends EntityCollection, USER e
         const collections = collectionsRef.current ?? [];
         return getParentReferencesFromPath({
             path,
-            collections
+            collections,
         });
     }, []);
 
-    const getParentCollectionIds = useCallback((path: string): string[] => {
+    const getParentCollectionIds = useCallback(
+        (path: string): string[] => {
+            const strings = path.split("/");
+            const oddPathSegments = strings.filter((_, i) => i % 2 === 0);
+            oddPathSegments.pop();
 
-        const strings = path.split("/");
-        const oddPathSegments = strings.filter((_, i) => i % 2 === 0);
-        oddPathSegments.pop();
+            const result: string[][] = [];
 
-        const result: string[][] = [];
+            for (let i = 1; i <= oddPathSegments.length; i++) {
+                result.push(oddPathSegments.slice(0, i));
+            }
 
-        for (let i = 1; i <= oddPathSegments.length; i++) {
-            result.push(oddPathSegments.slice(0, i));
-        }
+            // for each odd path segment, get the collection
+            return result.map((r) => getCollectionFromPaths(r)?.id).filter(Boolean) as string[];
+        },
+        [getAllParentReferencesForPath]
+    );
 
-        // for each odd path segment, get the collection
-        return result.map(r => getCollectionFromPaths(r)?.id).filter(Boolean) as string[];
-    }, [getAllParentReferencesForPath])
-
-    const convertIdsToPaths = useCallback((ids: string[]): string[] => {
-        const collections = collectionsRef.current;
-        let currentCollections = collections;
-        const paths: string[] = [];
-        for (let i = 0; i < ids.length; i++) {
-            const id = ids[i];
-            const collection: EntityCollection | undefined = currentCollections!.find(c => c.id === id);
-            if (!collection)
-                throw Error(`Collection with id ${id} not found`);
-            paths.push(collection.path);
-            currentCollections = collection.subcollections;
-        }
-        return paths;
-    }, [getCollectionFromIds]);
+    const convertIdsToPaths = useCallback(
+        (ids: string[]): string[] => {
+            const collections = collectionsRef.current;
+            let currentCollections = collections;
+            const paths: string[] = [];
+            for (let i = 0; i < ids.length; i++) {
+                const id = ids[i];
+                const collection: EntityCollection | undefined = currentCollections!.find(
+                    (c) => c.id === id
+                );
+                if (!collection) throw Error(`Collection with id ${id} not found`);
+                paths.push(collection.path);
+                currentCollections = collection.subcollections;
+            }
+            return paths;
+        },
+        [getCollectionFromIds]
+    );
 
     return {
         collections: collectionsRef.current,
@@ -530,7 +588,7 @@ export function useBuildNavigationController<EC extends EntityCollection, USER e
         getParentCollectionIds,
         convertIdsToPaths,
         navigate,
-        plugins
+        plugins,
     };
 }
 
@@ -540,7 +598,10 @@ function encodePath(input: string) {
         .replaceAll("%23", "#");
 }
 
-function filterOutNotAllowedCollections(resolvedCollections: EntityCollection[], authController: AuthController<User>): EntityCollection[] {
+function filterOutNotAllowedCollections(
+    resolvedCollections: EntityCollection[],
+    authController: AuthController<User>
+): EntityCollection[] {
     return resolvedCollections
         .filter((c) => Boolean(c.path))
         .filter((c) => {
@@ -552,35 +613,43 @@ function filterOutNotAllowedCollections(resolvedCollections: EntityCollection[],
             if (!c.subcollections) return c;
             return {
                 ...c,
-                subcollections: filterOutNotAllowedCollections(c.subcollections, authController)
-            }
+                subcollections: filterOutNotAllowedCollections(c.subcollections, authController),
+            };
         });
 }
 
-function applyPluginModifyCollection(resolvedCollections: EntityCollection[], modifyCollection: (collection: EntityCollection) => EntityCollection) {
+function applyPluginModifyCollection(
+    resolvedCollections: EntityCollection[],
+    modifyCollection: (collection: EntityCollection) => EntityCollection
+) {
     return resolvedCollections.map((collection: EntityCollection): EntityCollection => {
         const modifiedCollection = modifyCollection(collection);
         if (modifiedCollection.subcollections) {
             return {
                 ...modifiedCollection,
-                subcollections: applyPluginModifyCollection(modifiedCollection.subcollections, modifyCollection)
+                subcollections: applyPluginModifyCollection(
+                    modifiedCollection.subcollections,
+                    modifyCollection
+                ),
             } satisfies EntityCollection;
         }
         return modifiedCollection;
     });
 }
 
-async function resolveCollections(collections: undefined | EntityCollection[] | EntityCollectionsBuilder<any>,
-                                  collectionPermissions: PermissionsBuilder | undefined,
-                                  authController: AuthController,
-                                  dataSource: DataSourceDelegate,
-                                  plugins: FireCMSPlugin[] | undefined): Promise<EntityCollection[]> {
+async function resolveCollections(
+    collections: undefined | EntityCollection[] | EntityCollectionsBuilder<any>,
+    collectionPermissions: PermissionsBuilder | undefined,
+    authController: AuthController,
+    dataSource: DataSourceDelegate,
+    plugins: FireCMSPlugin[] | undefined
+): Promise<EntityCollection[]> {
     let resolvedCollections: EntityCollection[] = [];
     if (typeof collections === "function") {
         resolvedCollections = await collections({
             user: authController.user,
             authController,
-            dataSource
+            dataSource,
         });
     } else if (Array.isArray(collections)) {
         resolvedCollections = collections;
@@ -589,27 +658,39 @@ async function resolveCollections(collections: undefined | EntityCollection[] | 
     if (plugins) {
         for (const plugin of plugins) {
             if (plugin.collection?.modifyCollection) {
-                resolvedCollections = applyPluginModifyCollection(resolvedCollections, plugin.collection.modifyCollection);
+                resolvedCollections = applyPluginModifyCollection(
+                    resolvedCollections,
+                    plugin.collection.modifyCollection
+                );
             }
 
             if (plugin.collection?.injectCollections) {
-                resolvedCollections = plugin.collection.injectCollections(resolvedCollections ?? []);
+                resolvedCollections = plugin.collection.injectCollections(
+                    resolvedCollections ?? []
+                );
             }
         }
     }
 
-    resolvedCollections = applyPermissionsFunctionIfEmpty(resolvedCollections, collectionPermissions);
+    resolvedCollections = applyPermissionsFunctionIfEmpty(
+        resolvedCollections,
+        collectionPermissions
+    );
     resolvedCollections = filterOutNotAllowedCollections(resolvedCollections, authController);
     return resolvedCollections;
 }
 
-async function resolveCMSViews(baseViews: CMSView[] | CMSViewsBuilder | undefined, authController: AuthController, dataSource: DataSourceDelegate) {
+async function resolveCMSViews(
+    baseViews: CMSView[] | CMSViewsBuilder | undefined,
+    authController: AuthController,
+    dataSource: DataSourceDelegate
+) {
     let resolvedViews: CMSView[] = [];
     if (typeof baseViews === "function") {
         resolvedViews = await baseViews({
             user: authController.user,
             authController,
-            dataSource
+            dataSource,
         });
     } else if (Array.isArray(baseViews)) {
         resolvedViews = baseViews;
@@ -637,14 +718,8 @@ function areCollectionListsEqual(a: EntityCollection[], b: EntityCollection[]) {
 }
 
 function areCollectionsEqual(a: EntityCollection, b: EntityCollection) {
-    const {
-        subcollections: subcollectionsA,
-        ...restA
-    } = a;
-    const {
-        subcollections: subcollectionsB,
-        ...restB
-    } = b;
+    const { subcollections: subcollectionsA, ...restA } = a;
+    const { subcollections: subcollectionsB, ...restB } = b;
     if (!areCollectionListsEqual(subcollectionsA ?? [], subcollectionsB ?? [])) {
         return false;
     }
@@ -652,20 +727,25 @@ function areCollectionsEqual(a: EntityCollection, b: EntityCollection) {
 }
 
 function useCustomBlocker(): NavigationBlocker {
-    const [blockListeners, setBlockListeners] = useState<Record<string, {
-        block: boolean,
-        basePath?: string
-    }>>({});
+    const [blockListeners, setBlockListeners] = useState<
+        Record<
+            string,
+            {
+                block: boolean;
+                basePath?: string;
+            }
+        >
+    >({});
 
-    const shouldBlock = Object.values(blockListeners).some(b => b.block);
+    const shouldBlock = Object.values(blockListeners).some((b) => b.block);
 
     let blocker: any;
     try {
-        blocker = useBlocker(({
-                                  nextLocation
-                              }) => {
-            const allBasePaths = Object.values(blockListeners).map(b => b.basePath).filter(Boolean) as string[];
-            if (allBasePaths && allBasePaths.some(path => nextLocation.pathname.startsWith(path)))
+        blocker = useBlocker(({ nextLocation }) => {
+            const allBasePaths = Object.values(blockListeners)
+                .map((b) => b.basePath)
+                .filter(Boolean) as string[];
+            if (allBasePaths && allBasePaths.some((path) => nextLocation.pathname.startsWith(path)))
                 return false;
             return shouldBlock;
         });
@@ -674,69 +754,67 @@ function useCustomBlocker(): NavigationBlocker {
     }
 
     const updateBlockListener = (path: string, block: boolean, basePath?: string) => {
-        setBlockListeners(prev => ({
+        setBlockListeners((prev) => ({
             ...prev,
             [path]: {
                 block,
-                basePath
-            }
+                basePath,
+            },
         }));
-        return () => setBlockListeners(prev => {
-            const {
-                [path]: removed,
-                ...rest
-            } = prev;
-            return rest;
-        })
+        return () =>
+            setBlockListeners((prev) => {
+                const { [path]: removed, ...rest } = prev;
+                return rest;
+            });
     };
 
     const isBlocked = (path: string) => {
         return (blockListeners[path]?.block ?? false) && blocker?.state === "blocked";
-    }
+    };
 
     return {
         updateBlockListener,
         isBlocked,
         proceed: blocker?.proceed,
-        reset: blocker?.reset
-    }
+        reset: blocker?.reset,
+    };
 }
 
 function computeNavigationGroups({
-                                     navigationGroupMappings,
-                                     collections,
-                                     views,
-                                     plugins
-                                 }: {
-    navigationGroupMappings?: NavigationGroupMapping[],
-    collections?: EntityCollection[],
-    views?: CMSView[],
-    plugins?: FireCMSPlugin[]
+    navigationGroupMappings,
+    collections,
+    views,
+    plugins,
+}: {
+    navigationGroupMappings?: NavigationGroupMapping[];
+    collections?: EntityCollection[];
+    views?: CMSView[];
+    plugins?: FireCMSPlugin[];
 }): NavigationGroupMapping[] {
-
     let result = navigationGroupMappings;
 
-    result = plugins ? plugins?.reduce((acc, plugin) => {
-        if (plugin.homePage?.navigationEntries) {
-            plugin.homePage.navigationEntries.forEach((entry) => {
-                const {
-                    name,
-                    entries
-                } = entry;
-                const existingGroup = acc.find(entry => entry.name === name);
-                if (existingGroup) {
-                    existingGroup.entries.push(...entries);
-                } else {
-                    acc.push({
-                        name,
-                        entries: [...entries]
-                    });
-                }
-            });
-
-        }
-        return acc;
-    }, [...(result ?? [])] as NavigationGroupMapping[]) : result;
+    result = plugins
+        ? plugins?.reduce(
+              (acc, plugin) => {
+                  if (plugin.homePage?.navigationEntries) {
+                      plugin.homePage.navigationEntries.forEach((entry) => {
+                          const { name, entries } = entry;
+                          const existingGroup = acc.find((entry) => entry.name === name);
+                          if (existingGroup) {
+                              existingGroup.entries.push(...entries);
+                          } else {
+                              acc.push({
+                                  name,
+                                  entries: [...entries],
+                              });
+                          }
+                      });
+                  }
+                  return acc;
+              },
+              [...(result ?? [])] as NavigationGroupMapping[]
+          )
+        : result;
 
     if (!result) {
         // Convert views and collections to navigation group mappings, grouped by their group name
@@ -744,7 +822,7 @@ function computeNavigationGroups({
         const groupMap: Record<string, string[]> = {};
 
         // Add collections
-        (collections ?? []).forEach(collection => {
+        (collections ?? []).forEach((collection) => {
             const name = getGroup(collection);
             const entry = collection.id ?? collection.path;
             if (!groupMap[name]) groupMap[name] = [];
@@ -752,7 +830,7 @@ function computeNavigationGroups({
         });
 
         // Add views
-        (views ?? []).forEach(view => {
+        (views ?? []).forEach((view) => {
             const name = getGroup(view);
             const entry = Array.isArray(view.path) ? view.path[0] : view.path;
             if (!groupMap[name]) groupMap[name] = [];
@@ -762,12 +840,12 @@ function computeNavigationGroups({
         // Convert groupMap to initialGroupMappings array
         result = Object.entries(groupMap).map(([name, entries]) => ({
             name,
-            entries
+            entries,
         }));
     }
 
     // Remove duplicates in entries
-    result.forEach(group => {
+    result.forEach((group) => {
         group.entries = [...new Set(group.entries)];
     });
 

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
-import equal from "react-fast-compare"
+import equal from "react-fast-compare";
 
 import {
     AdditionalFieldDelegate,
@@ -14,12 +14,12 @@ import {
     PartialEntityCollection,
     PropertyOrBuilder,
     ResolvedProperty,
-    SaveEntityProps
+    SaveEntityProps,
 } from "../../types";
 import {
     EntityCollectionRowActions,
     EntityCollectionTable,
-    useDataSourceTableController
+    useDataSourceTableController,
 } from "../EntityCollectionTable";
 
 import {
@@ -31,7 +31,7 @@ import {
     mergeEntityActions,
     navigateToEntity,
     resolveCollection,
-    resolveProperty
+    resolveProperty,
 } from "../../util";
 import { ReferencePreview } from "../../preview";
 import {
@@ -42,7 +42,7 @@ import {
     useFireCMSContext,
     useLargeLayout,
     useNavigationController,
-    useSideEntityController
+    useSideEntityController,
 } from "../../hooks";
 import { useUserConfigurationPersistence } from "../../hooks/useUserConfigurationPersistence";
 import { EntityCollectionViewActions } from "./EntityCollectionViewActions";
@@ -58,7 +58,7 @@ import {
     SearchIcon,
     Skeleton,
     Tooltip,
-    Typography
+    Typography,
 } from "@firecms/ui";
 import { setIn } from "@firecms/formex";
 import { getSubcollectionColumnId } from "../EntityCollectionTable/internal/common";
@@ -71,7 +71,7 @@ import {
     OnColumnResizeParams,
     UniqueFieldValidator,
     useColumnIds,
-    useTableSearchHelper
+    useTableSearchHelper,
 } from "../common";
 import { PopupFormField } from "../EntityCollectionTable/internal/popup_field/PopupFormField";
 import { GetPropertyForProps } from "../EntityCollectionTable/EntityCollectionTableProps";
@@ -112,7 +112,6 @@ export type EntityCollectionViewProps<M extends Record<string, any>> = {
      * If true, this view will store its filter and sorting status in the url params
      */
     updateUrl?: boolean;
-
 } & EntityCollection<M>;
 
 /**
@@ -141,17 +140,14 @@ export type EntityCollectionViewProps<M extends Record<string, any>> = {
  */
 export const EntityCollectionView = React.memo(
     function EntityCollectionView<M extends Record<string, any>>({
-                                                                     fullPath: fullPathProp,
-                                                                     fullIdPath,
-                                                                     parentCollectionIds,
-                                                                     isSubCollection,
-                                                                     className,
-                                                                     updateUrl,
-                                                                     ...collectionProp
-                                                                 }: EntityCollectionViewProps<M>
-    ) {
-
-
+        fullPath: fullPathProp,
+        fullIdPath,
+        parentCollectionIds,
+        isSubCollection,
+        className,
+        updateUrl,
+        ...collectionProp
+    }: EntityCollectionViewProps<M>) {
         const context = useFireCMSContext();
         const navigation = useNavigationController();
         const fullPath = fullPathProp ?? collectionProp.path;
@@ -168,7 +164,9 @@ export const EntityCollectionView = React.memo(
 
         const collection = useMemo(() => {
             const userOverride = userConfigPersistence?.getCollectionConfig<M>(fullPath);
-            return (userOverride ? mergeDeep(collectionProp, userOverride) : collectionProp) as EntityCollection<M>;
+            return (
+                userOverride ? mergeDeep(collectionProp, userOverride) : collectionProp
+            ) as EntityCollection<M>;
         }, [collectionProp, fullPath, userConfigPersistence?.getCollectionConfig]);
 
         const openEntityMode = collection?.openEntityMode ?? DEFAULT_ENTITY_OPEN_MODE;
@@ -179,8 +177,12 @@ export const EntityCollectionView = React.memo(
         }, [collection]);
 
         const canCreateEntities = canCreateEntity(collection, authController, fullPath, null);
-        const [highlightedEntity, setHighlightedEntity] = useState<Entity<M> | undefined>(undefined);
-        const [deleteEntityClicked, setDeleteEntityClicked] = React.useState<Entity<M> | Entity<M>[] | undefined>(undefined);
+        const [highlightedEntity, setHighlightedEntity] = useState<Entity<M> | undefined>(
+            undefined
+        );
+        const [deleteEntityClicked, setDeleteEntityClicked] = React.useState<
+            Entity<M> | Entity<M>[] | undefined
+        >(undefined);
 
         const [lastDeleteTimestamp, setLastDeleteTimestamp] = React.useState<number>(0);
 
@@ -190,37 +192,37 @@ export const EntityCollectionView = React.memo(
         const unselectNavigatedEntity = useCallback(() => {
             const currentSelection = highlightedEntity;
             setTimeout(() => {
-                if (currentSelection === highlightedEntity)
-                    setHighlightedEntity(undefined);
+                if (currentSelection === highlightedEntity) setHighlightedEntity(undefined);
             }, 2400);
         }, [highlightedEntity]);
 
-        const checkInlineEditing = useCallback((entity?: Entity<any>): boolean => {
-            const collection = collectionRef.current;
-            if (!canEditEntity(collection, authController, fullPath, entity ?? null)) {
-                return false;
-            }
-            return collection.inlineEditing === undefined || collection.inlineEditing;
-        }, [authController, fullPath]);
+        const checkInlineEditing = useCallback(
+            (entity?: Entity<any>): boolean => {
+                const collection = collectionRef.current;
+                if (!canEditEntity(collection, authController, fullPath, entity ?? null)) {
+                    return false;
+                }
+                return collection.inlineEditing === undefined || collection.inlineEditing;
+            },
+            [authController, fullPath]
+        );
 
-        const selectionEnabled = collection.selectionEnabled === undefined || collection.selectionEnabled;
+        const selectionEnabled =
+            collection.selectionEnabled === undefined || collection.selectionEnabled;
         const hoverRow = !checkInlineEditing();
 
         const [popOverOpen, setPopOverOpen] = useState(false);
 
         const selectionController = useSelectionController<M>();
         const usedSelectionController = collection.selectionController ?? selectionController;
-        const {
-            selectedEntities,
-            setSelectedEntities
-        } = usedSelectionController;
+        const { selectedEntities, setSelectedEntities } = usedSelectionController;
 
         const tableController = useDataSourceTableController<M>({
             fullPath,
             collection,
             lastDeleteTimestamp,
             scrollRestoration,
-            updateUrl
+            updateUrl,
         });
 
         const tableKey = React.useRef<string>(Math.random().toString(36));
@@ -230,35 +232,39 @@ export const EntityCollectionView = React.memo(
             tableController.setPopupCell?.(undefined);
         }, [tableController.setPopupCell]);
 
-        const onEntityClick = useCallback((clickedEntity: Entity<M>) => {
-            const collection = collectionRef.current;
-            setHighlightedEntity(clickedEntity);
-            analyticsController.onAnalyticsEvent?.("edit_entity_clicked", {
-                path: clickedEntity.path,
-                entityId: clickedEntity.id
-            });
+        const onEntityClick = useCallback(
+            (clickedEntity: Entity<M>) => {
+                const collection = collectionRef.current;
+                setHighlightedEntity(clickedEntity);
+                analyticsController.onAnalyticsEvent?.("edit_entity_clicked", {
+                    path: clickedEntity.path,
+                    entityId: clickedEntity.id,
+                });
 
-            if (collection) {
-                addRecentId(collection.id, clickedEntity.id);
-            }
+                if (collection) {
+                    addRecentId(collection.id, clickedEntity.id);
+                }
 
-            const path = collection?.collectionGroup ? clickedEntity.path : (fullPath ?? clickedEntity.path);
-            navigateToEntity({
-                navigation,
-                path,
-                fullIdPath,
-                sideEntityController,
-                openEntityMode,
-                collection,
-                entityId: clickedEntity.id
-            });
-
-        }, [unselectNavigatedEntity, sideEntityController]);
+                const path = collection?.collectionGroup
+                    ? clickedEntity.path
+                    : (fullPath ?? clickedEntity.path);
+                navigateToEntity({
+                    navigation,
+                    path,
+                    fullIdPath,
+                    sideEntityController,
+                    openEntityMode,
+                    collection,
+                    entityId: clickedEntity.id,
+                });
+            },
+            [unselectNavigatedEntity, sideEntityController]
+        );
 
         const onNewClick = useCallback(() => {
             const collection = collectionRef.current;
             analyticsController.onAnalyticsEvent?.("new_entity_click", {
-                path: fullPath
+                path: fullPath,
             });
             navigateToEntity({
                 openEntityMode,
@@ -268,90 +274,97 @@ export const EntityCollectionView = React.memo(
                 fullIdPath,
                 sideEntityController,
                 navigation,
-                onClose: unselectNavigatedEntity
-            })
+                onClose: unselectNavigatedEntity,
+            });
         }, [fullPath, sideEntityController]);
 
         const onMultipleDeleteClick = () => {
             analyticsController.onAnalyticsEvent?.("multiple_delete_dialog_open", {
-                path: fullPath
+                path: fullPath,
             });
             setDeleteEntityClicked(selectedEntities);
         };
 
         const internalOnEntityDelete = (_path: string, entity: Entity<M>) => {
             analyticsController.onAnalyticsEvent?.("single_entity_deleted", {
-                path: fullPath
+                path: fullPath,
             });
-            setSelectedEntities((selectedEntities) => selectedEntities.filter((e) => e.id !== entity.id));
+            setSelectedEntities((selectedEntities) =>
+                selectedEntities.filter((e) => e.id !== entity.id)
+            );
             setLastDeleteTimestamp(Date.now());
         };
 
         const internalOnMultipleEntitiesDelete = (_path: string, entities: Entity<M>[]) => {
             analyticsController.onAnalyticsEvent?.("multiple_entities_deleted", {
-                path: fullPath
+                path: fullPath,
             });
             setSelectedEntities([]);
             setDeleteEntityClicked(undefined);
             setLastDeleteTimestamp(Date.now());
         };
 
-        let AddColumnComponent: React.ComponentType<{
-            fullPath: string,
-            parentCollectionIds: string[],
-            collection: EntityCollection;
-            tableController: EntityTableController;
-        }> | undefined
+        let AddColumnComponent:
+            | React.ComponentType<{
+                  fullPath: string;
+                  parentCollectionIds: string[];
+                  collection: EntityCollection;
+                  tableController: EntityTableController;
+              }>
+            | undefined;
 
         // we are only using the first plugin that implements this
         if (customizationController?.plugins) {
-            AddColumnComponent = customizationController.plugins.find(plugin => plugin.collectionView?.AddColumnComponent)?.collectionView?.AddColumnComponent;
+            AddColumnComponent = customizationController.plugins.find(
+                (plugin) => plugin.collectionView?.AddColumnComponent
+            )?.collectionView?.AddColumnComponent;
         }
 
-        const onCollectionModifiedForUser = useCallback((path: string, partialCollection: PartialEntityCollection<M>) => {
-            if (userConfigPersistence) {
-                const currentStoredConfig = userConfigPersistence.getCollectionConfig(path);
-                const updatedConfig = mergeDeep(currentStoredConfig, partialCollection);
-                userConfigPersistence.onCollectionModified(path, updatedConfig);
-            }
-        }, [userConfigPersistence]);
+        const onCollectionModifiedForUser = useCallback(
+            (path: string, partialCollection: PartialEntityCollection<M>) => {
+                if (userConfigPersistence) {
+                    const currentStoredConfig = userConfigPersistence.getCollectionConfig(path);
+                    const updatedConfig = mergeDeep(currentStoredConfig, partialCollection);
+                    userConfigPersistence.onCollectionModified(path, updatedConfig);
+                }
+            },
+            [userConfigPersistence]
+        );
 
-        const onColumnResize = useCallback(({
-                                                width,
-                                                key
-                                            }: OnColumnResizeParams) => {
+        const onColumnResize = useCallback(
+            ({ width, key }: OnColumnResizeParams) => {
+                const collection = collectionRef.current;
+                // Only for property columns
+                if (!getPropertyInPath(collection.properties, key)) return;
+                const localCollection = buildPropertyWidthOverwrite(key, width);
+                onCollectionModifiedForUser(fullPath, localCollection);
+            },
+            [onCollectionModifiedForUser, fullPath]
+        );
 
-            const collection = collectionRef.current;
-            // Only for property columns
-            if (!getPropertyInPath(collection.properties, key)) return;
-            const localCollection = buildPropertyWidthOverwrite(key, width);
-            onCollectionModifiedForUser(fullPath, localCollection);
-        }, [onCollectionModifiedForUser, fullPath]);
-
-        const onSizeChanged = useCallback((size: CollectionSize) => {
-            if (userConfigPersistence)
-                onCollectionModifiedForUser(fullPath, { defaultSize: size })
-        }, [onCollectionModifiedForUser, fullPath, userConfigPersistence]);
+        const onSizeChanged = useCallback(
+            (size: CollectionSize) => {
+                if (userConfigPersistence)
+                    onCollectionModifiedForUser(fullPath, { defaultSize: size });
+            },
+            [onCollectionModifiedForUser, fullPath, userConfigPersistence]
+        );
 
         const createEnabled = canCreateEntity(collection, authController, fullPath, null);
 
         const uniqueFieldValidator: UniqueFieldValidator = useCallback(
-            ({
-                 name,
-                 value,
-                 property,
-                 entityId
-             }) => dataSource.checkUniqueField(fullPath, name, value, entityId, collection),
-            [fullPath]);
+            ({ name, value, property, entityId }) =>
+                dataSource.checkUniqueField(fullPath, name, value, entityId, collection),
+            [fullPath]
+        );
 
         const onValueChange: OnCellValueChange<any, any> = ({
-                                                                value,
-                                                                propertyKey,
-                                                                onValueUpdated,
-                                                                setError,
-                                                                data: entity,
-                                                            }) => {
-
+            value,
+            propertyKey,
+            onValueUpdated,
+            setError,
+            data: entity,
+        }) => {
             const updatedValues = setIn({ ...entity.values }, propertyKey, value);
 
             const saveProps: SaveEntityProps = {
@@ -360,7 +373,7 @@ export const EntityCollectionView = React.memo(
                 values: updatedValues,
                 previousValues: entity.values,
                 collection,
-                status: "existing"
+                status: "existing",
             };
 
             return saveEntityWithCallbacks({
@@ -376,56 +389,71 @@ export const EntityCollectionView = React.memo(
                     console.error("Save failure");
                     console.error(e);
                     setError(e);
-                }
+                },
             });
-
         };
 
         const resolvedFullPath = navigation.resolveIdsFrom(fullPath);
-        const resolvedCollection = useMemo(() => resolveCollection<M>({
-            collection,
-            path: fullPath,
-            propertyConfigs: customizationController.propertyConfigs,
-            authController,
-        }), [collection, fullPath]);
+        const resolvedCollection = useMemo(
+            () =>
+                resolveCollection<M>({
+                    collection,
+                    path: fullPath,
+                    propertyConfigs: customizationController.propertyConfigs,
+                    authController,
+                }),
+            [collection, fullPath]
+        );
 
-        const getPropertyFor = useCallback(({
-                                                propertyKey,
-                                                entity
-                                            }: GetPropertyForProps<M>) => {
-            let propertyOrBuilder: PropertyOrBuilder<any, M> | undefined = getPropertyInPath<M>(collection.properties, propertyKey);
+        const getPropertyFor = useCallback(
+            ({ propertyKey, entity }: GetPropertyForProps<M>) => {
+                let propertyOrBuilder: PropertyOrBuilder<any, M> | undefined = getPropertyInPath<M>(
+                    collection.properties,
+                    propertyKey
+                );
 
-            // we might not find the property in the collection if combining property builders and map spread
-            if (!propertyOrBuilder) {
-                // these 2 properties are coming from the resolved collection with default values
-                propertyOrBuilder = getPropertyInPath<M>(resolvedCollection.properties, propertyKey);
-            }
+                // we might not find the property in the collection if combining property builders and map spread
+                if (!propertyOrBuilder) {
+                    // these 2 properties are coming from the resolved collection with default values
+                    propertyOrBuilder = getPropertyInPath<M>(
+                        resolvedCollection.properties,
+                        propertyKey
+                    );
+                }
 
-            return resolveProperty({
-                propertyKey,
-                propertyOrBuilder,
-                path: entity.path,
-                values: entity.values,
-                entityId: entity.id,
-                propertyConfigs: customizationController.propertyConfigs,
-                authController
-            });
-        }, [collection.properties, customizationController.propertyConfigs, resolvedCollection.properties]);
+                return resolveProperty({
+                    propertyKey,
+                    propertyOrBuilder,
+                    path: entity.path,
+                    values: entity.values,
+                    entityId: entity.id,
+                    propertyConfigs: customizationController.propertyConfigs,
+                    authController,
+                });
+            },
+            [
+                collection.properties,
+                customizationController.propertyConfigs,
+                resolvedCollection.properties,
+            ]
+        );
 
         const displayedColumnIds = useColumnIds(resolvedCollection, true);
 
         const additionalFields = useMemo(() => {
-            const subcollectionColumns: AdditionalFieldDelegate<M, any>[] = collection.subcollections?.map((subcollection) => {
-                return {
-                    key: getSubcollectionColumnId(subcollection),
-                    name: subcollection.name,
-                    width: 200,
-                    dependencies: [],
-                    Builder: ({ entity }) => (
-                        <Button color={"primary"}
+            const subcollectionColumns: AdditionalFieldDelegate<M, any>[] =
+                collection.subcollections?.map((subcollection) => {
+                    return {
+                        key: getSubcollectionColumnId(subcollection),
+                        name: subcollection.name,
+                        width: 200,
+                        dependencies: [],
+                        Builder: ({ entity }) => (
+                            <Button
+                                color={"primary"}
                                 variant={"outlined"}
                                 className={"max-w-full truncate justify-start"}
-                                startIcon={<KeyboardTabIcon size={"small"}/>}
+                                startIcon={<KeyboardTabIcon size={"small"} />}
                                 onClick={(event: any) => {
                                     event.stopPropagation();
                                     navigateToEntity({
@@ -436,43 +464,49 @@ export const EntityCollectionView = React.memo(
                                         path: fullPath,
                                         fullIdPath,
                                         navigation,
-                                        sideEntityController
-                                    })
-                                }}>
-                            {subcollection.name}
-                        </Button>
-                    )
-                };
-            }) ?? [];
+                                        sideEntityController,
+                                    });
+                                }}
+                            >
+                                {subcollection.name}
+                            </Button>
+                        ),
+                    };
+                }) ?? [];
 
-            const collectionGroupParentCollections: AdditionalFieldDelegate<M, any>[] = collection.collectionGroup
-                ? [{
-                    key: COLLECTION_GROUP_PARENT_ID,
-                    name: "Parent entities",
-                    width: 260,
-                    dependencies: [],
-                    Builder: ({ entity }) => {
-                        const collectionsWithPath = navigation.getParentReferencesFromPath(entity.path);
-                        return (
-                            <div className={"flex flex-col gap-2 w-full"}>
-                                {collectionsWithPath.map((reference) => {
-                                    return (
-                                        <ReferencePreview
-                                            key={reference.path + "/" + reference.id}
-                                            reference={reference}
-                                            size={"small"}/>
-                                    );
-                                })}
-                            </div>
-                        );
-                    }
-                }]
-                : [];
+            const collectionGroupParentCollections: AdditionalFieldDelegate<M, any>[] =
+                collection.collectionGroup
+                    ? [
+                          {
+                              key: COLLECTION_GROUP_PARENT_ID,
+                              name: "Parent entities",
+                              width: 260,
+                              dependencies: [],
+                              Builder: ({ entity }) => {
+                                  const collectionsWithPath =
+                                      navigation.getParentReferencesFromPath(entity.path);
+                                  return (
+                                      <div className={"flex flex-col gap-2 w-full"}>
+                                          {collectionsWithPath.map((reference) => {
+                                              return (
+                                                  <ReferencePreview
+                                                      key={reference.path + "/" + reference.id}
+                                                      reference={reference}
+                                                      size={"small"}
+                                                  />
+                                              );
+                                          })}
+                                      </div>
+                                  );
+                              },
+                          },
+                      ]
+                    : [];
 
             return [
                 ...(collection.additionalFields ?? []),
                 ...subcollectionColumns,
-                ...collectionGroupParentCollections
+                ...collectionGroupParentCollections,
             ];
         }, [collection, fullPath, sideEntityController]);
 
@@ -483,161 +517,184 @@ export const EntityCollectionView = React.memo(
         const largeLayout = useLargeLayout();
 
         const getActionsForEntity = ({
-                                         entity,
-                                         customEntityActions
-                                     }: {
-            entity?: Entity<M>,
-            customEntityActions?: EntityAction[]
+            entity,
+            customEntityActions,
+        }: {
+            entity?: Entity<M>;
+            customEntityActions?: EntityAction[];
         }): EntityAction[] => {
-            const deleteEnabled = entity ? canDeleteEntity(collection, authController, fullPath, entity) : true;
+            const deleteEnabled = entity
+                ? canDeleteEntity(collection, authController, fullPath, entity)
+                : true;
             const actions: EntityAction[] = [editEntityAction];
-            if (createEnabled)
-                actions.push(copyEntityAction);
-            if (deleteEnabled)
-                actions.push(deleteEntityAction);
-            if (customEntityActions)
-                return mergeEntityActions(actions, customEntityActions);
+            if (createEnabled) actions.push(copyEntityAction);
+            if (deleteEnabled) actions.push(deleteEntityAction);
+            if (customEntityActions) return mergeEntityActions(actions, customEntityActions);
             return actions;
         };
 
         const getIdColumnWidth = () => {
             const entityActions = getActionsForEntity({});
-            const collapsedActions = entityActions.filter(a => a.collapsed !== false);
-            const uncollapsedActions = entityActions.filter(a => a.collapsed === false);
+            const collapsedActions = entityActions.filter((a) => a.collapsed !== false);
+            const uncollapsedActions = entityActions.filter((a) => a.collapsed === false);
             const actionsWidth = uncollapsedActions.length * (largeLayout ? 40 : 30);
-            return (largeLayout ? (80 + actionsWidth) : (70 + actionsWidth)) + (collapsedActions.length > 0 ? (largeLayout ? 40 : 30) : 0);
+            return (
+                (largeLayout ? 80 + actionsWidth : 70 + actionsWidth) +
+                (collapsedActions.length > 0 ? (largeLayout ? 40 : 30) : 0)
+            );
         };
 
-        const tableRowActionsBuilder = useCallback(({
-                                                        entity,
-                                                        size,
-                                                        width,
-                                                        frozen
-                                                    }: {
-            entity: Entity<any>,
-            size: CollectionSize,
-            width: number,
-            frozen?: boolean
-        }) => {
-
-            const isSelected = Boolean(usedSelectionController.selectedEntities.find(e => e.id == entity.id && e.path == entity.path));
-
-            const actions = getActionsForEntity({
+        const tableRowActionsBuilder = useCallback(
+            ({
                 entity,
-                customEntityActions: collection.entityActions
-            });
+                size,
+                width,
+                frozen,
+            }: {
+                entity: Entity<any>;
+                size: CollectionSize;
+                width: number;
+                frozen?: boolean;
+            }) => {
+                const isSelected = Boolean(
+                    usedSelectionController.selectedEntities.find(
+                        (e) => e.id == entity.id && e.path == entity.path
+                    )
+                );
 
-            return (
-                <EntityCollectionRowActions
-                    entity={entity}
-                    width={width}
-                    frozen={frozen}
-                    isSelected={isSelected}
-                    selectionEnabled={selectionEnabled}
-                    size={size}
-                    highlightEntity={setHighlightedEntity}
-                    unhighlightEntity={unselectNavigatedEntity}
-                    collection={collection}
-                    fullPath={fullPath}
-                    fullIdPath={fullIdPath}
-                    actions={actions}
-                    hideId={collection?.hideIdFromCollection}
-                    onCollectionChange={updateLastDeleteTimestamp}
-                    selectionController={usedSelectionController}
-                    openEntityMode={openEntityMode}
-                />
-            );
+                const actions = getActionsForEntity({
+                    entity,
+                    customEntityActions: collection.entityActions,
+                });
 
-        }, [updateLastDeleteTimestamp, usedSelectionController]);
+                return (
+                    <EntityCollectionRowActions
+                        entity={entity}
+                        width={width}
+                        frozen={frozen}
+                        isSelected={isSelected}
+                        selectionEnabled={selectionEnabled}
+                        size={size}
+                        highlightEntity={setHighlightedEntity}
+                        unhighlightEntity={unselectNavigatedEntity}
+                        collection={collection}
+                        fullPath={fullPath}
+                        fullIdPath={fullIdPath}
+                        actions={actions}
+                        hideId={collection?.hideIdFromCollection}
+                        onCollectionChange={updateLastDeleteTimestamp}
+                        selectionController={usedSelectionController}
+                        openEntityMode={openEntityMode}
+                    />
+                );
+            },
+            [updateLastDeleteTimestamp, usedSelectionController]
+        );
 
-        const title = <Popover
-            open={popOverOpen}
-            onOpenChange={setPopOverOpen}
-            enabled={Boolean(collection.description)}
-            trigger={<div className="flex flex-col items-start">
-                <Typography
-                    variant={"subtitle1"}
-                    className={`leading-none truncate max-w-[160px] lg:max-w-[240px] ${collection.description ? "cursor-pointer" : "cursor-auto"}`}
-                    onClick={collection.description
-                        ? (e) => {
-                            setPopOverOpen(true);
-                            e.stopPropagation();
-                        }
-                        : undefined}>
-                    {`${collection.name}`}
-                </Typography>
+        const title = (
+            <Popover
+                open={popOverOpen}
+                onOpenChange={setPopOverOpen}
+                enabled={Boolean(collection.description)}
+                trigger={
+                    <div className="flex flex-col items-start">
+                        <Typography
+                            variant={"subtitle1"}
+                            className={`leading-none truncate max-w-[160px] lg:max-w-[240px] ${collection.description ? "cursor-pointer" : "cursor-auto"}`}
+                            onClick={
+                                collection.description
+                                    ? (e) => {
+                                          setPopOverOpen(true);
+                                          e.stopPropagation();
+                                      }
+                                    : undefined
+                            }
+                        >
+                            {`${collection.name}`}
+                        </Typography>
 
-                <EntitiesCount
-                    fullPath={fullPath}
-                    collection={collection}
-                    filter={tableController.filterValues}
-                    sortBy={tableController.sortBy}
-                    onCountChange={setDocsCount}
-                />
-
-            </div>}
-        >
-
-            {collection.description && <div className="m-4 text-surface-900 dark:text-white">
-                <Markdown source={collection.description}/>
-            </div>}
-
-        </Popover>;
-
-        const buildAdditionalHeaderWidget = useCallback(({
-                                                             property,
-                                                             propertyKey,
-                                                             onHover
-                                                         }: {
-            property: ResolvedProperty,
-            propertyKey: string,
-            onHover: boolean
-        }) => {
-            const collection = collectionRef.current;
-            if (!customizationController.plugins)
-                return null;
-            return <>
-                {customizationController.plugins.filter(plugin => plugin.collectionView?.HeaderAction)
-                    .map((plugin, i) => {
-                        const HeaderAction = plugin.collectionView!.HeaderAction!;
-                        return <HeaderAction
-                            onHover={onHover}
-                            key={`plugin_header_action_${i}`}
-                            propertyKey={propertyKey}
-                            property={property}
+                        <EntitiesCount
                             fullPath={fullPath}
                             collection={collection}
-                            tableController={tableController}
-                            parentCollectionIds={parentCollectionIds ?? []}/>;
-                    })}
-            </>;
-        }, [customizationController.plugins, fullPath, parentCollectionIds]);
+                            filter={tableController.filterValues}
+                            sortBy={tableController.sortBy}
+                            onCountChange={setDocsCount}
+                        />
+                    </div>
+                }
+            >
+                {collection.description && (
+                    <div className="m-4 text-surface-900 dark:text-white">
+                        <Markdown source={collection.description} />
+                    </div>
+                )}
+            </Popover>
+        );
+
+        const buildAdditionalHeaderWidget = useCallback(
+            ({
+                property,
+                propertyKey,
+                onHover,
+            }: {
+                property: ResolvedProperty;
+                propertyKey: string;
+                onHover: boolean;
+            }) => {
+                const collection = collectionRef.current;
+                if (!customizationController.plugins) return null;
+                return (
+                    <>
+                        {customizationController.plugins
+                            .filter((plugin) => plugin.collectionView?.HeaderAction)
+                            .map((plugin, i) => {
+                                const HeaderAction = plugin.collectionView!.HeaderAction!;
+                                return (
+                                    <HeaderAction
+                                        onHover={onHover}
+                                        key={`plugin_header_action_${i}`}
+                                        propertyKey={propertyKey}
+                                        property={property}
+                                        fullPath={fullPath}
+                                        collection={collection}
+                                        tableController={tableController}
+                                        parentCollectionIds={parentCollectionIds ?? []}
+                                    />
+                                );
+                            })}
+                    </>
+                );
+            },
+            [customizationController.plugins, fullPath, parentCollectionIds]
+        );
 
         const addColumnComponentInternal = AddColumnComponent
             ? function () {
-                if (typeof AddColumnComponent === "function")
-                    return <AddColumnComponent fullPath={fullPath}
-                                               parentCollectionIds={parentCollectionIds ?? []}
-                                               collection={collection}
-                                               tableController={tableController}/>;
-                return null;
-            }
+                  if (typeof AddColumnComponent === "function")
+                      return (
+                          <AddColumnComponent
+                              fullPath={fullPath}
+                              parentCollectionIds={parentCollectionIds ?? []}
+                              collection={collection}
+                              tableController={tableController}
+                          />
+                      );
+                  return null;
+              }
             : undefined;
 
-        const {
-            textSearchLoading,
-            textSearchInitialised,
-            onTextSearchClick,
-            textSearchEnabled
-        } = useTableSearchHelper({
-            collection,
-            fullPath: resolvedFullPath,
-            parentCollectionIds
-        });
+        const { textSearchLoading, textSearchInitialised, onTextSearchClick, textSearchEnabled } =
+            useTableSearchHelper({
+                collection,
+                fullPath: resolvedFullPath,
+                parentCollectionIds,
+            });
 
         return (
-            <div className={cls("overflow-hidden h-full w-full rounded-md", className)}
-                 ref={containerRef}>
+            <div
+                className={cls("overflow-hidden h-full w-full rounded-md", className)}
+                ref={containerRef}
+            >
                 <EntityCollectionTable
                     key={`collection_table_${fullPath}`}
                     additionalFields={additionalFields}
@@ -661,68 +718,86 @@ export const EntityCollectionView = React.memo(
                     initialScroll={tableController.initialScroll}
                     textSearchLoading={textSearchLoading}
                     textSearchEnabled={textSearchEnabled}
-                    actionsStart={<EntityCollectionViewStartActions
-                        parentCollectionIds={parentCollectionIds ?? []}
-                        collection={collection}
-                        tableController={tableController}
-                        path={fullPath}
-                        relativePath={collection.path}
-                        selectionController={usedSelectionController}
-                        collectionEntitiesCount={docsCount}/>}
-                    actions={<EntityCollectionViewActions
-                        parentCollectionIds={parentCollectionIds ?? []}
-                        collection={collection}
-                        tableController={tableController}
-                        onMultipleDeleteClick={onMultipleDeleteClick}
-                        onNewClick={onNewClick}
-                        path={fullPath}
-                        relativePath={collection.path}
-                        selectionController={usedSelectionController}
-                        selectionEnabled={selectionEnabled}
-                        collectionEntitiesCount={docsCount}
-                    />}
-                    emptyComponent={canCreateEntities && tableController.filterValues === undefined && tableController.sortBy === undefined
-                        ? <div className="flex flex-col items-center justify-center">
-                            <Typography variant={"subtitle2"}>So empty...</Typography>
-                            <Button
-                                color={"primary"}
-                                variant={"outlined"}
-                                onClick={onNewClick}
-                                className="mt-4"
-                            >
-                                <AddIcon/>
-                                Create your first entity
-                            </Button>
-                        </div>
-                        : <Typography variant={"label"}>No results with the applied filter/sort</Typography>
+                    actionsStart={
+                        <EntityCollectionViewStartActions
+                            parentCollectionIds={parentCollectionIds ?? []}
+                            collection={collection}
+                            tableController={tableController}
+                            path={fullPath}
+                            relativePath={collection.path}
+                            selectionController={usedSelectionController}
+                            collectionEntitiesCount={docsCount}
+                        />
+                    }
+                    actions={
+                        <EntityCollectionViewActions
+                            parentCollectionIds={parentCollectionIds ?? []}
+                            collection={collection}
+                            tableController={tableController}
+                            onMultipleDeleteClick={onMultipleDeleteClick}
+                            onNewClick={onNewClick}
+                            path={fullPath}
+                            relativePath={collection.path}
+                            selectionController={usedSelectionController}
+                            selectionEnabled={selectionEnabled}
+                            collectionEntitiesCount={docsCount}
+                        />
+                    }
+                    emptyComponent={
+                        canCreateEntities &&
+                        tableController.filterValues === undefined &&
+                        tableController.sortBy === undefined ? (
+                            <div className="flex flex-col items-center justify-center">
+                                <Typography variant={"subtitle2"}>So empty...</Typography>
+                                <Button
+                                    color={"primary"}
+                                    variant={"outlined"}
+                                    onClick={onNewClick}
+                                    className="mt-4"
+                                >
+                                    <AddIcon />
+                                    Create your first entity
+                                </Button>
+                            </div>
+                        ) : (
+                            <Typography variant={"label"}>
+                                No results with the applied filter/sort
+                            </Typography>
+                        )
                     }
                     hoverRow={hoverRow}
                     inlineEditing={checkInlineEditing()}
                     AdditionalHeaderWidget={buildAdditionalHeaderWidget}
                     AddColumnComponent={addColumnComponentInternal}
                     getIdColumnWidth={getIdColumnWidth}
-                    additionalIDHeaderWidget={<EntityIdHeaderWidget
-                        path={fullPath}
-                        fullIdPath={fullIdPath ?? fullPath}
-                        collection={collection}/>}
+                    additionalIDHeaderWidget={
+                        <EntityIdHeaderWidget
+                            path={fullPath}
+                            fullIdPath={fullIdPath ?? fullPath}
+                            collection={collection}
+                        />
+                    }
                     openEntityMode={openEntityMode}
                 />
 
-                {popupCell && <PopupFormField
-                    key={`popup_form_${popupCell?.propertyKey}_${popupCell?.entityId}`}
-                    open={Boolean(popupCell)}
-                    onClose={onPopupClose}
-                    cellRect={popupCell?.cellRect}
-                    propertyKey={popupCell?.propertyKey}
-                    collection={collection}
-                    entityId={popupCell.entityId}
-                    tableKey={tableKey.current}
-                    customFieldValidator={uniqueFieldValidator}
-                    path={resolvedFullPath}
-                    onCellValueChange={onValueChange}
-                    container={containerRef.current}/>}
+                {popupCell && (
+                    <PopupFormField
+                        key={`popup_form_${popupCell?.propertyKey}_${popupCell?.entityId}`}
+                        open={Boolean(popupCell)}
+                        onClose={onPopupClose}
+                        cellRect={popupCell?.cellRect}
+                        propertyKey={popupCell?.propertyKey}
+                        collection={collection}
+                        entityId={popupCell.entityId}
+                        tableKey={tableKey.current}
+                        customFieldValidator={uniqueFieldValidator}
+                        path={resolvedFullPath}
+                        onCellValueChange={onValueChange}
+                        container={containerRef.current}
+                    />
+                )}
 
-                {deleteEntityClicked &&
+                {deleteEntityClicked && (
                     <DeleteEntityDialog
                         entityOrEntitiesToDelete={deleteEntityClicked}
                         path={fullPath}
@@ -731,12 +806,15 @@ export const EntityCollectionView = React.memo(
                         open={Boolean(deleteEntityClicked)}
                         onEntityDelete={internalOnEntityDelete}
                         onMultipleEntitiesDelete={internalOnMultipleEntitiesDelete}
-                        onClose={() => setDeleteEntityClicked(undefined)}/>}
-
+                        onClose={() => setDeleteEntityClicked(undefined)}
+                    />
+                )}
             </div>
         );
-    }, (a, b) => {
-        return equal(a.path, b.path) &&
+    },
+    (a, b) => {
+        return (
+            equal(a.path, b.path) &&
             equal(a.parentCollectionIds, b.parentCollectionIds) &&
             equal(a.isSubCollection, b.isSubCollection) &&
             equal(a.className, b.className) &&
@@ -757,23 +835,24 @@ export const EntityCollectionView = React.memo(
             equal(a.openEntityMode, b.openEntityMode) &&
             equal(a.exportable, b.exportable) &&
             equal(a.history, b.history) &&
-            equal(a.forceFilter, b.forceFilter);
-    }) as React.FunctionComponent<EntityCollectionViewProps<any>>
+            equal(a.forceFilter, b.forceFilter)
+        );
+    }
+) as React.FunctionComponent<EntityCollectionViewProps<any>>;
 
 function EntitiesCount({
-                           fullPath,
-                           collection,
-                           filter,
-                           sortBy,
-                           onCountChange
-                       }: {
-    fullPath: string,
-    collection: EntityCollection,
-    filter?: FilterValues<any>,
-    sortBy?: [string, "asc" | "desc"],
-    onCountChange?: (count: number) => void,
+    fullPath,
+    collection,
+    filter,
+    sortBy,
+    onCountChange,
+}: {
+    fullPath: string;
+    collection: EntityCollection;
+    filter?: FilterValues<any>;
+    sortBy?: [string, "asc" | "desc"];
+    onCountChange?: (count: number) => void;
 }) {
-
     const dataSource = useDataSource(collection);
     const navigation = useNavigationController();
     const [count, setCount] = useState<number | undefined>(undefined);
@@ -781,18 +860,32 @@ function EntitiesCount({
 
     const sortByProperty = sortBy ? sortBy[0] : undefined;
     const currentSort = sortBy ? sortBy[1] : undefined;
-    const resolvedPath = useMemo(() => navigation.resolveIdsFrom(fullPath), [fullPath, navigation.resolveIdsFrom]);
+    const resolvedPath = useMemo(
+        () => navigation.resolveIdsFrom(fullPath),
+        [fullPath, navigation.resolveIdsFrom]
+    );
 
     useEffect(() => {
         if (dataSource.countEntities)
-            dataSource.countEntities({
-                path: resolvedPath,
-                collection,
-                filter,
-                orderBy: sortByProperty,
-                order: currentSort
-            }).then(setCount).catch(setError);
-    }, [fullPath, dataSource.countEntities, resolvedPath, collection, filter, sortByProperty, currentSort]);
+            dataSource
+                .countEntities({
+                    path: resolvedPath,
+                    collection,
+                    filter,
+                    orderBy: sortByProperty,
+                    order: currentSort,
+                })
+                .then(setCount)
+                .catch(setError);
+    }, [
+        fullPath,
+        dataSource.countEntities,
+        resolvedPath,
+        collection,
+        filter,
+        sortByProperty,
+        currentSort,
+    ]);
 
     useEffect(() => {
         if (onCountChange) {
@@ -805,32 +898,40 @@ function EntitiesCount({
         return null;
     }
 
-    return <Typography
-        className="w-full text-ellipsis block overflow-hidden whitespace-nowrap max-w-xs text-left w-fit-content"
-        variant={"caption"}
-        color={"secondary"}>
-        {count !== undefined ? `${count} entities` : <Skeleton className={"w-full max-w-[80px] mt-1"}/>}
-    </Typography>;
+    return (
+        <Typography
+            className="w-full text-ellipsis block overflow-hidden whitespace-nowrap max-w-xs text-left w-fit-content"
+            variant={"caption"}
+            color={"secondary"}
+        >
+            {count !== undefined ? (
+                `${count} entities`
+            ) : (
+                <Skeleton className={"w-full max-w-[80px] mt-1"} />
+            )}
+        </Typography>
+    );
 }
 
 function buildPropertyWidthOverwrite(key: string, width: number): PartialEntityCollection {
     if (key.includes(".")) {
         const [parentKey, ...childKey] = key.split(".");
-        return { properties: { [parentKey]: buildPropertyWidthOverwrite(childKey.join("."), width) } } as PartialEntityCollection;
+        return {
+            properties: { [parentKey]: buildPropertyWidthOverwrite(childKey.join("."), width) },
+        } as PartialEntityCollection;
     }
     return { properties: { [key]: { columnWidth: width } } } as PartialEntityCollection;
 }
 
 function EntityIdHeaderWidget({
-                                  collection,
-                                  path,
-                                  fullIdPath
-                              }: {
-    collection: EntityCollection,
-    path: string,
-    fullIdPath: string
+    collection,
+    path,
+    fullIdPath,
+}: {
+    collection: EntityCollection;
+    path: string;
+    fullIdPath: string;
 }) {
-
     const navigation = useNavigationController();
     const [openPopup, setOpenPopup] = React.useState(false);
     const [searchString, setSearchString] = React.useState("");
@@ -849,30 +950,35 @@ function EntityIdHeaderWidget({
                 alignOffset={-117}
                 trigger={
                     <IconButton size={"small"}>
-                        <SearchIcon size={"small"}/>
+                        <SearchIcon size={"small"} />
                     </IconButton>
-                }>
+                }
+            >
                 <div
-                    className={cls("my-2 rounded-lg bg-surface-50 dark:bg-surface-950 text-surface-900 dark:text-white")}>
-                    <form noValidate={true}
-                          onSubmit={(e) => {
-                              e.preventDefault();
-                              if (!searchString) return;
-                              setOpenPopup(false);
-                              const entityId = searchString.trim();
-                              setRecentIds(addRecentId(collection.id, entityId));
-                              navigateToEntity({
-                                  openEntityMode,
-                                  collection,
-                                  entityId,
-                                  path,
-                                  fullIdPath,
-                                  sideEntityController,
-                                  navigation
-                              })
-                          }}
-                          className={"w-96 max-w-full"}>
-
+                    className={cls(
+                        "my-2 rounded-lg bg-surface-50 dark:bg-surface-950 text-surface-900 dark:text-white"
+                    )}
+                >
+                    <form
+                        noValidate={true}
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            if (!searchString) return;
+                            setOpenPopup(false);
+                            const entityId = searchString.trim();
+                            setRecentIds(addRecentId(collection.id, entityId));
+                            navigateToEntity({
+                                openEntityMode,
+                                collection,
+                                entityId,
+                                path,
+                                fullIdPath,
+                                sideEntityController,
+                                navigation,
+                            });
+                        }}
+                        className={"w-96 max-w-full"}
+                    >
                         <div className="flex p-2 w-full gap-2">
                             <input
                                 autoFocus={openPopup}
@@ -882,37 +988,47 @@ function EntityIdHeaderWidget({
                                     setSearchString(e.target.value);
                                 }}
                                 value={searchString}
-                                className={"rounded-lg bg-white dark:bg-surface-800 flex-grow bg-transparent outline-none p-2 " + focusedDisabled}/>
-                            <Button variant={"text"}
-                                    disabled={!(searchString.trim())}
-                                    type={"submit"}
-                            ><KeyboardTabIcon/></Button>
+                                className={
+                                    "rounded-lg bg-white dark:bg-surface-800 flex-grow bg-transparent outline-none p-2 " +
+                                    focusedDisabled
+                                }
+                            />
+                            <Button
+                                variant={"text"}
+                                disabled={!searchString.trim()}
+                                type={"submit"}
+                            >
+                                <KeyboardTabIcon />
+                            </Button>
                         </div>
                     </form>
-                    {recentIds && recentIds.length > 0 && <div className="flex flex-col gap-2 p-2">
-                        {recentIds.map(id => (
-                            <ReferencePreview reference={new EntityReference(id, path)}
-                                              key={id}
-                                              hover={true}
-                                              onClick={() => {
-                                                  setOpenPopup(false);
-                                                  navigateToEntity({
-                                                      openEntityMode,
-                                                      collection,
-                                                      entityId: id,
-                                                      path,
-                                                      fullIdPath,
-                                                      sideEntityController,
-                                                      navigation
-                                                  })
-                                              }}
-                                              includeEntityLink={false}
-                                              size={"small"}/>
-                        ))}
-                    </div>}
+                    {recentIds && recentIds.length > 0 && (
+                        <div className="flex flex-col gap-2 p-2">
+                            {recentIds.map((id) => (
+                                <ReferencePreview
+                                    reference={new EntityReference(id, path)}
+                                    key={id}
+                                    hover={true}
+                                    onClick={() => {
+                                        setOpenPopup(false);
+                                        navigateToEntity({
+                                            openEntityMode,
+                                            collection,
+                                            entityId: id,
+                                            path,
+                                            fullIdPath,
+                                            sideEntityController,
+                                            navigation,
+                                        });
+                                    }}
+                                    includeEntityLink={false}
+                                    size={"small"}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </Popover>
-
         </Tooltip>
     );
 }

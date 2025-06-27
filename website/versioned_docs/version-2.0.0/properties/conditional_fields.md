@@ -27,11 +27,7 @@ with the `values` prop, but also the value of the property being built with
 Example of field that gets enabled or disabled based on other values:
 
 ```tsx
-import {
-    buildCollection,
-    EntityCollection,
-    EntityReference
-} from "@firecms/core";
+import { buildCollection, EntityCollection, EntityReference } from "@firecms/core";
 
 type Product = {
     name: string;
@@ -42,15 +38,15 @@ type Product = {
     publisher: {
         name: string;
         external_id: string;
-    }
-}
+    };
+};
 
 export const productCollection: EntityCollection = buildCollection<Partial<Product>>({
     name: "Product",
     properties: {
         available: {
             dataType: "boolean",
-            name: "Available"
+            name: "Available",
         },
         price: ({ values }) => ({
             dataType: "number",
@@ -58,15 +54,15 @@ export const productCollection: EntityCollection = buildCollection<Partial<Produ
             validation: {
                 requiredMessage: "You must set a price between 0 and 1000",
                 min: 0,
-                max: 1000
+                max: 1000,
             },
             disabled: !values.available && {
                 clearOnDisabled: true,
-                disabledMessage: "You can only set the price on available items"
+                disabledMessage: "You can only set the price on available items",
             },
-            description: "Price with range validation"
-        })
-    }
+            description: "Price with range validation",
+        }),
+    },
 });
 ```
 
@@ -76,22 +72,19 @@ A `User` type that has a `source` field that can be of type `facebook`
 or `apple`, and its fields change accordingly
 
 ```tsx
-import {
-    buildCollection,
-    EntityCollection,
-    buildProperty,
-    buildProperties
-} from "@firecms/core";
+import { buildCollection, EntityCollection, buildProperty, buildProperties } from "@firecms/core";
 
 type User = {
-    source: {
-        type: "facebook",
-        facebookId: string
-    } | {
-        type: "apple",
-        appleId: number
-    }
-}
+    source:
+        | {
+              type: "facebook";
+              facebookId: string;
+          }
+        | {
+              type: "apple";
+              appleId: number;
+          };
+};
 
 export const userSchema: EntityCollection = buildCollection<User>({
     name: "User",
@@ -101,30 +94,30 @@ export const userSchema: EntityCollection = buildCollection<User>({
                 type: {
                     dataType: "string",
                     enumValues: {
-                        "facebook": "FacebookId",
-                        "apple": "Apple"
-                    }
-                }
+                        facebook: "FacebookId",
+                        apple: "Apple",
+                    },
+                },
             });
 
             if (values.source) {
                 if ((values.source as any).type === "facebook") {
                     properties["facebookId"] = buildProperty({
-                        dataType: "string"
+                        dataType: "string",
                     });
                 } else if ((values.source as any).type === "apple") {
                     properties["appleId"] = buildProperty({
-                        dataType: "number"
+                        dataType: "number",
                     });
                 }
             }
 
-            return ({
+            return {
                 dataType: "map",
                 name: "Source",
-                properties: properties
-            });
-        }
-    }
+                properties: properties,
+            };
+        },
+    },
 });
 ```

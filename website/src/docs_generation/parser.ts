@@ -15,4 +15,3 @@ export function parseChatGPTOutput(output: string, callback: OnFileParsed) {
         callback(filename, content);
     }
 }
-

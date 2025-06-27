@@ -21,9 +21,9 @@ export type DataEnhancementController = {
     allowReferenceDataSelection: boolean;
     clearAllSuggestions: () => void;
     getSamplePrompts: (entityName: string, input?: string) => Promise<SamplePromptsResult>;
-    loadingSuggestions: string[],
+    loadingSuggestions: string[];
     editorAIController?: EditorAIController;
-}
+};
 
 export type EnhancedDataResult = {
     entityId?: string;
@@ -31,13 +31,13 @@ export type EnhancedDataResult = {
         [key: string]: string[];
     };
     errors: string[];
-    usage: { promptTokens?: number, completionTokens?: number, totalTokens?: number }
-}
+    usage: { promptTokens?: number; completionTokens?: number; totalTokens?: number };
+};
 
 export type SamplePrompt = {
     prompt: string;
     type: "recent" | "sample";
-}
+};
 
 export type SamplePromptsResult = {
     prompts: SamplePrompt[];
@@ -50,7 +50,7 @@ export type DataEnhancementRequest = {
     inputEntity: InputEntity;
     properties: Record<string, InputProperty>;
     propertyKey?: string;
-    propertyInstructions?: string,
+    propertyInstructions?: string;
     instructions?: string;
 };
 
@@ -72,4 +72,4 @@ export type InputProperty = {
         typeField?: string;
         valueField?: string;
     };
-}
+};

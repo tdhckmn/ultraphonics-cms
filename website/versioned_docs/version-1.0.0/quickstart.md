@@ -63,7 +63,7 @@ import {
     EntityReference,
     FirebaseCMSApp,
     NavigationBuilder,
-    NavigationBuilderProps
+    NavigationBuilderProps,
 } from "@camberi/firecms";
 
 import "typeface-rubik";
@@ -76,13 +76,13 @@ const firebaseConfig = {
     projectId: "",
     storageBucket: "",
     messagingSenderId: "",
-    appId: ""
+    appId: "",
 };
 
 const locales = {
     "en-US": "English (United States)",
     "es-ES": "Spanish (Spain)",
-    "de-DE": "German"
+    "de-DE": "German",
 };
 
 type Product = {
@@ -98,9 +98,9 @@ type Product = {
     publisher: {
         name: string;
         external_id: string;
-    },
-    expires_on: Date
-}
+    };
+    expires_on: Date;
+};
 
 const productSchema = buildSchema<Product>({
     name: "Product",
@@ -108,7 +108,7 @@ const productSchema = buildSchema<Product>({
         name: {
             title: "Name",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         price: {
             title: "Price",
@@ -116,56 +116,59 @@ const productSchema = buildSchema<Product>({
                 required: true,
                 requiredMessage: "You must set a price between 0 and 1000",
                 min: 0,
-                max: 1000
+                max: 1000,
             },
             description: "Price with range validation",
-            dataType: "number"
+            dataType: "number",
         },
         status: {
             title: "Status",
             validation: { required: true },
             dataType: "string",
             description: "Should this product be visible in the website",
-            longDescription: "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros.",
+            longDescription:
+                "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros.",
             config: {
                 enumValues: {
                     private: "Private",
-                    public: "Public"
-                }
-            }
+                    public: "Public",
+                },
+            },
         },
-        published: ({ values }) => buildProperty({
-            title: "Published",
-            dataType: "boolean",
-            columnWidth: 100,
-            disabled: (
-                values.status === "public"
-                    ? false
-                    : {
-                        clearOnDisabled: true,
-                        disabledMessage: "Status must be public in order to enable this the published flag"
-                    }
-            )
-        }),
+        published: ({ values }) =>
+            buildProperty({
+                title: "Published",
+                dataType: "boolean",
+                columnWidth: 100,
+                disabled:
+                    values.status === "public"
+                        ? false
+                        : {
+                              clearOnDisabled: true,
+                              disabledMessage:
+                                  "Status must be public in order to enable this the published flag",
+                          },
+            }),
         related_products: {
             dataType: "array",
             title: "Related products",
             description: "Reference to self",
             of: {
                 dataType: "reference",
-                path: "products"
-            }
+                path: "products",
+            },
         },
-        main_image: buildProperty({ // The `buildProperty` method is an utility function used for type checking
+        main_image: buildProperty({
+            // The `buildProperty` method is an utility function used for type checking
             title: "Image",
             dataType: "string",
             config: {
                 storageMeta: {
                     mediaType: "image",
                     storagePath: "images",
-                    acceptedFiles: ["image/*"]
-                }
-            }
+                    acceptedFiles: ["image/*"],
+                },
+            },
         }),
         tags: {
             title: "Tags",
@@ -173,15 +176,16 @@ const productSchema = buildSchema<Product>({
             validation: { required: true },
             dataType: "array",
             of: {
-                dataType: "string"
-            }
+                dataType: "string",
+            },
         },
         description: {
             title: "Description",
             description: "Not mandatory but it'd be awesome if you filled this up",
-            longDescription: "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros.",
+            longDescription:
+                "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros.",
             dataType: "string",
-            columnWidth: 300
+            columnWidth: 300,
         },
         categories: {
             title: "Categories",
@@ -195,10 +199,10 @@ const productSchema = buildSchema<Product>({
                         books: "Books",
                         furniture: "Furniture",
                         clothing: "Clothing",
-                        food: "Food"
-                    }
-                }
-            }
+                        food: "Food",
+                    },
+                },
+            },
         },
         publisher: {
             title: "Publisher",
@@ -207,19 +211,19 @@ const productSchema = buildSchema<Product>({
             properties: {
                 name: {
                     title: "Name",
-                    dataType: "string"
+                    dataType: "string",
                 },
                 external_id: {
                     title: "External id",
-                    dataType: "string"
-                }
-            }
+                    dataType: "string",
+                },
+            },
         },
         expires_on: {
             title: "Expires on",
-            dataType: "timestamp"
-        }
-    }
+            dataType: "timestamp",
+        },
+    },
 });
 
 const localeSchema = buildSchema({
@@ -229,12 +233,12 @@ const localeSchema = buildSchema({
         title: {
             title: "Title",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         selectable: {
             title: "Selectable",
             description: "Is this locale selectable",
-            dataType: "boolean"
+            dataType: "boolean",
         },
         video: {
             title: "Video",
@@ -244,21 +248,19 @@ const localeSchema = buildSchema({
                 storageMeta: {
                     mediaType: "video",
                     storagePath: "videos",
-                    acceptedFiles: ["video/*"]
-                }
-            }
-        }
-    }
+                    acceptedFiles: ["video/*"],
+                },
+            },
+        },
+    },
 });
 
 export default function App() {
-
     const navigation: NavigationBuilder = async ({
-                                                     user,
-                                                     authController
-                                                 }: NavigationBuilderProps) => {
-
-        return ({
+        user,
+        authController,
+    }: NavigationBuilderProps) => {
+        return {
             collections: [
                 buildCollection({
                     path: "products",
@@ -268,45 +270,44 @@ export default function App() {
                         edit: true,
                         create: true,
                         // we have created the roles object in the navigation builder
-                        delete: authController.extra.roles.includes("admin")
+                        delete: authController.extra.roles.includes("admin"),
                     }),
                     subcollections: [
                         buildCollection({
                             name: "Locales",
                             path: "locales",
-                            schema: localeSchema
-                        })
-                    ]
-                })
-            ]
-        });
+                            schema: localeSchema,
+                        }),
+                    ],
+                }),
+            ],
+        };
     };
 
-    const myAuthenticator: Authenticator<FirebaseUser> = async ({
-                                                                    user,
-                                                                    authController
-                                                                }) => {
+    const myAuthenticator: Authenticator<FirebaseUser> = async ({ user, authController }) => {
         // You can throw an error to display a message
-        if(user?.email?.includes("flanders")){
+        if (user?.email?.includes("flanders")) {
             throw Error("Stupid Flanders!");
         }
-        
+
         console.log("Allowing access to", user?.email);
         // This is an example of retrieving async data related to the user
         // and storing it in the user extra field.
         const sampleUserData = await Promise.resolve({
-            roles: ["admin"]
+            roles: ["admin"],
         });
         authController.setExtra(sampleUserData);
         return true;
     };
 
-    return <FirebaseCMSApp
-        name={"My Online Shop"}
-        authentication={myAuthenticator}
-        navigation={navigation}
-        firebaseConfig={firebaseConfig}
-    />;
+    return (
+        <FirebaseCMSApp
+            name={"My Online Shop"}
+            authentication={myAuthenticator}
+            navigation={navigation}
+            firebaseConfig={firebaseConfig}
+        />
+    );
 }
 ```
 
@@ -317,4 +318,3 @@ yarn start
 ```
 
 You should be able to see your FireCMS instance in your browser, awesome!
-

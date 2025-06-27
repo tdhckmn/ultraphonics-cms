@@ -19,25 +19,25 @@ import { cls } from "@firecms/ui";
  */
 export function ReferenceAsStringFieldBinding(props: FieldProps<string>) {
     if (typeof props.property.reference?.path !== "string") {
-        return <ReadOnlyFieldBinding {...props}/>;
+        return <ReadOnlyFieldBinding {...props} />;
     }
 
-    return <ReferenceAsStringFieldBindingInternal {...props}/>;
+    return <ReferenceAsStringFieldBindingInternal {...props} />;
 }
 
 function ReferenceAsStringFieldBindingInternal({
-                                                   propertyKey,
-                                                   value,
-                                                   setValue,
-                                                   error,
-                                                   showError,
-                                                   isSubmitting,
-                                                   disabled,
-                                                   minimalistView,
-                                                   property,
-                                                   includeDescription,
-                                                   size = "medium"
-                                               }: FieldProps<string>) {
+    propertyKey,
+    value,
+    setValue,
+    error,
+    showError,
+    isSubmitting,
+    disabled,
+    minimalistView,
+    property,
+    includeDescription,
+    size = "medium",
+}: FieldProps<string>) {
     if (!property.reference?.path) {
         throw new Error("Property path is required for ReferenceAsStringFieldBinding");
     }
@@ -45,7 +45,7 @@ function ReferenceAsStringFieldBindingInternal({
     useClearRestoreValue({
         property,
         value,
-        setValue
+        setValue,
     });
 
     const navigationController = useNavigationController();
@@ -65,19 +65,21 @@ function ReferenceAsStringFieldBindingInternal({
         throw Error(`Couldn't find the corresponding collection for the path: ${path}`);
     }
 
-    const onSingleEntitySelected = useCallback((e: Entity<any> | null) => {
-        setValue(e ? e.id : null);
-    }, [setValue]);
+    const onSingleEntitySelected = useCallback(
+        (e: Entity<any> | null) => {
+            setValue(e ? e.id : null);
+        },
+        [setValue]
+    );
 
     const referenceDialogController = useReferenceDialog({
-            multiselect: false,
-            path: path,
-            collection,
-            onSingleEntitySelected,
-            selectedEntityIds: value ? [value] : undefined,
-            forceFilter: property.reference.forceFilter
-        }
-    );
+        multiselect: false,
+        path: path,
+        collection,
+        onSingleEntitySelected,
+        selectedEntityIds: value ? [value] : undefined,
+        forceFilter: property.reference.forceFilter,
+    });
 
     const onEntryClick = (e: React.SyntheticEvent) => {
         e.preventDefault();
@@ -86,50 +88,65 @@ function ReferenceAsStringFieldBindingInternal({
 
     return (
         <>
-            {!minimalistView && <LabelWithIconAndTooltip
-                propertyKey={propertyKey}
-                icon={getIconForProperty(property, "small")}
-                required={property.validation?.required}
-                title={property.name}
-                className={"h-8 text-text-secondary dark:text-text-secondary-dark ml-3.5"}/>}
+            {!minimalistView && (
+                <LabelWithIconAndTooltip
+                    propertyKey={propertyKey}
+                    icon={getIconForProperty(property, "small")}
+                    required={property.validation?.required}
+                    title={property.name}
+                    className={"h-8 text-text-secondary dark:text-text-secondary-dark ml-3.5"}
+                />
+            )}
 
-            {!collection && <ErrorView
-                error={"The specified collection does not exist. Check console"}/>}
+            {!collection && (
+                <ErrorView error={"The specified collection does not exist. Check console"} />
+            )}
 
-            {collection && <>
+            {collection && (
+                <>
+                    {referenceValue && (
+                        <ReferencePreview
+                            disabled={!path}
+                            previewProperties={property.reference?.previewProperties}
+                            hover={!disabled}
+                            size={size}
+                            onClick={disabled || isSubmitting ? undefined : onEntryClick}
+                            reference={referenceValue}
+                            includeEntityLink={property.reference?.includeEntityLink}
+                            includeId={property.reference?.includeId}
+                        />
+                    )}
 
-                {referenceValue && <ReferencePreview
-                    disabled={!path}
-                    previewProperties={property.reference?.previewProperties}
-                    hover={!disabled}
-                    size={size}
-                    onClick={disabled || isSubmitting ? undefined : onEntryClick}
-                    reference={referenceValue}
-                    includeEntityLink={property.reference?.includeEntityLink}
-                    includeId={property.reference?.includeId}
-                />}
+                    {!value && (
+                        <div className="justify-center text-left">
+                            <EntityPreviewContainer
+                                className={cls(
+                                    "px-6 h-16 text-sm font-medium flex items-center gap-6",
+                                    disabled || isSubmitting
+                                        ? "text-surface-accent-500"
+                                        : "cursor-pointer text-surface-accent-700 dark:text-surface-accent-300 hover:bg-surface-accent-50 dark:hover:bg-surface-800 group-hover:bg-surface-accent-50 dark:group-hover:bg-surface-800"
+                                )}
+                                onClick={onEntryClick}
+                                size={"medium"}
+                            >
+                                <IconForView
+                                    collectionOrView={collection}
+                                    className={"text-surface-300 dark:text-surface-600"}
+                                />
+                                {`Edit ${property.name}`.toUpperCase()}
+                            </EntityPreviewContainer>
+                        </div>
+                    )}
+                </>
+            )}
 
-                {!value && <div className="justify-center text-left">
-                    <EntityPreviewContainer
-                        className={cls("px-6 h-16 text-sm font-medium flex items-center gap-6",
-                            disabled || isSubmitting
-                                ? "text-surface-accent-500"
-                                : "cursor-pointer text-surface-accent-700 dark:text-surface-accent-300 hover:bg-surface-accent-50 dark:hover:bg-surface-800 group-hover:bg-surface-accent-50 dark:group-hover:bg-surface-800")}
-                        onClick={onEntryClick}
-                        size={"medium"}>
-                        <IconForView collectionOrView={collection}
-                                     className={"text-surface-300 dark:text-surface-600"}/>
-                        {`Edit ${property.name}`.toUpperCase()}
-                    </EntityPreviewContainer>
-                </div>}
-            </>}
-
-            <FieldHelperText includeDescription={includeDescription}
-                             showError={showError}
-                             error={error}
-                             disabled={disabled}
-                             property={property}/>
-
+            <FieldHelperText
+                includeDescription={includeDescription}
+                showError={showError}
+                error={error}
+                disabled={disabled}
+                property={property}
+            />
         </>
     );
 }

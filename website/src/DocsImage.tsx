@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 
 export function DocsImage({
-                              src,
-                              alt,
-                              size
-                          }: { src: string; alt?: string, size?: "small" | "medium" | "large" }) {
+    src,
+    alt,
+    size,
+}: {
+    src: string;
+    alt?: string;
+    size?: "small" | "medium" | "large";
+}) {
     const [imageSrc, setImageSrc] = useState(undefined);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(undefined);
@@ -32,12 +36,14 @@ export function DocsImage({
     if (loading) return null;
     if (error) return null;
 
-    const widthClass = size === "small" ? "max-w-[600px]" : size === "medium" ? "max-w-[800px]" : "";
+    const widthClass =
+        size === "small" ? "max-w-[600px]" : size === "medium" ? "max-w-[800px]" : "";
     return (
         <img
             loading="lazy"
             className={"ml-8 w-full rounded-lg my-4 " + widthClass}
             src={imageSrc}
-            alt={alt ?? "Docs Image"}/>
+            alt={alt ?? "Docs Image"}
+        />
     );
 }

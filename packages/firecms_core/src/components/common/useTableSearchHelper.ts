@@ -10,11 +10,10 @@ export interface UseTableSearchHelperParams<M extends Record<string, any>> {
 }
 
 export function useTableSearchHelper<M extends Record<string, any>>({
-                                                                        collection,
-                                                                        fullPath,
-                                                                        parentCollectionIds
-                                                                    }: UseTableSearchHelperParams<M>) {
-
+    collection,
+    fullPath,
+    parentCollectionIds,
+}: UseTableSearchHelperParams<M>) {
     const context = useFireCMSContext();
     const customizationController = useCustomizationController();
     const dataSource = useDataSource();
@@ -30,59 +29,62 @@ export function useTableSearchHelper<M extends Record<string, any>>({
         path: fullPath,
         databaseId: collection.databaseId,
         collection,
-        parentCollectionIds
+        parentCollectionIds,
     };
 
-    const searchBlocked = customizationController.plugins?.find(p => {
+    const searchBlocked = customizationController.plugins?.find((p) => {
         return p.collectionView?.blockSearch?.(props);
     });
 
-    const addTextSearchClickListener = Boolean(dataSource?.initTextSearch) || customizationController.plugins?.find(p => Boolean(p.collectionView?.onTextSearchClick));
+    const addTextSearchClickListener =
+        Boolean(dataSource?.initTextSearch) ||
+        customizationController.plugins?.find((p) => Boolean(p.collectionView?.onTextSearchClick));
 
     if (addTextSearchClickListener) {
-
         onTextSearchClick = addTextSearchClickListener
             ? () => {
-                setTextSearchLoading(true);
-                const promises: Promise<boolean>[] = [];
-                if (dataSource?.initTextSearch && !searchBlocked) {
-                    promises.push(dataSource.initTextSearch(props));
-                }
-                if (searchBlocked) {
-                    customizationController.plugins?.forEach(p => {
-                        if (p.collectionView?.onTextSearchClick)
-                            promises.push(p.collectionView.onTextSearchClick({
-                                context,
-                                path: fullPath,
-                                collection,
-                                parentCollectionIds
-                            }));
-                    })
-                }
-                return Promise.all(promises)
-                    .then((res: boolean[]) => {
-                        if (res.every(Boolean)) setTextSearchInitialised(true);
-                    })
-                    .finally(() => setTextSearchLoading(false));
-            }
+                  setTextSearchLoading(true);
+                  const promises: Promise<boolean>[] = [];
+                  if (dataSource?.initTextSearch && !searchBlocked) {
+                      promises.push(dataSource.initTextSearch(props));
+                  }
+                  if (searchBlocked) {
+                      customizationController.plugins?.forEach((p) => {
+                          if (p.collectionView?.onTextSearchClick)
+                              promises.push(
+                                  p.collectionView.onTextSearchClick({
+                                      context,
+                                      path: fullPath,
+                                      collection,
+                                      parentCollectionIds,
+                                  })
+                              );
+                      });
+                  }
+                  return Promise.all(promises)
+                      .then((res: boolean[]) => {
+                          if (res.every(Boolean)) setTextSearchInitialised(true);
+                      })
+                      .finally(() => setTextSearchLoading(false));
+              }
             : undefined;
 
-        customizationController.plugins?.forEach(p => {
+        customizationController.plugins?.forEach((p) => {
             if (!textSearchEnabled)
                 if (p.collectionView?.showTextSearchBar) {
                     textSearchEnabled = p.collectionView.showTextSearchBar({
                         context,
                         path: fullPath,
                         collection,
-                        parentCollectionIds
+                        parentCollectionIds,
                     });
                 }
-        })
+        });
     }
     return {
         textSearchLoading,
         textSearchInitialised,
         onTextSearchClick,
-        textSearchEnabled
+        textSearchEnabled,
     };
 }

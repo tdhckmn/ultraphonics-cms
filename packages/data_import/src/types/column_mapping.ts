@@ -2,7 +2,6 @@ import React from "react";
 import { DataType, Entity, Property } from "@firecms/core";
 
 export type ImportConfig = {
-
     inUse: boolean;
     setInUse: React.Dispatch<React.SetStateAction<boolean>>;
 
@@ -28,5 +27,4 @@ export type ImportConfig = {
 
     defaultValues: Record<string, any>;
     setDefaultValues: React.Dispatch<React.SetStateAction<Record<string, any>>>;
-
-}
+};

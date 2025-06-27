@@ -15,21 +15,20 @@ import {
     SnackbarProvider,
     useBuildLocalConfigurationPersistence,
     useBuildModeController,
-    useBuildNavigationController
+    useBuildNavigationController,
 } from "@firecms/core";
 import { createClient } from "@supabase/supabase-js";
 import { useSupabaseAuthController } from "./useSupabaseAuthController";
 import { useSupabaseDelegate } from "./useSupabaseDataSourceDelegate";
 import { productsCollection } from "./collections/products_collection";
 
-const NEXT_PUBLIC_SUPABASE_URL = "https://aqgwxulqziwzfzxkbhau.supabase.co"
-const NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxZ3d4dWxxeml3emZ6eGtiaGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjUwNjU2NTcsImV4cCI6MjA0MDY0MTY1N30.NwtGlIkzoGGOJprGIfCQ-Ps_ZS5tevB2OFDtBlgrgBE"
+const NEXT_PUBLIC_SUPABASE_URL = "https://aqgwxulqziwzfzxkbhau.supabase.co";
+const NEXT_PUBLIC_SUPABASE_ANON_KEY =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxZ3d4dWxxeml3emZ6eGtiaGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjUwNjU2NTcsImV4cCI6MjA0MDY0MTY1N30.NwtGlIkzoGGOJprGIfCQ-Ps_ZS5tevB2OFDtBlgrgBE";
 
-const supabase = createClient(NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY)
-
+const supabase = createClient(NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY);
 
 function SupabaseApp() {
-
     const name = "My FireCMS App";
 
     /**
@@ -43,7 +42,7 @@ function SupabaseApp() {
     const userConfigPersistence = useBuildLocalConfigurationPersistence();
 
     const authController = useSupabaseAuthController({
-        supabase
+        supabase,
     });
 
     const supabaseDataSourceDelegate = useSupabaseDelegate({ supabase });
@@ -65,7 +64,7 @@ function SupabaseApp() {
     const navigationController = useBuildNavigationController({
         collections: [productsCollection],
         authController,
-        dataSourceDelegate: supabaseDataSourceDelegate
+        dataSourceDelegate: supabaseDataSourceDelegate,
     });
 
     // if (firebaseConfigLoading || !firebaseApp) {
@@ -81,7 +80,6 @@ function SupabaseApp() {
     return (
         <SnackbarProvider>
             <ModeControllerProvider value={modeController}>
-
                 <FireCMS
                     navigationController={navigationController}
                     authController={authController}
@@ -90,14 +88,10 @@ function SupabaseApp() {
                     // @ts-ignore
                     storageSource={null}
                 >
-                    {({
-                          context,
-                          loading
-                      }) => {
-
+                    {({ context, loading }) => {
                         let component;
                         if (loading) {
-                            component = <CircularProgressCenter size={"large"}/>;
+                            component = <CircularProgressCenter size={"large"} />;
                         } else {
                             // if (!canAccessMainView) {
                             //     component = (
@@ -109,13 +103,11 @@ function SupabaseApp() {
                             //     );
                             // } else {
                             component = (
-                                <Scaffold
-                                    autoOpenDrawer={false}>
-                                    <AppBar
-                                        title={name}/>
-                                    <Drawer/>
-                                    <NavigationRoutes/>
-                                    <SideDialogs/>
+                                <Scaffold autoOpenDrawer={false}>
+                                    <AppBar title={name} />
+                                    <Drawer />
+                                    <NavigationRoutes />
+                                    <SideDialogs />
                                 </Scaffold>
                             );
                             // }

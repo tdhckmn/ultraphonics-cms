@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function LocalBarIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"local_bar"}/>
+    return <Icon {...props} iconKey={"local_bar"} />;
 }

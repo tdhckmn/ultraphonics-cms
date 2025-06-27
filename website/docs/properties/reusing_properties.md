@@ -17,11 +17,10 @@ contains all the configurations related to a property. This is an array of
 
 ```typescript
 export type PropertyConfig<T extends CMSType = any> = {
-
     /**
      * Key used to identify this property config.
      */
-    key: string,
+    key: string;
 
     /**
      * Name of this field type.
@@ -55,8 +54,7 @@ export type PropertyConfig<T extends CMSType = any> = {
      * Description of this field type.
      */
     description?: string;
-
-}
+};
 ```
 
 Note that you can use any of the existing builders or properties as a base for
@@ -68,7 +66,6 @@ for the resulting property (the user is still able to customize it).
 Let's define a custom property that consists of a translations map object with different string values:
 
 ```typescript
-
 export const appConfig: FireCMSAppConfig = {
     version: "1",
     collections: [
@@ -83,16 +80,16 @@ export const appConfig: FireCMSAppConfig = {
                 properties: {
                     en: {
                         dataType: "string",
-                        name: "English"
+                        name: "English",
                     },
                     es: {
                         dataType: "string",
-                        name: "Español"
+                        name: "Español",
                     },
                 },
             },
-        }
-    ]
+        },
+    ],
 };
 ```
 
@@ -112,17 +109,15 @@ In FireCMS PRO, you can define the `propertyConfigs` in the `FireCMS` component:
                 properties: {
                     en: {
                         dataType: "string",
-                        name: "English"
+                        name: "English",
                     },
                     es: {
                         dataType: "string",
-                        name: "Español"
+                        name: "Español",
                     },
                 },
             },
-        }
+        },
     ]}
 />
 ```
-
-

@@ -7,46 +7,50 @@ const IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif"];
 const AUDIO_EXTENSIONS = [".mp3", ".ogg", ".opus", ".aac"];
 const VIDEO_EXTENSIONS = [".avi", ".mp4"];
 
-const emailRegEx = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+const emailRegEx =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
 export function buildStringProperty({
-                                        totalDocsCount,
-                                        valuesResult
-                                    }: InferencePropertyBuilderProps): Property {
-
+    totalDocsCount,
+    valuesResult,
+}: InferencePropertyBuilderProps): Property {
     let stringProperty: Property = {
         dataType: "string",
-
     };
 
     if (valuesResult) {
-
         const totalEntriesCount = valuesResult.values.length;
         const totalValues = Array.from(valuesResult.valuesCount.keys()).length;
 
         const config: Partial<StringProperty> = {};
 
-        const probablyAURL = valuesResult.values
-            .filter((value) => typeof value === "string" &&
-                value.toString().startsWith("http")).length > totalDocsCount / 3 * 2;
+        const probablyAURL =
+            valuesResult.values.filter(
+                (value) => typeof value === "string" && value.toString().startsWith("http")
+            ).length >
+            (totalDocsCount / 3) * 2;
         if (probablyAURL) {
             config.url = true;
         }
 
-        const probablyAnEmail = valuesResult.values
-            .filter((value) => typeof value === "string" &&
-                emailRegEx.test(value)).length > totalDocsCount / 3 * 2;
+        const probablyAnEmail =
+            valuesResult.values.filter(
+                (value) => typeof value === "string" && emailRegEx.test(value)
+            ).length >
+            (totalDocsCount / 3) * 2;
         if (probablyAnEmail) {
             config.email = true;
         }
 
-        const probablyUserIds = valuesResult.values
-            .filter((value) => typeof value === "string" && value.length === 28 && !value.includes(" "))
-            .length > totalDocsCount / 3 * 2;
-        if (probablyUserIds)
-            config.readOnly = true;
+        const probablyUserIds =
+            valuesResult.values.filter(
+                (value) => typeof value === "string" && value.length === 28 && !value.includes(" ")
+            ).length >
+            (totalDocsCount / 3) * 2;
+        if (probablyUserIds) config.readOnly = true;
 
-        if (!probablyAnEmail &&
+        if (
+            !probablyAnEmail &&
             !probablyAURL &&
             !probablyUserIds &&
             !probablyAURL &&
@@ -54,21 +58,22 @@ export function buildStringProperty({
         ) {
             const enumValues = extractEnumFromValues(Array.from(valuesResult.valuesCount.keys()));
 
-            if (Object.keys(enumValues).length > 1)
-                config.enumValues = enumValues;
+            if (Object.keys(enumValues).length > 1) config.enumValues = enumValues;
         }
 
         // regular string
-        if (!probablyAnEmail &&
+        if (
+            !probablyAnEmail &&
             !probablyAURL &&
             !probablyUserIds &&
             !probablyAURL &&
-            !config.enumValues) {
+            !config.enumValues
+        ) {
             const fileType = probableFileType(valuesResult, totalDocsCount);
             if (fileType) {
                 config.storage = {
                     acceptedFiles: [fileType as FileType],
-                    storagePath: findCommonInitialStringInPath(valuesResult) ?? "/"
+                    storagePath: findCommonInitialStringInPath(valuesResult) ?? "/",
                 };
             }
         }
@@ -77,7 +82,7 @@ export function buildStringProperty({
             stringProperty = {
                 ...stringProperty,
                 ...config,
-                editable: true
+                editable: true,
             };
     }
 
@@ -85,23 +90,40 @@ export function buildStringProperty({
 }
 
 // TODO: support returning multiple types
-function probableFileType(valuesCount: ValuesCountEntry, totalDocsCount: number): boolean | FileType {
-    const probablyAnImage = valuesCount.values
-        .filter((value) => typeof value === "string" &&
-            IMAGE_EXTENSIONS.some((extension) => value.toString().endsWith(extension))).length > totalDocsCount / 3 * 2;
+function probableFileType(
+    valuesCount: ValuesCountEntry,
+    totalDocsCount: number
+): boolean | FileType {
+    const probablyAnImage =
+        valuesCount.values.filter(
+            (value) =>
+                typeof value === "string" &&
+                IMAGE_EXTENSIONS.some((extension) => value.toString().endsWith(extension))
+        ).length >
+        (totalDocsCount / 3) * 2;
 
-    const probablyAudio = valuesCount.values
-        .filter((value) => typeof value === "string" &&
-            AUDIO_EXTENSIONS.some((extension) => value.toString().endsWith(extension))).length > totalDocsCount / 3 * 2;
+    const probablyAudio =
+        valuesCount.values.filter(
+            (value) =>
+                typeof value === "string" &&
+                AUDIO_EXTENSIONS.some((extension) => value.toString().endsWith(extension))
+        ).length >
+        (totalDocsCount / 3) * 2;
 
-    const probablyVideo = valuesCount.values
-        .filter((value) => typeof value === "string" &&
-            VIDEO_EXTENSIONS.some((extension) => value.toString().endsWith(extension))).length > totalDocsCount / 3 * 2;
+    const probablyVideo =
+        valuesCount.values.filter(
+            (value) =>
+                typeof value === "string" &&
+                VIDEO_EXTENSIONS.some((extension) => value.toString().endsWith(extension))
+        ).length >
+        (totalDocsCount / 3) * 2;
 
     const fileType: boolean | FileType = probablyAnImage
         ? "image/*"
         : probablyAudio
-            ? "audio/*"
-            : probablyVideo ? "video/*" : false;
+          ? "audio/*"
+          : probablyVideo
+            ? "video/*"
+            : false;
     return fileType;
 }

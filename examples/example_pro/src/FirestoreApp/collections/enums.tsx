@@ -8,13 +8,13 @@ export const locales: EnumValues = {
     fr: {
         id: "fr",
         label: "French",
-        disabled: true
-    }
+        disabled: true,
+    },
 };
 
 export const currencies: EnumValues = [
     { id: "EUR", label: "Euros", color: "blueDark" },
-    { id: "DOL", label: "Dollars", color: "greenLight" }
+    { id: "DOL", label: "Dollars", color: "greenLight" },
 ];
 
 export const categories: EnumValues = {
@@ -50,5 +50,5 @@ export const categories: EnumValues = {
     speakers: "Speakers",
     sunglasses: "Sunglasses",
     toys_and_games: "Toys and games",
-    watches: "Watches"
+    watches: "Watches",
 };

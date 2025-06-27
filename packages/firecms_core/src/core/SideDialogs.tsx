@@ -7,28 +7,23 @@ import { ErrorBoundary } from "../components";
 import { UnsavedChangesDialog } from "../components/UnsavedChangesDialog";
 
 export type SideDialogController = {
-    blocked: boolean,
-    setBlocked: (blocked: boolean) => void,
-    setBlockedNavigationMessage: (message?: React.ReactNode) => void,
-    width?: string,
+    blocked: boolean;
+    setBlocked: (blocked: boolean) => void;
+    setBlockedNavigationMessage: (message?: React.ReactNode) => void;
+    width?: string;
     close: (force?: boolean) => void;
-    pendingClose: boolean,
-    setPendingClose: (pendingClose: boolean) => void
-}
+    pendingClose: boolean;
+    setPendingClose: (pendingClose: boolean) => void;
+};
 
 const SideDialogContext = React.createContext<SideDialogController>({
     width: "",
     blocked: false,
-    setBlocked: (blocked: boolean) => {
-    },
-    setBlockedNavigationMessage: (message?: React.ReactNode) => {
-    },
-    close: () => {
-    },
+    setBlocked: (blocked: boolean) => {},
+    setBlockedNavigationMessage: (message?: React.ReactNode) => {},
+    close: () => {},
     pendingClose: false,
-    setPendingClose: () => {
-
-    }
+    setPendingClose: () => {},
 });
 
 /**
@@ -47,7 +42,6 @@ export const useSideDialogContext = () => useContext<SideDialogController>(SideD
  * @group Components
  */
 export function SideDialogs() {
-
     const sideDialogsController = useSideDialogsController();
 
     const sidePanels = sideDialogsController.sidePanels;
@@ -55,29 +49,32 @@ export function SideDialogs() {
     const panels: (SideDialogPanelProps | undefined)[] = [...sidePanels];
     panels.push(undefined);
 
-    return <>
-        {
-            panels.map((panel, index) =>
+    return (
+        <>
+            {panels.map((panel, index) => (
                 <SideDialogView
                     key={`side_dialog_${index}`}
                     panel={panel}
-                    offsetPosition={sidePanels.length - index - 1}/>)
-        }
-    </>;
+                    offsetPosition={sidePanels.length - index - 1}
+                />
+            ))}
+        </>
+    );
 }
 
 function SideDialogView({
-                            offsetPosition,
-                            panel
-                        }: {
-    offsetPosition: number,
-    panel?: SideDialogPanelProps
+    offsetPosition,
+    panel,
+}: {
+    offsetPosition: number;
+    panel?: SideDialogPanelProps;
 }) {
-
     // was the closing of the dialog requested by the drawer
     const [drawerCloseRequested, setDrawerCloseRequested] = useState<boolean>(false);
     const [blocked, setBlocked] = useState(false);
-    const [blockedNavigationMessage, setBlockedNavigationMessage] = useState<React.ReactNode | undefined>();
+    const [blockedNavigationMessage, setBlockedNavigationMessage] = useState<
+        React.ReactNode | undefined
+    >();
 
     const [pendingClose, setPendingClose] = useState(false);
 
@@ -89,16 +86,14 @@ function SideDialogView({
     const {
         navigationWasBlocked,
         handleOk: handleNavigationOk,
-        handleCancel: handleNavigationCancel
-    } = useNavigationUnsavedChangesDialog(
-        blocked && !drawerCloseRequested,
-        () => setBlocked(false)
+        handleCancel: handleNavigationCancel,
+    } = useNavigationUnsavedChangesDialog(blocked && !drawerCloseRequested, () =>
+        setBlocked(false)
     );
 
     useEffect(() => {
-        if (panel)
-            widthRef.current = panel.width;
-    }, [panel])
+        if (panel) widthRef.current = panel.width;
+    }, [panel]);
 
     const handleDrawerCloseOk = () => {
         setBlocked(false);
@@ -129,38 +124,39 @@ function SideDialogView({
                 width,
                 close: onCloseRequest,
                 pendingClose,
-                setPendingClose
-            }}>
-
+                setPendingClose,
+            }}
+        >
             <Sheet
                 open={Boolean(panel)}
                 onOpenChange={(open) => !open && onCloseRequest()}
                 title={"Side dialog " + panel?.key}
             >
-                {panel &&
+                {panel && (
                     <div
-                        className={"transform max-w-[100vw] lg:max-w-[95vw] flex flex-col h-full transition-all duration-250 ease-in-out bg-white dark:bg-surface-900 "}
+                        className={
+                            "transform max-w-[100vw] lg:max-w-[95vw] flex flex-col h-full transition-all duration-250 ease-in-out bg-white dark:bg-surface-900 "
+                        }
                         style={{
                             width: panel.width,
                             transform: `translateX(-${offsetPosition * 200}px)`,
                         }}
                     >
-                        <ErrorBoundary>
-                            {panel.component}
-                        </ErrorBoundary>
-                    </div>}
+                        <ErrorBoundary>{panel.component}</ErrorBoundary>
+                    </div>
+                )}
 
-                {!panel && <div style={{ width }}/>}
-
+                {!panel && <div style={{ width }} />}
             </Sheet>
 
             <UnsavedChangesDialog
                 open={drawerCloseRequested}
                 handleOk={drawerCloseRequested ? handleDrawerCloseOk : handleNavigationOk}
-                handleCancel={drawerCloseRequested ? handleDrawerCloseCancel : handleNavigationCancel}
-                body={blockedNavigationMessage}/>
-
+                handleCancel={
+                    drawerCloseRequested ? handleDrawerCloseCancel : handleNavigationCancel
+                }
+                body={blockedNavigationMessage}
+            />
         </SideDialogContext.Provider>
-
     );
 }

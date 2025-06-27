@@ -2,6 +2,7 @@
 id: changelog
 title: Changelog
 ---
+
 ## [3.0.0-beta.14] - 2025-04-17
 
 - **JSON View Toggle**: Added toggle in collections editor view for accessing raw JSON data.
@@ -9,15 +10,15 @@ title: Changelog
 - **Form Improvements**: Enhanced popup form field resizing and boundary handling.
 - **Entity History Plugin**: Added history tracking functionality to FireCMS Cloud and FireCMS PRO.
 - **Fixes**:
-  - Fixed text overflow in entity titles
-  - Fixed errors displayed incorrectly in array of maps
-  - Fixed truncating buttons
-  - Fixed read-only entities getting obscured by bottom bar
-  - Fixed overlay text color in dark mode
-  - Fixed errors not being cleared on collection editor
-  - Fixed mergeDeep to handle null cases correctly
-  - Fixed scroll resetting x-axis on pagination
-  - Added back table cell error indication
+    - Fixed text overflow in entity titles
+    - Fixed errors displayed incorrectly in array of maps
+    - Fixed truncating buttons
+    - Fixed read-only entities getting obscured by bottom bar
+    - Fixed overlay text color in dark mode
+    - Fixed errors not being cleared on collection editor
+    - Fixed mergeDeep to handle null cases correctly
+    - Fixed scroll resetting x-axis on pagination
+    - Added back table cell error indication
 - **Drag and Drop**: Replaced `@hello-pangea/dnd` with `@dnd-kit` for better performance and flexibility.
 
 ## [3.0.0-beta.13] - 2025-04-11
@@ -28,38 +29,38 @@ title: Changelog
 - **Storage Improvements**: Added `processFile` to storage properties for pre-processing files before upload.
 - **Secondary Forms**: Secondary forms are now always rendered, even if disabled, for better consistency.
 - **UI Improvements**:
-  - Adjusted small and smallest field sizes for better visual hierarchy
-  - Updated Button neutral color styling
-  - Improved layout for long entity IDs
-  - Various minor layout tweaks
+    - Adjusted small and smallest field sizes for better visual hierarchy
+    - Updated Button neutral color styling
+    - Improved layout for long entity IDs
+    - Various minor layout tweaks
 - **Fixes**:
-  - Fixed array reference field with incorrect add button
-  - Fixed subcollections not resolving path correctly
-  - Fixed complex subcollection with alias navigation bug
-  - Fixed export functionality when flatten arrays is false (double quotes are now escaped correctly)
-  - Fixed CollectionDetailsForm enum select issues
-  - Fixed entity creation bug
-  - Fixed URL update for entities with default selected view
-  - Fixed values not resetting correctly
-  - Fixed read-only entity views missing tabs
-  - Fixed camel case related bug
+    - Fixed array reference field with incorrect add button
+    - Fixed subcollections not resolving path correctly
+    - Fixed complex subcollection with alias navigation bug
+    - Fixed export functionality when flatten arrays is false (double quotes are now escaped correctly)
+    - Fixed CollectionDetailsForm enum select issues
+    - Fixed entity creation bug
+    - Fixed URL update for entities with default selected view
+    - Fixed values not resetting correctly
+    - Fixed read-only entity views missing tabs
+    - Fixed camel case related bug
 - **Demo**: Added MultiSelect component demonstration
 
 ## [3.0.0-beta.12] - 2025-03-13
 
 - **Full-screen entity views**: You can now open entities in a full-screen view. This is useful when you want to
-focus on the entity you are editing. You can enable this feature by setting the `openEntityMode` prop to `full_screen`
-in the collection view. The default mode continues to be `side_panel`. There has been a big navigation revamp to
-accommodate all the new use cases.
+  focus on the entity you are editing. You can enable this feature by setting the `openEntityMode` prop to `full_screen`
+  in the collection view. The default mode continues to be `side_panel`. There has been a big navigation revamp to
+  accommodate all the new use cases.
 - **Scroll preservation**: When you open an entity in a full-screen view, the scroll position of the collection view is preserved.
 - **Drafts saved locally**: Drafts are now saved locally in the browser. This means that if you accidentally close the browser or navigate away, your changes will still be there when you come back.
 - URL state preservation: The state of filters and sorting is now preserved in the URL.
 - **Undo/redo functionality**: Added ability to undo and redo changes when editing entities.
 - Added `alwaysApplyDefaultValues` flag to collections. This flag allows you to enforce the default values when updating
-entities, not just when creating them.
-- Secondary forms now preserve their width when in side panel mode. You can create full secondary forms 
-that live in their own tab. Secondary forms are built as custom components and can include any components, including
-field bindings.
+  entities, not just when creating them.
+- Secondary forms now preserve their width when in side panel mode. You can create full secondary forms
+  that live in their own tab. Secondary forms are built as custom components and can include any components, including
+  field bindings.
 - Added system color mode besides dark and light modes. The button is now a dropdown instead of a toggle.
 - Form improvements including fixed initial state reset after save and detached entity form actions.
 - Warning when leaving unsaved forms to prevent accidental data loss.
@@ -86,12 +87,12 @@ field bindings.
 ❌ Code before:
 
 ```typescript
-    /**
+/**
  * Controller in charge of user management
  */
 const userManagement = useBuildUserManagement({
-        dataSourceDelegate: firestoreDelegate
-    });
+    dataSourceDelegate: firestoreDelegate,
+});
 
 /**
  * Controller for managing authentication
@@ -100,27 +101,27 @@ const authController: FirebaseAuthController = useFirebaseAuthController({
     firebaseApp,
     signInOptions,
     loading: userManagement.loading,
-    defineRolesFor: userManagement.defineRolesFor
+    defineRolesFor: userManagement.defineRolesFor,
 });
 ```
 
 ✅ Code after:
 
 ```typescript
-    /**
+/**
  * Controller for managing authentication
  */
 const authController: FirebaseAuthController = useFirebaseAuthController({
-        firebaseApp,
-        signInOptions
-    });
+    firebaseApp,
+    signInOptions,
+});
 
 /**
  * Controller in charge of user management
  */
 const userManagement = useBuildUserManagement({
     dataSourceDelegate: firestoreDelegate,
-    authController
+    authController,
 });
 ```
 
@@ -171,7 +172,6 @@ const userManagement = useBuildUserManagement({
 - Added API key generation and project selection capabilities.
 - Introduced a past-due warning message and improvements in collection and subcollection data handling.
 - Provided better error handling and layout consistency in the application.
-
 
 ## [3.0.0-beta.9] - 2024-07-10
 
@@ -304,14 +304,14 @@ const userManagement = useBuildUserManagement({
 - [BREAKING] In that case, you also need to add `@tailwindcss/typography` to your dev dependencies.
 - [BREAKING] You need to update your `vite.config.js` and replace the package name in the federated configuration:
     ```javascript
-    import { defineConfig } from "vite"
-    import react from "@vitejs/plugin-react"
-    import federation from "@originjs/vite-plugin-federation"
-    
+    import { defineConfig } from "vite";
+    import react from "@vitejs/plugin-react";
+    import federation from "@originjs/vite-plugin-federation";
+
     // https://vitejs.dev/config/
     export default defineConfig({
         esbuild: {
-            logOverride: { "this-is-undefined-in-esm": "silent" }
+            logOverride: { "this-is-undefined-in-esm": "silent" },
         },
         plugins: [
             react(),
@@ -319,17 +319,24 @@ const userManagement = useBuildUserManagement({
                 name: "remote_app",
                 filename: "remoteEntry.js",
                 exposes: {
-                    "./config": "./src/index"
+                    "./config": "./src/index",
                 },
-                shared: ["react", "react-dom", "@firecms/cloud", "@firecms/core", "@firecms/firebase", "@firecms/ui"]
-            })
+                shared: [
+                    "react",
+                    "react-dom",
+                    "@firecms/cloud",
+                    "@firecms/core",
+                    "@firecms/firebase",
+                    "@firecms/ui",
+                ],
+            }),
         ],
         build: {
             modulePreload: false,
             target: "ESNEXT",
             cssCodeSplit: false,
-        }
-    })
+        },
+    });
     ```
 - Minor performance improvements and bug fixes.
 - Enhanced filtering and sorting capability for indexed fields.
@@ -551,6 +558,7 @@ While still in beta, we consider this version stable enough to be used in
 production.
 
 > All changes related to V2 alpha are currently bundled in these documents:
+>
 > - [What's new in version 2.0.0](https://firecms.co/docs/new_in_v2)
 > - [Migration guide from version 1.x to 2.0.0](https://firecms.co/docs/migrating_from_v1)
 

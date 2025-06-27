@@ -42,5 +42,4 @@ export type User = {
     roles?: Role[];
 
     getIdToken?: (forceRefresh?: boolean) => Promise<string>;
-
 };

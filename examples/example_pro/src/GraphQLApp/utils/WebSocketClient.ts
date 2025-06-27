@@ -2,10 +2,10 @@ import ReconnectingWebSocket from "reconnecting-websocket";
 
 type Callback = (response: any) => void;
 type SubscriptionCallback<TYPE = string> = (update: {
-    type: TYPE,
-    data: any,
-    success: boolean,
-    error?: any
+    type: TYPE;
+    data: any;
+    success: boolean;
+    error?: any;
 }) => void;
 
 /**
@@ -24,13 +24,7 @@ class WebSocketClient {
 
         this.socket.onmessage = (event) => {
             const message = JSON.parse(event.data);
-            const {
-                type,
-                requestId,
-                success,
-                data,
-                error
-            } = message;
+            const { type, requestId, success, data, error } = message;
 
             console.log("!! Received message:", message);
 
@@ -42,7 +36,7 @@ class WebSocketClient {
                         type,
                         data,
                         success,
-                        error
+                        error,
                     });
                 } else {
                     console.error("Subscription not found for requestId:", requestId);
@@ -56,12 +50,12 @@ class WebSocketClient {
                 if (success) {
                     callback({
                         success,
-                        data
+                        data,
                     });
                 } else {
                     callback({
                         success,
-                        error
+                        error,
                     });
                 }
                 this.callbacks.delete(requestId);
@@ -102,7 +96,7 @@ class WebSocketClient {
             const message = {
                 type,
                 payload,
-                requestId
+                requestId,
             };
 
             this.socket.send(JSON.stringify(message));
@@ -116,14 +110,18 @@ class WebSocketClient {
      * @param callback - Callback to handle updates
      * @returns A unique subscription ID
      */
-    subscribe<TYPE = string>(type: string, payload: any, callback: SubscriptionCallback<TYPE>): string {
+    subscribe<TYPE = string>(
+        type: string,
+        payload: any,
+        callback: SubscriptionCallback<TYPE>
+    ): string {
         const requestId = this.generateRequestId();
         this.subscriptions.set(requestId, callback);
 
         const message = {
             type,
             payload,
-            requestId
+            requestId,
         };
 
         this.socket.send(JSON.stringify(message));

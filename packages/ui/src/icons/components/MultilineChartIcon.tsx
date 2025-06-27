@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function MultilineChartIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"multiline_chart"}/>
+    return <Icon {...props} iconKey={"multiline_chart"} />;
 }

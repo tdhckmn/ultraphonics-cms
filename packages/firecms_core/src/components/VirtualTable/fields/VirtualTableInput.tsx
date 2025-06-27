@@ -9,18 +9,11 @@ export function VirtualTableInput(props: {
     multiline: boolean;
     focused: boolean;
     disabled: boolean;
-    updateValue: (newValue: (string | null)) => void;
+    updateValue: (newValue: string | null) => void;
 }) {
-
     const ref = React.useRef<HTMLTextAreaElement>(null);
 
-    const {
-        disabled,
-        value,
-        multiline,
-        updateValue,
-        focused
-    } = props;
+    const { disabled, value, multiline, updateValue, focused } = props;
 
     const prevValue = useRef<string | null>(value);
 
@@ -28,15 +21,13 @@ export function VirtualTableInput(props: {
     const focusedState = useRef<boolean>(false);
 
     useEffect(() => {
-        if (prevValue.current !== value && value !== internalValue)
-            setInternalValue(value);
+        if (prevValue.current !== value && value !== internalValue) setInternalValue(value);
         prevValue.current = value;
     }, [value]);
 
     const doUpdate = React.useCallback(() => {
         const emptyInitialValue = !value;
-        if (emptyInitialValue && !internalValue)
-            return;
+        if (emptyInitialValue && !internalValue) return;
         if (internalValue !== value) {
             prevValue.current = internalValue;
             updateValue(internalValue);
@@ -71,13 +62,12 @@ export function VirtualTableInput(props: {
                 background: "unset",
                 border: "unset",
                 resize: "none",
-                outline: "none"
+                outline: "none",
             }}
             value={internalValue ?? ""}
             onChange={(evt) => {
                 const newValue = evt.target.value as string;
-                if (multiline || !newValue.endsWith("\n"))
-                    setInternalValue(newValue);
+                if (multiline || !newValue.endsWith("\n")) setInternalValue(newValue);
             }}
             onFocus={() => {
                 focusedState.current = true;

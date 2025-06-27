@@ -17,7 +17,8 @@ export type ChatMessage = {
     };
 };
 
-export type FeedbackSlug = "not_helpful"
+export type FeedbackSlug =
+    | "not_helpful"
     | "not_factually_correct"
     | "incorrect_code"
     | "unsafe_or_problematic"

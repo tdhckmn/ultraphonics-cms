@@ -1,6 +1,6 @@
 ---
-id: use_reference_dialog 
-title: useReferenceDialog 
+id: use_reference_dialog
+title: useReferenceDialog
 sidebar_label: useReferenceDialog
 ---
 
@@ -19,35 +19,39 @@ hook used internally when a reference property is defined.
 
 The props provided by this hook are:
 
+-     multiselect?: boolean;
 
-*     multiselect?: boolean;
-  Allow multiple selection of values
+    Allow multiple selection of values
 
-*     collection?: EntityCollection;
-  Entity collection config
+-     collection?: EntityCollection;
 
-*     path: string;
-  Absolute path of the collection. 
-  May be not set if this hook is being used in a component and the path is
-  dynamic. If not set, the dialog won't open.
+    Entity collection config
 
-*     selectedEntityIds?: string[];
-  If you are opening the dialog for the first time, you can select some
-  entity ids to be displayed first.
+-     path: string;
 
-*     onSingleEntitySelected?(entity: Entity | null): void;
-  If `multiselect` is set to `false`, you will get the selected entity
-  in this callback.
-    
-*     onMultipleEntitiesSelected?(entities: Entity[]): void;
-  If `multiselect` is set to `false`, you will get the selected entities
-  in this callback.
+    Absolute path of the collection.
+    May be not set if this hook is being used in a component and the path is
+    dynamic. If not set, the dialog won't open.
 
-*     onClose?(): void;
-  If the dialog currently open, close it
+-     selectedEntityIds?: string[];
 
-*     forceFilter?: FilterValues;
-  Allow selection of entities that pass the given filter only.
+    If you are opening the dialog for the first time, you can select some
+    entity ids to be displayed first.
+
+-     onSingleEntitySelected?(entity: Entity | null): void;
+    If `multiselect` is set to `false`, you will get the selected entity
+    in this callback.
+-     onMultipleEntitiesSelected?(entities: Entity[]): void;
+
+    If `multiselect` is set to `false`, you will get the selected entities
+    in this callback.
+
+-     onClose?(): void;
+
+    If the dialog currently open, close it
+
+-     forceFilter?: FilterValues;
+    Allow selection of entities that pass the given filter only.
 
 Example:
 
@@ -56,7 +60,6 @@ import React from "react";
 import { useAuthController } from "@firecms/core";
 
 export function ExampleCMSView() {
-
     // hook to display custom snackbars
     const snackbarController = useSnackbarController();
 
@@ -66,16 +69,15 @@ export function ExampleCMSView() {
         onSingleEntitySelected(entity: Entity<Product> | null) {
             snackbarController.open({
                 type: "success",
-                message: "Selected " + entity?.values.name
-            })
-        }
+                message: "Selected " + entity?.values.name,
+            });
+        },
     });
 
-    return <Button
-        onClick={referenceDialog.open}
-        color="primary">
-        Test reference dialog
-    </Button>;
+    return (
+        <Button onClick={referenceDialog.open} color="primary">
+            Test reference dialog
+        </Button>
+    );
 }
 ```
-

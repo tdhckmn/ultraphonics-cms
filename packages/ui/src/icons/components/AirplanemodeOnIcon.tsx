@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function AirplanemodeOnIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"airplanemode_on"}/>
+    return <Icon {...props} iconKey={"airplanemode_on"} />;
 }

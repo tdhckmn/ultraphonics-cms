@@ -8,49 +8,47 @@ import { downloadDataAsCsv } from "@firecms/data_export";
 export type DataType = "string" | "number" | "date" | "object" | "array";
 
 export type TableColumn = {
-    key: string,
-    name: string,
-    width?: number,
-    dataType?: DataType
+    key: string;
+    name: string;
+    width?: number;
+    dataType?: DataType;
 };
 
 export type DataTableProps = {
     data?: object[];
     maxWidth?: number;
     onEndReached?: () => void;
-    onColumnResize?: (params: { key: string, width: number }) => void;
+    onColumnResize?: (params: { key: string; width: number }) => void;
     loading?: boolean;
-}
+};
 
 export function DataTable({
-                              data,
-                              onColumnResize,
-                              maxWidth,
-                              onEndReached,
-                              loading
-                          }: DataTableProps) {
-
+    data,
+    onColumnResize,
+    maxWidth,
+    onEndReached,
+    loading,
+}: DataTableProps) {
     const columns = useMemo(() => extractColumns(data ?? []), [data]);
 
     function cellRenderer({
-                              columns,
-                              column,
-                              columnIndex,
-                              rowData,
-                              rowIndex,
-                              isScrolling
-                          }: CellRendererParams) {
-
+        columns,
+        column,
+        columnIndex,
+        rowData,
+        rowIndex,
+        isScrolling,
+    }: CellRendererParams) {
         const entry = getIn(rowData, column.key);
         const string = entry ? entry.toString() : "";
-        return <DataTableCell
-            align={column.align}
-            width={column.width}>
-            {string}
-        </DataTableCell>;
+        return (
+            <DataTableCell align={column.align} width={column.width}>
+                {string}
+            </DataTableCell>
+        );
     }
 
-    const tableColumns: VirtualTableColumn[] = columns.map(col => {
+    const tableColumns: VirtualTableColumn[] = columns.map((col) => {
         return {
             key: col.key,
             title: col.name,
@@ -61,20 +59,23 @@ export function DataTable({
 
     return (
         <Paper>
-            <div
-                className="rounded bg-surface-50 dark:bg-surface-900 flex flex-row justify-between items-center px-4 py-2 h-14">
-                <Typography variant="label" className="flex-1">Data</Typography>
+            <div className="rounded bg-surface-50 dark:bg-surface-900 flex flex-row justify-between items-center px-4 py-2 h-14">
+                <Typography variant="label" className="flex-1">
+                    Data
+                </Typography>
                 <IconButton
                     disabled={!data}
-                    onClick={() => data && downloadDataAsCsv(data, "export")}>
-                    <FileDownloadIcon/>
+                    onClick={() => data && downloadDataAsCsv(data, "export")}
+                >
+                    <FileDownloadIcon />
                 </IconButton>
             </div>
-            <div className="flex h-[360px] w-full flex-col bg-white dark:bg-surface-950"
-                 style={{
-                     maxWidth
-                 }}>
-
+            <div
+                className="flex h-[360px] w-full flex-col bg-white dark:bg-surface-950"
+                style={{
+                    maxWidth,
+                }}
+            >
                 <VirtualTable
                     loading={loading}
                     data={data}
@@ -85,13 +86,10 @@ export function DataTable({
                     onEndReached={onEndReached}
                     endOffset={1600}
                 />
-
             </div>
-
         </Paper>
     );
-
-};
+}
 
 function getColumnWidth(dataType?: DataType) {
     switch (dataType) {
@@ -125,7 +123,7 @@ function extractColumns(newData: object[]): TableColumn[] {
         return {
             key,
             name: key,
-            type
+            type,
         };
     });
 

@@ -1,100 +1,101 @@
 jest.mock("@tiptap/extension-placeholder", () => ({
-    configure: jest.fn(() => ({}))
+    configure: jest.fn(() => ({})),
 }));
 jest.mock("@tiptap/extension-horizontal-rule", () => ({
     configure: jest.fn(() => ({})),
-    extend: jest.fn(() => ({ configure: jest.fn(() => ({})) }))
+    extend: jest.fn(() => ({ configure: jest.fn(() => ({})) })),
 }));
 jest.mock("@tiptap/extension-link", () => ({
     configure: jest.fn(() => ({})),
-    extend: jest.fn(() => ({}))
+    extend: jest.fn(() => ({})),
 }));
 
 jest.mock("@tiptap/starter-kit", () => ({
-    configure: jest.fn(() => ({}))
+    configure: jest.fn(() => ({})),
 }));
 
 jest.mock("@tiptap/extension-ordered-list", () => ({
-    configure: jest.fn(() => ({}))
+    configure: jest.fn(() => ({})),
 }));
 
 jest.mock("@tiptap/extension-bullet-list", () => ({
-    configure: jest.fn(() => ({}))
+    configure: jest.fn(() => ({})),
 }));
 
 jest.mock("@tiptap/extension-list-item", () => ({
-    configure: jest.fn(() => ({}))
+    configure: jest.fn(() => ({})),
 }));
 
 jest.mock("@tiptap/extension-code-block", () => ({
-    configure: jest.fn(() => ({}))
+    configure: jest.fn(() => ({})),
 }));
 
 jest.mock("@tiptap/extension-blockquote", () => ({
-    configure: jest.fn(() => ({}))
+    configure: jest.fn(() => ({})),
 }));
 
 jest.mock("@tiptap/extension-code", () => ({
-    configure: jest.fn(() => ({}))
+    configure: jest.fn(() => ({})),
 }));
 
 jest.mock("@tiptap/extension-document", () => ({
-    extend: jest.fn(() => ({}))
+    extend: jest.fn(() => ({})),
 }));
 
 import { expect, it } from "@jest/globals";
 import { siteConfig } from "./test_site_config";
 import { EntityCollection } from "../src/types";
-import { buildCollection, buildProperty, getCollectionByPathOrId, resolveCollectionPathIds } from "../src";
+import {
+    buildCollection,
+    buildProperty,
+    getCollectionByPathOrId,
+    resolveCollectionPathIds,
+} from "../src";
 import { getNavigationEntriesFromPath } from "../src/util/navigation_from_path";
 
 const collections = siteConfig.collections as EntityCollection[];
 
 describe("Resolving paths test", () => {
     it("collection view matches ok", () => {
-
         const collectionViewFromPath = getCollectionByPathOrId("products", collections);
-        expect(
-            collectionViewFromPath && collectionViewFromPath.path
-        ).toEqual("products");
+        expect(collectionViewFromPath && collectionViewFromPath.path).toEqual("products");
 
-        const collectionViewFromPath1 = getCollectionByPathOrId("products/pid/locales", collections);
-        expect(
-            collectionViewFromPath1 && collectionViewFromPath1.path
-        ).toEqual("locales");
+        const collectionViewFromPath1 = getCollectionByPathOrId(
+            "products/pid/locales",
+            collections
+        );
+        expect(collectionViewFromPath1 && collectionViewFromPath1.path).toEqual("locales");
 
         const collectionViewFromPath2 = getCollectionByPathOrId("sites/es/products", collections);
-        expect(
-            collectionViewFromPath2 && collectionViewFromPath2.path
-        ).toEqual("sites/es/products");
+        expect(collectionViewFromPath2 && collectionViewFromPath2.path).toEqual(
+            "sites/es/products"
+        );
 
-        const collectionViewFromPath3 = getCollectionByPathOrId("sites/es/products/pid/locales", collections);
-        expect(
-            collectionViewFromPath3 && collectionViewFromPath3.path
-        ).toEqual("locales");
+        const collectionViewFromPath3 = getCollectionByPathOrId(
+            "sites/es/products/pid/locales",
+            collections
+        );
+        expect(collectionViewFromPath3 && collectionViewFromPath3.path).toEqual("locales");
 
-        expect(
-            () => getCollectionByPathOrId("products/pid", collections)
-        ).toThrow(
+        expect(() => getCollectionByPathOrId("products/pid", collections)).toThrow(
             "Collection paths must have an odd number of segments: products/pid"
         );
 
-        expect(
-            getCollectionByPathOrId("products", [])
-        ).toEqual(undefined);
+        expect(getCollectionByPathOrId("products", [])).toEqual(undefined);
 
-        const collectionViewFromPath10 = getCollectionByPathOrId("products/id/subcollection_inline", collections);
-        expect(
-            collectionViewFromPath10 && collectionViewFromPath10.path
-        ).toEqual("products/id/subcollection_inline");
-
+        const collectionViewFromPath10 = getCollectionByPathOrId(
+            "products/id/subcollection_inline",
+            collections
+        );
+        expect(collectionViewFromPath10 && collectionViewFromPath10.path).toEqual(
+            "products/id/subcollection_inline"
+        );
     });
 
     it("build entity collection array", () => {
-
         const navigationEntries = getNavigationEntriesFromPath({
             path: "products/pid",
-            collections: collections
+            collections: collections,
         });
         console.log(navigationEntries);
         // expect(
@@ -103,27 +104,24 @@ describe("Resolving paths test", () => {
     });
 
     it("Custom view internal", () => {
-
         const navigationEntries = getNavigationEntriesFromPath({
             path: "products/pid/custom_view",
-            collections: collections
+            collections: collections,
         });
         console.log(navigationEntries);
         expect(navigationEntries.length).toEqual(3);
     });
 
     it("build entity collection array 2", () => {
-
         const navigationEntries = getNavigationEntriesFromPath({
             path: "products/pid/locales/yep",
-            collections: collections
+            collections: collections,
         });
         console.log(navigationEntries);
         expect(navigationEntries.length).toEqual(4);
     });
 
     it("Test aliases", () => {
-
         const resolvedPath = resolveCollectionPathIds("u", collections);
         expect(resolvedPath).toEqual("users");
 
@@ -136,7 +134,10 @@ describe("Resolving paths test", () => {
         const resolvedPath4 = resolveCollectionPathIds("users/123/p", collections);
         expect(resolvedPath4).toEqual("users/123/products");
 
-        const resolvedPath5 = resolveCollectionPathIds("products/id/subcollection_inline", collections);
+        const resolvedPath5 = resolveCollectionPathIds(
+            "products/id/subcollection_inline",
+            collections
+        );
         expect(resolvedPath5).toEqual("products/id/subcollection_inline");
     });
 
@@ -149,9 +150,9 @@ describe("Resolving paths test", () => {
             properties: {
                 name: buildProperty({
                     dataType: "string",
-                    name: "Name"
-                })
-            }
+                    name: "Name",
+                }),
+            },
         });
 
         // Simplified joint movements collection
@@ -162,10 +163,10 @@ describe("Resolving paths test", () => {
             properties: {
                 reference_value_min: buildProperty({
                     name: "Reference value min",
-                    dataType: "number"
-                })
+                    dataType: "number",
+                }),
             },
-            subcollections: [jointLocaleCollection]
+            subcollections: [jointLocaleCollection],
         });
 
         // Simplified joints collection
@@ -176,10 +177,10 @@ describe("Resolving paths test", () => {
             properties: {
                 latin_name: buildProperty({
                     name: "Latin name",
-                    dataType: "string"
-                })
+                    dataType: "string",
+                }),
             },
-            subcollections: [jointMovementsCollection, jointLocaleCollection]
+            subcollections: [jointMovementsCollection, jointLocaleCollection],
         });
 
         const collections = [jointsCollection];
@@ -207,7 +208,7 @@ describe("Resolving paths test", () => {
             id: "sub", // ID used in the input path
             path: "sub_path", // Actual path segment
             name: "Sub Sub Collection",
-            properties: {}
+            properties: {},
         });
 
         const localesCollection = buildCollection({
@@ -215,7 +216,7 @@ describe("Resolving paths test", () => {
             path: "locales", // Actual path segment
             name: "Locales",
             properties: {},
-            subcollections: [subSubCollection]
+            subcollections: [subSubCollection],
         });
 
         const productsCollection = buildCollection({
@@ -223,7 +224,7 @@ describe("Resolving paths test", () => {
             path: "products",
             name: "Products",
             properties: {},
-            subcollections: [localesCollection]
+            subcollections: [localesCollection],
         });
 
         const testCollections = [productsCollection];
@@ -235,5 +236,4 @@ describe("Resolving paths test", () => {
 
         expect(resolvedPath).toEqual(expectedPath);
     });
-
 });

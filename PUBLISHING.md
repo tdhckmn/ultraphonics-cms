@@ -1,15 +1,14 @@
 Update all packages to a new version:
-    
+
 ```bash
 lerna version --exact <newversion>
-``` 
+```
 
-or 
+or
 
 ```bash
 lerna version --no-private
 ```
-
 
 To publish all packages to npm, first you need to login to npm:
 

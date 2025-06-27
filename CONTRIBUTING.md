@@ -17,14 +17,17 @@ After pulling the code you just need to run:
 ```bash
 yarn
 yarn dev
-``` 
+```
+
 to start the demo project.
 
 You can also run:
+
 ```bash
 yarn
 yarn pro
-``` 
+```
+
 to use the example project with the Pro version of FireCMS.
 
 ## Support and discussion
@@ -34,5 +37,3 @@ happy to help!
 
 You are encouraged to check with us before implementing any major changes to the library, that would like
 to be submitted as a PR.
-
-

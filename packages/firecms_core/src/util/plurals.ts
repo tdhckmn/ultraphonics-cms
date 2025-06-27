@@ -7,7 +7,7 @@
  */
 export function plural(word: string, amount?: number): string {
     if (amount !== undefined && amount === 1) {
-        return word
+        return word;
     }
     const plurals: { [key: string]: string } = {
         "(quiz)$": "$1zes",
@@ -27,8 +27,8 @@ export function plural(word: string, amount?: number): string {
         "(octop)us$": "$1i",
         "(ax|test)is$": "$1es",
         "(us)$": "$1es",
-        "([^s]+)$": "$1s"
-    }
+        "([^s]+)$": "$1s",
+    };
     const irregular: { [key: string]: string } = {
         move: "moves",
         foot: "feet",
@@ -37,8 +37,8 @@ export function plural(word: string, amount?: number): string {
         child: "children",
         man: "men",
         tooth: "teeth",
-        person: "people"
-    }
+        person: "people",
+    };
     const uncountable: string[] = [
         "sheep",
         "fish",
@@ -64,25 +64,25 @@ export function plural(word: string, amount?: number): string {
         "sugar",
         "tuna",
         "you",
-        "wood"
-    ]
+        "wood",
+    ];
     // save some time in the case that singular and plural are the same
     if (uncountable.indexOf(word.toLowerCase()) >= 0) {
         return word;
     }
     // check for irregular forms
     for (const w in irregular) {
-        const pattern = new RegExp(`${w}$`, "i")
-        const replace = irregular[w]
+        const pattern = new RegExp(`${w}$`, "i");
+        const replace = irregular[w];
         if (pattern.test(word)) {
             return word.replace(pattern, replace);
         }
     }
     // check for matches using regular expressions
     for (const reg in plurals) {
-        const pattern = new RegExp(reg, "i")
+        const pattern = new RegExp(reg, "i");
         if (pattern.test(word)) {
-            return word.replace(pattern, plurals[reg])
+            return word.replace(pattern, plurals[reg]);
         }
     }
     return word;
@@ -127,8 +127,8 @@ export function singular(word: string, amount?: number): string {
         "(h|bl)ouses$": "$1ouse",
         "(corpse)s$": "$1",
         "(us)es$": "$1",
-        s$: ""
-    }
+        s$: "",
+    };
     const irregular: { [key: string]: string } = {
         move: "moves",
         foot: "feet",
@@ -137,8 +137,8 @@ export function singular(word: string, amount?: number): string {
         child: "children",
         man: "men",
         tooth: "teeth",
-        person: "people"
-    }
+        person: "people",
+    };
     const uncountable: string[] = [
         "sheep",
         "fish",
@@ -164,8 +164,8 @@ export function singular(word: string, amount?: number): string {
         "sugar",
         "tuna",
         "you",
-        "wood"
-    ]
+        "wood",
+    ];
     // save some time in the case that singular and plural are the same
     if (uncountable.indexOf(word.toLowerCase()) >= 0) {
         return word;

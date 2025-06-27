@@ -9,8 +9,11 @@ import { Entity } from "./entities";
  *
  * @group Form custom fields
  */
-export interface FieldProps<T extends CMSType = any, CustomProps = any, M extends Record<string, any> = any> {
-
+export interface FieldProps<
+    T extends CMSType = any,
+    CustomProps = any,
+    M extends Record<string, any> = any,
+> {
     /**
      * Key of the property
      * E.g. "user.name" for a property with path "user.name"
@@ -95,7 +98,7 @@ export interface FieldProps<T extends CMSType = any, CustomProps = any, M extend
     /**
      * Additional properties set by the developer
      */
-    customProps: CustomProps
+    customProps: CustomProps;
 
     /**
      * Additional values related to the state of the form or the entity
@@ -120,7 +123,6 @@ export interface FieldProps<T extends CMSType = any, CustomProps = any, M extend
      * @param property
      */
     onPropertyChange?: (property: Partial<Property<any>>) => void;
-
 }
 
 /**
@@ -128,7 +130,6 @@ export interface FieldProps<T extends CMSType = any, CustomProps = any, M extend
  * @group Form custom fields
  */
 export interface FormContext<M extends Record<string, any> = any> {
-
     /**
      * Current values of the entity
      */
@@ -186,7 +187,6 @@ export interface FormContext<M extends Record<string, any> = any> {
  * @group Form custom fields
  */
 export interface PropertyFieldBindingProps<T extends CMSType, M extends Record<string, any> = any> {
-
     /**
      * The key/path of the property, such as `age`. You can use nested and array
      * indexed such as `address.street` or `people[3]`
@@ -246,7 +246,7 @@ export interface PropertyFieldBindingProps<T extends CMSType, M extends Record<s
     /**
      * The size of the field
      */
-    size?: "small" | "medium" | "large",
+    size?: "small" | "medium" | "large";
 
     /**
      * Some properties might change internal state (like expanding a panel).

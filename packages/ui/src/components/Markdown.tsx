@@ -1,15 +1,15 @@
 "use client";
 import React, { useMemo } from "react";
-import equal from "react-fast-compare"
+import equal from "react-fast-compare";
 
 // @ts-ignore
 import MarkdownIt from "markdown-it";
 import { cls } from "../util";
 
 export interface MarkdownProps {
-    source: string,
+    source: string;
     size?: "small" | "medium" | "large" | "xl" | "2xl";
-    className?: string
+    className?: string;
 }
 
 const proseClasses = {
@@ -17,7 +17,7 @@ const proseClasses = {
     medium: "prose typography-body1",
     large: "prose-lg",
     xl: "prose-xl",
-    "2xl": "prose-2xl"
+    "2xl": "prose-2xl",
 };
 
 const md = new MarkdownIt({ html: true });
@@ -25,17 +25,22 @@ const md = new MarkdownIt({ html: true });
  * @group Preview components
  */
 export const Markdown = React.memo<MarkdownProps>(function Markdown({
-                                                                        source,
-                                                                        className,
-                                                                        size = "medium"
-                                                                    }: MarkdownProps) {
-        const html = useMemo(() => {
-            return md.render(typeof source === "string" ? source : "");
-        }, [source]);
+    source,
+    className,
+    size = "medium",
+}: MarkdownProps) {
+    const html = useMemo(() => {
+        return md.render(typeof source === "string" ? source : "");
+    }, [source]);
 
-        return <div
-            className={cls(proseClasses[size], "dark:prose-invert prose-headings:font-title", className)}
+    return (
+        <div
+            className={cls(
+                proseClasses[size],
+                "dark:prose-invert prose-headings:font-title",
+                className
+            )}
             dangerouslySetInnerHTML={{ __html: html }}
-        />;
-    }
-    , equal) as React.FunctionComponent<MarkdownProps>;
+        />
+    );
+}, equal) as React.FunctionComponent<MarkdownProps>;

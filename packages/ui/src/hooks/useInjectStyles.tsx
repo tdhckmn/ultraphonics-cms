@@ -8,7 +8,6 @@ import { useEffect } from "react";
  * @param styles
  */
 export function useInjectStyles(key: string, styles: string) {
-
     useEffect(() => {
         const styleElement = document.getElementById(key);
         if (!styleElement) {
@@ -18,5 +17,4 @@ export function useInjectStyles(key: string, styles: string) {
             document.head.appendChild(style);
         }
     }, []);
-
 }

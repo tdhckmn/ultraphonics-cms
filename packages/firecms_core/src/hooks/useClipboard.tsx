@@ -68,11 +68,8 @@ export interface useClipboardReturnType {
     isSupported: () => boolean;
 }
 
-export const useClipboard = (
-    options?: UseClipboardProps
-): useClipboardReturnType => {
-    const { onSuccess, onError, disableClipboardAPI = false, copiedDuration } =
-    options || {};
+export const useClipboard = (options?: UseClipboardProps): useClipboardReturnType => {
+    const { onSuccess, onError, disableClipboardAPI = false, copiedDuration } = options || {};
     const ref = useRef<any>(null);
     const [isCoppied, setIsCoppied] = useState(false);
     const [clipboard, setClipbaord] = useState("");
@@ -83,26 +80,35 @@ export const useClipboard = (
 
     const isSupported = () => navigator.clipboard !== undefined;
 
-    const handleError = useCallback((error: string) => {
-        if (onError) onError(error);
-        else throw new Error(error);
-    }, [onError]);
+    const handleError = useCallback(
+        (error: string) => {
+            if (onError) onError(error);
+            else throw new Error(error);
+        },
+        [onError]
+    );
 
-    const handleSuccess = useCallback((text: string) => {
-        if (onSuccess) onSuccess(text);
-        setIsCoppied(true);
-        setClipbaord(text);
-    }, [onSuccess]);
+    const handleSuccess = useCallback(
+        (text: string) => {
+            if (onSuccess) onSuccess(text);
+            setIsCoppied(true);
+            setClipbaord(text);
+        },
+        [onSuccess]
+    );
 
-    const copyToClipboard = useCallback((text: string) => {
-        navigator.clipboard
-            .writeText(text)
-            .then(() => handleSuccess(text))
-            .catch((err) => {
-                handleError(err);
-                setIsCoppied(false);
-            });
-    }, [handleError, handleSuccess]);
+    const copyToClipboard = useCallback(
+        (text: string) => {
+            navigator.clipboard
+                .writeText(text)
+                .then(() => handleSuccess(text))
+                .catch((err) => {
+                    handleError(err);
+                    setIsCoppied(false);
+                });
+        },
+        [handleError, handleSuccess]
+    );
 
     const clearClipboard = () => {
         if (isSupported()) {
@@ -110,8 +116,7 @@ export const useClipboard = (
         }
     };
 
-    const copy = (text?: string) =>
-        action("copy", typeof text === "object" ? undefined : text);
+    const copy = (text?: string) => action("copy", typeof text === "object" ? undefined : text);
 
     const cut = () => action("cut");
 
@@ -120,8 +125,7 @@ export const useClipboard = (
             const element = ref.current as HTMLElement;
 
             const isInput =
-                element &&
-                (element.tagName === "INPUT" || element.tagName === "TEXTAREA");
+                element && (element.tagName === "INPUT" || element.tagName === "TEXTAREA");
 
             const input = ref.current as HTMLInputElement;
 
@@ -153,6 +157,6 @@ export const useClipboard = (
         clearClipboard,
         isSupported,
         copy,
-        cut
+        cut,
     };
 };

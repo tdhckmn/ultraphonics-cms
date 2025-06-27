@@ -21,21 +21,20 @@ import {
 import { editableProperty } from "../../utils/entities";
 
 export function PropertyFieldPreview({
-                                         property,
-                                         onClick,
-                                         hasError,
-                                         includeName,
-                                         includeEditButton,
-                                         selected
-                                     }: {
-    property: Property,
-    hasError?: boolean,
-    selected?: boolean,
-    includeName?: boolean,
+    property,
+    onClick,
+    hasError,
+    includeName,
+    includeEditButton,
+    selected,
+}: {
+    property: Property;
+    hasError?: boolean;
+    selected?: boolean;
+    includeName?: boolean;
     includeEditButton?: boolean;
-    onClick?: () => void
+    onClick?: () => void;
 }) {
-
     const { propertyConfigs } = useCustomizationController();
 
     const propertyConfig = getFieldConfig(property, propertyConfigs);
@@ -43,98 +42,89 @@ export function PropertyFieldPreview({
 
     const borderColorClass = hasError
         ? "border-red-500 dark:border-red-500 border-opacity-100 dark:border-opacity-100 ring-0 dark:ring-0"
-        : (selected ? "border-primary" : "border-transparent");
+        : selected
+          ? "border-primary"
+          : "border-transparent";
 
-    return <ErrorBoundary>
-        <div
-            onClick={onClick}
-            className="flex flex-row w-full cursor-pointer">
-            <div className={"m-4"}>
-                <PropertyConfigBadge propertyConfig={propertyConfig}/>
-            </div>
-            <Paper
-                className={cls(
-                    "m-1",
-                    "border",
-                    "pl-2 w-full flex flex-row gap-4 items-center",
-                    cardMixin,
-                    onClick ? cardClickableMixin : "",
-                    selected ? cardSelectedMixin : "",
-                    "flex-grow p-4 border transition-colors duration-200",
-                    borderColorClass
-                )}
-            >
-
-                <div className="w-full flex flex-col">
-
-                    {includeName &&
-                        <ErrorBoundary>
-                            <Typography variant="body1"
-                                        component="span"
-                                        className="flex-grow pr-2">
-                                {property.name
-                                    ? property.name
-                                    : "\u00a0"
-                                }
-                            </Typography>
-                        </ErrorBoundary>}
-
-                    <div className="flex flex-row items-center">
-                        <ErrorBoundary>
-                            <Typography className="flex-grow pr-2"
-                                        variant={includeName ? "body2" : "subtitle1"}
-                                        component="span"
-                                        color="secondary">
-                                {propertyConfig?.name}
-                            </Typography>
-                        </ErrorBoundary>
-                        <ErrorBoundary>
-                            <Typography variant="body2"
-                                        component="span"
-                                        color="disabled">
-                                {property.dataType}
-                            </Typography>
-                        </ErrorBoundary>
-
-                    </div>
+    return (
+        <ErrorBoundary>
+            <div onClick={onClick} className="flex flex-row w-full cursor-pointer">
+                <div className={"m-4"}>
+                    <PropertyConfigBadge propertyConfig={propertyConfig} />
                 </div>
+                <Paper
+                    className={cls(
+                        "m-1",
+                        "border",
+                        "pl-2 w-full flex flex-row gap-4 items-center",
+                        cardMixin,
+                        onClick ? cardClickableMixin : "",
+                        selected ? cardSelectedMixin : "",
+                        "flex-grow p-4 border transition-colors duration-200",
+                        borderColorClass,
+                    )}
+                >
+                    <div className="w-full flex flex-col">
+                        {includeName && (
+                            <ErrorBoundary>
+                                <Typography variant="body1" component="span" className="flex-grow pr-2">
+                                    {property.name ? property.name : "\u00a0"}
+                                </Typography>
+                            </ErrorBoundary>
+                        )}
 
-                {includeEditButton && <Typography variant={"button"}>
-                    EDIT
-                </Typography>}
+                        <div className="flex flex-row items-center">
+                            <ErrorBoundary>
+                                <Typography
+                                    className="flex-grow pr-2"
+                                    variant={includeName ? "body2" : "subtitle1"}
+                                    component="span"
+                                    color="secondary"
+                                >
+                                    {propertyConfig?.name}
+                                </Typography>
+                            </ErrorBoundary>
+                            <ErrorBoundary>
+                                <Typography variant="body2" component="span" color="disabled">
+                                    {property.dataType}
+                                </Typography>
+                            </ErrorBoundary>
+                        </div>
+                    </div>
 
-            </Paper>
-        </div>
-    </ErrorBoundary>
+                    {includeEditButton && <Typography variant={"button"}>EDIT</Typography>}
+                </Paper>
+            </div>
+        </ErrorBoundary>
+    );
 }
 
 export function NonEditablePropertyPreview({
-                                               name,
-                                               selected,
-                                               onClick,
-                                               property
-                                           }: {
-    name: string,
-    selected: boolean,
-    onClick?: () => void,
-    property?: PropertyOrBuilder
+    name,
+    selected,
+    onClick,
+    property,
+}: {
+    name: string;
+    selected: boolean;
+    onClick?: () => void;
+    property?: PropertyOrBuilder;
 }) {
-
     const { propertyConfigs } = useCustomizationController();
 
-    const propertyConfig = !isPropertyBuilder(property) && property ? getFieldConfig(property, propertyConfigs) : undefined;
+    const propertyConfig =
+        !isPropertyBuilder(property) && property ? getFieldConfig(property, propertyConfigs) : undefined;
 
     return (
-        <div
-            onClick={onClick}
-            className="flex flex-row w-full cursor-pointer">
+        <div onClick={onClick} className="flex flex-row w-full cursor-pointer">
             <div className={"relative m-4"}>
-                {propertyConfig && <PropertyConfigBadge propertyConfig={propertyConfig}/>}
-                {!propertyConfig && <div
-                    className={"h-8 w-8 p-1 rounded-full shadow text-white bg-surface-500"}>
-                    <FunctionsIcon color={"inherit"} size={"medium"}/>
-                </div>}
-                <DoNotDisturbOnIcon color={"disabled"} size={"small"} className={"absolute -right-2 -top-2"}/>
+                {propertyConfig && <PropertyConfigBadge propertyConfig={propertyConfig} />}
+                {!propertyConfig && (
+                    <div className={"h-8 w-8 p-1 rounded-full shadow text-white bg-surface-500"}>
+                        <FunctionsIcon color={"inherit"} size={"medium"} />
+                    </div>
+                )}
+                <DoNotDisturbOnIcon color={"disabled"} size={"small"} className={"absolute -right-2 -top-2"} />
             </div>
             <Paper
                 className={cls(
@@ -143,51 +133,44 @@ export function NonEditablePropertyPreview({
                     onClick ? cardClickableMixin : "",
                     selected ? cardSelectedMixin : "",
                     "flex-grow p-4 border transition-colors duration-200",
-                    selected ? "border-primary" : "border-transparent")}
+                    selected ? "border-primary" : "border-transparent",
+                )}
             >
-
                 <div className="w-full flex flex-col">
-                    <Typography variant="body1"
-                                component="span"
-                                className="flex-grow pr-2">
-                        {property?.name
-                            ? property.name
-                            : name
-                        }
+                    <Typography variant="body1" component="span" className="flex-grow pr-2">
+                        {property?.name ? property.name : name}
                     </Typography>
 
                     <div className="flex flex-row items-center">
-                        {propertyConfig && <Typography className="flex-grow pr-2"
-                                                       variant={"body2"}
-                                                       component="span"
-                                                       color="secondary">
-                            {propertyConfig?.name}
-                        </Typography>}
-
-                        {property && !isPropertyBuilder(property) && <ErrorBoundary>
-                            <Typography variant="body2"
-                                        component="span"
-                                        color="disabled">
-                                {property.dataType}
+                        {propertyConfig && (
+                            <Typography className="flex-grow pr-2" variant={"body2"} component="span" color="secondary">
+                                {propertyConfig?.name}
                             </Typography>
-                        </ErrorBoundary>}
+                        )}
 
-                        {property && isPropertyBuilder(property) && <ErrorBoundary>
-                            <Typography variant="body2"
-                                        component="span"
-                                        color="disabled">
-                                This property is defined as a property builder in code
-                            </Typography>
-                        </ErrorBoundary>}
+                        {property && !isPropertyBuilder(property) && (
+                            <ErrorBoundary>
+                                <Typography variant="body2" component="span" color="disabled">
+                                    {property.dataType}
+                                </Typography>
+                            </ErrorBoundary>
+                        )}
 
-                        {!property && <ErrorBoundary>
-                            <Typography variant="body2"
-                                        component="span"
-                                        color="disabled">
-                                This field is defined as an additional field in code
-                            </Typography>
-                        </ErrorBoundary>}
+                        {property && isPropertyBuilder(property) && (
+                            <ErrorBoundary>
+                                <Typography variant="body2" component="span" color="disabled">
+                                    This property is defined as a property builder in code
+                                </Typography>
+                            </ErrorBoundary>
+                        )}
 
+                        {!property && (
+                            <ErrorBoundary>
+                                <Typography variant="body2" component="span" color="disabled">
+                                    This field is defined as an additional field in code
+                                </Typography>
+                            </ErrorBoundary>
+                        )}
                     </div>
 
                     {/*<div className="flex flex-row text-xs">*/}
@@ -199,7 +182,7 @@ export function NonEditablePropertyPreview({
                     {/*    </Typography>*/}
                     {/*</div>*/}
                 </div>
-
             </Paper>
-        </div>)
+        </div>
+    );
 }

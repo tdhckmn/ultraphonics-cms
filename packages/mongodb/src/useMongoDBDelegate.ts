@@ -15,9 +15,15 @@ import {
     ListenEntityProps,
     PropertyConfig,
     SaveEntityProps,
-    WhereFilterOp
+    WhereFilterOp,
 } from "@firecms/core";
-import { addValueAtIndex, getEntityIndex, removeValueAtIndex, replaceValueAtIndex, updateValueAtIndex } from "./utils";
+import {
+    addValueAtIndex,
+    getEntityIndex,
+    removeValueAtIndex,
+    replaceValueAtIndex,
+    updateValueAtIndex,
+} from "./utils";
 
 type ChangeEvent = any;
 
@@ -25,9 +31,9 @@ type ChangeEvent = any;
  *
  */
 export interface UseMongoDataSourceProps {
-    app: App,
-    cluster: string,
-    database: string,
+    app: App;
+    cluster: string;
+    database: string;
     propertyConfigs?: Record<string, PropertyConfig>;
 }
 
@@ -40,7 +46,7 @@ const firecmsToMongoDB: Record<WhereFilterOp, string> = {
     ">": "$gt",
     "array-contains": "$eq",
     "array-contains-any": "in",
-    "in": "$in",
+    in: "$in",
     "not-in": "$nin", // Please note the semantic difference
     // "array-contains-any": ??? // There's no MongoDB equivalent
 };
@@ -51,167 +57,170 @@ const firecmsToMongoDB: Record<WhereFilterOp, string> = {
  *
  */
 export function useMongoDBDelegate({
-                                       app,
-                                       cluster,
-                                       database,
-                                   }: UseMongoDataSourceProps): DataSourceDelegate {
+    app,
+    cluster,
+    database,
+}: UseMongoDataSourceProps): DataSourceDelegate {
+    const buildQuery = useCallback(
+        (
+            filter: FilterValues<any> | undefined,
+            searchString?: string,
+            orderBy?: string,
+            order?: "desc" | "asc",
+            limit?: number
+        ): [Realm.Services.MongoDB.Filter, Realm.Services.MongoDB.FindOptions] => {
+            const queryParams: Realm.Services.MongoDB.Filter = {};
+            if (filter) {
+                Object.entries(filter).forEach(([key, filterParameter]) => {
+                    const [op, value] = filterParameter as [WhereFilterOp, any];
+                    const opMongo = firecmsToMongoDB[op];
+                    queryParams[key] = { [opMongo]: value };
+                });
+            }
 
-    const buildQuery = useCallback((
-        filter: FilterValues<any> | undefined,
-        searchString?: string,
-        orderBy?: string,
-        order?: "desc" | "asc",
-        limit?: number): [Realm.Services.MongoDB.Filter, Realm.Services.MongoDB.FindOptions] => {
+            // if (searchString) {
+            //     queryParams['$text'] = { $search: searchString };
+            // }
 
-        const queryParams: Realm.Services.MongoDB.Filter = {};
-        if (filter) {
-            Object.entries(filter).forEach(([key, filterParameter]) => {
-                const [op, value] = filterParameter as [WhereFilterOp, any];
-                const opMongo = firecmsToMongoDB[op];
-                queryParams[key] = { [opMongo]: value };
-            });
-        }
+            const options: Realm.Services.MongoDB.FindOptions = {};
+            if (orderBy && order) {
+                // @ts-ignore
+                options["sort"] = { [orderBy]: order === "desc" ? -1 : 1 };
+            }
 
-        // if (searchString) {
-        //     queryParams['$text'] = { $search: searchString };
-        // }
+            if (limit) {
+                // @ts-ignore
+                options["limit"] = limit;
+            }
 
-        const options: Realm.Services.MongoDB.FindOptions = {};
-        if (orderBy && order) {
-            // @ts-ignore
-            options["sort"] = { [orderBy]: (order === "desc" ? -1 : 1) };
-        }
+            return [queryParams, options];
+        },
+        []
+    );
 
-        if (limit) {
-            // @ts-ignore
-            options["limit"] = limit;
-        }
+    const fetchCollection = useCallback(
+        async <M extends Record<string, any>>({
+            path,
+            collection,
+            filter,
+            limit,
+            searchString,
+            orderBy,
+            order,
+        }: FetchCollectionProps<M>): Promise<Entity<M>[]> => {
+            if (!app?.currentUser) throw Error("useMongoDataSource app not initialised");
 
-        return [queryParams, options];
-    }, []);
+            const mdb = app.currentUser.mongoClient(cluster);
+            const mongoCollection = mdb.db(database).collection(path);
 
-    const fetchCollection = useCallback(async <M extends Record<string, any>>({
-                                                                                  path,
-                                                                                  collection,
-                                                                                  filter,
-                                                                                  limit,
-                                                                                  searchString,
-                                                                                  orderBy,
-                                                                                  order
-                                                                              }: FetchCollectionProps<M>
-    ): Promise<Entity<M>[]> => {
+            const [queryParams, options] = buildQuery(filter, searchString, orderBy, order, limit);
 
-        if (!app?.currentUser)
-            throw Error("useMongoDataSource app not initialised");
-
-        const mdb = app.currentUser.mongoClient(cluster);
-        const mongoCollection = mdb.db(database).collection(path);
-
-        const [queryParams, options] = buildQuery(filter, searchString, orderBy, order, limit);
-
-        if (searchString) {
-            const res = await mongoCollection.aggregate([
-                {
-                    $search: {
-                        "text": {
-                            "query": searchString,
-                            "path": { "wildcard": "*" },
-                            "fuzzy": {}
-                        }
+            if (searchString) {
+                const res = await mongoCollection.aggregate([
+                    {
+                        $search: {
+                            text: {
+                                query: searchString,
+                                path: { wildcard: "*" },
+                                fuzzy: {},
+                            },
+                        },
                     },
+                    {
+                        $match: queryParams,
+                    },
+                ]);
+                return res.map((doc: any) => mongoToEntity(doc, path));
+            }
 
-                },
-                {
-                    $match: queryParams
-                }
-            ]);
-            return res.map((doc: any) => mongoToEntity(doc, path));
-        }
+            const fetchedDocs = await mongoCollection.find(queryParams, options);
+            return fetchedDocs.map((doc) => mongoToEntity(doc, path));
+        },
+        [app, buildQuery, cluster, database]
+    );
 
-        const fetchedDocs = await mongoCollection.find(queryParams, options);
-        return fetchedDocs.map((doc) => mongoToEntity(doc, path));
-    }, [app, buildQuery, cluster, database]);
-
-    const fetchEntity = useCallback(async <M extends Record<string, any>>({
-                                                                              path,
-                                                                              entityId,
-                                                                              collection
-                                                                          }: FetchEntityProps<M>
-    ): Promise<Entity<M> | undefined> => {
-        if (!app?.currentUser) throw Error("useMongoDataSource app not initialised");
-        const mdb = app.currentUser.mongoClient(cluster);
-        const mongoCollection = mdb.db(database).collection(path);
-        const doc = await mongoCollection
-            .findOne({
-                _id: new BSON.ObjectId(entityId)
+    const fetchEntity = useCallback(
+        async <M extends Record<string, any>>({
+            path,
+            entityId,
+            collection,
+        }: FetchEntityProps<M>): Promise<Entity<M> | undefined> => {
+            if (!app?.currentUser) throw Error("useMongoDataSource app not initialised");
+            const mdb = app.currentUser.mongoClient(cluster);
+            const mongoCollection = mdb.db(database).collection(path);
+            const doc = await mongoCollection.findOne({
+                _id: new BSON.ObjectId(entityId),
             });
-        if (!doc) return undefined;
-        return mongoToEntity(doc, path);
-    }, [app.currentUser, cluster, database]);
+            if (!doc) return undefined;
+            return mongoToEntity(doc, path);
+        },
+        [app.currentUser, cluster, database]
+    );
 
-    const saveEntity = useCallback(async <M extends Record<string, any>>(
-        {
+    const saveEntity = useCallback(
+        async <M extends Record<string, any>>({
             path,
             entityId,
             values,
             collection,
-            status
+            status,
         }: SaveEntityProps<M>): Promise<Entity<M>> => {
-        if (!app?.currentUser) throw Error("useMongoDataSource app not initialised");
-        const mdb = app.currentUser.mongoClient(cluster);
-        const mongoCollection = mdb.db(database).collection(path);
-        const mongoValues = values;
-        if (status === "existing") {
-            await mongoCollection
-                .updateOne({
-                    _id: new BSON.ObjectId(entityId)
-                }, {
-                    $set: mongoValues
-                });
-            return {
-                id: entityId as string,
-                path: path,
-                values: convertFromMongoValues(values) as M
-            };
-        }
-        const res = await mongoCollection
-            .insertOne({
+            if (!app?.currentUser) throw Error("useMongoDataSource app not initialised");
+            const mdb = app.currentUser.mongoClient(cluster);
+            const mongoCollection = mdb.db(database).collection(path);
+            const mongoValues = values;
+            if (status === "existing") {
+                await mongoCollection.updateOne(
+                    {
+                        _id: new BSON.ObjectId(entityId),
+                    },
+                    {
+                        $set: mongoValues,
+                    }
+                );
+                return {
+                    id: entityId as string,
+                    path: path,
+                    values: convertFromMongoValues(values) as M,
+                };
+            }
+            const res = await mongoCollection.insertOne({
                 _id: new BSON.ObjectId(entityId),
-                ...mongoValues
+                ...mongoValues,
             });
-        return {
-            id: res.insertedId.toString(),
-            path: path,
-            values: values as M
-        };
-    }, [app.currentUser, cluster, database]);
+            return {
+                id: res.insertedId.toString(),
+                path: path,
+                values: values as M,
+            };
+        },
+        [app.currentUser, cluster, database]
+    );
 
-    const listenEntity = useCallback(<M extends Record<string, any>>(
-        {
+    const listenEntity = useCallback(
+        <M extends Record<string, any>>({
             path,
             entityId,
             collection,
             onUpdate,
-            onError
-        }: ListenEntityProps<M>): () => void => {
+            onError,
+        }: ListenEntityProps<M>): (() => void) => {
+            fetchEntity({
+                path,
+                entityId,
+                collection,
+            }).then((entity) => {
+                if (entity) onUpdate(entity);
+                if (!entity) onError?.(new Error("Entity not found"));
+            });
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            return () => {};
+        },
+        [fetchEntity]
+    );
 
-        fetchEntity({
-            path,
-            entityId,
-            collection
-        }).then((entity) => {
-            if (entity)
-                onUpdate(entity);
-            if (!entity)
-                onError?.(new Error("Entity not found"));
-        });
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        return () => {
-        }
-    }, [fetchEntity]);
-
-    const listenCollection = useCallback(<M extends Record<string, any>>(
-        {
+    const listenCollection = useCallback(
+        <M extends Record<string, any>>({
             path,
             collection,
             filter,
@@ -222,143 +231,150 @@ export function useMongoDBDelegate({
             order,
             onUpdate,
             onError,
-        }: ListenCollectionProps<M>
-    ): () => void => {
+        }: ListenCollectionProps<M>): (() => void) => {
+            if (!app?.currentUser) throw Error("useMongoDataSource app not initialised");
+            const mdb = app.currentUser.mongoClient(cluster);
+            const mongoCollection = mdb.db(database).collection(path);
 
-        if (!app?.currentUser) throw Error("useMongoDataSource app not initialised");
-        const mdb = app.currentUser.mongoClient(cluster);
-        const mongoCollection = mdb.db(database).collection(path);
+            let currentEntities: Entity<M>[] = [];
 
-        let currentEntities: Entity<M>[] = [];
+            const updateCurrentEntities = (entities: Entity<M>[]) => {
+                currentEntities = entities;
+                onUpdate(entities);
+            };
 
-        const updateCurrentEntities = (entities: Entity<M>[]) => {
-            currentEntities = entities;
-            onUpdate(entities);
-        }
+            let stream: AsyncGenerator<ChangeEvent> | undefined = undefined;
 
-        let stream: AsyncGenerator<ChangeEvent> | undefined = undefined;
+            fetchCollection({
+                path,
+                collection,
+                filter,
+                limit,
+                startAfter,
+                searchString,
+                orderBy,
+                order,
+            })
+                .then(updateCurrentEntities)
+                .catch(onError);
 
-        fetchCollection({
-            path,
-            collection,
-            filter,
-            limit,
-            startAfter,
-            searchString,
-            orderBy,
-            order
-        }).then(updateCurrentEntities).catch(onError)
+            const onDocDelete = (change: ChangeEvent) => {
+                const idx = getEntityIndex(currentEntities, { id: change.documentKey._id });
+                if (idx && idx >= 0) {
+                    updateCurrentEntities(removeValueAtIndex(currentEntities, idx));
+                }
+            };
+            const onDocInsert = (change: ChangeEvent) => {
+                const entity = mongoToEntity(change.fullDocument, path);
+                const idx = getEntityIndex(currentEntities, entity) ?? currentEntities.length;
+                if (idx === currentEntities.length) {
+                    const updatedEntities = addValueAtIndex(currentEntities, idx, entity);
+                    updateCurrentEntities(updatedEntities);
+                }
+            };
+            const onDocReplace = (change: ChangeEvent) => {
+                const entity = mongoToEntity(change.fullDocument, path);
+                const idx = getEntityIndex(currentEntities, entity);
+                updateCurrentEntities(replaceValueAtIndex(currentEntities, idx, entity));
+            };
 
-        const onDocDelete = (change: ChangeEvent) => {
-            const idx = getEntityIndex(currentEntities, { id: change.documentKey._id });
-            if (idx && idx >= 0) {
-                updateCurrentEntities(removeValueAtIndex(currentEntities, idx));
-            }
-        };
-        const onDocInsert = (change: ChangeEvent) => {
-            const entity = mongoToEntity(change.fullDocument, path);
-            const idx =
-                getEntityIndex(currentEntities, entity) ?? currentEntities.length;
-            if (idx === currentEntities.length) {
-                const updatedEntities = addValueAtIndex(currentEntities, idx, entity);
-                updateCurrentEntities(updatedEntities);
-            }
-        };
-        const onDocReplace = (change: ChangeEvent) => {
-            const entity = mongoToEntity(change.fullDocument, path);
-            const idx = getEntityIndex(currentEntities, entity);
-            updateCurrentEntities(replaceValueAtIndex(currentEntities, idx, entity));
-        };
-
-        const onDocUpdate = (change: ChangeEvent) => {
-            const entity = mongoToEntity(change.fullDocument, path);
-            const idx = getEntityIndex(currentEntities, entity);
-            if (idx === null) return;
-            updateCurrentEntities(updateValueAtIndex(currentEntities, idx, () => {
-                return entity;
-            }));
-        };
-        const watchCollection = async () => {
-            const [queryParams, options] = buildQuery(filter, searchString, orderBy, order, limit);
-            stream = mongoCollection.watch(queryParams);
-            for await (const change of stream) {
-                switch (change.operationType) {
-                    case "insert": {
-                        onDocInsert(change);
-                        break;
-                    }
-                    case "update": {
-                        onDocUpdate(change);
-                        break;
-                    }
-                    case "replace": {
-                        onDocReplace(change);
-                        break;
-                    }
-                    case "delete": {
-                        onDocDelete(change);
-                        break;
-                    }
-                    default: {
-                        // change.operationType will always be one of the specified cases, so we should never hit this default
-                        throw new Error(
-                            `Invalid change operation type: ${change.operationType}`
-                        );
+            const onDocUpdate = (change: ChangeEvent) => {
+                const entity = mongoToEntity(change.fullDocument, path);
+                const idx = getEntityIndex(currentEntities, entity);
+                if (idx === null) return;
+                updateCurrentEntities(
+                    updateValueAtIndex(currentEntities, idx, () => {
+                        return entity;
+                    })
+                );
+            };
+            const watchCollection = async () => {
+                const [queryParams, options] = buildQuery(
+                    filter,
+                    searchString,
+                    orderBy,
+                    order,
+                    limit
+                );
+                stream = mongoCollection.watch(queryParams);
+                for await (const change of stream) {
+                    switch (change.operationType) {
+                        case "insert": {
+                            onDocInsert(change);
+                            break;
+                        }
+                        case "update": {
+                            onDocUpdate(change);
+                            break;
+                        }
+                        case "replace": {
+                            onDocReplace(change);
+                            break;
+                        }
+                        case "delete": {
+                            onDocDelete(change);
+                            break;
+                        }
+                        default: {
+                            // change.operationType will always be one of the specified cases, so we should never hit this default
+                            throw new Error(
+                                `Invalid change operation type: ${change.operationType}`
+                            );
+                        }
                     }
                 }
-            }
-        };
+            };
 
-        watchCollection();
+            watchCollection();
 
-        return () => {
-            // @ts-ignore
-            stream?.return();
-        }
-    }, [app.currentUser, cluster, database, fetchCollection]);
+            return () => {
+                // @ts-ignore
+                stream?.return();
+            };
+        },
+        [app.currentUser, cluster, database, fetchCollection]
+    );
 
     const generateEntityId = useCallback((path: string): string => {
         return new BSON.ObjectId().toString();
     }, []);
 
-    const deleteEntity = useCallback(async <M extends Record<string, any>>(
-        {
-            entity
-        }: DeleteEntityProps<M>
-    ): Promise<void> => {
-        if (!app?.currentUser) throw Error("useMongoDataSource app not initialised");
-        const mdb = app.currentUser.mongoClient(cluster);
-        const mongoCollection = mdb.db(database).collection(entity.path);
-        const res = await mongoCollection
-            .deleteOne({
-                _id: new BSON.ObjectId(entity.id)
+    const deleteEntity = useCallback(
+        async <M extends Record<string, any>>({ entity }: DeleteEntityProps<M>): Promise<void> => {
+            if (!app?.currentUser) throw Error("useMongoDataSource app not initialised");
+            const mdb = app.currentUser.mongoClient(cluster);
+            const mongoCollection = mdb.db(database).collection(entity.path);
+            const res = await mongoCollection.deleteOne({
+                _id: new BSON.ObjectId(entity.id),
             });
-        if (res.deletedCount === 0) {
-            console.error("No entities were deleted", res);
-            throw Error("No entities were deleted");
-        }
+            if (res.deletedCount === 0) {
+                console.error("No entities were deleted", res);
+                throw Error("No entities were deleted");
+            }
+        },
+        [app.currentUser, cluster, database]
+    );
 
-    }, [app.currentUser, cluster, database]);
+    const countEntities = useCallback(
+        async (props: {
+            path: string;
+            collection: EntityCollection<any>;
+            onCountUpdate?: (count: number) => void;
+        }): Promise<number> => {
+            if (!app?.currentUser) throw Error("useMongoDataSource app not initialised");
+            const mdb = app.currentUser.mongoClient(cluster);
+            const mongoCollection = mdb.db(database).collection(props.path);
+            return mongoCollection.count();
+        },
+        [app.currentUser, cluster, database]
+    );
 
-    const countEntities = useCallback(async (props: {
-        path: string,
-        collection: EntityCollection<any>
-        onCountUpdate?: (count: number) => void
-    }): Promise<number> => {
-        if (!app?.currentUser) throw Error("useMongoDataSource app not initialised");
-        const mdb = app.currentUser.mongoClient(cluster);
-        const mongoCollection = mdb.db(database).collection(props.path);
-        return mongoCollection.count();
-    }, [app.currentUser, cluster, database]);
-
-    const checkUniqueField = useCallback((
-        path: string,
-        name: string,
-        value: any,
-        entityId?: string
-    ): Promise<boolean> => {
-        throw Error("checkUniqueField not implemented");
-    }, []);
+    const checkUniqueField = useCallback(
+        (path: string, name: string, value: any, entityId?: string): Promise<boolean> => {
+            throw Error("checkUniqueField not implemented");
+        },
+        []
+    );
 
     return {
         key: "mongodb",
@@ -469,33 +485,26 @@ export function useMongoDBDelegate({
          * @param status
          *
          */
-        saveEntity: saveEntity
-
+        saveEntity: saveEntity,
     };
-
 }
 
 const mongoToEntity = (doc: any, path: string): Entity<any> => {
-    const {
-        _id,
-        ...data
-    } = doc;
+    const { _id, ...data } = doc;
     return {
         id: _id.toString(),
         path: path,
-        values: convertFromMongoValues(data)
+        values: convertFromMongoValues(data),
     };
 };
 
 const convertFromMongoValues = (values: object): object => {
-    return Object
-        .entries(values)
+    return Object.entries(values)
         .map(([k, v]) => ({ [k]: convertFromMongoValue(v) }))
         .reduce((a, b) => ({ ...a, ...b }), {});
-}
+};
 
 function convertFromMongoValue(value: unknown): any {
-
     if (typeof value !== "object" || value === null) return value;
     if (Array.isArray(value)) return value.map(convertFromMongoValue);
 
@@ -518,12 +527,11 @@ function valuesToMongoValues(values: EntityValues<any>) {
 }
 
 function valueToMongoValue(value: any): any {
-    if (value === null)
-        return null;
+    if (value === null) return null;
     if (value.isEntityReference && value.isEntityReference()) {
         return {
             id: new BSON.ObjectId(value.id),
-            path: value.path
+            path: value.path,
         };
     }
     if (typeof value !== "object") return value;

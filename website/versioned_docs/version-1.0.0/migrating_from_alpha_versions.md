@@ -27,7 +27,6 @@ yarn add @camberi/firecms firebase@^9.0.0 @mui/material@^5.1.0 @mui/icons-materi
 
 > You may want to remove previous dependencies to @material-ui
 
-
 ## Separation of concerns
 
 We are taking steps to abstract away all the Firebase specific details behind
@@ -57,7 +56,7 @@ import firebase from "firebase/app";
 type User = {
     // ...
     liked_products: firebase.firestore.DocumentReference[];
-}
+};
 ```
 
 you should replace them by:
@@ -68,7 +67,7 @@ import { EntityReference } from "@camberi/firecms";
 type User = {
     // ...
     liked_products: EntityReference[];
-}
+};
 ```
 
 ## API changes
@@ -111,16 +110,14 @@ type User = {
 const previousProductAdditionalColumn: AdditionalColumnDelegate<Product> = {
     id: "spanish_title",
     title: "Spanish title",
-    builder: (entity: Entity<Product>) =>
-        <div>{entity.values.title}</div>
+    builder: (entity: Entity<Product>) => <div>{entity.values.title}</div>,
 };
 
 // Now
 const productAdditionalColumn: AdditionalColumnDelegate<Product> = {
     id: "spanish_title",
     title: "Spanish title",
-    builder: ({ entity }) =>
-        <div>{entity.values.title}</div>
+    builder: ({ entity }) => <div>{entity.values.title}</div>,
 };
 ```
 
@@ -128,12 +125,10 @@ const productAdditionalColumn: AdditionalColumnDelegate<Product> = {
   . It is also generically typed now, so you can specify the type for the user.
   If you are using the default `FirebaseCMSApp`, you can specify your
   authenticator like:
+
 ```tsx
 import { User as FirebaseUser } from "firebase/auth";
-const myAuthenticator: Authenticator<FirebaseUser> = async ({
-                                                                user,
-                                                                authController
-                                                            }) => {
+const myAuthenticator: Authenticator<FirebaseUser> = async ({ user, authController }) => {
     console.log("Allowing access to", user?.email);
     // ...
     return true;
@@ -159,10 +154,10 @@ const myAuthenticator: Authenticator<FirebaseUser> = async ({
     - [`NavigationRoutes`]
     - [`SideEntityDialogs`]
 
-  You will be responsible for initialising the material theme, Firebase (or your
-  own backend) and providing the Router. On the plus side, this is going to give
-  you a ton of room for customisation. You can check a complete example in:
-  https://github.com/Camberi/firecms/blob/master/example/src/CustomCMSApp.tsx
+    You will be responsible for initialising the material theme, Firebase (or your
+    own backend) and providing the Router. On the plus side, this is going to give
+    you a ton of room for customisation. You can check a complete example in:
+    https://github.com/Camberi/firecms/blob/master/example/src/CustomCMSApp.tsx
 
 ## Text search
 
@@ -189,5 +184,3 @@ Check an example of the [new implementation](./firebase_cms_app#text-search)
 
 The callbacks that were previously related to a schema have been moved to the
 collection level, and are now bundled up under the optional `callbacks` prop.
-
-

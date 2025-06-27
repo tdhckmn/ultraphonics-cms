@@ -5,10 +5,12 @@ import { initServiceAccountFirestore } from "./util";
 initServiceAccountFirestore(true);
 
 const firestore = admin.firestore();
-firestore.collection("/blog")
+firestore
+    .collection("/blog")
     .where("status", "==", "draft")
     .get()
     .then((snapshot) =>
-        snapshot.docs.forEach(d => {
+        snapshot.docs.forEach((d) => {
             d.ref.delete();
-        }));
+        })
+    );

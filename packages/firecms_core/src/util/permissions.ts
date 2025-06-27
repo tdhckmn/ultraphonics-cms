@@ -5,15 +5,15 @@ const DEFAULT_PERMISSIONS = {
     read: true,
     edit: true,
     create: true,
-    delete: true
+    delete: true,
 };
 
-export function resolvePermissions<M extends Record<string, any>, USER extends User>
-(collection: EntityCollection<M>,
- authController: AuthController<USER>,
- path: string,
- entity: Entity<M> | null): Permissions | undefined {
-
+export function resolvePermissions<M extends Record<string, any>, USER extends User>(
+    collection: EntityCollection<M>,
+    authController: AuthController<USER>,
+    path: string,
+    entity: Entity<M> | null
+): Permissions | undefined {
     const permission = collection.permissions;
     if (permission === undefined) {
         return DEFAULT_PERMISSIONS;
@@ -27,39 +27,48 @@ export function resolvePermissions<M extends Record<string, any>, USER extends U
             user: authController.user,
             authController,
             collection,
-            pathSegments
+            pathSegments,
         });
     }
     console.error("Permissions:", permission);
     throw Error("New type of permission added and not mapped");
 }
 
-export function canEditEntity<M extends Record<string, any>, USER extends User>
-(
+export function canEditEntity<M extends Record<string, any>, USER extends User>(
     collection: EntityCollection<M>,
     authController: AuthController<USER>,
     path: string,
-    entity: Entity<M> | null): boolean {
-    return resolvePermissions(collection, authController, path, entity)?.edit ?? DEFAULT_PERMISSIONS.edit;
+    entity: Entity<M> | null
+): boolean {
+    return (
+        resolvePermissions(collection, authController, path, entity)?.edit ??
+        DEFAULT_PERMISSIONS.edit
+    );
 }
 
-export function canCreateEntity<M extends Record<string, any>, USER extends User>
-(
+export function canCreateEntity<M extends Record<string, any>, USER extends User>(
     collection: EntityCollection<M>,
     authController: AuthController<USER>,
     path: string,
-    entity: Entity<M> | null): boolean {
+    entity: Entity<M> | null
+): boolean {
     if (collection.collectionGroup) return false;
-    return resolvePermissions(collection, authController, path, entity)?.create ?? DEFAULT_PERMISSIONS.create;
+    return (
+        resolvePermissions(collection, authController, path, entity)?.create ??
+        DEFAULT_PERMISSIONS.create
+    );
 }
 
-export function canDeleteEntity<M extends Record<string, any>, USER extends User>
-(
+export function canDeleteEntity<M extends Record<string, any>, USER extends User>(
     collection: EntityCollection<M>,
     authController: AuthController<USER>,
     path: string,
-    entity: Entity<M> | null): boolean {
-    return resolvePermissions(collection, authController, path, entity)?.delete ?? DEFAULT_PERMISSIONS.delete;
+    entity: Entity<M> | null
+): boolean {
+    return (
+        resolvePermissions(collection, authController, path, entity)?.delete ??
+        DEFAULT_PERMISSIONS.delete
+    );
 }
 
 // export function resolveCollectionsPermissions(roles: Role[]): Record<string, Permissions> {

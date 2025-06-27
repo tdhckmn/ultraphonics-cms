@@ -1,7 +1,14 @@
 import React, { useCallback, useState } from "react";
 import * as Yup from "yup";
 
-import { EntityCollection, FieldCaption, Role, toSnakeCase, useAuthController, User, } from "@firecms/core";
+import {
+    EntityCollection,
+    FieldCaption,
+    Role,
+    toSnakeCase,
+    useAuthController,
+    User,
+} from "@firecms/core";
 import {
     Button,
     Checkbox,
@@ -21,18 +28,18 @@ import {
     TableRow,
     TextField,
     Tooltip,
-    Typography
+    Typography,
 } from "@firecms/ui";
 import { useUserManagement } from "../../hooks";
 import { Formex, getIn, useCreateFormex } from "@firecms/formex";
 
 export const RoleYupSchema = Yup.object().shape({
     id: Yup.string().required("Required"),
-    name: Yup.string().required("Required")
+    name: Yup.string().required("Required"),
 });
 
 function canRoleBeEdited(loggedUser: User) {
-    const loggedUserIsAdmin = loggedUser.roles?.map(r => r.id).includes("admin");
+    const loggedUserIsAdmin = loggedUser.roles?.map((r) => r.id).includes("admin");
     if (!loggedUserIsAdmin) {
         throw new Error("Only admins can edit roles");
     }
@@ -41,48 +48,50 @@ function canRoleBeEdited(loggedUser: User) {
 }
 
 export function RolesDetailsForm({
-                                     open,
-                                     role,
-                                     editable,
-                                     handleClose,
-                                     collections
-                                 }: {
-    open: boolean,
-    editable?: boolean,
-    role?: Role,
-    handleClose: () => void,
-    collections?: EntityCollection[]
+    open,
+    role,
+    editable,
+    handleClose,
+    collections,
+}: {
+    open: boolean;
+    editable?: boolean;
+    role?: Role;
+    handleClose: () => void;
+    collections?: EntityCollection[];
 }) {
-
     const { saveRole } = useUserManagement();
     const isNewRole = !role;
-    const {
-        user: loggedInUser
-    } = useAuthController();
+    const { user: loggedInUser } = useAuthController();
 
     const [savingError, setSavingError] = useState<Error | undefined>();
 
-    const onRoleUpdated = useCallback((role: Role) => {
-        setSavingError(undefined);
-        if (!loggedInUser) throw new Error("User not found");
-        canRoleBeEdited(loggedInUser);
-        return saveRole(role);
-    }, [saveRole, loggedInUser]);
+    const onRoleUpdated = useCallback(
+        (role: Role) => {
+            setSavingError(undefined);
+            if (!loggedInUser) throw new Error("User not found");
+            canRoleBeEdited(loggedInUser);
+            return saveRole(role);
+        },
+        [saveRole, loggedInUser]
+    );
 
     const formex = useCreateFormex({
-        initialValues: role ?? {
-            name: ""
-        } as Role,
+        initialValues:
+            role ??
+            ({
+                name: "",
+            } as Role),
         onSubmit: (role: Role, formexController) => {
             try {
                 return onRoleUpdated(role)
                     .then(() => {
                         formexController.resetForm({
-                            values: role
+                            values: role,
                         });
                         handleClose();
                     })
-                    .catch(e => {
+                    .catch((e) => {
                         setSavingError(e);
                     });
             } catch (e: any) {
@@ -100,8 +109,7 @@ export function RolesDetailsForm({
                     });
                     return errors;
                 });
-        }
-
+        },
     });
 
     const {
@@ -112,7 +120,7 @@ export function RolesDetailsForm({
         handleChange,
         setFieldValue,
         dirty,
-        setFieldTouched
+        setFieldTouched,
     } = formex;
 
     const isAdmin = values.isAdmin ?? false;
@@ -124,32 +132,29 @@ export function RolesDetailsForm({
     React.useEffect(() => {
         const idTouched = getIn(touched, "id");
         if (!idTouched && values.name) {
-            setFieldValue("id", toSnakeCase(values.name))
+            setFieldValue("id", toSnakeCase(values.name));
         }
     }, [touched, values.name]);
 
     return (
-        <Dialog
-            open={open}
-            maxWidth={"4xl"}
-        >
+        <Dialog open={open} maxWidth={"4xl"}>
             <Formex value={formex}>
-                <form noValidate
-                      autoComplete={"off"}
-                      onSubmit={formex.handleSubmit}
-                      style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          position: "relative",
-                          height: "100%"
-                      }}>
+                <form
+                    noValidate
+                    autoComplete={"off"}
+                    onSubmit={formex.handleSubmit}
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        position: "relative",
+                        height: "100%",
+                    }}
+                >
                     <DialogTitle variant={"h4"} gutterBottom={false}>
                         Role
                     </DialogTitle>
                     <DialogContent className="flex-grow">
-
                         <div className={"grid grid-cols-12 gap-8"}>
-
                             <div className={"col-span-12 md:col-span-8"}>
                                 <TextField
                                     name="name"
@@ -162,7 +167,9 @@ export function RolesDetailsForm({
                                     label="Name"
                                 />
                                 <FieldCaption>
-                                    {touched.name && Boolean(errors.name) ? errors.name : "Name of this role"}
+                                    {touched.name && Boolean(errors.name)
+                                        ? errors.name
+                                        : "Name of this role"}
                                 </FieldCaption>
                             </div>
 
@@ -175,13 +182,15 @@ export function RolesDetailsForm({
                                     disabled={!isNewRole || !editable}
                                     onChange={(e) => {
                                         handleChange(e);
-                                        setFieldTouched("id", true)
+                                        setFieldTouched("id", true);
                                     }}
                                     aria-describedby="id-helper-text"
                                     label="ID"
                                 />
                                 <FieldCaption>
-                                    {touched.id && Boolean(errors.id) ? errors.id : "ID of this role"}
+                                    {touched.id && Boolean(errors.id)
+                                        ? errors.id
+                                        : "ID of this role"}
                                 </FieldCaption>
                             </div>
 
@@ -190,148 +199,225 @@ export function RolesDetailsForm({
                                     <Table className={"w-full rounded-md"}>
                                         <TableHeader className={"rounded-md"}>
                                             <TableCell></TableCell>
-                                            <TableCell
-                                                align="center">Create
-                                                entities
-                                            </TableCell>
-                                            <TableCell
-                                                align="center">Read
-                                                entities
-                                            </TableCell>
-                                            <TableCell
-                                                align="center">Update
-                                                entities
-                                            </TableCell>
-                                            <TableCell
-                                                align="center">Delete
-                                                entities
-                                            </TableCell>
-                                            <TableCell
-                                                align="center">
-                                            </TableCell>
+                                            <TableCell align="center">Create entities</TableCell>
+                                            <TableCell align="center">Read entities</TableCell>
+                                            <TableCell align="center">Update entities</TableCell>
+                                            <TableCell align="center">Delete entities</TableCell>
+                                            <TableCell align="center"></TableCell>
                                         </TableHeader>
 
                                         <TableBody>
                                             <TableRow>
-                                                <TableCell
-                                                    scope="row">
-                                                    <strong>All
-                                                        collections</strong>
+                                                <TableCell scope="row">
+                                                    <strong>All collections</strong>
                                                 </TableCell>
-                                                <TableCell
-                                                    align="center">
-                                                    <Tooltip
-                                                        title="Create entities in collections">
+                                                <TableCell align="center">
+                                                    <Tooltip title="Create entities in collections">
                                                         <Checkbox
                                                             disabled={isAdmin || !editable}
-                                                            checked={(isAdmin || defaultCreate) ?? false}
-                                                            onCheckedChange={(checked) => setFieldValue("defaultPermissions.create", checked)}
+                                                            checked={
+                                                                (isAdmin || defaultCreate) ?? false
+                                                            }
+                                                            onCheckedChange={(checked) =>
+                                                                setFieldValue(
+                                                                    "defaultPermissions.create",
+                                                                    checked
+                                                                )
+                                                            }
                                                         />
                                                     </Tooltip>
                                                 </TableCell>
 
-                                                <TableCell
-                                                    align="center">
-                                                    <Tooltip
-                                                        title="Access all data in every collection">
+                                                <TableCell align="center">
+                                                    <Tooltip title="Access all data in every collection">
                                                         <Checkbox
                                                             disabled={isAdmin || !editable}
-                                                            checked={(isAdmin || defaultRead) ?? false}
-                                                            onCheckedChange={(checked) => setFieldValue("defaultPermissions.read", checked)}
+                                                            checked={
+                                                                (isAdmin || defaultRead) ?? false
+                                                            }
+                                                            onCheckedChange={(checked) =>
+                                                                setFieldValue(
+                                                                    "defaultPermissions.read",
+                                                                    checked
+                                                                )
+                                                            }
                                                         />
                                                     </Tooltip>
                                                 </TableCell>
-                                                <TableCell
-                                                    align="center">
-                                                    <Tooltip
-                                                        title="Update data in any collection">
+                                                <TableCell align="center">
+                                                    <Tooltip title="Update data in any collection">
                                                         <Checkbox
                                                             disabled={isAdmin || !editable}
-                                                            checked={(isAdmin || defaultEdit) ?? false}
-                                                            onCheckedChange={(checked) => setFieldValue("defaultPermissions.edit", checked)}
+                                                            checked={
+                                                                (isAdmin || defaultEdit) ?? false
+                                                            }
+                                                            onCheckedChange={(checked) =>
+                                                                setFieldValue(
+                                                                    "defaultPermissions.edit",
+                                                                    checked
+                                                                )
+                                                            }
                                                         />
                                                     </Tooltip>
                                                 </TableCell>
-                                                <TableCell
-                                                    align="center">
-                                                    <Tooltip
-                                                        title="Delete data in any collection">
+                                                <TableCell align="center">
+                                                    <Tooltip title="Delete data in any collection">
                                                         <Checkbox
                                                             disabled={isAdmin || !editable}
-                                                            checked={(isAdmin || defaultDelete) ?? false}
-                                                            onCheckedChange={(checked) => setFieldValue("defaultPermissions.delete", checked)}
+                                                            checked={
+                                                                (isAdmin || defaultDelete) ?? false
+                                                            }
+                                                            onCheckedChange={(checked) =>
+                                                                setFieldValue(
+                                                                    "defaultPermissions.delete",
+                                                                    checked
+                                                                )
+                                                            }
                                                         />
-
                                                     </Tooltip>
                                                 </TableCell>
-                                                <TableCell
-                                                    align="center">
-                                                </TableCell>
+                                                <TableCell align="center"></TableCell>
                                             </TableRow>
-                                            {collections && collections.map((col) => (
-                                                <TableRow key={col.name}>
-                                                    <TableCell
-                                                        scope="row">
-                                                        {col.name}
-                                                    </TableCell>
-                                                    <TableCell
-                                                        align="center">
-                                                        <Checkbox
-                                                            disabled={isAdmin || defaultCreate || !editable}
-                                                            checked={(isAdmin || defaultCreate || getIn(values, `collectionPermissions.${col.id}.create`)) ?? false}
-                                                            onCheckedChange={(checked) => setFieldValue(`collectionPermissions.${col.id}.create`, checked)}/>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        align="center">
-                                                        <Checkbox
-                                                            disabled={isAdmin || defaultRead || !editable}
-                                                            checked={(isAdmin || defaultRead || getIn(values, `collectionPermissions.${col.id}.read`)) ?? false}
-                                                            onCheckedChange={(checked) => setFieldValue(`collectionPermissions.${col.id}.read`, checked)}/>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        align="center">
-                                                        <Checkbox
-                                                            disabled={isAdmin || defaultEdit || !editable}
-                                                            checked={(isAdmin || defaultEdit || getIn(values, `collectionPermissions.${col.id}.edit`)) ?? false}
-                                                            onCheckedChange={(checked) => setFieldValue(`collectionPermissions.${col.id}.edit`, checked)}/>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        align="center">
-                                                        <Checkbox
-                                                            disabled={isAdmin || defaultDelete || !editable}
-                                                            checked={(isAdmin || defaultDelete || getIn(values, `collectionPermissions.${col.id}.delete`)) ?? false}
-                                                            onCheckedChange={(checked) => setFieldValue(`collectionPermissions.${col.id}.delete`, checked)}/>
-                                                    </TableCell>
+                                            {collections &&
+                                                collections.map((col) => (
+                                                    <TableRow key={col.name}>
+                                                        <TableCell scope="row">
+                                                            {col.name}
+                                                        </TableCell>
+                                                        <TableCell align="center">
+                                                            <Checkbox
+                                                                disabled={
+                                                                    isAdmin ||
+                                                                    defaultCreate ||
+                                                                    !editable
+                                                                }
+                                                                checked={
+                                                                    (isAdmin ||
+                                                                        defaultCreate ||
+                                                                        getIn(
+                                                                            values,
+                                                                            `collectionPermissions.${col.id}.create`
+                                                                        )) ??
+                                                                    false
+                                                                }
+                                                                onCheckedChange={(checked) =>
+                                                                    setFieldValue(
+                                                                        `collectionPermissions.${col.id}.create`,
+                                                                        checked
+                                                                    )
+                                                                }
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell align="center">
+                                                            <Checkbox
+                                                                disabled={
+                                                                    isAdmin ||
+                                                                    defaultRead ||
+                                                                    !editable
+                                                                }
+                                                                checked={
+                                                                    (isAdmin ||
+                                                                        defaultRead ||
+                                                                        getIn(
+                                                                            values,
+                                                                            `collectionPermissions.${col.id}.read`
+                                                                        )) ??
+                                                                    false
+                                                                }
+                                                                onCheckedChange={(checked) =>
+                                                                    setFieldValue(
+                                                                        `collectionPermissions.${col.id}.read`,
+                                                                        checked
+                                                                    )
+                                                                }
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell align="center">
+                                                            <Checkbox
+                                                                disabled={
+                                                                    isAdmin ||
+                                                                    defaultEdit ||
+                                                                    !editable
+                                                                }
+                                                                checked={
+                                                                    (isAdmin ||
+                                                                        defaultEdit ||
+                                                                        getIn(
+                                                                            values,
+                                                                            `collectionPermissions.${col.id}.edit`
+                                                                        )) ??
+                                                                    false
+                                                                }
+                                                                onCheckedChange={(checked) =>
+                                                                    setFieldValue(
+                                                                        `collectionPermissions.${col.id}.edit`,
+                                                                        checked
+                                                                    )
+                                                                }
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell align="center">
+                                                            <Checkbox
+                                                                disabled={
+                                                                    isAdmin ||
+                                                                    defaultDelete ||
+                                                                    !editable
+                                                                }
+                                                                checked={
+                                                                    (isAdmin ||
+                                                                        defaultDelete ||
+                                                                        getIn(
+                                                                            values,
+                                                                            `collectionPermissions.${col.id}.delete`
+                                                                        )) ??
+                                                                    false
+                                                                }
+                                                                onCheckedChange={(checked) =>
+                                                                    setFieldValue(
+                                                                        `collectionPermissions.${col.id}.delete`,
+                                                                        checked
+                                                                    )
+                                                                }
+                                                            />
+                                                        </TableCell>
 
-                                                    <TableCell
-                                                        align="center">
-                                                        <Tooltip
-                                                            title="Allow all permissions in this collections">
-                                                            <Button
-                                                                className={"color-inherit"}
-                                                                onClick={() => {
-                                                                    setFieldValue(`collectionPermissions.${col.id}.create`, true);
-                                                                    setFieldValue(`collectionPermissions.${col.id}.read`, true);
-                                                                    setFieldValue(`collectionPermissions.${col.id}.edit`, true);
-                                                                    setFieldValue(`collectionPermissions.${col.id}.delete`, true);
-                                                                }}
-                                                                disabled={isAdmin || !editable}
-                                                                variant={"text"}>
-                                                                All
-                                                            </Button>
-
-                                                        </Tooltip>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
+                                                        <TableCell align="center">
+                                                            <Tooltip title="Allow all permissions in this collections">
+                                                                <Button
+                                                                    className={"color-inherit"}
+                                                                    onClick={() => {
+                                                                        setFieldValue(
+                                                                            `collectionPermissions.${col.id}.create`,
+                                                                            true
+                                                                        );
+                                                                        setFieldValue(
+                                                                            `collectionPermissions.${col.id}.read`,
+                                                                            true
+                                                                        );
+                                                                        setFieldValue(
+                                                                            `collectionPermissions.${col.id}.edit`,
+                                                                            true
+                                                                        );
+                                                                        setFieldValue(
+                                                                            `collectionPermissions.${col.id}.delete`,
+                                                                            true
+                                                                        );
+                                                                    }}
+                                                                    disabled={isAdmin || !editable}
+                                                                    variant={"text"}
+                                                                >
+                                                                    All
+                                                                </Button>
+                                                            </Tooltip>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
                                         </TableBody>
                                     </Table>
                                 </Paper>
                                 <FieldCaption>
-                                    You can customise the permissions
-                                    that the users related to this
-                                    role can perform in the entities
-                                    of each collection
+                                    You can customise the permissions that the users related to this
+                                    role can perform in the entities of each collection
                                 </FieldCaption>
                             </div>
 
@@ -345,18 +431,27 @@ export function RolesDetailsForm({
                                     label="Create collections"
                                     position={"item-aligned"}
                                     disabled={isAdmin || !editable}
-                                    onChange={(event) => setFieldValue("config.createCollections", event.target.value === "true")}
-                                    value={isAdmin || values.config?.createCollections ? "true" : "false"}
-                                    renderValue={(value: any) => value === "true" ? "Yes" : "No"}
+                                    onChange={(event) =>
+                                        setFieldValue(
+                                            "config.createCollections",
+                                            event.target.value === "true"
+                                        )
+                                    }
+                                    value={
+                                        isAdmin || values.config?.createCollections
+                                            ? "true"
+                                            : "false"
+                                    }
+                                    renderValue={(value: any) => (value === "true" ? "Yes" : "No")}
                                 >
-                                    <SelectItem
-                                        value={"true"}> Yes </SelectItem>
-                                    <SelectItem
-                                        value={"false"}> No </SelectItem>
+                                    <SelectItem value={"true"}> Yes </SelectItem>
+                                    <SelectItem value={"false"}> No </SelectItem>
                                 </Select>
 
                                 <FieldCaption>
-                                    {touched.config && Boolean(errors.config) ? errors.config : "Can the user create collections"}
+                                    {touched.config && Boolean(errors.config)
+                                        ? errors.config
+                                        : "Can the user create collections"}
                                 </FieldCaption>
                             </div>
 
@@ -370,21 +465,36 @@ export function RolesDetailsForm({
                                     label="Edit collections"
                                     disabled={isAdmin || !editable}
                                     position={"item-aligned"}
-                                    onChange={(event) => setFieldValue("config.editCollections", event.target.value === "own" ? "own" : event.target.value === "true")}
-                                    value={isAdmin ? "true" : (values.config?.editCollections === "own" ? "own" : (values.config?.editCollections ? "true" : "false"))}
-                                    renderValue={(value: any) => value === "own" ? "Own" : (value === "true" ? "Yes" : "No")}
+                                    onChange={(event) =>
+                                        setFieldValue(
+                                            "config.editCollections",
+                                            event.target.value === "own"
+                                                ? "own"
+                                                : event.target.value === "true"
+                                        )
+                                    }
+                                    value={
+                                        isAdmin
+                                            ? "true"
+                                            : values.config?.editCollections === "own"
+                                              ? "own"
+                                              : values.config?.editCollections
+                                                ? "true"
+                                                : "false"
+                                    }
+                                    renderValue={(value: any) =>
+                                        value === "own" ? "Own" : value === "true" ? "Yes" : "No"
+                                    }
                                 >
-                                    <SelectItem
-                                        value={"true"}> Yes </SelectItem>
-                                    <SelectItem
-                                        value={"false"}> No </SelectItem>
-                                    <SelectItem
-                                        value={"own"}> Only
-                                        his/her own </SelectItem>
+                                    <SelectItem value={"true"}> Yes </SelectItem>
+                                    <SelectItem value={"false"}> No </SelectItem>
+                                    <SelectItem value={"own"}> Only his/her own </SelectItem>
                                 </Select>
 
                                 <FieldCaption>
-                                    {touched.config && Boolean(errors.config) ? errors.config : "Can the user edit collections"}
+                                    {touched.config && Boolean(errors.config)
+                                        ? errors.config
+                                        : "Can the user edit collections"}
                                 </FieldCaption>
                             </div>
 
@@ -398,36 +508,53 @@ export function RolesDetailsForm({
                                     label="Delete collections"
                                     disabled={isAdmin || !editable}
                                     position={"item-aligned"}
-                                    onChange={(event) => setFieldValue("config.deleteCollections", event.target.value === "own" ? "own" : event.target.value === "true")}
-                                    value={isAdmin ? "true" : (values.config?.deleteCollections === "own" ? "own" : (values.config?.deleteCollections ? "true" : "false"))}
-                                    renderValue={(value: any) => value === "own" ? "Own" : (value === "true" ? "Yes" : "No")}
+                                    onChange={(event) =>
+                                        setFieldValue(
+                                            "config.deleteCollections",
+                                            event.target.value === "own"
+                                                ? "own"
+                                                : event.target.value === "true"
+                                        )
+                                    }
+                                    value={
+                                        isAdmin
+                                            ? "true"
+                                            : values.config?.deleteCollections === "own"
+                                              ? "own"
+                                              : values.config?.deleteCollections
+                                                ? "true"
+                                                : "false"
+                                    }
+                                    renderValue={(value: any) =>
+                                        value === "own" ? "Own" : value === "true" ? "Yes" : "No"
+                                    }
                                 >
-                                    <SelectItem
-                                        value={"true"}> Yes </SelectItem>
-                                    <SelectItem
-                                        value={"false"}> No </SelectItem>
-                                    <SelectItem
-                                        value={"own"}> Only
-                                        his/her own </SelectItem>
+                                    <SelectItem value={"true"}> Yes </SelectItem>
+                                    <SelectItem value={"false"}> No </SelectItem>
+                                    <SelectItem value={"own"}> Only his/her own </SelectItem>
                                 </Select>
 
                                 <FieldCaption>
-                                    {touched.config && Boolean(errors.config) ? errors.config : "Can the user delete collections"}
+                                    {touched.config && Boolean(errors.config)
+                                        ? errors.config
+                                        : "Can the user delete collections"}
                                 </FieldCaption>
-
                             </div>
-
                         </div>
                     </DialogContent>
 
                     <DialogActions position={"sticky"}>
-                        {savingError && <Typography className={"text-red-500 dark:text-red-500"}>
-                            {savingError.message ?? "There was an error saving this role"}
-                        </Typography>}
-                        <Button variant={"text"}
-                                onClick={() => {
-                                    handleClose();
-                                }}>
+                        {savingError && (
+                            <Typography className={"text-red-500 dark:text-red-500"}>
+                                {savingError.message ?? "There was an error saving this role"}
+                            </Typography>
+                        )}
+                        <Button
+                            variant={"text"}
+                            onClick={() => {
+                                handleClose();
+                            }}
+                        >
                             Cancel
                         </Button>
                         <LoadingButton
@@ -436,13 +563,12 @@ export function RolesDetailsForm({
                             type="submit"
                             disabled={!dirty}
                             loading={isSubmitting}
-                            startIcon={<CheckIcon/>}
+                            startIcon={<CheckIcon />}
                         >
                             {isNewRole ? "Create role" : "Update"}
                         </LoadingButton>
                     </DialogActions>
                 </form>
-
             </Formex>
         </Dialog>
     );

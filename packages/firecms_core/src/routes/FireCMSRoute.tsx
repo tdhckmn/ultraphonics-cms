@@ -7,7 +7,7 @@ import {
     getNavigationEntriesFromPath,
     NavigationViewCollectionInternal,
     NavigationViewEntityCustomInternal,
-    NavigationViewInternal
+    NavigationViewInternal,
 } from "../util/navigation_from_path";
 import { useBreadcrumbsController } from "../hooks/useBreadcrumbsController";
 import { toArray } from "../util/arrays";
@@ -16,7 +16,6 @@ import { UnsavedChangesDialog } from "../components/UnsavedChangesDialog";
 import { EntityCollection } from "../types";
 
 export function FireCMSRoute() {
-
     const location = useLocation();
     const navigation = useNavigationController();
     const breadcrumbs = useBreadcrumbsController();
@@ -31,93 +30,106 @@ export function FireCMSRoute() {
 
     const navigationEntries = getNavigationEntriesFromPath({
         path: navigationPath,
-        collections: navigation.collections ?? []
+        collections: navigation.collections ?? [],
     });
 
     useEffect(() => {
         breadcrumbs.set({
-            breadcrumbs: navigationEntries.map(entry => {
+            breadcrumbs: navigationEntries.map((entry) => {
                 if (entry.type === "entity") {
-                    return ({
+                    return {
                         title: entry.entityId,
-                        url: navigation.buildUrlCollectionPath(entry.fullPath)
-                    });
+                        url: navigation.buildUrlCollectionPath(entry.fullPath),
+                    };
                 } else if (entry.type === "custom_view") {
-                    return ({
+                    return {
                         title: entry.view.name,
-                        url: navigation.buildUrlCollectionPath(entry.fullPath)
-                    });
+                        url: navigation.buildUrlCollectionPath(entry.fullPath),
+                    };
                 } else if (entry.type === "collection") {
-                    return ({
+                    return {
                         title: entry.collection.name,
-                        url: navigation.buildUrlCollectionPath(entry.fullPath)
-                    });
+                        url: navigation.buildUrlCollectionPath(entry.fullPath),
+                    };
                 } else {
                     throw new Error("Unexpected navigation entry type");
                 }
-            })
+            }),
         });
-    }, [navigationEntries.map(entry => entry.path).join(",")]);
+    }, [navigationEntries.map((entry) => entry.path).join(",")]);
 
     if (isNew) {
-        return <EntityFullScreenRoute
-            pathname={pathname}
-            navigationEntries={navigationEntries}
-            isNew={true}
-            isCopy={false}
-        />;
+        return (
+            <EntityFullScreenRoute
+                pathname={pathname}
+                navigationEntries={navigationEntries}
+                isNew={true}
+                isCopy={false}
+            />
+        );
     }
 
     if (navigationEntries.length === 1 && navigationEntries[0].type === "collection") {
         let collection: EntityCollection<any> | undefined;
         collection = navigation.getCollectionById(navigationEntries[0].id);
-        if (!collection)
-            collection = navigation.getCollection(navigationEntries[0].path);
-        if (!collection)
-            return null;
-        return <EntityCollectionView
-            key={`collection_view_${collection.id ?? collection.path}`}
-            isSubCollection={false}
-            parentCollectionIds={[]}
-            fullPath={collection.path}
-            fullIdPath={collection.id}
-            updateUrl={true}
-            {...collection}
-            Actions={toArray(collection.Actions)}/>
+        if (!collection) collection = navigation.getCollection(navigationEntries[0].path);
+        if (!collection) return null;
+        return (
+            <EntityCollectionView
+                key={`collection_view_${collection.id ?? collection.path}`}
+                isSubCollection={false}
+                parentCollectionIds={[]}
+                fullPath={collection.path}
+                fullIdPath={collection.id}
+                updateUrl={true}
+                {...collection}
+                Actions={toArray(collection.Actions)}
+            />
+        );
     }
 
     if (isSidePanel) {
-        const lastCollectionEntry = navigationEntries.findLast((entry) => entry.type === "collection");
+        const lastCollectionEntry = navigationEntries.findLast(
+            (entry) => entry.type === "collection"
+        );
         if (lastCollectionEntry) {
             let collection: EntityCollection<any> | undefined;
             const firstEntry = navigationEntries[0] as NavigationViewCollectionInternal<any>;
             collection = navigation.getCollectionById(firstEntry.id);
-            if (!collection)
-                collection = navigation.getCollection(firstEntry.path);
-            if (!collection)
-                return null;
-            return <EntityCollectionView
-                key={`collection_view_${collection.id ?? collection.path}`}
-                fullIdPath={collection.id}
-                isSubCollection={false}
-                parentCollectionIds={[]}
-                fullPath={collection.path}
-                updateUrl={true}
-                {...collection}
-                Actions={toArray(collection.Actions)}/>;
+            if (!collection) collection = navigation.getCollection(firstEntry.path);
+            if (!collection) return null;
+            return (
+                <EntityCollectionView
+                    key={`collection_view_${collection.id ?? collection.path}`}
+                    fullIdPath={collection.id}
+                    isSubCollection={false}
+                    parentCollectionIds={[]}
+                    fullPath={collection.path}
+                    updateUrl={true}
+                    {...collection}
+                    Actions={toArray(collection.Actions)}
+                />
+            );
         }
     }
 
-    return <EntityFullScreenRoute
-        pathname={pathname}
-        navigationEntries={navigationEntries}
-        isNew={isNew}
-        isCopy={isCopy}
-    />;
-
+    return (
+        <EntityFullScreenRoute
+            pathname={pathname}
+            navigationEntries={navigationEntries}
+            isNew={isNew}
+            isCopy={isCopy}
+        />
+    );
 }
 
-function getSelectedTabFromUrl(isNew: boolean, lastCustomView: NavigationViewCollectionInternal<any> | NavigationViewEntityCustomInternal<any> | undefined) {
+function getSelectedTabFromUrl(
+    isNew: boolean,
+    lastCustomView:
+        | NavigationViewCollectionInternal<any>
+        | NavigationViewEntityCustomInternal<any>
+        | undefined
+) {
     if (isNew) {
         return undefined;
     } else if (lastCustomView) {
@@ -131,17 +143,16 @@ function getSelectedTabFromUrl(isNew: boolean, lastCustomView: NavigationViewCol
 }
 
 function EntityFullScreenRoute({
-                                   pathname,
-                                   navigationEntries,
-                                   isNew,
-                                   isCopy
-                               }: {
+    pathname,
+    navigationEntries,
+    isNew,
+    isCopy,
+}: {
     pathname: string;
-    navigationEntries: NavigationViewInternal[],
-    isNew: boolean,
-    isCopy: boolean
+    navigationEntries: NavigationViewInternal[];
+    isNew: boolean;
+    isCopy: boolean;
 }) {
-
     const navigation = useNavigationController();
     const navigate = useNavigate();
 
@@ -151,11 +162,16 @@ function EntityFullScreenRoute({
     const blocked = useRef(false);
 
     const lastEntityEntry = navigationEntries.findLast((entry) => entry.type === "entity");
-    const navigationEntriesAfterEntity = lastEntityEntry ? navigationEntries.slice(navigationEntries.indexOf(lastEntityEntry) + 1) : [];
+    const navigationEntriesAfterEntity = lastEntityEntry
+        ? navigationEntries.slice(navigationEntries.indexOf(lastEntityEntry) + 1)
+        : [];
 
     const lastCustomView = navigationEntriesAfterEntity.findLast(
         (entry) => entry.type === "custom_view" || entry.type === "collection"
-    ) as NavigationViewCollectionInternal<any> | NavigationViewEntityCustomInternal<any> | undefined;
+    ) as
+        | NavigationViewCollectionInternal<any>
+        | NavigationViewEntityCustomInternal<any>
+        | undefined;
 
     const entityId = lastEntityEntry?.entityId;
 
@@ -169,19 +185,15 @@ function EntityFullScreenRoute({
         }
     }, [urlTab]);
 
-    const basePath = !entityId || isNew
-        ? pathname
-        : pathname.substring(0, pathname.lastIndexOf(`/${entityId}`));
+    const basePath =
+        !entityId || isNew ? pathname : pathname.substring(0, pathname.lastIndexOf(`/${entityId}`));
 
     const entityPath = basePath + `/${entityId}`;
 
     let blocker: Blocker | undefined = undefined;
     try {
-        blocker = useBlocker(({
-                                  nextLocation
-                              }) => {
-            if (nextLocation.pathname.startsWith(entityPath))
-                return false;
+        blocker = useBlocker(({ nextLocation }) => {
+            if (nextLocation.pathname.startsWith(entityPath)) return false;
             return blocked.current;
         });
     } catch (e) {
@@ -195,52 +207,54 @@ function EntityFullScreenRoute({
     }
 
     if (!isNew && !lastEntityEntry) {
-        return <NotFoundPage/>;
+        return <NotFoundPage />;
     }
 
     const collection = isNew ? lastCollectionEntry!.collection : lastEntityEntry!.parentCollection;
     const fullIdPath = isNew ? lastCollectionEntry!.path : lastEntityEntry!.path;
     const collectionPath = navigation.resolveIdsFrom(fullIdPath);
-    return <>
-        <EntityEditView
-            key={collection.id + "_" + (isNew ? "new" : (isCopy ? entityId + "_copy" : entityId))}
-            entityId={isNew ? undefined : entityId}
-            fullIdPath={fullIdPath}
-            collection={collection}
-            layout={"full_screen"}
-            path={collectionPath}
-            copy={isCopy}
-            selectedTab={selectedTab ?? undefined}
-            onValuesModified={(modified) => blocked.current = modified}
-            onSaved={(params) => {
-                const newSelectedTab = params.selectedTab;
-                const newEntityId = params.entityId;
-                if (newSelectedTab) {
-                    navigate(`${basePath}/${newEntityId}/${newSelectedTab}`, { replace: true });
-                } else {
-                    navigate(`${basePath}/${newEntityId}`, { replace: true });
-                }
-            }}
-            onTabChange={(params) => {
-                setSelectedTab(params.selectedTab);
-                if (isNew) {
-                    return;
-                }
-                const newSelectedTab = params.selectedTab;
-                if (newSelectedTab) {
-                    navigate(`${basePath}/${entityId}/${newSelectedTab}`, { replace: true });
-                } else {
-                    navigate(`${basePath}/${entityId}`, { replace: true });
-                }
-            }}
-            parentCollectionIds={parentCollectionIds}
-        />
+    return (
+        <>
+            <EntityEditView
+                key={collection.id + "_" + (isNew ? "new" : isCopy ? entityId + "_copy" : entityId)}
+                entityId={isNew ? undefined : entityId}
+                fullIdPath={fullIdPath}
+                collection={collection}
+                layout={"full_screen"}
+                path={collectionPath}
+                copy={isCopy}
+                selectedTab={selectedTab ?? undefined}
+                onValuesModified={(modified) => (blocked.current = modified)}
+                onSaved={(params) => {
+                    const newSelectedTab = params.selectedTab;
+                    const newEntityId = params.entityId;
+                    if (newSelectedTab) {
+                        navigate(`${basePath}/${newEntityId}/${newSelectedTab}`, { replace: true });
+                    } else {
+                        navigate(`${basePath}/${newEntityId}`, { replace: true });
+                    }
+                }}
+                onTabChange={(params) => {
+                    setSelectedTab(params.selectedTab);
+                    if (isNew) {
+                        return;
+                    }
+                    const newSelectedTab = params.selectedTab;
+                    if (newSelectedTab) {
+                        navigate(`${basePath}/${entityId}/${newSelectedTab}`, { replace: true });
+                    } else {
+                        navigate(`${basePath}/${entityId}`, { replace: true });
+                    }
+                }}
+                parentCollectionIds={parentCollectionIds}
+            />
 
-        <UnsavedChangesDialog
-            open={blocker?.state === "blocked"}
-            handleOk={() => blocker?.proceed?.()}
-            handleCancel={() => blocker?.reset?.()}
-            body={"You have unsaved changes in this entity."}/>
-
-    </>;
+            <UnsavedChangesDialog
+                open={blocker?.state === "blocked"}
+                handleOk={() => blocker?.proceed?.()}
+                handleCancel={() => blocker?.reset?.()}
+                body={"You have unsaved changes in this entity."}
+            />
+        </>
+    );
 }

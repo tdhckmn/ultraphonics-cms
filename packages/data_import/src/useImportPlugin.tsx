@@ -6,16 +6,18 @@ import { ImportCollectionAction } from "./import";
  *
  */
 export function useImportPlugin(props?: ImportPluginProps): FireCMSPlugin<any, any, any, ImportPluginProps> {
-
-    return useMemo(() => ({
-        key: "import",
-        collectionView: {
-            CollectionActions: [ImportCollectionAction],
-            collectionActionsProps: props
-        }
-    }), [props]);
+    return useMemo(
+        () => ({
+            key: "import",
+            collectionView: {
+                CollectionActions: [ImportCollectionAction],
+                collectionActionsProps: props,
+            },
+        }),
+        [props],
+    );
 }
 
 export type ImportPluginProps = {
     onAnalyticsEvent?: (event: string, params?: any) => void;
-}
+};

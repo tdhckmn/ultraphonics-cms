@@ -8,8 +8,9 @@ import { HistoryControllerProvider } from "./HistoryControllerProvider";
 /**
  * This plugin adds a history view to the entity side panel.
  */
-export function useEntityHistoryPlugin(props?: EntityHistoryPluginProps): FireCMSPlugin<any, any, any, EntityHistoryPluginProps> {
-
+export function useEntityHistoryPlugin(
+    props?: EntityHistoryPluginProps,
+): FireCMSPlugin<any, any, any, EntityHistoryPluginProps> {
     const { defaultEnabled = false } = props ?? {};
 
     const modifyCollection = useCallback((collection: EntityCollection) => {
@@ -21,29 +22,33 @@ export function useEntityHistoryPlugin(props?: EntityHistoryPluginProps): FireCM
                     {
                         key: "__history",
                         name: "History",
-                        tabComponent: <HistoryIcon size={"small"}/>,
+                        tabComponent: <HistoryIcon size={"small"} />,
                         Builder: EntityHistoryView,
-                        position: "start"
-                    }
+                        position: "start",
+                    },
                 ],
-                callbacks: mergeCallbacks(collection.callbacks, entityHistoryCallbacks)
+                callbacks: mergeCallbacks(collection.callbacks, entityHistoryCallbacks),
             } satisfies EntityCollection;
         }
         return collection;
     }, []);
 
-    return useMemo(() => ({
-        key: "entity_history",
-        provider: {
-            Component: HistoryControllerProvider,
-            props: {
-                getUser: props?.getUser
-            }
-        },
-        collection: {
-            modifyCollection
-        }
-    } satisfies FireCMSPlugin), [props]);
+    return useMemo(
+        () =>
+            ({
+                key: "entity_history",
+                provider: {
+                    Component: HistoryControllerProvider,
+                    props: {
+                        getUser: props?.getUser,
+                    },
+                },
+                collection: {
+                    modifyCollection,
+                },
+            }) satisfies FireCMSPlugin,
+        [props],
+    );
 }
 
 export type EntityHistoryPluginProps = {
@@ -58,4 +63,4 @@ export type EntityHistoryPluginProps = {
      * @param uid
      */
     getUser?: (uid: string) => User | null;
-}
+};

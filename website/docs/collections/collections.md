@@ -55,99 +55,96 @@ functions that will help you detect type and configuration errors
 import { buildCollection, buildProperty, EntityReference } from "@firecms/core";
 
 type Product = {
-  name: string;
-  main_image: string;
-  available: boolean;
-  price: number;
-  related_products: EntityReference[];
-  publisher: {
     name: string;
-    external_id: string;
-  }
-}
+    main_image: string;
+    available: boolean;
+    price: number;
+    related_products: EntityReference[];
+    publisher: {
+        name: string;
+        external_id: string;
+    };
+};
 
 const productsCollection = buildCollection<Product>({
-  id: "products",
-  path: "products",
-  name: "Products",
-  group: "Main",
-  description: "List of the products currently sold in our shop",
-  textSearchEnabled: true,
-  openEntityMode: "side_panel",
-  properties: {
-    name: buildProperty({
-      dataType: "string",
-      name: "Name",
-      validation: { required: true }
+    id: "products",
+    path: "products",
+    name: "Products",
+    group: "Main",
+    description: "List of the products currently sold in our shop",
+    textSearchEnabled: true,
+    openEntityMode: "side_panel",
+    properties: {
+        name: buildProperty({
+            dataType: "string",
+            name: "Name",
+            validation: { required: true },
+        }),
+        main_image: buildProperty({
+            dataType: "string",
+            name: "Image",
+            storage: {
+                mediaType: "image",
+                storagePath: "images",
+                acceptedFiles: ["image/*"],
+                metadata: {
+                    cacheControl: "max-age=1000000",
+                },
+            },
+            description: "Upload field for images",
+            validation: {
+                required: true,
+            },
+        }),
+        available: buildProperty({
+            dataType: "boolean",
+            name: "Available",
+            columnWidth: 100,
+        }),
+        price: buildProperty(({ values }) => ({
+            dataType: "number",
+            name: "Price",
+            validation: {
+                requiredMessage: "You must set a price between 0 and 1000",
+                min: 0,
+                max: 1000,
+            },
+            disabled: !values.available && {
+                clearOnDisabled: true,
+                disabledMessage: "You can only set the price on available items",
+            },
+            description: "Price with range validation",
+        })),
+        related_products: buildProperty({
+            dataType: "array",
+            name: "Related products",
+            description: "Reference to self",
+            of: {
+                dataType: "reference",
+                path: "products",
+            },
+        }),
+        publisher: buildProperty({
+            name: "Publisher",
+            description: "This is an example of a map property",
+            dataType: "map",
+            properties: {
+                name: {
+                    name: "Name",
+                    dataType: "string",
+                },
+                external_id: {
+                    name: "External id",
+                    dataType: "string",
+                },
+            },
+        }),
+    },
+    permissions: ({ user, authController }) => ({
+        edit: true,
+        create: true,
+        delete: false,
     }),
-    main_image: buildProperty({
-      dataType: "string",
-      name: "Image",
-      storage: {
-        mediaType: "image",
-        storagePath: "images",
-        acceptedFiles: ["image/*"],
-        metadata: {
-          cacheControl: "max-age=1000000"
-        }
-      },
-      description: "Upload field for images",
-      validation: {
-        required: true
-      }
-    }),
-    available: buildProperty({
-      dataType: "boolean",
-      name: "Available",
-      columnWidth: 100
-    }),
-    price: buildProperty(({ values }) => ({
-      dataType: "number",
-      name: "Price",
-      validation: {
-        requiredMessage: "You must set a price between 0 and 1000",
-        min: 0,
-        max: 1000
-      },
-      disabled: !values.available && {
-        clearOnDisabled: true,
-        disabledMessage: "You can only set the price on available items"
-      },
-      description: "Price with range validation"
-    })),
-    related_products: buildProperty({
-      dataType: "array",
-      name: "Related products",
-      description: "Reference to self",
-      of: {
-        dataType: "reference",
-        path: "products"
-      }
-    }),
-    publisher: buildProperty({
-      name: "Publisher",
-      description: "This is an example of a map property",
-      dataType: "map",
-      properties: {
-        name: {
-          name: "Name",
-          dataType: "string"
-        },
-        external_id: {
-          name: "External id",
-          dataType: "string"
-        }
-      }
-    })
-  },
-  permissions: ({
-                  user,
-                  authController
-                }) => ({
-    edit: true,
-    create: true,
-    delete: false
-  })
 });
 ```
 
@@ -170,9 +167,9 @@ import { FireCMSAppConfig } from "@firecms/core";
 const appConfig: FireCMSAppConfig = {
     version: "1",
     collections: async (props) => {
-        return ([
+        return [
             // ... full-code defined collections here
-        ]);
+        ];
     },
     modifyCollection: ({ collection }) => {
         if (collection.id === "products") {
@@ -184,14 +181,14 @@ const appConfig: FireCMSAppConfig = {
                         name: "Sample entity action",
                         onClick: ({ entity }) => {
                             console.log("Entity", entity);
-                        }
-                    }
-                ]
-            }
+                        },
+                    },
+                ],
+            };
         }
         return collection;
-    }
-}
+    },
+};
 
 export default appConfig;
 ```
@@ -235,9 +232,9 @@ const productsCollection = buildCollection<Product>({
     indexes: [
         {
             price: "asc",
-            available: "desc"
-        }
-    ]
+            available: "desc",
+        },
+    ],
 });
 ```
 
@@ -266,9 +263,9 @@ to `false` in the collection configuration.
     - Note that if you set this prop, other ways to hide fields, like `hidden` in the property definition, will be
       ignored. `propertiesOrder` has precedence over `hidden`.
 
-  ```typescript
-  propertiesOrder: ["name", "price", "subcollection:orders"]
-  ```
+    ```typescript
+    propertiesOrder: ["name", "price", "subcollection:orders"];
+    ```
 
 - **`openEntityMode`**: Determines how the entity view is opened. You can choose between `side_panel` (default) or
   `full_screen`.
@@ -296,17 +293,13 @@ to `false` in the collection configuration.
 
 ```tsx
 const archiveEntityAction: EntityAction = {
-    icon: <ArchiveIcon/>,
+    icon: <ArchiveIcon />,
     name: "Archive",
-    onClick({
-                entity,
-                collection,
-                context
-            }): Promise<void> {
+    onClick({ entity, collection, context }): Promise<void> {
         // Add your code here
         return Promise.resolve(undefined);
-    }
-}
+    },
+};
 ```
 
 - **`initialFilter`**: Initial filters applied to this collection. Defaults to none. Filters applied with this prop can
@@ -314,12 +307,13 @@ const archiveEntityAction: EntityAction = {
 
 ```tsx
 initialFilter: {
-    age: [">=", 18]
+    age: [">=", 18];
 }
 ```
+
 ```tsx
 initialFilter: {
-    related_user: ["==", new EntityReference("sdc43dsw2", "users")]
+    related_user: ["==", new EntityReference("sdc43dsw2", "users")];
 }
 ```
 
@@ -328,12 +322,13 @@ initialFilter: {
 
 ```tsx
 forceFilter: {
-    age: [">=", 18]
+    age: [">=", 18];
 }
 ```
+
 ```tsx
 forceFilter: {
-    related_user: ["==", new EntityReference("sdc43dsw2", "users")]
+    related_user: ["==", new EntityReference("sdc43dsw2", "users")];
 }
 ```
 
@@ -341,7 +336,7 @@ forceFilter: {
   or `["property_name", "desc"]`.
 
 ```tsx
-initialSort: ["price", "asc"]
+initialSort: ["price", "asc"];
 ```
 
 - **`Actions`**: Builder for rendering additional components such as buttons in the collection toolbar. The builder

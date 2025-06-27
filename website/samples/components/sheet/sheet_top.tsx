@@ -8,9 +8,7 @@ export default function SheetTopDemo() {
         <div>
             <Button onClick={() => setOpen(true)}>Open Top Sheet</Button>
             <Sheet open={open} onOpenChange={setOpen} side="top">
-                <div className={"bg-white dark:bg-gray-800 p-4 w-full"}>
-                    Sheet Content
-                </div>
+                <div className={"bg-white dark:bg-gray-800 p-4 w-full"}>Sheet Content</div>
             </Sheet>
         </div>
     );

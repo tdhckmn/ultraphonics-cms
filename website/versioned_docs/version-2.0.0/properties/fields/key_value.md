@@ -18,7 +18,7 @@ import { buildProperty } from "@firecms/core";
 buildProperty({
     dataType: "map",
     name: "Key value",
-    keyValue: true
+    keyValue: true,
 });
 ```
 
@@ -26,4 +26,3 @@ The data type is [`map`](../config/map).
 
 Internally the component used
 is [`KeyValueFieldBinding`].
-

@@ -16,13 +16,16 @@ const generateBooks = async () => {
         .collection("books")
         .get()
         .then((snapshot) => {
-                fs.writeFile("bookids.json", JSON.stringify(snapshot.docs.map((doc) => doc.id)), function (err: any) {
+            fs.writeFile(
+                "bookids.json",
+                JSON.stringify(snapshot.docs.map((doc) => doc.id)),
+                function (err: any) {
                     if (err) {
                         return console.error(err);
                     }
                     console.log("The file was saved!");
-                });
-            }
-        );
+                }
+            );
+        });
 };
 generateBooks();

@@ -17,40 +17,47 @@ type StorageThumbnailProps = {
 /**
  * @group Preview components
  */
-export const StorageThumbnail = React.memo<StorageThumbnailProps>(StorageThumbnailInternal, areEqual) as React.FunctionComponent<StorageThumbnailProps>;
+export const StorageThumbnail = React.memo<StorageThumbnailProps>(
+    StorageThumbnailInternal,
+    areEqual
+) as React.FunctionComponent<StorageThumbnailProps>;
 
 function areEqual(prevProps: StorageThumbnailProps, nextProps: StorageThumbnailProps) {
-    return prevProps.size === nextProps.size &&
+    return (
+        prevProps.size === nextProps.size &&
         prevProps.storagePathOrDownloadUrl === nextProps.storagePathOrDownloadUrl &&
-        prevProps.storeUrl === nextProps.storeUrl&&
-        prevProps.interactive === nextProps.interactive;
+        prevProps.storeUrl === nextProps.storeUrl &&
+        prevProps.interactive === nextProps.interactive
+    );
 }
 
 const URL_CACHE: Record<string, DownloadConfig> = {};
 
 export function StorageThumbnailInternal({
-                                             storeUrl,
-                                             interactive,
-                                             storagePathOrDownloadUrl,
-                                             size
-                                         }: StorageThumbnailProps) {
-
+    storeUrl,
+    interactive,
+    storagePathOrDownloadUrl,
+    size,
+}: StorageThumbnailProps) {
     const [error, setError] = React.useState<Error | undefined>(undefined);
     const storage = useStorageSource();
 
-    const [downloadConfig, setDownloadConfig] = React.useState<DownloadConfig>(URL_CACHE[storagePathOrDownloadUrl]);
+    const [downloadConfig, setDownloadConfig] = React.useState<DownloadConfig>(
+        URL_CACHE[storagePathOrDownloadUrl]
+    );
 
     useEffect(() => {
-        if (!storagePathOrDownloadUrl)
-            return;
+        if (!storagePathOrDownloadUrl) return;
         let unmounted = false;
-        storage.getDownloadURL(storagePathOrDownloadUrl)
+        storage
+            .getDownloadURL(storagePathOrDownloadUrl)
             .then(function (downloadConfig) {
                 if (!unmounted) {
                     setDownloadConfig(downloadConfig);
                     URL_CACHE[storagePathOrDownloadUrl] = downloadConfig;
                 }
-            }).catch(setError);
+            })
+            .catch(setError);
         return () => {
             unmounted = true;
         };
@@ -58,23 +65,30 @@ export function StorageThumbnailInternal({
 
     if (!storagePathOrDownloadUrl) return null;
 
-    const filetype = downloadConfig?.metadata ? getFiletype(downloadConfig?.metadata.contentType) : undefined;
+    const filetype = downloadConfig?.metadata
+        ? getFiletype(downloadConfig?.metadata.contentType)
+        : undefined;
     const previewType = filetype?.startsWith("image")
         ? "image"
-        : (filetype?.startsWith("video")
-            ? "video"
-            : (filetype?.startsWith("audio") ? "audio" : "file"));
+        : filetype?.startsWith("video")
+          ? "video"
+          : filetype?.startsWith("audio")
+            ? "audio"
+            : "file";
 
-    if (downloadConfig?.fileNotFound)
-        return <ErrorView error={"File not found"}></ErrorView>
+    if (downloadConfig?.fileNotFound) return <ErrorView error={"File not found"}></ErrorView>;
 
-    return downloadConfig?.url
-        ? <UrlComponentPreview previewType={previewType}
-                               url={downloadConfig.url}
-                               interactive={interactive}
-                               size={size}
-                               hint={storagePathOrDownloadUrl}/>
-        : renderSkeletonImageThumbnail(size);
+    return downloadConfig?.url ? (
+        <UrlComponentPreview
+            previewType={previewType}
+            url={downloadConfig.url}
+            interactive={interactive}
+            size={size}
+            hint={storagePathOrDownloadUrl}
+        />
+    ) : (
+        renderSkeletonImageThumbnail(size)
+    );
 }
 
 function getFiletype(input: string): FileType {

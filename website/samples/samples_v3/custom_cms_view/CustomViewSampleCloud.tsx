@@ -4,13 +4,15 @@ import { FireCMSAppConfig, FireCMSCloudApp } from "@firecms/cloud";
 
 const projectId = "YOUR_PROJECT_ID";
 
-const customViews: CMSView[] = [{
-    path: "additional",
-    name: "Additional view",
-    description: "This is an example of an additional view that is defined by the user",
-    // This can be any React component
-    view: <ExampleCMSView/>
-}];
+const customViews: CMSView[] = [
+    {
+        path: "additional",
+        name: "Additional view",
+        description: "This is an example of an additional view that is defined by the user",
+        // This can be any React component
+        view: <ExampleCMSView />,
+    },
+];
 
 const productCollection = buildCollection<any>({
     name: "Product",
@@ -20,23 +22,17 @@ const productCollection = buildCollection<any>({
         name: {
             name: "Name",
             validation: { required: true },
-            dataType: "string"
-        }
-    }
+            dataType: "string",
+        },
+    },
 });
 
 const appConfig: FireCMSAppConfig = {
     version: "1",
-    collections: ({ user }) => [
-        productCollection
-    ],
-    views: ({ user }) => customViews
+    collections: ({ user }) => [productCollection],
+    views: ({ user }) => customViews,
 };
 
 export default function App() {
-
-    return <FireCMSCloudApp
-        projectId={projectId}
-        appConfig={appConfig}
-    />;
+    return <FireCMSCloudApp projectId={projectId} appConfig={appConfig} />;
 }

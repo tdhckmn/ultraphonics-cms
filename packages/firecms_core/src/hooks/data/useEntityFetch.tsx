@@ -19,9 +19,9 @@ export interface EntityFetchProps<M extends Record<string, any>, USER extends Us
  * @group Hooks and utilities
  */
 export interface EntityFetchResult<M extends Record<string, any>> {
-    entity?: Entity<M>,
-    dataLoading: boolean,
-    dataLoadingError?: Error
+    entity?: Entity<M>;
+    dataLoading: boolean;
+    dataLoadingError?: Error;
 }
 
 const CACHE: Record<string, Entity<any> | undefined> = {};
@@ -36,15 +36,13 @@ const CACHE: Record<string, Entity<any> | undefined> = {};
  * @group Hooks and utilities
  */
 
-export function useEntityFetch<M extends Record<string, any>, USER extends User>(
-    {
-        path: inputPath,
-        entityId,
-        collection,
-        databaseId,
-        useCache = false
-    }: EntityFetchProps<M, USER>): EntityFetchResult<M> {
-
+export function useEntityFetch<M extends Record<string, any>, USER extends User>({
+    path: inputPath,
+    entityId,
+    collection,
+    databaseId,
+    useCache = false,
+}: EntityFetchProps<M, USER>): EntityFetchResult<M> {
     const dataSource = useDataSource(collection);
     const navigationController = useNavigationController();
 
@@ -57,7 +55,6 @@ export function useEntityFetch<M extends Record<string, any>, USER extends User>
     const [dataLoadingError, setDataLoadingError] = useState<Error | undefined>();
 
     useEffect(() => {
-
         setDataLoading(true);
 
         const onEntityUpdate = async (updatedEntity: Entity<M> | undefined) => {
@@ -67,7 +64,7 @@ export function useEntityFetch<M extends Record<string, any>, USER extends User>
                         collection,
                         path,
                         entity: updatedEntity,
-                        context
+                        context,
                     });
                 } catch (e: any) {
                     console.error(e);
@@ -91,8 +88,7 @@ export function useEntityFetch<M extends Record<string, any>, USER extends User>
             setDataLoading(false);
             setDataLoadingError(undefined);
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            return () => {
-            };
+            return () => {};
         } else if (entityId && path && collection) {
             if (dataSource.listenEntity) {
                 return dataSource.listenEntity<M>({
@@ -101,33 +97,31 @@ export function useEntityFetch<M extends Record<string, any>, USER extends User>
                     databaseId,
                     collection,
                     onUpdate: onEntityUpdate,
-                    onError
+                    onError,
                 });
             } else {
-                dataSource.fetchEntity<M>({
-                    path,
-                    entityId,
-                    databaseId,
-                    collection
-                })
+                dataSource
+                    .fetchEntity<M>({
+                        path,
+                        entityId,
+                        databaseId,
+                        collection,
+                    })
                     .then(onEntityUpdate)
                     .catch(onError);
-                return () => {
-                };
+                return () => {};
             }
         }
         // if no entityId is provided we do nothing
         else {
             onEntityUpdate(undefined);
-            return () => {
-            };
+            return () => {};
         }
     }, [entityId, path]);
 
     return {
         entity,
         dataLoading,
-        dataLoadingError
+        dataLoadingError,
     };
-
 }

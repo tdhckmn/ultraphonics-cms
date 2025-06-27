@@ -35,23 +35,16 @@ import {
     buildEntityCallbacks,
     EntityOnDeleteProps,
     EntityOnSaveProps,
-    toSnakeCase
+    toSnakeCase,
 } from "@firecms/core";
 
 type Product = {
     name: string;
     uppercase_name: string;
-}
+};
 
 const productCallbacks = buildEntityCallbacks({
-    onPreSave: ({
-                    collection,
-                    path,
-                    entityId,
-                    values,
-                    previousValues,
-                    status
-                }) => {
+    onPreSave: ({ collection, path, entityId, values, previousValues, status }) => {
         // return the updated values
         values.uppercase_name = values.name?.toUpperCase();
         return values;
@@ -66,40 +59,27 @@ const productCallbacks = buildEntityCallbacks({
     },
 
     onPreDelete: ({
-                      collection,
-                      path,
-                      entityId,
-                      entity,
-                      context
-                  }: EntityOnDeleteProps<Product>
-    ) => {
-        if (!context.authController.user)
-            throw Error("Not logged in users cannot delete products");
+        collection,
+        path,
+        entityId,
+        entity,
+        context,
+    }: EntityOnDeleteProps<Product>) => {
+        if (!context.authController.user) throw Error("Not logged in users cannot delete products");
     },
 
     onDelete: (props: EntityOnDeleteProps<Product>) => {
         console.log("onDelete", props);
     },
 
-    onFetch({
-                collection,
-                context,
-                entity,
-                path,
-            }: EntityOnFetchProps) {
+    onFetch({ collection, context, entity, path }: EntityOnFetchProps) {
         entity.values.name = "Forced name";
         return entity;
     },
 
-    onIdUpdate({
-                   collection,
-                   context,
-                   entityId,
-                   path,
-                   values
-               }: EntityIdUpdateProps): string {
+    onIdUpdate({ collection, context, entityId, path, values }: EntityIdUpdateProps): string {
         // return the desired ID
-        return toSnakeCase(values?.name)
+        return toSnakeCase(values?.name);
     },
 });
 
@@ -110,55 +90,55 @@ const productCollection = buildCollection<Product>({
         name: {
             name: "Name",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         uppercase_name: {
             name: "Uppercase Name",
             dataType: "string",
             disabled: true,
-            description: "This field gets updated with a preSave callback"
-        }
+            description: "This field gets updated with a preSave callback",
+        },
     },
-    callbacks: productCallbacks
+    callbacks: productCallbacks,
 });
 ```
 
 #### EntityOnSaveProps
 
-* `collection`: Resolved collection of the entity
+- `collection`: Resolved collection of the entity
 
-* `path`: string Full path where this entity is being saved
+- `path`: string Full path where this entity is being saved
 
-* `entityId`: string ID of the entity
+- `entityId`: string ID of the entity
 
-* `values`: EntityValues Values being saved
+- `values`: EntityValues Values being saved
 
-* `previousValues`: EntityValues Previous values of the entity
+- `previousValues`: EntityValues Previous values of the entity
 
-* `status`: EntityStatus New or existing entity
+- `status`: EntityStatus New or existing entity
 
-* `context`: FireCMSContext Context of the app status
+- `context`: FireCMSContext Context of the app status
 
 #### EntityOnDeleteProps
 
-* `collection`:  Resolved collection of the entity
+- `collection`: Resolved collection of the entity
 
-* `path`: string Full path where this entity is being saved
+- `path`: string Full path where this entity is being saved
 
-* `entityId`: string ID of the entity
+- `entityId`: string ID of the entity
 
-* `entity`: Entity Deleted entity
+- `entity`: Entity Deleted entity
 
-* `context`: FireCMSContext Context of the app status
+- `context`: FireCMSContext Context of the app status
 
 #### EntityIdUpdateProps
 
-* `collection`: EntityCollection Resolved collection of the entity
+- `collection`: EntityCollection Resolved collection of the entity
 
-* `path`: string Full path where this entity is being saved
+- `path`: string Full path where this entity is being saved
 
-* `entityId`: string ID of the entity
+- `entityId`: string ID of the entity
 
-* `values`: Entity values
+- `values`: Entity values
 
-* `context`: FireCMSContext Context of the app status
+- `context`: FireCMSContext Context of the app status

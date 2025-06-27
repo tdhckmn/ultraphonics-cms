@@ -4,8 +4,8 @@ import { Checkbox, DateTimeField, Label, Select, SelectItem } from "@firecms/ui"
 import { useCustomizationController } from "../../../hooks";
 
 interface DateTimeFilterFieldProps {
-    name: string,
-    mode?: "date" | "date_time",
+    name: string;
+    mode?: "date" | "date_time";
     value?: [op: VirtualTableWhereFilterOp, fieldValue: any];
     setValue: (value?: [op: VirtualTableWhereFilterOp, newValue: any]) => void;
     isArray?: boolean;
@@ -22,22 +22,21 @@ const operationLabels: Record<VirtualTableWhereFilterOp, string> = {
     "not-in": "not in",
     in: "in",
     "array-contains": "Contains",
-    "array-contains-any": "Any"
+    "array-contains-any": "Any",
 };
 
 const multipleSelectOperations = ["array-contains-any", "in"];
 
 export function DateTimeFilterField({
-                                        name,
-                                        isArray,
-                                        mode,
-                                        value,
-                                        setValue,
-                                        title
-                                    }: DateTimeFilterFieldProps) {
-
+    name,
+    isArray,
+    mode,
+    value,
+    setValue,
+    title,
+}: DateTimeFilterFieldProps) {
     const { locale } = useCustomizationController();
-    const possibleOperations: (keyof typeof operationLabels) [] = isArray
+    const possibleOperations: (keyof typeof operationLabels)[] = isArray
         ? ["array-contains"]
         : ["==", "!=", ">", "<", ">=", "<="];
 
@@ -57,31 +56,29 @@ export function DateTimeFilterField({
         setOperation(op);
         setInternalValue(newValue === null ? undefined : newValue);
 
-        const hasNewValue = newValue !== null && Array.isArray(newValue)
-            ? newValue.length > 0
-            : newValue !== undefined;
+        const hasNewValue =
+            newValue !== null && Array.isArray(newValue)
+                ? newValue.length > 0
+                : newValue !== undefined;
         if (op && hasNewValue) {
-            setValue(
-                [op, newValue]
-            );
+            setValue([op, newValue]);
         } else {
-            setValue(
-                undefined
-            );
+            setValue(undefined);
         }
     }
 
     return (
-
         <div className="flex w-[440px]">
             <div className="w-[80px]">
-                <Select value={operation}
-                        size={"large"}
-                        fullWidth={true}
-                        onValueChange={(value) => {
-                            updateFilter(value as VirtualTableWhereFilterOp, internalValue);
-                        }}
-                        renderValue={(op) => operationLabels[op as VirtualTableWhereFilterOp]}>
+                <Select
+                    value={operation}
+                    size={"large"}
+                    fullWidth={true}
+                    onValueChange={(value) => {
+                        updateFilter(value as VirtualTableWhereFilterOp, internalValue);
+                    }}
+                    renderValue={(op) => operationLabels[op as VirtualTableWhereFilterOp]}
+                >
                     {possibleOperations.map((op) => (
                         <SelectItem key={op} value={op}>
                             {operationLabels[op]}
@@ -91,7 +88,6 @@ export function DateTimeFilterField({
             </div>
 
             <div className="flex-grow ml-2 flex flex-col gap-2">
-
                 <DateTimeField
                     mode={mode}
                     size={"large"}
@@ -107,20 +103,18 @@ export function DateTimeFilterField({
                     className="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-surface-100 dark:[&:has(:checked)]:bg-surface-800"
                     htmlFor="null-filter"
                 >
-                    <Checkbox id="null-filter"
-                              checked={internalValue === null}
-                              size={"small"}
-                              onCheckedChange={(checked) => {
-                                  if (internalValue !== null)
-                                      updateFilter(operation, null);
-                                  else updateFilter(operation, undefined);
-                              }}/>
+                    <Checkbox
+                        id="null-filter"
+                        checked={internalValue === null}
+                        size={"small"}
+                        onCheckedChange={(checked) => {
+                            if (internalValue !== null) updateFilter(operation, null);
+                            else updateFilter(operation, undefined);
+                        }}
+                    />
                     Filter for null values
                 </Label>
-
             </div>
-
         </div>
     );
-
 }

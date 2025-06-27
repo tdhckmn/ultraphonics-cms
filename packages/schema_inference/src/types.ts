@@ -1,18 +1,18 @@
 import { DataType } from "./cms_types";
 
 export type TypesCount = {
-    number?: number,
-    string?: number,
-    boolean?: number,
-    map?: TypesCountRecord,
-    array?: TypesCount,
-    date?: number,
-    geopoint?: number,
-    reference?: number
+    number?: number;
+    string?: number;
+    boolean?: number;
+    map?: TypesCountRecord;
+    array?: TypesCount;
+    date?: number;
+    geopoint?: number;
+    reference?: number;
 };
 
 export type TypesCountRecord<K extends keyof DataType = any> = {
-    [P in K]: TypesCount
+    [P in K]: TypesCount;
 };
 
 export type ValuesCountEntry = {
@@ -24,7 +24,6 @@ export type ValuesCountEntry = {
 export type ValuesCountRecord = Record<string, ValuesCountEntry>;
 
 export type InferencePropertyBuilderProps = {
-
     /**
      * Name of the property
      */

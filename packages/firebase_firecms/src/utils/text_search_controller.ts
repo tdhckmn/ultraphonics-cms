@@ -7,28 +7,26 @@ import { EntityCollection, ResolvedEntityCollection } from "@firecms/core";
  * @group Firebase
  */
 export function buildExternalSearchController({
-                                                 isPathSupported,
-                                                 search
-                                             }: {
-    isPathSupported: (path: string) => boolean,
+    isPathSupported,
+    search,
+}: {
+    isPathSupported: (path: string) => boolean;
     search: (props: {
-        searchString: string,
-        path: string
-    }) => Promise<readonly string[] | undefined>,
+        searchString: string;
+        path: string;
+    }) => Promise<readonly string[] | undefined>;
 }): FirestoreTextSearchControllerBuilder {
     return (props): FirestoreTextSearchController => {
-
         const init = (props: {
-            path: string,
-            collection?: EntityCollection | ResolvedEntityCollection
+            path: string;
+            collection?: EntityCollection | ResolvedEntityCollection;
         }) => {
             return Promise.resolve(isPathSupported(props.path));
-        }
+        };
 
         return {
             init,
-            search
-        }
-    }
-
+            search,
+        };
+    };
 }

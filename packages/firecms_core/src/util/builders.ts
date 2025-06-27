@@ -17,7 +17,7 @@ import {
     PropertyOrBuilder,
     ReferenceProperty,
     StringProperty,
-    User
+    User,
 } from "../types";
 
 /**
@@ -26,10 +26,7 @@ import {
  * @param collection
  * @group Builder
  */
-export function buildCollection<
-    M extends Record<string, any> = any,
-    USER extends User = User>
-(
+export function buildCollection<M extends Record<string, any> = any, USER extends User = User>(
     collection: EntityCollection<M, USER>
 ): EntityCollection<M, USER> {
     return collection;
@@ -41,18 +38,31 @@ export function buildCollection<
  * @param property
  * @group Builder
  */
-export function buildProperty<T extends CMSType = CMSType, P extends PropertyOrBuilder<T> = PropertyOrBuilder<T>, M extends Record<string, any> = any>(
+export function buildProperty<
+    T extends CMSType = CMSType,
+    P extends PropertyOrBuilder<T> = PropertyOrBuilder<T>,
+    M extends Record<string, any> = any,
+>(
     property: P
-):
-    P extends StringProperty ? StringProperty :
-        P extends NumberProperty ? NumberProperty :
-            P extends BooleanProperty ? BooleanProperty :
-                P extends DateProperty ? DateProperty :
-                    P extends GeopointProperty ? GeopointProperty :
-                        P extends ReferenceProperty ? ReferenceProperty :
-                            P extends ArrayProperty ? ArrayProperty :
-                                P extends MapProperty ? MapProperty :
-                                    P extends PropertyBuilder<T, M> ? PropertyBuilder<T, M> : never {
+): P extends StringProperty
+    ? StringProperty
+    : P extends NumberProperty
+      ? NumberProperty
+      : P extends BooleanProperty
+        ? BooleanProperty
+        : P extends DateProperty
+          ? DateProperty
+          : P extends GeopointProperty
+            ? GeopointProperty
+            : P extends ReferenceProperty
+              ? ReferenceProperty
+              : P extends ArrayProperty
+                ? ArrayProperty
+                : P extends MapProperty
+                  ? MapProperty
+                  : P extends PropertyBuilder<T, M>
+                    ? PropertyBuilder<T, M>
+                    : never {
     return property as any;
 }
 
@@ -86,9 +96,7 @@ export function buildPropertiesOrBuilder<M extends Record<string, any>>(
  * @param enumValues
  * @group Builder
  */
-export function buildEnumValues(
-    enumValues: EnumValues
-): EnumValues {
+export function buildEnumValues(enumValues: EnumValues): EnumValues {
     return enumValues;
 }
 
@@ -98,9 +106,7 @@ export function buildEnumValues(
  * @param enumValueConfig
  * @group Builder
  */
-export function buildEnumValueConfig(
-    enumValueConfig: EnumValueConfig
-): EnumValueConfig {
+export function buildEnumValueConfig(enumValueConfig: EnumValueConfig): EnumValueConfig {
     return enumValueConfig;
 }
 
@@ -122,9 +128,10 @@ export function buildEntityCallbacks<M extends Record<string, any> = any>(
  * @param additionalFieldDelegate
  * @group Builder
  */
-export function buildAdditionalFieldDelegate<M extends Record<string, any>, USER extends User = User>(
-    additionalFieldDelegate: AdditionalFieldDelegate<M, USER>
-): AdditionalFieldDelegate<M, USER> {
+export function buildAdditionalFieldDelegate<
+    M extends Record<string, any>,
+    USER extends User = User,
+>(additionalFieldDelegate: AdditionalFieldDelegate<M, USER>): AdditionalFieldDelegate<M, USER> {
     return additionalFieldDelegate;
 }
 

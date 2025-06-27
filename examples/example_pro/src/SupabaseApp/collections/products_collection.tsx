@@ -8,8 +8,8 @@ export const locales: EnumValues = {
     fr: {
         id: "fr",
         label: "French",
-        disabled: true
-    }
+        disabled: true,
+    },
 };
 
 export const productsCollection = buildCollection<any>({
@@ -26,15 +26,15 @@ export const productsCollection = buildCollection<any>({
             description: "Name of this product",
             clearable: true,
             validation: {
-                required: true
-            }
+                required: true,
+            },
         },
         brand: {
             dataType: "string",
             name: "Brand",
             validation: {
-                required: true
-            }
+                required: true,
+            },
         },
         category: {
             dataType: "string",
@@ -47,7 +47,7 @@ export const productsCollection = buildCollection<any>({
                 cameras: "Cameras",
                 clothing_man: "Clothing man",
                 clothing_woman: "Clothing woman",
-            }
+            },
         },
 
         available_locales: {
@@ -55,16 +55,16 @@ export const productsCollection = buildCollection<any>({
             dataType: "array",
             of: {
                 dataType: "string",
-                enumValues: locales
-            }
+                enumValues: locales,
+            },
         },
         related_products: {
             dataType: "array",
             name: "Related products",
             of: {
                 dataType: "reference",
-                path: "products"
-            }
+                path: "products",
+            },
         },
         price: {
             dataType: "number",
@@ -74,27 +74,25 @@ export const productsCollection = buildCollection<any>({
             dataType: "string",
             name: "Description",
             description: "Example of a markdown field",
-            markdown: true
+            markdown: true,
         },
         metadata: {
             dataType: "map",
             name: "Metadata",
             description: "This is a field that allows arbitrary key-value input",
-            keyValue: true
+            keyValue: true,
         },
         tags: {
             dataType: "array",
             name: "Tags",
             of: {
-                dataType: "string"
-            }
+                dataType: "string",
+            },
         },
         added_on: {
             dataType: "date",
             name: "Added on",
-            autoValue: "on_create"
-        }
-
-    }
-
+            autoValue: "on_create",
+        },
+    },
 });

@@ -3,7 +3,7 @@ import { buildCollection, buildEnumValues } from "@firecms/core";
 const locales = buildEnumValues({
     "en-US": "English (United States)",
     "es-ES": "Spanish (Spain)",
-    "de-DE": "German"
+    "de-DE": "German",
 });
 
 export const localeCollection = buildCollection({
@@ -16,12 +16,12 @@ export const localeCollection = buildCollection({
         name: {
             name: "Title",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         selectable: {
             name: "Selectable",
             description: "Is this locale selectable",
-            dataType: "boolean"
-        }
-    }
+            dataType: "boolean",
+        },
+    },
 });

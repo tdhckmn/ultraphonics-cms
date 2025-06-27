@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function GradientIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"gradient"}/>
+    return <Icon {...props} iconKey={"gradient"} />;
 }

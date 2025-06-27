@@ -10,19 +10,19 @@ import { ErrorBoundary } from "../../components";
  * @group Preview components
  */
 export function ArrayOfStringsPreview({
-                                          propertyKey,
-                                          value,
-                                          property: inputProperty,
-                                          // entity,
-                                          size
-                                      }: PropertyPreviewProps<string[]>) {
+    propertyKey,
+    value,
+    property: inputProperty,
+    // entity,
+    size,
+}: PropertyPreviewProps<string[]>) {
     const authController = useAuthController();
     const customizationController = useCustomizationController();
     const property = resolveArrayProperty({
         propertyKey,
         property: inputProperty,
         propertyConfigs: customizationController.propertyConfigs,
-        authController
+        authController,
     });
 
     if (Array.isArray(property.of)) {
@@ -39,17 +39,19 @@ export function ArrayOfStringsPreview({
     return (
         <div className="flex flex-col gap-2">
             {value &&
-                value.map((v, index) =>
+                value.map((v, index) => (
                     <div key={`preview_array_strings_${propertyKey}_${index}`}>
                         <ErrorBoundary>
-                            <StringPropertyPreview propertyKey={propertyKey}
-                                                   property={stringProperty}
-                                                   value={v}
+                            <StringPropertyPreview
+                                propertyKey={propertyKey}
+                                property={stringProperty}
+                                value={v}
                                 // entity={entity}
-                                                   size={size}/>
+                                size={size}
+                            />
                         </ErrorBoundary>
                     </div>
-                )}
+                ))}
         </div>
     );
 }

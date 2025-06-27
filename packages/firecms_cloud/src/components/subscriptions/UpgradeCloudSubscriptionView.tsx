@@ -9,22 +9,23 @@ function getDefaultCurrency(productPrice: ProductPrice) {
 }
 
 export function UpgradeCloudSubscriptionView({
-                                                 product,
-                                                 includePriceSelect = true,
-                                                 largePriceLabel = false,
-                                                 subscribeCloud,
-                                                 projectId
-                                             }: {
-    product: ProductWithPrices,
-    projectId?: string,
-    includePriceSelect?: boolean,
-    largePriceLabel?: boolean,
-    subscribeCloud: (params: SubscribeCloudParams) => Promise<void>
+    product,
+    includePriceSelect = true,
+    largePriceLabel = false,
+    subscribeCloud,
+    projectId,
+}: {
+    product: ProductWithPrices;
+    projectId?: string;
+    includePriceSelect?: boolean;
+    largePriceLabel?: boolean;
+    subscribeCloud: (params: SubscribeCloudParams) => Promise<void>;
 }) {
-
     const [error, setError] = useState<Error>();
 
-    const productPrices: ProductPrice[] = product.prices.filter((p) => Boolean(p.recurring && p.currency_options));
+    const productPrices: ProductPrice[] = product.prices.filter((p) =>
+        Boolean(p.recurring && p.currency_options)
+    );
 
     if (!productPrices) {
         throw new Error("INTERNAL: No product prices found");
@@ -37,12 +38,15 @@ export function UpgradeCloudSubscriptionView({
         throw new Error("Error: Unmapped product type in ProductView");
     }
 
-    const priceSelect = <CurrencyPriceSelect
-        price={productPrice}
-        currencies={productPrice.currency_options}
-        selectedCurrency={currency}
-        setSelectedCurrency={setCurrency}
-        largePriceLabel={largePriceLabel}/>;
+    const priceSelect = (
+        <CurrencyPriceSelect
+            price={productPrice}
+            currencies={productPrice.currency_options}
+            selectedCurrency={currency}
+            setSelectedCurrency={setCurrency}
+            largePriceLabel={largePriceLabel}
+        />
+    );
 
     const [linkLoading, setLinkLoading] = useState<boolean>(false);
 
@@ -54,11 +58,9 @@ export function UpgradeCloudSubscriptionView({
                 projectId,
                 currency,
                 onCheckoutSessionReady: (url, error) => {
-
                     setLinkLoading(false);
 
-                    if (!url && !error)
-                        return;
+                    if (!url && !error) return;
                     if (error) {
                         setError(error);
                     }
@@ -67,30 +69,33 @@ export function UpgradeCloudSubscriptionView({
                             // window.open(url, "_blank"); // Open a new tab
                             window.location.assign(url);
                     }
-                }
+                },
             });
         } catch (e: any) {
             setLinkLoading(false);
             setError(e);
         }
-    }
+    };
 
-    return <div className={"flex flex-col gap-4"}>
-        <div className={"flex flex-row gap-4"}>
-            {includePriceSelect && priceSelect}
+    return (
+        <div className={"flex flex-col gap-4"}>
+            <div className={"flex flex-row gap-4"}>
+                {includePriceSelect && priceSelect}
 
-            <LoadingButton
-                variant={"filled"}
-                loading={linkLoading}
-                onClick={doSubscribe}
-                startIcon={<RocketLaunchIcon/>}>
-                Create a subscription
-            </LoadingButton>
-
+                <LoadingButton
+                    variant={"filled"}
+                    loading={linkLoading}
+                    onClick={doSubscribe}
+                    startIcon={<RocketLaunchIcon />}
+                >
+                    Create a subscription
+                </LoadingButton>
+            </div>
+            {error && (
+                <Alert color="error" className={"my-4"}>
+                    {error.message}
+                </Alert>
+            )}
         </div>
-        {error &&
-            <Alert color="error" className={"my-4"}>{error.message}</Alert>
-        }
-
-    </div>;
+    );
 }

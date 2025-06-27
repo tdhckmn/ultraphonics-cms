@@ -24,9 +24,9 @@ buildProperty({
     name: "Tags",
     of: {
         dataType: "string",
-        previewAsTag: true
+        previewAsTag: true,
     },
-    expanded: true
+    expanded: true,
 });
 ```
 
@@ -34,4 +34,3 @@ The data type is [`array`](../config/array).
 
 Internally the component used
 is [`RepeatFieldBinding`].
-

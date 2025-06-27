@@ -8,7 +8,7 @@ import {
     FilterValues,
     ListenCollectionProps,
     ListenEntityProps,
-    SaveEntityProps
+    SaveEntityProps,
 } from "@firecms/core";
 import ObjectID from "bson-objectid";
 import WebSocketClient from "../utils/WebSocketClient";
@@ -21,19 +21,21 @@ function transformIncomingData(data: any): any {
     if (data === null || data === undefined) return null;
 
     if (Array.isArray(data)) {
-        return data.map(transformIncomingData).filter(v => v !== undefined);
+        return data.map(transformIncomingData).filter((v) => v !== undefined);
     }
 
     if (typeof data === "object") {
         const result: Record<string, any> = {};
 
         // Map MongoDB _id to CMS id
-        if (data.id) { // Assuming backend sends 'id'
+        if (data.id) {
+            // Assuming backend sends 'id'
             result.id = data.id;
         }
 
         for (const key of Object.keys(data)) {
-            if (key !== "id") { // Avoid duplicating id
+            if (key !== "id") {
+                // Avoid duplicating id
                 const childValue = transformIncomingData(data[key]);
                 if (childValue !== undefined) result[key] = childValue;
             }
@@ -65,7 +67,8 @@ function transformOutgoingData(data: any): any {
         }
 
         Object.entries(data).forEach(([key, v]) => {
-            if (key !== "id") { // Avoid duplicating id to _id
+            if (key !== "id") {
+                // Avoid duplicating id to _id
                 const gqlModel = transformOutgoingData(v);
                 if (gqlModel !== undefined) {
                     result[key] = gqlModel;
@@ -115,19 +118,19 @@ export class WebSocketDataSource implements DataSourceDelegate {
      * Fetch a single entity by path and entityId.
      */
     async fetchEntity<M extends Record<string, any> = any>({
-                                                               path,
-                                                               entityId,
-                                                               collection
-                                                           }: FetchEntityProps<M>): Promise<Entity<M> | undefined> {
+        path,
+        entityId,
+        collection,
+    }: FetchEntityProps<M>): Promise<Entity<M> | undefined> {
         try {
             const response = await this.wsClient.sendRequest("fetchEntity", {
                 path,
-                entityId
+                entityId,
             });
             return {
                 id: response.id,
                 path,
-                values: this.delegateToCMSModel(response)
+                values: this.delegateToCMSModel(response),
             };
         } catch (error: any) {
             console.error("Fetch Entity Error:", error);
@@ -139,31 +142,33 @@ export class WebSocketDataSource implements DataSourceDelegate {
      * Fetch a collection of entities with optional filtering, sorting, and pagination.
      */
     async fetchCollection<M extends Record<string, any> = any>({
-                                                                   path,
-                                                                   filter,
-                                                                   limit,
-                                                                   startAfter,
-                                                                   orderBy,
-                                                                   order,
-                                                                   searchString
-                                                               }: FetchCollectionProps<M>): Promise<Entity<M>[]> {
+        path,
+        filter,
+        limit,
+        startAfter,
+        orderBy,
+        order,
+        searchString,
+    }: FetchCollectionProps<M>): Promise<Entity<M>[]> {
         try {
             const response = await this.wsClient.sendRequest("fetchCollection", {
                 path,
                 filter,
                 limit,
-                sort: orderBy ? {
-                    field: orderBy,
-                    order
-                } : undefined,
+                sort: orderBy
+                    ? {
+                          field: orderBy,
+                          order,
+                      }
+                    : undefined,
                 startAfter,
-                searchString
+                searchString,
             });
 
             return response.map((item: any) => ({
                 id: item.id, // Assuming backend sends 'id'
                 path,
-                values: this.delegateToCMSModel(item)
+                values: this.delegateToCMSModel(item),
             }));
         } catch (error: any) {
             console.error("Fetch Collection Error:", error);
@@ -175,20 +180,19 @@ export class WebSocketDataSource implements DataSourceDelegate {
      * Save (create or update) an entity.
      */
     async saveEntity<M extends Record<string, any> = any>({
-                                                              path,
-                                                              entityId,
-                                                              values,
-                                                              collection,
-                                                              status
-                                                          }: SaveEntityProps<M>): Promise<Entity<M>> {
-
+        path,
+        entityId,
+        values,
+        collection,
+        status,
+    }: SaveEntityProps<M>): Promise<Entity<M>> {
         console.log("Save Entity:", path, entityId, values, status);
         try {
             // Prepare the payload
             const payload: any = {
                 path,
                 values: this.cmsToDelegateModel(values),
-                status
+                status,
             };
             if (entityId) {
                 payload.entityId = entityId;
@@ -199,7 +203,7 @@ export class WebSocketDataSource implements DataSourceDelegate {
             return {
                 id: response.id,
                 path,
-                values: this.delegateToCMSModel(response)
+                values: this.delegateToCMSModel(response),
             };
         } catch (error: any) {
             console.error("Save Entity Error:", error);
@@ -211,13 +215,13 @@ export class WebSocketDataSource implements DataSourceDelegate {
      * Delete an entity by its path and id.
      */
     async deleteEntity<M extends Record<string, any> = any>({
-                                                                entity,
-                                                                collection
-                                                            }: DeleteEntityProps<M>): Promise<void> {
+        entity,
+        collection,
+    }: DeleteEntityProps<M>): Promise<void> {
         try {
             await this.wsClient.sendRequest("deleteEntity", {
                 path: entity.path,
-                entityId: entity.id
+                entityId: entity.id,
             });
         } catch (error: any) {
             console.error("Delete Entity Error:", error);
@@ -243,7 +247,7 @@ export class WebSocketDataSource implements DataSourceDelegate {
             const collectionData = await this.fetchCollection({
                 path,
                 filter,
-                limit: 1
+                limit: 1,
             });
             if (collectionData.length === 0) return true;
             if (entityId) {
@@ -278,21 +282,23 @@ export class WebSocketDataSource implements DataSourceDelegate {
      * Listen to a collection for real-time updates.
      */
     listenCollection<M extends Record<string, any> = any>({
-                                                              path,
-                                                              filter,
-                                                              limit,
-                                                              startAfter,
-                                                              searchString,
-                                                              orderBy,
-                                                              order,
-                                                              onUpdate,
-                                                              onError,
-                                                              collection
-                                                          }: ListenCollectionProps<M>): () => void {
-        const sort = orderBy ? {
-            field: orderBy,
-            order
-        } : undefined;
+        path,
+        filter,
+        limit,
+        startAfter,
+        searchString,
+        orderBy,
+        order,
+        onUpdate,
+        onError,
+        collection,
+    }: ListenCollectionProps<M>): () => void {
+        const sort = orderBy
+            ? {
+                  field: orderBy,
+                  order,
+              }
+            : undefined;
 
         // Initialize a cache for the entities
         const entityCache = new Map<string, Entity<M>>();
@@ -306,7 +312,7 @@ export class WebSocketDataSource implements DataSourceDelegate {
                 sort,
                 startAfter,
                 searchString,
-                fields: collection?.properties ? Object.keys(collection.properties) : []
+                fields: collection?.properties ? Object.keys(collection.properties) : [],
             },
             (update: SubscriptionMessage<any>) => {
                 console.log("Listen Collection Update:", update);
@@ -317,7 +323,7 @@ export class WebSocketDataSource implements DataSourceDelegate {
                             const entity: Entity<M> = {
                                 id: item.id,
                                 path,
-                                values: this.delegateToCMSModel(item)
+                                values: this.delegateToCMSModel(item),
                             };
                             entityCache.set(entity.id, entity);
                         });
@@ -327,7 +333,7 @@ export class WebSocketDataSource implements DataSourceDelegate {
                         const entity: Entity<M> = {
                             id: item.id,
                             path,
-                            values: this.delegateToCMSModel(item)
+                            values: this.delegateToCMSModel(item),
                         };
                         entityCache.set(entity.id, entity);
                     }
@@ -366,17 +372,17 @@ export class WebSocketDataSource implements DataSourceDelegate {
      * Listen to a single entity for real-time updates.
      */
     listenEntity<M extends Record<string, any> = any>({
-                                                          path,
-                                                          entityId,
-                                                          collection,
-                                                          onUpdate,
-                                                          onError
-                                                      }: ListenEntityProps<M>): () => void {
+        path,
+        entityId,
+        collection,
+        onUpdate,
+        onError,
+    }: ListenEntityProps<M>): () => void {
         const subscriptionId = this.wsClient.subscribe(
             "listenEntity",
             {
                 path,
-                entityId
+                entityId,
             },
             (update: SubscriptionMessage<any>) => {
                 console.log("Listen Entity Update:", update);
@@ -385,7 +391,7 @@ export class WebSocketDataSource implements DataSourceDelegate {
                         const entity: Entity<M> = {
                             id: update.data.id,
                             path,
-                            values: this.delegateToCMSModel(update.data)
+                            values: this.delegateToCMSModel(update.data),
                         };
                         onUpdate(entity);
                     } else {
@@ -393,7 +399,7 @@ export class WebSocketDataSource implements DataSourceDelegate {
                         const entity: Entity<M> = {
                             id: entityId,
                             path,
-                            values: {} as M
+                            values: {} as M,
                         };
                         onUpdate(entity);
                     }
@@ -410,7 +416,6 @@ export class WebSocketDataSource implements DataSourceDelegate {
     }
 
     initTextSearch() {
-        return Promise.resolve(true)
+        return Promise.resolve(true);
     }
 }
-

@@ -1,21 +1,32 @@
 import * as React from "react";
 import { useMemo } from "react";
 
-import { Entity, ResolvedArrayProperty, ResolvedStringProperty, StorageConfig } from "../../../types";
+import {
+    Entity,
+    ResolvedArrayProperty,
+    ResolvedStringProperty,
+    StorageConfig,
+} from "../../../types";
 import { useDropzone } from "react-dropzone";
 import { PreviewSize, PropertyPreview } from "../../../preview";
 import { ErrorBoundary } from "../../ErrorBoundary";
 import { useSnackbarController, useStorageSource } from "../../../hooks";
 import { getThumbnailMeasure } from "../../../preview/util";
-import { StorageFieldItem, useStorageUploadController } from "../../../util/useStorageUploadController";
+import {
+    StorageFieldItem,
+    useStorageUploadController,
+} from "../../../util/useStorageUploadController";
 import { StorageUploadProgress } from "../../../form/components/StorageUploadProgress";
 import { cls, EditIcon, IconButton, Typography } from "@firecms/ui";
 import { EntityTableCellActions } from "../internal/EntityTableCellActions";
 
-const dropZoneClasses = "max-w-full box-border relative pt-[2px] items-center border border-transparent outline-none rounded-md duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus:border-primary-solid";
-const activeDropClasses = "pt-0 border-2 border-solid"
-const acceptDropClasses = "transition-colors duration-200 ease-[cubic-bezier(0,0,0.2,1)] border-2 border-solid border-green-500 bg-green-50 dark:bg-green-900"
-const rejectDropClasses = "transition-colors duration-200 ease-[cubic-bezier(0,0,0.2,1)] border-2 border-solid border-red-500 bg-red-50 dark:bg-red-900"
+const dropZoneClasses =
+    "max-w-full box-border relative pt-[2px] items-center border border-transparent outline-none rounded-md duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus:border-primary-solid";
+const activeDropClasses = "pt-0 border-2 border-solid";
+const acceptDropClasses =
+    "transition-colors duration-200 ease-[cubic-bezier(0,0,0.2,1)] border-2 border-solid border-green-500 bg-green-50 dark:bg-green-900";
+const rejectDropClasses =
+    "transition-colors duration-200 ease-[cubic-bezier(0,0,0.2,1)] border-2 border-solid border-red-500 bg-red-50 dark:bg-red-900";
 
 /**
  * Field that allows to upload files to Google Cloud Storage.
@@ -29,7 +40,7 @@ export function TableStorageUpload(props: {
     error: Error | undefined;
     disabled: boolean;
     value: string | string[] | null;
-    updateValue: (newValue: (string | string[] | null)) => void;
+    updateValue: (newValue: string | string[] | null) => void;
     selected: boolean;
     focused: boolean;
     property: ResolvedStringProperty | ResolvedArrayProperty<string[]>;
@@ -39,7 +50,6 @@ export function TableStorageUpload(props: {
     openPopup?: (cellRect?: DOMRect) => void;
     onBlur?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
 }) {
-
     const {
         propertyKey,
         error,
@@ -63,7 +73,7 @@ export function TableStorageUpload(props: {
         storage,
         onFileUploadComplete,
         storagePathBuilder,
-        multipleFilesSupported
+        multipleFilesSupported,
     } = useStorageUploadController({
         entityValues: entity.values,
         entityId: entity.id,
@@ -73,11 +83,10 @@ export function TableStorageUpload(props: {
         storageSource,
         onChange: updateValue,
         value,
-        disabled
+        disabled,
     });
 
     return (
-
         <StorageUpload
             internalValue={internalValue}
             setInternalValue={setInternalValue}
@@ -95,8 +104,8 @@ export function TableStorageUpload(props: {
             multipleFilesSupported={multipleFilesSupported}
             onFilesAdded={onFilesAdded}
             onFileUploadComplete={onFileUploadComplete}
-            previewSize={previewSize}/>
-
+            previewSize={previewSize}
+        />
     );
 }
 
@@ -117,29 +126,32 @@ interface StorageUploadProps {
     onFilesAdded: (acceptedFiles: File[]) => void;
     storagePathBuilder: (file: File) => string;
     openPopup?: (cellRect?: DOMRect) => void;
-    onFileUploadComplete: (uploadedPath: string, entry: StorageFieldItem, fileMetadata?: any) => Promise<void>;
+    onFileUploadComplete: (
+        uploadedPath: string,
+        entry: StorageFieldItem,
+        fileMetadata?: any
+    ) => Promise<void>;
 }
 
 function StorageUpload({
-                           property,
-                           name,
-                           internalValue,
-                           setInternalValue,
-                           openPopup,
-                           entity,
-                           selected,
-                           error,
-                           onChange,
-                           multipleFilesSupported,
-                           previewSize: previewSizeInput,
-                           disabled,
-                           autoFocus,
-                           storage,
-                           onFilesAdded,
-                           onFileUploadComplete,
-                           storagePathBuilder,
-                       }: StorageUploadProps) {
-
+    property,
+    name,
+    internalValue,
+    setInternalValue,
+    openPopup,
+    entity,
+    selected,
+    error,
+    onChange,
+    multipleFilesSupported,
+    previewSize: previewSizeInput,
+    disabled,
+    autoFocus,
+    storage,
+    onFilesAdded,
+    onFileUploadComplete,
+    storagePathBuilder,
+}: StorageUploadProps) {
     const previewSize = previewSizeInput;
     if (multipleFilesSupported) {
         const arrayProperty = property as ResolvedArrayProperty<string[]>;
@@ -160,15 +172,13 @@ function StorageUpload({
 
     const snackbarContext = useSnackbarController();
 
-    const {
-        open,
-        getRootProps,
-        getInputProps,
-        isDragActive,
-        isDragAccept,
-        isDragReject
-    } = useDropzone({
-            accept: storage.acceptedFiles ? storage.acceptedFiles.map(e => ({ [e]: [] })).reduce((a, b) => ({ ...a, ...b }), {}) : undefined,
+    const { open, getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } =
+        useDropzone({
+            accept: storage.acceptedFiles
+                ? storage.acceptedFiles
+                      .map((e) => ({ [e]: [] }))
+                      .reduce((a, b) => ({ ...a, ...b }), {})
+                : undefined,
             disabled,
             maxSize: storage.maxSize,
             noClick: true,
@@ -181,19 +191,18 @@ function StorageUpload({
                         if (error.code === "file-too-large") {
                             snackbarContext.open({
                                 type: "error",
-                                message: `Error uploading file: File is larger than ${storage.maxSize} bytes`
+                                message: `Error uploading file: File is larger than ${storage.maxSize} bytes`,
                             });
                         } else if (error.code === "file-invalid-type") {
                             snackbarContext.open({
                                 type: "error",
-                                message: "Error uploading file: File type is not supported"
+                                message: "Error uploading file: File type is not supported",
                             });
                         }
                     }
                 }
-            }
-        }
-    );
+            },
+        });
 
     const { ...rootProps } = getRootProps();
 
@@ -202,23 +211,24 @@ function StorageUpload({
         : "Drag 'n' drop a file here, or click here edit";
 
     const renderProperty = multipleFilesSupported
-        ? (property as ResolvedArrayProperty<string[]>).of as ResolvedStringProperty
-        : property as ResolvedStringProperty;
+        ? ((property as ResolvedArrayProperty<string[]>).of as ResolvedStringProperty)
+        : (property as ResolvedStringProperty);
 
     const imageSize = useMemo(() => getThumbnailMeasure(previewSize), [previewSize]);
     const showError = !disabled && error;
 
     return (
-        <div {...rootProps}
-             className={cls(dropZoneClasses,
-                 "relative w-full h-full flex",
-                 `justify-${hasValue ? "start" : "center"}`,
-                 isDragActive ? activeDropClasses : "",
-                 isDragAccept ? acceptDropClasses : "",
-                 isDragReject ? rejectDropClasses : ""
-             )}
+        <div
+            {...rootProps}
+            className={cls(
+                dropZoneClasses,
+                "relative w-full h-full flex",
+                `justify-${hasValue ? "start" : "center"}`,
+                isDragActive ? activeDropClasses : "",
+                isDragAccept ? acceptDropClasses : "",
+                isDragReject ? rejectDropClasses : ""
+            )}
         >
-
             <input autoFocus={autoFocus} {...getInputProps()} />
 
             {internalValue.map((entry, index) => {
@@ -230,7 +240,8 @@ function StorageUpload({
                             property={renderProperty}
                             value={entry.storagePathOrDownloadUrl}
                             entity={entity}
-                            size={previewSize}/>
+                            size={previewSize}
+                        />
                     );
                 } else if (entry.file) {
                     child = (
@@ -249,67 +260,59 @@ function StorageUpload({
                 return child;
             })}
 
-            {!internalValue && <div
-                className="flex-grow m-2 max-w-[200px]"
-                onClick={open}>
-                <Typography
-                    className="text-surface-400 dark:text-surface-600"
-                    variant={"body2"}
-                    align={"center"}>
-                    {helpText}
-                </Typography>
-            </div>}
+            {!internalValue && (
+                <div className="flex-grow m-2 max-w-[200px]" onClick={open}>
+                    <Typography
+                        className="text-surface-400 dark:text-surface-600"
+                        variant={"body2"}
+                        align={"center"}
+                    >
+                        {helpText}
+                    </Typography>
+                </div>
+            )}
 
             <EntityTableCellActions
                 showError={showError}
                 disabled={disabled}
                 showExpandIcon={true}
                 selected={selected}
-                openPopup={!disabled ? openPopup : undefined}>
-                <IconButton
-                    color={"inherit"}
-                    size={"small"}
-                    onClick={open}>
-                    <EditIcon size={"small"} className={"text-surface-500"}/>
+                openPopup={!disabled ? openPopup : undefined}
+            >
+                <IconButton color={"inherit"} size={"small"} onClick={open}>
+                    <EditIcon size={"small"} className={"text-surface-500"} />
                 </IconButton>
             </EntityTableCellActions>
-
         </div>
     );
-
 }
 
 interface TableStorageItemPreviewProps {
     property: ResolvedStringProperty;
-    value: string,
+    value: string;
     size: PreviewSize;
     entity: Entity<any>;
 }
 
 export function TableStorageItemPreview({
-                                            property,
-                                            value,
-                                            size,
-                                            entity
-                                        }: TableStorageItemPreviewProps) {
-
+    property,
+    value,
+    size,
+    entity,
+}: TableStorageItemPreviewProps) {
     return (
-        <div
-            className={"relative p-2 max-w-full"}
-        >
-
-            {value &&
+        <div className={"relative p-2 max-w-full"}>
+            {value && (
                 <ErrorBoundary>
                     <PropertyPreview
                         propertyKey={"ignore"} // TODO: Fix this
                         value={value}
                         property={property}
                         // entity={entity}
-                        size={size}/>
+                        size={size}
+                    />
                 </ErrorBoundary>
-            }
-
+            )}
         </div>
     );
-
 }

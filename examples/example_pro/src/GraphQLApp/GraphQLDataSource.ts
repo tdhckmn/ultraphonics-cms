@@ -7,12 +7,12 @@ import {
     FetchCollectionProps,
     FetchEntityProps,
     FilterValues,
-    SaveEntityProps
+    SaveEntityProps,
 } from "@firecms/core";
 
 const client = new ApolloClient({
     uri: "http://localhost:4000/graphql",
-    cache: new InMemoryCache()
+    cache: new InMemoryCache(),
 });
 
 export class GraphQLDataSource implements DataSourceDelegate {
@@ -29,35 +29,34 @@ export class GraphQLDataSource implements DataSourceDelegate {
     }
 
     async fetchEntity<M extends Record<string, any> = any>({
-                                                               path,
-                                                               entityId
-                                                           }: FetchEntityProps<M>): Promise<Entity<M> | undefined> {
+        path,
+        entityId,
+    }: FetchEntityProps<M>): Promise<Entity<M> | undefined> {
         const filter: FilterValues<Extract<string, string>> = { _id: ["==", entityId] };
 
         const collection = await this.fetchCollection<M>({
             path,
             filter,
-            limit: 1
+            limit: 1,
         });
 
         return collection.length > 0 ? collection[0] : undefined;
     }
 
     async fetchCollection<M extends Record<string, any> = any>({
-                                                                   path,
-                                                                   filter,
-                                                                   limit,
-                                                                   startAfter,
-                                                                   orderBy,
-                                                                   order,
-                                                                   searchString
-                                                               }: FetchCollectionProps<M>): Promise<Entity<M>[]> {
-        const gqlFilters = Object.entries(filter ?? {})
-            .map(([key, [op, value]]: any) => ({
-                field: key,
-                op,
-                value
-            }));
+        path,
+        filter,
+        limit,
+        startAfter,
+        orderBy,
+        order,
+        searchString,
+    }: FetchCollectionProps<M>): Promise<Entity<M>[]> {
+        const gqlFilters = Object.entries(filter ?? {}).map(([key, [op, value]]: any) => ({
+            field: key,
+            op,
+            value,
+        }));
 
         const queryResult = await client.query({
             query: gql`
@@ -87,21 +86,21 @@ export class GraphQLDataSource implements DataSourceDelegate {
                 orderBy,
                 order,
                 searchString,
-                limit
-            }
+                limit,
+            },
         });
 
         return queryResult.data.dynamicQuery.map((item: any) => ({
             id: item._id,
-            values: this.delegateToCMSModel(item)
+            values: this.delegateToCMSModel(item),
         }));
     }
 
     async saveEntity<M extends Record<string, any> = any>({
-                                                              path,
-                                                              entityId,
-                                                              values
-                                                          }: SaveEntityProps<M>): Promise<Entity<M>> {
+        path,
+        entityId,
+        values,
+    }: SaveEntityProps<M>): Promise<Entity<M>> {
         const mutationResult = await client.mutate({
             mutation: gql`
                 mutation (
@@ -122,39 +121,33 @@ export class GraphQLDataSource implements DataSourceDelegate {
             variables: {
                 collectionName: path,
                 id: entityId,
-                values: this.cmsToDelegateModel(values)
-            }
+                values: this.cmsToDelegateModel(values),
+            },
         });
 
         const savedEntity = mutationResult.data.saveEntity;
         return {
             id: savedEntity._id,
             path,
-            values: this.delegateToCMSModel(savedEntity)
+            values: this.delegateToCMSModel(savedEntity),
         };
     }
 
     async deleteEntity<M extends Record<string, any> = any>({
-                                                                entity
-                                                            }: DeleteEntityProps<M>): Promise<void> {
+        entity,
+    }: DeleteEntityProps<M>): Promise<void> {
         await client.mutate({
             mutation: gql`
-                mutation (
-                    $collectionName: String!,
-                    $id: String!
-                ) {
-                    deleteEntity(
-                        collectionName: $collectionName,
-                        id: $id
-                    ) {
+                mutation ($collectionName: String!, $id: String!) {
+                    deleteEntity(collectionName: $collectionName, id: $id) {
                         id
                     }
                 }
             `,
             variables: {
                 collectionName: entity.path,
-                id: entity.id
-            }
+                id: entity.id,
+            },
         });
     }
 
@@ -162,7 +155,7 @@ export class GraphQLDataSource implements DataSourceDelegate {
         const filter: FilterValues<string> = { [name]: ["==", value] };
         const collection = await this.fetchCollection({
             path,
-            filter
+            filter,
         });
         return collection.length === 0;
     }
@@ -184,7 +177,7 @@ export function graphQLToCMSModel(data: any): any {
     if (data === null || data === undefined) return null;
 
     if (Array.isArray(data)) {
-        return data.map(graphQLToCMSModel).filter(v => v !== undefined);
+        return data.map(graphQLToCMSModel).filter((v) => v !== undefined);
     }
 
     if (typeof data === "object") {
@@ -208,7 +201,7 @@ export function cmsToGraphQLModel(data: any): any {
     if (data === undefined) return null;
 
     if (Array.isArray(data)) {
-        return data.map(v => cmsToGraphQLModel(v));
+        return data.map((v) => cmsToGraphQLModel(v));
     }
 
     if (typeof data === "object") {
@@ -219,7 +212,8 @@ export function cmsToGraphQLModel(data: any): any {
         }
 
         Object.entries(data).forEach(([key, v]) => {
-            if (key !== "id") { // Avoid duplicating id to _id
+            if (key !== "id") {
+                // Avoid duplicating id to _id
                 result[key] = cmsToGraphQLModel(v);
             }
         });

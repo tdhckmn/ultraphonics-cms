@@ -1,11 +1,17 @@
-import { EntityCollection, Property, ResolvedArrayProperty, ResolvedProperty } from "../../../types";
+import {
+    EntityCollection,
+    Property,
+    ResolvedArrayProperty,
+    ResolvedProperty,
+} from "../../../types";
 
-export function getTableCellAlignment(property: Property | ResolvedProperty): "right" | "left" | "center" {
+export function getTableCellAlignment(
+    property: Property | ResolvedProperty
+): "right" | "left" | "center" {
     if (property.dataType === "boolean") {
         return "center";
     } else if (property.dataType === "number") {
-        if (property.enumValues)
-            return "left";
+        if (property.enumValues) return "left";
         return "right";
     } else if (property.dataType === "date") {
         return "right";
@@ -15,7 +21,6 @@ export function getTableCellAlignment(property: Property | ResolvedProperty): "r
 }
 
 export function getTablePropertyColumnWidth(property: ResolvedProperty): number {
-
     if (property.columnWidth) {
         return property.columnWidth;
     }

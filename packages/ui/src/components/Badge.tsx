@@ -19,13 +19,9 @@ const getColor = (color: BadgeColor) => {
         default:
             return "bg-surface-accent-300 dark:bg-surface-accent-700";
     }
-}
+};
 
-export const Badge: React.FC<BadgeProps> = ({
-                                                color = "primary",
-                                                invisible = false,
-                                                children
-                                            }) => {
+export const Badge: React.FC<BadgeProps> = ({ color = "primary", invisible = false, children }) => {
     return (
         <div className="relative inline-block w-fit">
             {children}
@@ -37,4 +33,4 @@ export const Badge: React.FC<BadgeProps> = ({
             />
         </div>
     );
-}
+};

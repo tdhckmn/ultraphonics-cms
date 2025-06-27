@@ -5,30 +5,16 @@ import React from "react";
 import { FieldCaption, toSnakeCase, unslugify } from "@firecms/core";
 
 type CommonPropertyFieldsProps = {
-    showErrors: boolean,
-    disabledId: boolean,
+    showErrors: boolean;
+    disabledId: boolean;
     disabled: boolean;
     isNewProperty: boolean;
     autoUpdateId: boolean;
 };
 
 export const CommonPropertyFields = React.forwardRef<HTMLDivElement, CommonPropertyFieldsProps>(
-    function CommonPropertyFields({
-                                      showErrors,
-                                      disabledId,
-                                      disabled,
-                                      autoUpdateId,
-                                      isNewProperty
-                                  }, ref) {
-
-        const {
-            errors,
-            values,
-            setFieldValue,
-            setFieldTouched,
-            touched,
-            validate
-        } = useFormex<PropertyWithId>();
+    function CommonPropertyFields({ showErrors, disabledId, disabled, autoUpdateId, isNewProperty }, ref) {
+        const { errors, values, setFieldValue, setFieldTouched, touched, validate } = useFormex<PropertyWithId>();
 
         const name = "name";
         const nameError = showErrors && getIn(errors, name);
@@ -41,7 +27,6 @@ export const CommonPropertyFields = React.forwardRef<HTMLDivElement, CommonPrope
 
         return (
             <div className={"flex flex-col gap-2 col-span-12"}>
-
                 <div>
                     <Field
                         name={name}
@@ -52,7 +37,7 @@ export const CommonPropertyFields = React.forwardRef<HTMLDivElement, CommonPrope
                             const newNameValue = e.target.value;
                             const idTouched = getIn(touched, id);
                             if (!idTouched && autoUpdateId) {
-                                setFieldValue(id, newNameValue ? toSnakeCase(newNameValue) : "", false)
+                                setFieldValue(id, newNameValue ? toSnakeCase(newNameValue) : "", false);
                             }
                             setFieldValue(name, newNameValue, true);
                             setFieldTouched(name, true);
@@ -61,11 +46,10 @@ export const CommonPropertyFields = React.forwardRef<HTMLDivElement, CommonPrope
                         placeholder={"Field name"}
                         required
                         disabled={disabled}
-                        error={Boolean(nameError)}/>
+                        error={Boolean(nameError)}
+                    />
 
-                    <FieldCaption error={Boolean(nameError)}>
-                        {nameError}
-                    </FieldCaption>
+                    <FieldCaption error={Boolean(nameError)}>{nameError}</FieldCaption>
                 </div>
 
                 <div>
@@ -78,7 +62,7 @@ export const CommonPropertyFields = React.forwardRef<HTMLDivElement, CommonPrope
                             const newIdValue = e.target.value;
                             const nameTouched = getIn(touched, name);
                             if (!nameTouched && autoUpdateId) {
-                                setFieldValue(name, newIdValue ? unslugify(newIdValue) : "")
+                                setFieldValue(name, newIdValue ? unslugify(newIdValue) : "");
                             }
                             setFieldValue(id, newIdValue, true);
                             setFieldTouched(id, true);
@@ -86,25 +70,22 @@ export const CommonPropertyFields = React.forwardRef<HTMLDivElement, CommonPrope
                         disabled={disabledId || disabled}
                         required
                         size="small"
-                        error={Boolean(idError)}/>
-                    <FieldCaption error={Boolean(idError)}>
-                        {idError}
-                    </FieldCaption>
+                        error={Boolean(idError)}
+                    />
+                    <FieldCaption error={Boolean(idError)}>{idError}</FieldCaption>
                 </div>
 
                 <div>
-                    <Field name={description}
-                           as={DebouncedTextField}
-                           label={"Description"}
-                           disabled={disabled}
-                           error={Boolean(descriptionError)}/>
-                    <FieldCaption error={Boolean(descriptionError)}>
-                        {descriptionError}
-                    </FieldCaption>
+                    <Field
+                        name={description}
+                        as={DebouncedTextField}
+                        label={"Description"}
+                        disabled={disabled}
+                        error={Boolean(descriptionError)}
+                    />
+                    <FieldCaption error={Boolean(descriptionError)}>{descriptionError}</FieldCaption>
                 </div>
-
             </div>
         );
-
-    }
+    },
 );

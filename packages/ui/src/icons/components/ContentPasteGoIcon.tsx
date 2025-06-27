@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function ContentPasteGoIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"content_paste_go"}/>
+    return <Icon {...props} iconKey={"content_paste_go"} />;
 }

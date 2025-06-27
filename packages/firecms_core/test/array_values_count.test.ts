@@ -6,7 +6,7 @@ describe("getArrayValuesCount", () => {
         const array = [
             { a: [1, 2, 3], b: [1, 2], c: [1] },
             { a: [1, 2], b: [1, 2, 3, 4], c: [] },
-            { a: [1], b: [], c: [1, 2, 3, 4, 5] }
+            { a: [1], b: [], c: [1, 2, 3, 4, 5] },
         ];
         const result = getArrayValuesCount(array);
         expect(result).toEqual({ a: 3, b: 4, c: 5 });
@@ -16,7 +16,7 @@ describe("getArrayValuesCount", () => {
         const array = [
             { a: { b: [1, 2, 3], c: { d: [1, 2], e: [1] } } },
             { a: { b: [1, 2], c: { d: [1, 2, 3, 4], e: [] } } },
-            { a: { b: [1], c: { d: [], e: [1, 2, 3, 4, 5] } } }
+            { a: { b: [1], c: { d: [], e: [1, 2, 3, 4, 5] } } },
         ];
         const result = getArrayValuesCount(array);
         expect(result).toEqual({ "a.b": 3, "a.c.d": 4, "a.c.e": 5 });

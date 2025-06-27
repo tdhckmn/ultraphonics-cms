@@ -11,7 +11,7 @@ const productsReferenceProperty = buildProperty({
     name: "Product",
     dataType: "reference",
     path: "products",
-    previewProperties: ["name", "main_image"]
+    previewProperties: ["name", "main_image"],
 });
 ```
 
@@ -35,8 +35,8 @@ e.g. `forceFilter: { age: [">=", 18] }`
 
 ### `validation`
 
-* `required` Should this field be compulsory.
-* `requiredMessage` Message to be displayed as a validation error.
+- `required` Should this field be compulsory.
+- `requiredMessage` Message to be displayed as a validation error.
 
 ### `defaultValue`
 
@@ -44,14 +44,13 @@ Default value for this property.
 You can set the default value by defining an EntityReference:
 
 ```tsx
-
 import { buildProperty } from "./builders";
 
 const productsReferenceProperty = buildProperty({
     name: "Product",
     dataType: "reference",
     path: "products",
-    defaultValue: new EntityReference("B000P0MDMS", "products")
+    defaultValue: new EntityReference("B000P0MDMS", "products"),
 });
 ```
 

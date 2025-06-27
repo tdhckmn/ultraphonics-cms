@@ -14,26 +14,24 @@ want to use the ids of a collection as the enum values of a `string`.
 ```tsx
 import { useCallback } from "react";
 import {
-// ...
+    // ...
     EntityCollectionsBuilder,
 } from "@firecms/core";
 
 // ...
 
-const collectionsBuilder: EntityCollectionsBuilder = useCallback(async ({
-                                                                            user,
-                                                                            authController,
-                                                                            dataSource
-                                                                        }) =>
-    ({
+const collectionsBuilder: EntityCollectionsBuilder = useCallback(
+    async ({ user, authController, dataSource }) => ({
         collections: [
             buildCollection({
                 path: "products",
                 properties: {}, // ...
-                name: "Products"
-            })
-        ]
-    }), []);
+                name: "Products",
+            }),
+        ],
+    }),
+    []
+);
 ```
 
 :::note
@@ -52,50 +50,47 @@ example, the roles or the permissions.
 ```tsx
 import { useCallback } from "react";
 
-const myAuthenticator: Authenticator<FirebaseUser> = useCallback(async ({
-                                                                            user,
-                                                                            authController
-                                                                        }) => {
+const myAuthenticator: Authenticator<FirebaseUser> = useCallback(
+    async ({ user, authController }) => {
+        if (user?.email?.includes("flanders")) {
+            throw Error("Stupid Flanders!");
+        }
 
-    if (user?.email?.includes("flanders")) {
-        throw Error("Stupid Flanders!");
-    }
+        console.log("Allowing access to", user?.email);
+        // This is an example of retrieving async data related to the user
+        // and storing it in the controller's extra field.
+        const sampleUserRoles = await Promise.resolve(["admin"]);
+        authController.setExtra(sampleUserRoles);
 
-    console.log("Allowing access to", user?.email);
-    // This is an example of retrieving async data related to the user
-    // and storing it in the controller's extra field.
-    const sampleUserRoles = await Promise.resolve(["admin"]);
-    authController.setExtra(sampleUserRoles);
-
-    return true;
-}, []);
+        return true;
+    },
+    []
+);
 ```
 
 Then you can access the extra data in the `collectionsBuilder` callback.
 
 ```tsx
-const collectionsBuilder: EntityCollectionsBuilder = useCallback(async ({
-                                                                            user,
-                                                                            authController,
-                                                                            dataSource
-                                                                        }) => {
+const collectionsBuilder: EntityCollectionsBuilder = useCallback(
+    async ({ user, authController, dataSource }) => {
+        const userRoles = authController.extra;
 
-    const userRoles = authController.extra;
-
-    if (userRoles?.includes("admin")) {
-        return {
-            collections: [
-                buildCollection({
-                    path: "products",
-                    properties: {}, // ...
-                    name: "Products"
-                })
-            ]
-        };
-    } else {
-        return {
-            collections: []
-        };
-    }
-}, []);
+        if (userRoles?.includes("admin")) {
+            return {
+                collections: [
+                    buildCollection({
+                        path: "products",
+                        properties: {}, // ...
+                        name: "Products",
+                    }),
+                ],
+            };
+        } else {
+            return {
+                collections: [],
+            };
+        }
+    },
+    []
+);
 ```

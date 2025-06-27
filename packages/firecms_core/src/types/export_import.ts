@@ -8,7 +8,7 @@ import { FireCMSContext } from "./firecms_context";
  * @group Models
  */
 export interface ExportConfig<USER extends User = User> {
-    additionalFields: ExportMappingFunction<USER> [];
+    additionalFields: ExportMappingFunction<USER>[];
 }
 
 /**
@@ -17,10 +17,10 @@ export interface ExportConfig<USER extends User = User> {
 export interface ExportMappingFunction<USER extends User = User> {
     key: string;
     builder: ({
-                  entity,
-                  context
-              }: {
-        entity: Entity<any>,
-        context: FireCMSContext<USER>
+        entity,
+        context,
+    }: {
+        entity: Entity<any>;
+        context: FireCMSContext<USER>;
     }) => Promise<string> | string;
 }

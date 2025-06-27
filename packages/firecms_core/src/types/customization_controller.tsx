@@ -6,7 +6,6 @@ import { Locale } from "./locales";
 import { PropertyConfig } from "./property_config";
 
 export type CustomizationController = {
-
     /**
      * Builder for generating utility links for entities
      */
@@ -45,13 +44,11 @@ export type CustomizationController = {
     propertyConfigs: Record<string, PropertyConfig>;
 
     components?: {
-
         /**
          * Component to render when a reference is missing
          */
         missingReference?: React.ComponentType<{
-            path: string,
+            path: string;
         }>;
-
     };
-}
+};

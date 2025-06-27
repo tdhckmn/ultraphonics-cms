@@ -1,6 +1,6 @@
 import React from "react";
 
-import equal from "react-fast-compare"
+import equal from "react-fast-compare";
 
 import { CellRendererParams, VirtualTableColumn } from "./VirtualTableProps";
 
@@ -18,8 +18,9 @@ type VirtualTableCellProps<T extends any> = {
 export const VirtualTableCell = React.memo<VirtualTableCellProps<any>>(
     function VirtualTableCell<T>(props: VirtualTableCellProps<T>) {
         // @ts-ignore
-        return props.rowData && props.cellRenderer(
-            {
+        return (
+            props.rowData &&
+            props.cellRenderer({
                 cellData: props.cellData,
                 rowData: props.rowData,
                 rowIndex: props.rowIndex,
@@ -27,16 +28,18 @@ export const VirtualTableCell = React.memo<VirtualTableCellProps<any>>(
                 column: props.column,
                 columns: props.columns,
                 columnIndex: props.columnIndex,
-                width: props.column.width
-            } as CellRendererParams<T>
+                width: props.column.width,
+            } as CellRendererParams<T>)
         );
     },
     (a, b) => {
-        return equal(a.rowData, b.rowData) &&
+        return (
+            equal(a.rowData, b.rowData) &&
             equal(a.column, b.column) &&
             equal(a.cellData, b.cellData) &&
             equal(a.rowIndex, b.rowIndex) &&
             equal(a.cellRenderer, b.cellRenderer) &&
             equal(a.columnIndex, b.columnIndex)
+        );
     }
 );

@@ -35,16 +35,10 @@ import { EntityCustomView, buildCollection } from "@firecms/core";
 const sampleView: EntityCustomView = {
     key: "preview",
     name: "Blog entry preview",
-    Builder: ({
-                  collection,
-                  entity,
-                  modifiedValues,
-                  formContext
-              }) => (
+    Builder: ({ collection, entity, modifiedValues, formContext }) => (
         // This is a custom component that you can build as any React component
-        <MyBlogPreviewComponent entity={entity}
-                                modifiedValues={modifiedValues}/>
-    )
+        <MyBlogPreviewComponent entity={entity} modifiedValues={modifiedValues} />
+    ),
 };
 ```
 
@@ -64,29 +58,28 @@ In this example we creating a secondary form with a map field, including name an
 import { EntityCustomViewParams, PropertyFieldBinding } from "@firecms/core";
 import { Container } from "@firecms/ui";
 
-export function SecondaryForm({
-                                  formContext
-                              }: EntityCustomViewParams) {
-
+export function SecondaryForm({ formContext }: EntityCustomViewParams) {
     return (
         <Container className={"my-16"}>
-            <PropertyFieldBinding context={formContext}
-                                  propertyKey={"myTestMap"}
-                                  property={{
-                                      dataType: "map",
-                                      name: "My test map",
-                                      properties: {
-                                          name: {
-                                              name: "Name",
-                                              dataType: "string",
-                                              validation: { required: true }
-                                          },
-                                          age: {
-                                              name: "Age",
-                                              dataType: "number",
-                                          }
-                                      }
-                                  }}/>
+            <PropertyFieldBinding
+                context={formContext}
+                propertyKey={"myTestMap"}
+                property={{
+                    dataType: "map",
+                    name: "My test map",
+                    properties: {
+                        name: {
+                            name: "Name",
+                            dataType: "string",
+                            validation: { required: true },
+                        },
+                        age: {
+                            name: "Age",
+                            dataType: "number",
+                        },
+                    },
+                }}
+            />
         </Container>
     );
 }
@@ -102,18 +95,19 @@ export const testCollection = buildCollection<any>({
     properties: {
         // ... your blog properties here
     },
-    entityViews: [{
-        key: "user_details",
-        name: "Details",
-        includeActions: true, // this prop allows you to include the default actions in the bottom bar
-        Builder: SecondaryForm
-    }]
+    entityViews: [
+        {
+            key: "user_details",
+            name: "Details",
+            includeActions: true, // this prop allows you to include the default actions in the bottom bar
+            Builder: SecondaryForm,
+        },
+    ],
 });
 ```
 
 Note that you can use the `includeActions` prop to include the default actions in the bottom bar, of the view,
 so the user doesn't need to go back to the main form view to perform actions like saving or deleting the entity.
-
 
 ### Add your entity view directly to the collection
 
@@ -131,20 +125,15 @@ const blogCollection = buildCollection({
         {
             path: "preview",
             name: "Blog entry preview",
-            Builder: ({
-                          collection,
-                          entity,
-                          modifiedValues
-                      }) => (
+            Builder: ({ collection, entity, modifiedValues }) => (
                 // This is a custom component that you can build as any React component
-                <MyBlogPreviewComponent entity={entity}
-                                        modifiedValues={modifiedValues}/>
-            )
-        }
+                <MyBlogPreviewComponent entity={entity} modifiedValues={modifiedValues} />
+            ),
+        },
     ],
     properties: {
         // ... your blog properties here
-    }
+    },
 });
 ```
 
@@ -163,20 +152,18 @@ import { FireCMSAppConfig } from "@firecms/core";
 const appConfig: FireCMSAppConfig = {
     version: "1",
     collections: async (props) => {
-        return ([
+        return [
             // ... your collections here
-        ]);
+        ];
     },
-    entityViews: [{
-        key: "test-view",
-        name: "Test",
-        Builder: ({
-                      collection,
-                      entity,
-                      modifiedValues
-                  }) => <div>Your view</div>
-    }]
-}
+    entityViews: [
+        {
+            key: "test-view",
+            name: "Test",
+            Builder: ({ collection, entity, modifiedValues }) => <div>Your view</div>,
+        },
+    ],
+};
 
 export default appConfig;
 ```
@@ -190,15 +177,13 @@ In FireCMS PRO, you can add it to the entity view registry in your main
 //...
 <FireCMS
     //...
-    entityViews={[{
-        key: "test-view",
-        name: "Test",
-        Builder: ({
-                      collection,
-                      entity,
-                      modifiedValues
-                  }) => <div>Your view</div>
-    }]}
+    entityViews={[
+        {
+            key: "test-view",
+            name: "Test",
+            Builder: ({ collection, entity, modifiedValues }) => <div>Your view</div>,
+        },
+    ]}
     //...
 />
 ```
@@ -219,7 +204,6 @@ const blogCollection = buildCollection({
     entityViews: ["test-view"],
     properties: {
         // ... your blog properties here
-    }
+    },
 });
 ```
-

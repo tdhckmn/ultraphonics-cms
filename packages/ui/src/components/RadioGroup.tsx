@@ -1,12 +1,12 @@
 "use client";
-import * as React from "react"
-import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
+import * as React from "react";
+import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
 import { cls } from "../util";
 
 export interface RadioGroupProps {
     id?: string;
     children: React.ReactNode;
-    name?: string
+    name?: string;
     required?: boolean;
     disabled?: boolean;
     /**
@@ -25,19 +25,12 @@ export interface RadioGroupProps {
 const RadioGroup = React.forwardRef<
     React.ElementRef<typeof RadioGroupPrimitive.Root>,
     RadioGroupProps
->(({
-       className,
-       ...props
-   }, ref) => {
+>(({ className, ...props }, ref) => {
     return (
-        <RadioGroupPrimitive.Root
-            className={cls("grid gap-2", className)}
-            {...props}
-            ref={ref}
-        />
-    )
-})
-RadioGroup.displayName = RadioGroupPrimitive.Root.displayName
+        <RadioGroupPrimitive.Root className={cls("grid gap-2", className)} {...props} ref={ref} />
+    );
+});
+RadioGroup.displayName = RadioGroupPrimitive.Root.displayName;
 
 export interface RadioGroupItemProps {
     id?: string;
@@ -50,10 +43,7 @@ export interface RadioGroupItemProps {
 const RadioGroupItem = React.forwardRef<
     React.ElementRef<typeof RadioGroupPrimitive.Item>,
     RadioGroupItemProps
->(({
-       className,
-       ...props
-   }, ref) => {
+>(({ className, ...props }, ref) => {
     return (
         <RadioGroupPrimitive.Item
             ref={ref}
@@ -64,11 +54,11 @@ const RadioGroupItem = React.forwardRef<
             {...props}
         >
             <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-                <div className="h-2.5 w-2.5 fill-current text-current bg-primary rounded-lg"/>
+                <div className="h-2.5 w-2.5 fill-current text-current bg-primary rounded-lg" />
             </RadioGroupPrimitive.Indicator>
         </RadioGroupPrimitive.Item>
-    )
-})
-RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName
+    );
+});
+RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName;
 
-export { RadioGroup, RadioGroupItem }
+export { RadioGroup, RadioGroupItem };

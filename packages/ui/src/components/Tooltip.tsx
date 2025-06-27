@@ -6,70 +6,75 @@ import { cls } from "../util";
 import { useInjectStyles } from "../hooks";
 
 export type TooltipProps = {
-    open?: boolean,
-    defaultOpen?: boolean,
-    onOpenChange?: (open: boolean) => void,
-    side?: "top" | "bottom" | "left" | "right",
-    align?: "start" | "center" | "end",
-    sideOffset?: number,
-    title?: string | React.ReactNode,
+    open?: boolean;
+    defaultOpen?: boolean;
+    onOpenChange?: (open: boolean) => void;
+    side?: "top" | "bottom" | "left" | "right";
+    align?: "start" | "center" | "end";
+    sideOffset?: number;
+    title?: string | React.ReactNode;
     delayDuration?: number;
     asChild?: boolean;
-    tooltipClassName?: string,
+    tooltipClassName?: string;
     tooltipStyle?: React.CSSProperties;
-    children: React.ReactNode,
-    className?: string,
-    container?: HTMLElement,
+    children: React.ReactNode;
+    className?: string;
+    container?: HTMLElement;
     style?: React.CSSProperties;
 };
 
 export const Tooltip = ({
-                            open,
-                            defaultOpen,
-                            side = "bottom",
-                            delayDuration = 200,
-                            sideOffset,
-                            align,
-                            onOpenChange,
-                            title,
-                            tooltipClassName,
-                            tooltipStyle,
-                            children,
-                            asChild = false,
-                            container,
-                            className,
-                            style
-                        }: TooltipProps) => {
-
+    open,
+    defaultOpen,
+    side = "bottom",
+    delayDuration = 200,
+    sideOffset,
+    align,
+    onOpenChange,
+    title,
+    tooltipClassName,
+    tooltipStyle,
+    children,
+    asChild = false,
+    container,
+    className,
+    style,
+}: TooltipProps) => {
     useInjectStyles("Tooltip", styles);
 
-    if (!title)
-        return <>{children}</>;
+    if (!title) return <>{children}</>;
 
-    const trigger = asChild
-        ? <TooltipPrimitive.Trigger asChild={true}>
-            {children}
-        </TooltipPrimitive.Trigger>
-        : <TooltipPrimitive.Trigger asChild={true}>
+    const trigger = asChild ? (
+        <TooltipPrimitive.Trigger asChild={true}>{children}</TooltipPrimitive.Trigger>
+    ) : (
+        <TooltipPrimitive.Trigger asChild={true}>
             <div style={style} className={className}>
                 {children}
             </div>
-        </TooltipPrimitive.Trigger>;
+        </TooltipPrimitive.Trigger>
+    );
 
     return (
         <TooltipPrimitive.Provider delayDuration={delayDuration}>
-            <TooltipPrimitive.Root open={open} onOpenChange={onOpenChange} defaultOpen={defaultOpen}>
+            <TooltipPrimitive.Root
+                open={open}
+                onOpenChange={onOpenChange}
+                defaultOpen={defaultOpen}
+            >
                 {trigger}
                 <TooltipPrimitive.Portal container={container}>
                     <TooltipPrimitive.Content
-                        className={cls("TooltipContent",
+                        className={cls(
+                            "TooltipContent",
                             "max-w-lg leading-relaxed",
                             "z-50 rounded px-3 py-2 text-xs leading-none bg-surface-accent-700 dark:bg-surface-accent-800 bg-opacity-90 font-medium text-surface-accent-50 shadow-2xl select-none duration-400 ease-in transform opacity-100",
-                            tooltipClassName)}
+                            tooltipClassName
+                        )}
                         style={tooltipStyle}
                         sideOffset={sideOffset === undefined ? 4 : sideOffset}
                         align={align}
-                        side={side}>
+                        side={side}
+                    >
                         {title}
                     </TooltipPrimitive.Content>
                 </TooltipPrimitive.Portal>

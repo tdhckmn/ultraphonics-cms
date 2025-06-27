@@ -3,7 +3,6 @@ id: text_fields
 title: Text fields
 ---
 
-
 ### Simple text field
 
 ![Textfield](/img/fields/Textfield.png)
@@ -22,7 +21,7 @@ buildProperty({
     name: "Name",
     validation: {
         // ...
-    }
+    },
 });
 ```
 
@@ -49,7 +48,7 @@ buildProperty({
     multiline: true,
     validation: {
         // ...
-    }
+    },
 });
 ```
 
@@ -57,7 +56,6 @@ The data type is [`string`](../config/string).
 
 Internally the component used
 is [`TextFieldBinding`](../../api/functions/TextFieldBinding).
-
 
 ### Markdown text field
 
@@ -77,7 +75,7 @@ buildProperty({
     markdown: true,
     validation: {
         // ...
-    }
+    },
 });
 ```
 
@@ -85,7 +83,6 @@ The data type is [`string`](../config/string).
 
 Internally the component used
 is [`MarkdownEditorFieldBinding`](../../api/functions/MarkdownEditorFieldBinding).
-
 
 ### Url text field
 
@@ -105,7 +102,7 @@ buildProperty({
     url: true,
     validation: {
         // ...
-    }
+    },
 });
 ```
 
@@ -113,7 +110,6 @@ The data type is [`string`](../config/string).
 
 Internally the component used
 is [`TextFieldBinding`](../../api/functions/TextFieldBinding).
-
 
 ### Email field
 
@@ -133,7 +129,7 @@ buildProperty({
     email: true,
     validation: {
         // ...
-    }
+    },
 });
 ```
 

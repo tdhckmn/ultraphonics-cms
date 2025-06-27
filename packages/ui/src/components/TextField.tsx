@@ -82,7 +82,6 @@ export const TextField = forwardRef<HTMLDivElement, TextFieldProps<string | numb
         }: TextFieldProps<T>,
         ref: ForwardedRef<HTMLDivElement>
     ) => {
-
         const inputRef = inputRefProp ?? useRef(null);
 
         // @ts-ignore
@@ -118,7 +117,8 @@ export const TextField = forwardRef<HTMLDivElement, TextFieldProps<string | numb
                 className={cls(
                     invisible ? focusedInvisibleMixin : "",
                     "rounded-md resize-none w-full outline-none p-[32px] text-base bg-transparent min-h-[64px] px-3 pt-8",
-                    disabled && "outline-none opacity-50 text-surface-accent-600 dark:text-surface-accent-500",
+                    disabled &&
+                        "outline-none opacity-50 text-surface-accent-600 dark:text-surface-accent-500",
                     inputClassName
                 )}
             />
@@ -140,14 +140,10 @@ export const TextField = forwardRef<HTMLDivElement, TextFieldProps<string | numb
                         "min-h-[42px]": size === "medium",
                         "min-h-[64px]": size === "large",
                     },
-                    label
-                        ? size === "large"
-                            ? "pt-8 pb-2"
-                            : "pt-4 pb-2"
-                        : "py-2",
+                    label ? (size === "large" ? "pt-8 pb-2" : "pt-4 pb-2") : "py-2",
                     endAdornment ? "pr-10" : "pr-3",
                     disabled &&
-                    "outline-none opacity-50 dark:opacity-50 text-surface-accent-800 dark:text-white",
+                        "outline-none opacity-50 dark:opacity-50 text-surface-accent-800 dark:text-white",
                     inputClassName
                 )}
                 placeholder={focused || hasValue || !label ? placeholder : undefined}
@@ -155,7 +151,7 @@ export const TextField = forwardRef<HTMLDivElement, TextFieldProps<string | numb
                 onFocus={() => setFocused(true)}
                 onBlur={() => setFocused(false)}
                 type={type}
-                value={type === "number" && Number.isNaN(value) ? "" : value ?? ""}
+                value={type === "number" && Number.isNaN(value) ? "" : (value ?? "")}
                 onChange={onChange}
             />
         );

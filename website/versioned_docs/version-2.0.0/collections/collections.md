@@ -31,19 +31,19 @@ or as subcollections inside other collections.
 Check the full API reference
 in [Entity collections]
 
-* `name` The plural name of the collection. E.g. 'Products'.
+- `name` The plural name of the collection. E.g. 'Products'.
 
-* `singularName` The singular name of an entry in the collection. E.g. '
+- `singularName` The singular name of an entry in the collection. E.g. '
   Product'.
 
-* `path` Relative Firestore path of this view to its parent. If this view is in
+- `path` Relative Firestore path of this view to its parent. If this view is in
   the root the path, it is equal to the absolute one. This path also determines
   the URL in FireCMS.
 
-* `properties` Object defining the properties for the entity schema. More
+- `properties` Object defining the properties for the entity schema. More
   information in [Properties](../properties/properties_intro.md).
 
-* `propertiesOrder` Order in which the properties are displayed.
+- `propertiesOrder` Order in which the properties are displayed.
   If you are specifying your collection as code, the order is the same as the
   one you define in `properties`. Additional columns are added at the
   end of the list, if the order is not specified.
@@ -55,50 +55,50 @@ in [Entity collections]
     - If you are using a collection group, you will also have an
       additional `collectionGroupParent` column.
 
-  You can use this prop to hide some properties from the table view.
-  Note that if you set this prop, other ways to hide fields, like
-  `hidden` in the property definition,will be ignored.
-  `propertiesOrder` has precedence over `hidden`.
+    You can use this prop to hide some properties from the table view.
+    Note that if you set this prop, other ways to hide fields, like
+    `hidden` in the property definition,will be ignored.
+    `propertiesOrder` has precedence over `hidden`.
 
-* `formAutoSave` If set to true, the form will be auto-saved when the user changes
+- `formAutoSave` If set to true, the form will be auto-saved when the user changes
   the value of a field. Defaults to false. You can't use this prop if you are using a `customId`
 
-* `collectionGroup` If this collection is a top level navigation entry, you can
+- `collectionGroup` If this collection is a top level navigation entry, you can
   set this property to `true` to indicate that this collection is a collection
   group. From the Firestore documentation: "A collection group consists of all
   collections with the same ID. By default, queries retrieve results from a
   single collection in your database. Use a collection group query to retrieve
   documents from a collection group instead of from a single collection."
 
-* `alias` You can set an alias that will be used internally instead of
+- `alias` You can set an alias that will be used internally instead of
   the `path`.
   The `alias` value will be used to determine the URL of the collection,
   while `path` will still be used in the datasource.
   Note that you can use this value in reference properties too.
 
-* `icon` Icon key to use in this collection.
+- `icon` Icon key to use in this collection.
   You can use any of the icons in the MUI specs:
   https://mui.com/material-ui/material-icons/
   e.g. 'AccountTree' or 'Person'
 
-* `customId` If this prop is not set, the ID of the document will be created by
+- `customId` If this prop is not set, the ID of the document will be created by
   the datasource. You can set the value to 'true' to force the users to choose
   the ID. You can set the value to `true` to allow the users to choose the
   ID. You can also pass a set
   of values (as an `EnumValues` object) to allow users to pick from those only.
 
-* `subcollections` Following the Firestore document and collection schema, you
+- `subcollections` Following the Firestore document and collection schema, you
   can add subcollections to your entity in the same way you define the root
   collections.
 
-* `defaultSize` Default size of the rendered collection.
+- `defaultSize` Default size of the rendered collection.
 
-* `group` Optional field used to group top level navigation entries under a
+- `group` Optional field used to group top level navigation entries under a
   navigation view. If you set this value in a subcollection, it has no effect.
 
-* `description` Optional description of this view. You can use Markdown.
+- `description` Optional description of this view. You can use Markdown.
 
-* `filterCombinations` If you need to filter/sort by multiple properties in this
+- `filterCombinations` If you need to filter/sort by multiple properties in this
   collection, you can define the supported filter combinations here.
   In the case of Firestore, you need to create special indexes in the console to
   support filtering/sorting by more than one property. You can then
@@ -110,73 +110,75 @@ in [Entity collections]
     ],
     ```
 
-* `initialFilter` Initial filters applied to this collection.
+- `initialFilter` Initial filters applied to this collection.
   Defaults to none. Filters applied with this prop can be changed by the user.
   e.g.
-  ```
-  initialFilter: { age: [ ">=", 18 ] }
-  ```
 
-* `forceFilter` Force a filter in this view. If applied, the rest of the filters
+    ```
+    initialFilter: { age: [ ">=", 18 ] }
+    ```
+
+- `forceFilter` Force a filter in this view. If applied, the rest of the filters
   will be disabled. Filters applied with this prop cannot be changed.
   e.g.
-  ```
-  forceFilter: { age: [ ">=", 18 ] }
-  ```
 
-* `initialSort` Default sort applied to this collection. It takes tuples in the
+    ```
+    forceFilter: { age: [ ">=", 18 ] }
+    ```
+
+- `initialSort` Default sort applied to this collection. It takes tuples in the
   shape `["property_name", "asc"]` or `["property_name", "desc"]`
 
-* `Actions` Builder for rendering additional components such as buttons in
+- `Actions` Builder for rendering additional components such as buttons in
   the collection toolbar. The builder takes an object with
-  props `entityCollection`  and `selectedEntities` if any are set by the end
+  props `entityCollection` and `selectedEntities` if any are set by the end
   user.
 
-* `pagination` If enabled, content is loaded in batches. If `false` all entities
+- `pagination` If enabled, content is loaded in batches. If `false` all entities
   in the collection are loaded. You can specify a number to specify the
   pagination size (50 by default)
   Defaults to `true`
 
-* `additionalFields` You can add additional fields to both the collection view,
+- `additionalFields` You can add additional fields to both the collection view,
   and the form view by implementing an additional field delegate.
 
-* `textSearchEnabled` Flag to indicate if a search bar should be displayed on
+- `textSearchEnabled` Flag to indicate if a search bar should be displayed on
   top of the collection table. Please note that you need to add
 
-* `permissions` You can specify an object with boolean permissions with the
+- `permissions` You can specify an object with boolean permissions with the
   shape `{edit:boolean; create:boolean; delete:boolean}` to indicate the actions
   the user can perform. You can also pass
   a [`PermissionsBuilder`]
   to customize the permissions based on user or entity.
 
-* `inlineEditing` Can the elements in this collection be edited inline in the
+- `inlineEditing` Can the elements in this collection be edited inline in the
   collection view. If this flag is set to false but `permissions.edit` is `true`
   ,  
   entities can still be edited in the side panel.
 
-* `selectionEnabled` Are the entities in this collection selectable. Defaults
+- `selectionEnabled` Are the entities in this collection selectable. Defaults
   to `true`
 
-* `selectionController` Pass your own selection controller if you want to control selected
+- `selectionController` Pass your own selection controller if you want to control selected
   entities externally. [`useSelectionController`]
 
-* `exportable` Should the data in this collection view include an export button.
+- `exportable` Should the data in this collection view include an export button.
   You can also set an [`ExportConfig`]
   configuration object to customize the export and add additional values.
   Defaults to `true`
 
-* `hideFromNavigation` Should this collection be hidden from the main navigation
+- `hideFromNavigation` Should this collection be hidden from the main navigation
   panel, if
   it is at the root level, or in the entity side panel if it's a
   subcollection.
   It will still be accessible if you reach the specified path.
   You can also use this collection as a reference target.
 
-* `callbacks` This interface defines all the callbacks that can be used when an
+- `callbacks` This interface defines all the callbacks that can be used when an
   entity is being created, updated or deleted.
   Useful for adding your own logic or blocking the execution of the operation.
 
-* `views` Array of builders for rendering additional panels in an entity view.
+- `views` Array of builders for rendering additional panels in an entity view.
   Useful if you need to render custom views for your entities.
 
 :::tip
@@ -193,11 +195,7 @@ type and configuration errors
 :::
 
 ```tsx
-import {
-    buildCollection,
-    buildProperty,
-    EntityReference
-} from "@firecms/core";
+import { buildCollection, buildProperty, EntityReference } from "@firecms/core";
 
 type Product = {
     name: string;
@@ -208,8 +206,8 @@ type Product = {
     publisher: {
         name: string;
         external_id: string;
-    }
-}
+    };
+};
 
 const productsCollection = buildCollection<Product>({
     path: "products",
@@ -221,7 +219,7 @@ const productsCollection = buildCollection<Product>({
         name: buildProperty({
             dataType: "string",
             name: "Name",
-            validation: { required: true }
+            validation: { required: true },
         }),
         main_image: buildProperty({
             dataType: "string",
@@ -231,18 +229,18 @@ const productsCollection = buildCollection<Product>({
                 storagePath: "images",
                 acceptedFiles: ["image/*"],
                 metadata: {
-                    cacheControl: "max-age=1000000"
-                }
+                    cacheControl: "max-age=1000000",
+                },
             },
             description: "Upload field for images",
             validation: {
-                required: true
-            }
+                required: true,
+            },
         }),
         available: buildProperty({
             dataType: "boolean",
             name: "Available",
-            columnWidth: 100
+            columnWidth: 100,
         }),
         price: buildProperty(({ values }) => ({
             dataType: "number",
@@ -250,13 +248,13 @@ const productsCollection = buildCollection<Product>({
             validation: {
                 requiredMessage: "You must set a price between 0 and 1000",
                 min: 0,
-                max: 1000
+                max: 1000,
             },
             disabled: !values.available && {
                 clearOnDisabled: true,
-                disabledMessage: "You can only set the price on available items"
+                disabledMessage: "You can only set the price on available items",
             },
-            description: "Price with range validation"
+            description: "Price with range validation",
         })),
         related_products: buildProperty({
             dataType: "array",
@@ -264,8 +262,8 @@ const productsCollection = buildCollection<Product>({
             description: "Reference to self",
             of: {
                 dataType: "reference",
-                path: "products"
-            }
+                path: "products",
+            },
         }),
         publisher: buildProperty({
             name: "Publisher",
@@ -274,24 +272,23 @@ const productsCollection = buildCollection<Product>({
             properties: {
                 name: {
                     name: "Name",
-                    dataType: "string"
+                    dataType: "string",
                 },
                 external_id: {
                     name: "External id",
-                    dataType: "string"
-                }
-            }
-        })
+                    dataType: "string",
+                },
+            },
+        }),
     },
     // additionalFields: [productAdditionalField], // Example below
     filterCombinations: [{ price: "desc", available: "desc" }],
     permissions: ({ user, authController }) => ({
         edit: true,
         create: true,
-        delete: false
-    })
+        delete: false,
+    }),
 });
-
 ```
 
 ### Additional columns
@@ -314,13 +311,9 @@ property values.
 #### Example
 
 ```tsx
-import {
-    buildCollection,
-    buildCollection,
-    AdditionalFieldDelegate
-} from "@firecms/core";
+import { buildCollection, buildCollection, AdditionalFieldDelegate } from "@firecms/core";
 
-type User = { name: string }
+type User = { name: string };
 
 export const fullNameAdditionalField: AdditionalFieldDelegate<User> = {
     id: "full_name",
@@ -329,41 +322,38 @@ export const fullNameAdditionalField: AdditionalFieldDelegate<User> = {
         let values = entity.values;
         return typeof values.name === "string" ? values.name.toUpperCase() : "No name provided";
     },
-    dependencies: ["name"]
+    dependencies: ["name"],
 };
 
 const usersCollection = buildCollection<User>({
     path: "users",
     name: "User",
     properties: {
-        name: { dataType: "string", name: "Name" }
+        name: { dataType: "string", name: "Name" },
     },
-    additionalFields: [
-        fullNameAdditionalField
-    ]
+    additionalFields: [fullNameAdditionalField],
 });
 ```
 
 #### Advanced example
 
 ```tsx
-import {
-    buildCollection,
-    AdditionalFieldDelegate,
-    AsyncPreviewComponent
-} from "@firecms/core";
+import { buildCollection, AdditionalFieldDelegate, AsyncPreviewComponent } from "@firecms/core";
 
 export const productAdditionalField: AdditionalFieldDelegate<Product> = {
     id: "spanish_title",
     title: "Spanish title",
-    builder: ({ entity, context }) =>
-        <AsyncPreviewComponent builder={
-            context.dataSource.fetchEntity({
-                path: entity.path,
-                entityId: entity.id,
-                collection: localeSchema
-            }).then((entity) => entity.values.name)
-        }/>
+    builder: ({ entity, context }) => (
+        <AsyncPreviewComponent
+            builder={context.dataSource
+                .fetchEntity({
+                    path: entity.path,
+                    entityId: entity.id,
+                    collection: localeSchema,
+                })
+                .then((entity) => entity.values.name)}
+        />
+    ),
 };
 ```
 
@@ -416,8 +406,8 @@ const productsCollection = buildCollection<Product>({
     indexes: [
         {
             price: "asc",
-            available: "desc"
-        }
-    ]
+            available: "desc",
+        },
+    ],
 });
 ```

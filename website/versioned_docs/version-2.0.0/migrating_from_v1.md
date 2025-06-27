@@ -3,12 +3,12 @@ id: migrating_from_v1
 title: Migrating from version 1.0 to 2.0
 ---
 
-:::important 
-The package name has change from `@Camberi/firecms` to `firecms`. 
+:::important
+The package name has change from `@Camberi/firecms` to `firecms`.
 Please update your dependencies accordingly
 :::
 
-In order to update the dependencies to the new version you can run the 
+In order to update the dependencies to the new version you can run the
 command
 
 ```
@@ -19,7 +19,8 @@ This is a guide on how to migrate FireCMS apps from version 1.0 to 2.0.
 
 ### Main config
 
-The main navigation has been revamped: 
+The main navigation has been revamped:
+
 - The `navigation` prop has been removed and replaced with `collections`
   and `views`.
 - If you need to have dynamic collections or views based on the user or other
@@ -54,42 +55,51 @@ most of the config:
 ##### Code in version 1.0
 
 ```typescript tsx
-const usersSchema = buildSchema(
-    {
-        name: "User",
-        properties: {
-            display_name: buildProperty({
-                dataType: "string",
-                title: "Display name"
-            }),
-            email: {
-                dataType: "string",
-                title: "Email",
-                validation: {
-                    email: true
-                }
-            }
-        }
-    });
-    
-const usersCollection = buildCollection({
-        path: "users",
-        schema: usersSchema,
-        name: "Users",
-        callbacks: {
-            onPreSave: ({ values }: EntityOnSaveProps<any, any>) =>{
-                return values;
-            }
+const usersSchema = buildSchema({
+    name: "User",
+    properties: {
+        display_name: buildProperty({
+            dataType: "string",
+            title: "Display name",
+        }),
+        email: {
+            dataType: "string",
+            title: "Email",
+            validation: {
+                email: true,
+            },
         },
-        properties: ["display_name", "email", "country_code", "birth_year", "photo_url", "current_level", "level_points", "current_habit_refs", "challenge_id"],
-        textSearchEnabled: true
-    });
+    },
+});
+
+const usersCollection = buildCollection({
+    path: "users",
+    schema: usersSchema,
+    name: "Users",
+    callbacks: {
+        onPreSave: ({ values }: EntityOnSaveProps<any, any>) => {
+            return values;
+        },
+    },
+    properties: [
+        "display_name",
+        "email",
+        "country_code",
+        "birth_year",
+        "photo_url",
+        "current_level",
+        "level_points",
+        "current_habit_refs",
+        "challenge_id",
+    ],
+    textSearchEnabled: true,
+});
 ```
 
 ##### Code in version 2.0
 
 ```typescript tsx
-    
+
 const usersCollection = buildCollection({
         path: "users",
         name: "User",
@@ -115,13 +125,13 @@ const usersCollection = buildCollection({
     });
 ```
 
-- `AdditionalColumnDelegate` has been renamed to `AdditionalFieldDelegate`. 
+- `AdditionalColumnDelegate` has been renamed to `AdditionalFieldDelegate`.
   The signature is the same. The prop in the collection is now called
   `additionalFields`, instead of `additionalColumns`.
 - `extraActions` has been renamed to `Actions`. The signature is the
-  same. `ExtraActionsParams` has been renamed to `CollectionActionsProps`. 
+  same. `ExtraActionsParams` has been renamed to `CollectionActionsProps`.
 - `EntityPermissionsBuilderProps` has been renamed to `PermissionsBuilderProps` and
- `EntityPermissionsBuilder` has been renamed to `PermissionsBuilder`
+  `EntityPermissionsBuilder` has been renamed to `PermissionsBuilder`
 
 ### Properties
 
@@ -132,17 +142,17 @@ const usersCollection = buildCollection({
 
 ```typescript jsx
 buildProperty<string>({
-  dataType: "string",
-  title: "Currency",
-  config: {
-    enumValues: {
-      EUR: "Euros",
-      DOL: "Dollars"
-    }
-  },
-  validation: {
-    required: true
-  }
+    dataType: "string",
+    title: "Currency",
+    config: {
+        enumValues: {
+            EUR: "Euros",
+            DOL: "Dollars",
+        },
+    },
+    validation: {
+        required: true,
+    },
 });
 ```
 
@@ -150,15 +160,15 @@ now becomes:
 
 ```typescript jsx
 buildProperty<string>({
-  dataType: "string",
-  name: "Currency",
-  enumValues: {
-    EUR: "Euros",
-    DOL: "Dollars"
-  },
-  validation: {
-    required: true
-  }
+    dataType: "string",
+    name: "Currency",
+    enumValues: {
+        EUR: "Euros",
+        DOL: "Dollars",
+    },
+    validation: {
+        required: true,
+    },
 });
 ```
 
@@ -188,21 +198,22 @@ buildProperty<string>({
 - `toolbarActionsBuilder` in `CollectionTable` has been replaced by a prop where
   you pass a React Component directly: `Actions`
 - Enum values: if you are using enum values with custom configurations, you
-need to include the id in the new object as well
+  need to include the id in the new object as well
 - `skipLoginButtonEnabled` renamed to `allowSkipLogin` in `FirebaseLoginViewProps`
+
 ```tsx
 buildProperty(({ values }) => ({
-  title: "Status",
-  dataType: "string",
-  enumValues: {
-    published: {
-      id: "published", // new compulsory field
-      label: "Published",
-      disabled: !values.header_image,
+    title: "Status",
+    dataType: "string",
+    enumValues: {
+        published: {
+            id: "published", // new compulsory field
+            label: "Published",
+            disabled: !values.header_image,
+        },
+        draft: "Draft",
     },
-    draft: "Draft"
-  }
-}))
+}));
 ```
 
 - `LoginViewProps` has been replaced by `LoginView` in `FirebaseCMSAppProps`. If
@@ -215,10 +226,10 @@ buildProperty(({ values }) => ({
 import { FirebaseLoginView, FirebaseLoginViewProps } from "@firecms/core";
 
 export function CustomLoginView(props: FirebaseLoginViewProps) {
-  return <FirebaseLoginView {...props}/>;
+    return <FirebaseLoginView {...props} />;
 }
 ```
- 
+
 ### Style changes
 
 One of the fonts used by FireCMS has changed, and you need to update the imports
@@ -241,12 +252,12 @@ import "@fontsource/ibm-plex-mono";
 ### Custom apps
 
 The authorization and authentication logic has been moved away from the core of
-the `FireCMS` component, and now it is handled by the components implementing 
-it. 
+the `FireCMS` component, and now it is handled by the components implementing
+it.
 
 Specifically, the `Authenticator` logic has been extracted into a new hook
-`useValidateAuthenticator` from the core. You are free to use it in your 
-implementation as before or use your custom logic, for displaying the 
+`useValidateAuthenticator` from the core. You are free to use it in your
+implementation as before or use your custom logic, for displaying the
 login screen when needed. It is now easier to implement you `AuthController`
 and your custom login flow.
 

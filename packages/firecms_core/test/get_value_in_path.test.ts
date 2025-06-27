@@ -6,13 +6,13 @@ describe("getValueInPath", () => {
         name: "John Doe",
         address: {
             city: "New York",
-            zip: "10001"
+            zip: "10001",
         },
         scores: [98, 99, 100],
         payments: [
             { month: "Jan", amount: 100 },
             { month: "Feb", amount: 200 },
-        ]
+        ],
     };
 
     it("should return the correct value for simple paths", () => {

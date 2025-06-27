@@ -9,7 +9,6 @@ import { SubscriptionMessageProps } from "./types/subscriptions_message_props";
 const DEFAULT_API_KEY = "fcms-U9jdDii0xXWSDC34asfrf54lbkFJBfKfRWcEDEwdc4V5wDWEDF";
 
 export interface DataEnhancementPluginProps {
-
     apiKey?: string;
 
     /**
@@ -21,11 +20,7 @@ export interface DataEnhancementPluginProps {
      * @param path
      * @param collection
      */
-    getConfigForPath?: (props: {
-        path: string,
-        collection: EntityCollection,
-        user: User | null
-    }) => boolean;
+    getConfigForPath?: (props: { path: string; collection: EntityCollection; user: User | null }) => boolean;
 
     /**
      * Host to use for the data enhancement API.
@@ -40,20 +35,22 @@ export interface DataEnhancementPluginProps {
  * @param props
  */
 export function useDataEnhancementPlugin(props?: DataEnhancementPluginProps): FireCMSPlugin {
-
     const apiKey = props?.apiKey ?? DEFAULT_API_KEY;
     const getConfigForPath = props?.getConfigForPath;
     const authController = useAuthController();
 
-    const fieldBuilderEnabled = useCallback((params: PluginFieldBuilderParams<any>) => {
-        if (!getConfigForPath) return true;
-        if (!params.path || !params.collection) return false;
-        return getConfigForPath({
-            path: params.path,
-            collection: params.collection,
-            user: authController.user
-        })
-    }, [getConfigForPath, authController.user?.uid]);
+    const fieldBuilderEnabled = useCallback(
+        (params: PluginFieldBuilderParams<any>) => {
+            if (!getConfigForPath) return true;
+            if (!params.path || !params.collection) return false;
+            return getConfigForPath({
+                path: params.path,
+                collection: params.collection,
+                user: authController.user,
+            });
+        },
+        [getConfigForPath, authController.user?.uid],
+    );
 
     return {
         key: "data_enhancement",
@@ -64,18 +61,18 @@ export function useDataEnhancementPlugin(props?: DataEnhancementPluginProps): Fi
                 props: {
                     apiKey,
                     getConfigForPath,
-                    host: props?.host
-                }
+                    host: props?.host,
+                },
             },
             fieldBuilder,
-            fieldBuilderEnabled
+            fieldBuilderEnabled,
         },
         homePage: {
             // CollectionActions: EnhanceCollectionIcon,
             extraProps: {
-                getConfigForPath
-            }
-        }
+                getConfigForPath,
+            },
+        },
         // loading: configController.loading,
     };
 }

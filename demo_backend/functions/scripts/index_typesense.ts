@@ -11,9 +11,11 @@ initServiceAccountFirestore(true);
 const firestore = admin.firestore();
 createSchemaInTypesense("products");
 
-firestore.collection("products")
+firestore
+    .collection("products")
     .get()
     .then((snapshot) =>
-        snapshot.docs.forEach(d => {
+        snapshot.docs.forEach((d) => {
             indexInTypesense("products", d.data(), d.id);
-        }));
+        })
+    );

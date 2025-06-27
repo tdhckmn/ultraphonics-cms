@@ -1,4 +1,11 @@
-import { CommandProps, mergeAttributes, Node, NodeViewProps, RawCommands, textblockTypeInputRule } from "@tiptap/core";
+import {
+    CommandProps,
+    mergeAttributes,
+    Node,
+    NodeViewProps,
+    RawCommands,
+    textblockTypeInputRule,
+} from "@tiptap/core";
 import { ReactNodeViewRenderer } from "@tiptap/react";
 import { Node as ProseMirrorNode } from "prosemirror-model";
 
@@ -25,41 +32,38 @@ export const CustomBlock = Node.create<CustomBlockOptions>({
         return {
             // The custom component must be provided when configuring the extension
             component: null,
-            delimiter: DEFAULT_DELIMITER
+            delimiter: DEFAULT_DELIMITER,
         };
     },
 
     addAttributes() {
         return {
             content: {
-                default: ""
-            }
+                default: "",
+            },
         };
     },
 
     parseHTML() {
         return [
             {
-                tag: "div[data-type=\"custom-block\"]",
+                tag: 'div[data-type="custom-block"]',
                 getAttrs: (element) => {
                     const content = (element as HTMLElement).getAttribute("data-content") || "";
                     return { content };
-                }
-            }
+                },
+            },
         ];
     },
 
-    renderHTML({
-                   node,
-                   HTMLAttributes
-               }) {
+    renderHTML({ node, HTMLAttributes }) {
         return [
             "div",
             mergeAttributes(HTMLAttributes, {
                 "data-type": "custom-block",
-                "data-content": node.attrs.content
+                "data-content": node.attrs.content,
             }),
-            0
+            0,
         ];
     },
 
@@ -75,14 +79,14 @@ export const CustomBlock = Node.create<CustomBlockOptions>({
         return {
             setCustomBlock:
                 (attributes?: Record<string, any>) =>
-                    ({ commands }: CommandProps) => {
-                        return commands.setNode(this.name, attributes);
-                    },
+                ({ commands }: CommandProps) => {
+                    return commands.setNode(this.name, attributes);
+                },
             toggleCustomBlock:
                 (attributes?: Record<string, any>) =>
-                    ({ commands }: CommandProps) => {
-                        return commands.toggleNode(this.name, "paragraph", attributes);
-                    }
+                ({ commands }: CommandProps) => {
+                    return commands.toggleNode(this.name, "paragraph", attributes);
+                },
         } as Partial<RawCommands>;
     },
 
@@ -101,8 +105,8 @@ export const CustomBlock = Node.create<CustomBlockOptions>({
                 type: this.type,
                 getAttributes: () => {
                     return {};
-                }
-            })
+                },
+            }),
         ];
     },
 
@@ -132,20 +136,19 @@ export const CustomBlock = Node.create<CustomBlockOptions>({
                             block: this.name,
                             getAttrs: (token: any) => {
                                 return { content: token.content };
-                            }
-                        }
-                    }
-                }
-            }
+                            },
+                        },
+                    },
+                },
+            },
         };
-    }
+    },
 });
 
 // Create a markdown-it plugin to handle custom blocks
 function customBlockPlugin(md: any) {
     // Add a function to parse custom code fences
     function customBlock(state: any, startLine: number, endLine: number, silent: boolean) {
-
         let pos = state.bMarks[startLine] + state.tShift[startLine];
         let max = state.eMarks[startLine];
 
@@ -207,6 +210,6 @@ function customBlockPlugin(md: any) {
 
     // Add the rule to the parser
     md.block.ruler.before("fence", "custom_block", customBlock, {
-        alt: ["paragraph", "reference", "blockquote", "list"]
+        alt: ["paragraph", "reference", "blockquote", "list"],
     });
 }

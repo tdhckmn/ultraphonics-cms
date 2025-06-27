@@ -17,47 +17,47 @@ export type Product = {
     publisher: {
         name: string;
         external_id: string;
-    },
+    };
     added_on: Date;
     tags: string[];
-}
+};
 
 export type ProductWithId = Product & { id: string };
 
 export type Locale = {
-    name: string,
-    description: string,
-}
+    name: string;
+    description: string;
+};
 
 export type BlogEntry = {
-    name: string,
-    header_image: string,
+    name: string;
+    header_image: string;
     content: (BlogEntryImages | BlogEntryText | BlogEntryProducts | BlogQuote)[];
-    created_on: Date,
-    publish_date: Date,
-    reviewed: boolean,
-    status: string,
-    tags: string[]
-}
+    created_on: Date;
+    publish_date: Date;
+    reviewed: boolean;
+    status: string;
+    tags: string[];
+};
 
 export type BlogEntryWithId = BlogEntry & { id: string };
 
 export type BlogEntryImages = {
     type: "images";
     value: string[];
-}
+};
 
 export type BlogEntryText = {
     type: "text";
     value: string;
-}
+};
 
 export type BlogEntryProducts = {
     type: "products";
     value: ProductWithId[];
-}
+};
 
 export type BlogQuote = {
     type: "quote";
     value: string;
-}
+};

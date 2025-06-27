@@ -23,8 +23,8 @@ buildCollection({
     permissions: {
         edit: true,
         create: true,
-        delete: false
-    }
+        delete: false,
+    },
 });
 ```
 
@@ -46,20 +46,14 @@ buildCollection({
     path: "products",
     collection: productSchema,
     name: "Products",
-    permissions: ({
-                      entity,
-                      path,
-                      user,
-                      authController,
-                      context
-                  }) => {
+    permissions: ({ entity, path, user, authController, context }) => {
         const isAdmin = authController.extra?.roles.includes("admin");
-        return ({
+        return {
             edit: isAdmin,
             create: isAdmin,
-            delete: isAdmin
-        });
-    }
+            delete: isAdmin,
+        };
+    },
 });
 ```
 
@@ -76,14 +70,14 @@ import { User as FirebaseUser } from "firebase/auth";
 import { Authenticator } from "@camberi/firecms";
 
 const myAuthenticator: Authenticator<FirebaseUser> = async ({
-                                                                user,
-                                                                authController,
-                                                                dataSource
-                                                            }) => {
+    user,
+    authController,
+    dataSource,
+}) => {
     // This is an example of retrieving async data related to the user
     // and storing it in the user extra field
     const sampleUserData = await Promise.resolve({
-        roles: ["admin"]
+        roles: ["admin"],
     });
     authController.setExtra(sampleUserData);
 
@@ -91,4 +85,3 @@ const myAuthenticator: Authenticator<FirebaseUser> = async ({
     return true; // Allow
 };
 ```
-

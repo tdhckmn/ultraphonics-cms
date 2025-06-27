@@ -6,7 +6,7 @@ import {
     KeyboardSensor,
     PointerSensor,
     useSensor,
-    useSensors
+    useSensors,
 } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
@@ -26,7 +26,7 @@ import {
     MenuItem,
     RemoveIcon,
     Tooltip,
-    useOutsideAlerter
+    useOutsideAlerter,
 } from "@firecms/ui";
 
 export type ArrayEntryParams = {
@@ -60,13 +60,13 @@ export interface ArrayContainerProps<T> {
 const buildIdsMap = (value: any[]) =>
     value && Array.isArray(value) && value.length > 0
         ? value
-            .map((v, index) => {
-                if (!v) return {};
-                return {
-                    [getHashValue(v) + index]: getRandomId()
-                };
-            })
-            .reduce((a, b) => ({ ...a, ...b }), {})
+              .map((v, index) => {
+                  if (!v) return {};
+                  return {
+                      [getHashValue(v) + index]: getRandomId(),
+                  };
+              })
+              .reduce((a, b) => ({ ...a, ...b }), {})
         : {};
 
 type SortableItemProps = {
@@ -85,42 +85,36 @@ type SortableItemProps = {
 };
 
 function SortableItem({
-                          id,
-                          index,
-                          size,
-                          disabled,
-                          buildEntry,
-                          remove,
-                          copy,
-                          addInIndex,
-                          canAddElements,
-                          sortable,
-                          storedProps,
-                          updateItemCustomProps
-                      }: SortableItemProps) {
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging
-    } = sortable
+    id,
+    index,
+    size,
+    disabled,
+    buildEntry,
+    remove,
+    copy,
+    addInIndex,
+    canAddElements,
+    sortable,
+    storedProps,
+    updateItemCustomProps,
+}: SortableItemProps) {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = sortable
         ? useSortable({ id })
         : {
-            attributes: {},
-            listeners: {},
-            setNodeRef: (node: HTMLElement | null) => {
-            },
-            transform: null,
-            transition: undefined,
-            isDragging: false
-        };
+              attributes: {},
+              listeners: {},
+              setNodeRef: (node: HTMLElement | null) => {},
+              transform: null,
+              transition: undefined,
+              isDragging: false,
+          };
 
-    const style = transform ? {
-        transform: CSS.Transform.toString(transform),
-        transition
-    } : {};
+    const style = transform
+        ? {
+              transform: CSS.Transform.toString(transform),
+              transition,
+          }
+        : {};
     const dragHandleProps = sortable ? { ...listeners, ...attributes } : {};
 
     return (
@@ -165,23 +159,23 @@ type ArrayContainerItemProps = {
 };
 
 export function ArrayContainerItem({
-                                       nodeRef,
-                                       style,
-                                       dragHandleProps,
-                                       index,
-                                       internalId,
-                                       size,
-                                       disabled,
-                                       buildEntry,
-                                       remove,
-                                       copy,
-                                       addInIndex,
-                                       canAddElements,
-                                       sortable,
-                                       isDragging,
-                                       storedProps,
-                                       updateItemCustomProps
-                                   }: ArrayContainerItemProps) {
+    nodeRef,
+    style,
+    dragHandleProps,
+    index,
+    internalId,
+    size,
+    disabled,
+    buildEntry,
+    remove,
+    copy,
+    addInIndex,
+    canAddElements,
+    sortable,
+    isDragging,
+    storedProps,
+    updateItemCustomProps,
+}: ArrayContainerItemProps) {
     return (
         <div
             ref={nodeRef}
@@ -195,7 +189,7 @@ export function ArrayContainerItem({
                         internalId,
                         isDragging,
                         storedProps,
-                        storeProps: (props: object) => updateItemCustomProps(internalId, props)
+                        storeProps: (props: object) => updateItemCustomProps(internalId, props),
                     })}
                 </div>
                 <ArrayItemOptions
@@ -215,16 +209,16 @@ export function ArrayContainerItem({
 }
 
 export function ArrayItemOptions({
-                                     dragHandleProps,
-                                     direction,
-                                     disabled,
-                                     remove,
-                                     index,
-                                     copy,
-                                     canAddElements,
-                                     sortable,
-                                     addInIndex,
-                                 }: {
+    dragHandleProps,
+    direction,
+    disabled,
+    remove,
+    index,
+    copy,
+    canAddElements,
+    sortable,
+    addInIndex,
+}: {
     dragHandleProps: any;
     direction?: "row" | "column";
     disabled: boolean;
@@ -247,7 +241,7 @@ export function ArrayItemOptions({
         if (showMenu) {
             e.stopPropagation();
             e.preventDefault();
-            setMenuOpen(o => !o);
+            setMenuOpen((o) => !o);
         } else if (sortable) {
             // Allow drag to propagate if menu is not shown
         } else {
@@ -256,13 +250,20 @@ export function ArrayItemOptions({
         }
     };
 
-    const title = !disabled && sortable && showMenu ? "Drag to move. Click for options" :
-        !disabled && showMenu ? "Click for options" :
-            !disabled && sortable ? "Drag to move" : undefined;
+    const title =
+        !disabled && sortable && showMenu
+            ? "Drag to move. Click for options"
+            : !disabled && showMenu
+              ? "Click for options"
+              : !disabled && sortable
+                ? "Drag to move"
+                : undefined;
 
     return (
-        <div ref={iconRef}
-             className={`pl-2 pt-1 pb-1 flex ${direction === "row" ? "flex-row-reverse" : "flex-col"} items-center`}>
+        <div
+            ref={iconRef}
+            className={`pl-2 pt-1 pb-1 flex ${direction === "row" ? "flex-row-reverse" : "flex-col"} items-center`}
+        >
             <Tooltip
                 delayDuration={400}
                 open={menuOpen ? false : undefined}
@@ -278,16 +279,20 @@ export function ArrayItemOptions({
                         if (sortable && menuOpen) setMenuOpen(false);
                     }}
                     className={cls(
-                        (disabled || (!sortable && !showMenu)) ? "cursor-inherit" : "",
+                        disabled || (!sortable && !showMenu) ? "cursor-inherit" : "",
                         sortable && !disabled ? "cursor-grab" : "",
                         !sortable && showMenu && !disabled ? "cursor-pointer" : ""
                     )}
                 >
-                    <HandleIcon/>
+                    <HandleIcon />
                 </IconButton>
             </Tooltip>
             {showMenu && (
-                <Menu portalContainer={iconRef.current} open={menuOpen} trigger={<div tabIndex={-1}/>}>
+                <Menu
+                    portalContainer={iconRef.current}
+                    open={menuOpen}
+                    trigger={<div tabIndex={-1} />}
+                >
                     <MenuItem
                         dense
                         onClick={(e: React.MouseEvent) => {
@@ -295,7 +300,7 @@ export function ArrayItemOptions({
                             remove(index);
                         }}
                     >
-                        <RemoveIcon size={"small"}/>
+                        <RemoveIcon size={"small"} />
                         Remove
                     </MenuItem>
                     <MenuItem
@@ -305,7 +310,7 @@ export function ArrayItemOptions({
                             copy(index);
                         }}
                     >
-                        <ContentCopyIcon size={"small"}/>
+                        <ContentCopyIcon size={"small"} />
                         Copy
                     </MenuItem>
                     {addInIndex && (
@@ -316,7 +321,7 @@ export function ArrayItemOptions({
                                 addInIndex(index);
                             }}
                         >
-                            <KeyboardArrowUpIcon size={"small"}/>
+                            <KeyboardArrowUpIcon size={"small"} />
                             Add on top
                         </MenuItem>
                     )}
@@ -328,7 +333,7 @@ export function ArrayItemOptions({
                                 addInIndex(index + 1);
                             }}
                         >
-                            <KeyboardArrowDownIcon size={"small"}/>
+                            <KeyboardArrowDownIcon size={"small"} />
                             Add below
                         </MenuItem>
                     )}
@@ -339,22 +344,22 @@ export function ArrayItemOptions({
 }
 
 export function ArrayContainer<T>({
-                                      droppableId,
-                                      addLabel,
-                                      value,
-                                      disabled = false,
-                                      buildEntry,
-                                      size = "medium",
-                                      onInternalIdAdded,
-                                      includeAddButton: deprecatedIncludeAddButton,
-                                      canAddElements: canAddElementsProp = true,
-                                      sortable = true,
-                                      newDefaultEntry,
-                                      onValueChange,
-                                      className,
-                                      min = 0,
-                                      max = Infinity
-                                  }: ArrayContainerProps<T>) {
+    droppableId,
+    addLabel,
+    value,
+    disabled = false,
+    buildEntry,
+    size = "medium",
+    onInternalIdAdded,
+    includeAddButton: deprecatedIncludeAddButton,
+    canAddElements: canAddElementsProp = true,
+    sortable = true,
+    newDefaultEntry,
+    onValueChange,
+    className,
+    min = 0,
+    max = Infinity,
+}: ArrayContainerProps<T>) {
     const canAddElements =
         (canAddElementsProp === undefined ? true : canAddElementsProp) && // Default canAddElementsProp to true if undefined
         (deprecatedIncludeAddButton === undefined || deprecatedIncludeAddButton);
@@ -419,7 +424,7 @@ export function ArrayContainer<T>({
         const newIds: number[] = [
             ...internalIds.slice(0, index + 1),
             id,
-            ...internalIds.slice(index + 1)
+            ...internalIds.slice(index + 1),
         ];
         if (onInternalIdAdded) onInternalIdAdded(id);
         setInternalIds(newIds);
@@ -429,21 +434,14 @@ export function ArrayContainer<T>({
     const addInIndex = (index: number) => {
         if ((value ?? []).length >= max) return;
         const id = getRandomId();
-        const newIds: number[] = [
-            ...internalIds.slice(0, index),
-            id,
-            ...internalIds.slice(index)
-        ];
+        const newIds: number[] = [...internalIds.slice(0, index), id, ...internalIds.slice(index)];
         if (onInternalIdAdded) onInternalIdAdded(id);
         setInternalIds(newIds);
         onValueChange([...value.slice(0, index), newDefaultEntry, ...value.slice(index)]);
     };
 
     const onDragEnd = (event: DragEndEvent) => {
-        const {
-            active,
-            over
-        } = event;
+        const { active, over } = event;
         if (!over || active.id === over.id) return;
 
         const oldIndex = internalIds.indexOf(active.id as number);
@@ -455,10 +453,12 @@ export function ArrayContainer<T>({
     };
 
     return sortable ? (
-        <DndContext sensors={sensors}
-                    modifiers={[restrictToVerticalAxis]}
-                    collisionDetection={closestCenter}
-                    onDragEnd={onDragEnd}>
+        <DndContext
+            sensors={sensors}
+            modifiers={[restrictToVerticalAxis]}
+            collisionDetection={closestCenter}
+            onDragEnd={onDragEnd}
+        >
             <SortableContext items={internalIds} strategy={verticalListSortingStrategy}>
                 <div className={cls("space-y-1", className)} id={droppableId}>
                     {hasValue &&
@@ -486,7 +486,7 @@ export function ArrayContainer<T>({
                                 size={size === "small" ? "small" : "medium"}
                                 color="primary"
                                 disabled={disabled || (value?.length ?? 0) >= max}
-                                startIcon={<AddIcon/>}
+                                startIcon={<AddIcon />}
                                 onClick={insertInEnd}
                                 className={"ml-3.5"}
                             >
@@ -503,8 +503,7 @@ export function ArrayContainer<T>({
                 internalIds.map((internalId: number, index: number) => (
                     <ArrayContainerItem
                         key={`array_field_${internalId}`}
-                        nodeRef={(node: HTMLElement | null) => {
-                        }}
+                        nodeRef={(node: HTMLElement | null) => {}}
                         style={{}}
                         dragHandleProps={{}}
                         internalId={internalId}
@@ -529,7 +528,7 @@ export function ArrayContainer<T>({
                         size={size === "small" ? "small" : "medium"}
                         color="primary"
                         disabled={disabled || (value?.length ?? 0) >= max}
-                        startIcon={<AddIcon/>}
+                        startIcon={<AddIcon />}
                         onClick={insertInEnd}
                     >
                         {addLabel ?? "Add"}

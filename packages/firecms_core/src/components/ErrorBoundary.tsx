@@ -2,9 +2,12 @@ import React, { ErrorInfo, PropsWithChildren } from "react";
 
 import { ErrorIcon, Typography } from "@firecms/ui";
 
-export class ErrorBoundary extends React.Component<PropsWithChildren<Record<string, unknown>>, {
-    error: Error | null
-}> {
+export class ErrorBoundary extends React.Component<
+    PropsWithChildren<Record<string, unknown>>,
+    {
+        error: Error | null;
+    }
+> {
     constructor(props: any) {
         super(props);
         this.state = { error: null };
@@ -25,7 +28,7 @@ export class ErrorBoundary extends React.Component<PropsWithChildren<Record<stri
             return (
                 <div className="flex flex-col m-2">
                     <div className="flex items-center m-2">
-                        <ErrorIcon color={"error"} size={"small"}/>
+                        <ErrorIcon color={"error"} size={"small"} />
                         <div className="ml-4">Error</div>
                     </div>
                     <Typography variant={"caption"}>

@@ -4,23 +4,23 @@ const client = new Client({
     cloud: { id: process.env.ES_CLOUD_ID as string },
     auth: {
         username: process.env.ES_USER as string,
-        password: process.env.ES_PASSWORD as string
-    }
-})
+        password: process.env.ES_PASSWORD as string,
+    },
+});
 
 export function indexInElasticSearch(indexName: string, data: any, id: string) {
     return client.index({
         index: indexName,
         id,
-        body: data
-    })
+        body: data,
+    });
 }
 
 export function deleteInElasticSearch(indexName: string, id: string) {
     return client.delete({
         index: indexName,
-        id
-    })
+        id,
+    });
 }
 
 export function searchInElasticSearch(indexName: string, query: any) {
@@ -29,9 +29,9 @@ export function searchInElasticSearch(indexName: string, query: any) {
         body: {
             query: {
                 query_string: {
-                    query
-                }
-            }
-        }
-    })
+                    query,
+                },
+            },
+        },
+    });
 }

@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function LibraryAddIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"library_add"}/>
+    return <Icon {...props} iconKey={"library_add"} />;
 }

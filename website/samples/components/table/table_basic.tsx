@@ -5,9 +5,15 @@ export default function TableBasicDemo() {
     return (
         <Table>
             <TableHeader>
-                <TableCell header scope="col">Name</TableCell>
-                <TableCell header scope="col">Age</TableCell>
-                <TableCell header scope="col">City</TableCell>
+                <TableCell header scope="col">
+                    Name
+                </TableCell>
+                <TableCell header scope="col">
+                    Age
+                </TableCell>
+                <TableCell header scope="col">
+                    City
+                </TableCell>
             </TableHeader>
             <TableBody>
                 <TableRow>

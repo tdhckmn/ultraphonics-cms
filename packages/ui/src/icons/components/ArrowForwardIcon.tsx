@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function ArrowForwardIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"arrow_forward"}/>
+    return <Icon {...props} iconKey={"arrow_forward"} />;
 }

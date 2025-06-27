@@ -10,16 +10,25 @@ import { AuthController } from "./auth";
 /**
  * @group Entity properties
  */
-export type DataType<T extends CMSType = CMSType> =
-    T extends string ? "string" :
-        T extends number ? "number" :
-            T extends boolean ? "boolean" :
-                T extends Date ? "date" :
-                    T extends GeoPoint ? "geopoint" :
-                        T extends Vector ? "vector" :
-                            T extends EntityReference ? "reference" :
-                                T extends Array<any> ? "array" :
-                                    T extends Record<string, any> ? "map" : never;
+export type DataType<T extends CMSType = CMSType> = T extends string
+    ? "string"
+    : T extends number
+      ? "number"
+      : T extends boolean
+        ? "boolean"
+        : T extends Date
+          ? "date"
+          : T extends GeoPoint
+            ? "geopoint"
+            : T extends Vector
+              ? "vector"
+              : T extends EntityReference
+                ? "reference"
+                : T extends Array<any>
+                  ? "array"
+                  : T extends Record<string, any>
+                    ? "map"
+                    : never;
 
 /**
  * @group Entity properties
@@ -38,34 +47,41 @@ export type CMSType =
  * @ignore
  */
 export type AnyProperty =
-    StringProperty |
-    NumberProperty |
-    BooleanProperty |
-    DateProperty |
-    GeopointProperty |
-    ReferenceProperty |
-    ArrayProperty |
-    MapProperty;
+    | StringProperty
+    | NumberProperty
+    | BooleanProperty
+    | DateProperty
+    | GeopointProperty
+    | ReferenceProperty
+    | ArrayProperty
+    | MapProperty;
 
 /**
  * @group Entity properties
  */
-export type Property<T extends CMSType = any> =
-    T extends string ? StringProperty :
-        T extends number ? NumberProperty :
-            T extends boolean ? BooleanProperty :
-                T extends Date ? DateProperty :
-                    T extends GeoPoint ? GeopointProperty :
-                        T extends EntityReference ? ReferenceProperty :
-                            T extends Array<CMSType> ? ArrayProperty<T> :
-                                T extends Record<string, any> ? MapProperty<T> : AnyProperty;
+export type Property<T extends CMSType = any> = T extends string
+    ? StringProperty
+    : T extends number
+      ? NumberProperty
+      : T extends boolean
+        ? BooleanProperty
+        : T extends Date
+          ? DateProperty
+          : T extends GeoPoint
+            ? GeopointProperty
+            : T extends EntityReference
+              ? ReferenceProperty
+              : T extends Array<CMSType>
+                ? ArrayProperty<T>
+                : T extends Record<string, any>
+                  ? MapProperty<T>
+                  : AnyProperty;
 
 /**
  * Interface including all common properties of a CMS property
  * @group Entity properties
  */
 export interface BaseProperty<T extends CMSType, CustomProps = any> {
-
     /**
      * Datatype of the property
      */
@@ -169,7 +185,6 @@ export interface BaseProperty<T extends CMSType, CustomProps = any> {
  * @group Entity properties
  */
 export interface PropertyDisabledConfig {
-
     /**
      * Enable this flag if you would like to clear the value of the field
      * when the corresponding property gets disabled.
@@ -207,8 +222,7 @@ export type EnumType = number | string;
  * If you need to ensure the order of the elements use an array of {@link EnumValueConfig}
  * @group Entity properties
  */
-export type EnumValues = EnumValueConfig[]
-    | Record<string | number, string | EnumValueConfig>;
+export type EnumValues = EnumValueConfig[] | Record<string | number, string | EnumValueConfig>;
 
 /**
  * Configuration for a particular entry in an `EnumValues`
@@ -232,7 +246,7 @@ export type EnumValueConfig = {
      * your own {@link ChipColorScheme}
      */
     color?: ChipColorKey | ChipColorScheme;
-}
+};
 
 /**
  * Record of properties of an entity or a map property
@@ -245,38 +259,37 @@ export type Properties<M extends Record<string, any> = any> = {
 /**
  * @group Entity properties
  */
-export type PropertyBuilderProps<M extends Record<string, any> = any> =
-    {
-        /**
-         * Current values of the entity
-         */
-        values: Partial<M>;
-        /**
-         * Previous values of the entity before being saved
-         */
-        previousValues?: Partial<M>;
-        /**
-         * Current value of this property
-         */
-        propertyValue?: any;
-        /**
-         * Index of this property (only for arrays)
-         */
-        index?: number;
-        /**
-         * Path of the entity in the data source
-         */
-        path: string;
-        /**
-         * Entity ID
-         */
-        entityId?: string;
+export type PropertyBuilderProps<M extends Record<string, any> = any> = {
+    /**
+     * Current values of the entity
+     */
+    values: Partial<M>;
+    /**
+     * Previous values of the entity before being saved
+     */
+    previousValues?: Partial<M>;
+    /**
+     * Current value of this property
+     */
+    propertyValue?: any;
+    /**
+     * Index of this property (only for arrays)
+     */
+    index?: number;
+    /**
+     * Path of the entity in the data source
+     */
+    path: string;
+    /**
+     * Entity ID
+     */
+    entityId?: string;
 
-        /**
-         * Controller to manage authentication
-         */
-        authController: AuthController;
-    };
+    /**
+     * Controller to manage authentication
+     */
+    authController: AuthController;
+};
 
 /**
  * You can use this type to define a property dynamically, based
@@ -284,37 +297,34 @@ export type PropertyBuilderProps<M extends Record<string, any> = any> =
  * current value of the property, as well as the path and entity ID.
  * @group Entity properties
  */
-export type PropertyBuilder<T extends CMSType = any, M extends Record<string, any> = any> =
-    ({
-         values,
-         previousValues,
-         propertyValue,
-         index,
-         path,
-         entityId,
-         authController
-     }: PropertyBuilderProps<M>) => Property<T> | null;
+export type PropertyBuilder<T extends CMSType = any, M extends Record<string, any> = any> = ({
+    values,
+    previousValues,
+    propertyValue,
+    index,
+    path,
+    entityId,
+    authController,
+}: PropertyBuilderProps<M>) => Property<T> | null;
 
 /**
  * @group Entity properties
  */
 export type PropertyOrBuilder<T extends CMSType = CMSType, M extends Record<string, any> = any> =
-    Property<T>
+    | Property<T>
     | PropertyBuilder<T, M>;
 
 /**
  * @group Entity properties
  */
-export type PropertiesOrBuilders<M extends Record<string, any> = any> =
-    {
-        [k in keyof M]: PropertyOrBuilder<M[k], M>;
-    };
+export type PropertiesOrBuilders<M extends Record<string, any> = any> = {
+    [k in keyof M]: PropertyOrBuilder<M[k], M>;
+};
 
 /**
  * @group Entity properties
  */
 export interface NumberProperty extends BaseProperty<number> {
-
     dataType: "number";
 
     /**
@@ -327,7 +337,7 @@ export interface NumberProperty extends BaseProperty<number> {
     /**
      * Rules for validating this property
      */
-    validation?: NumberPropertyValidationSchema,
+    validation?: NumberPropertyValidationSchema;
 
     /**
      * Add an icon to clear the value and set it to `null`. Defaults to `false`
@@ -339,21 +349,18 @@ export interface NumberProperty extends BaseProperty<number> {
  * @group Entity properties
  */
 export interface BooleanProperty extends BaseProperty<boolean> {
-
     dataType: "boolean";
 
     /**
      * Rules for validating this property
      */
-    validation?: PropertyValidationSchema,
-
+    validation?: PropertyValidationSchema;
 }
 
 /**
  * @group Entity properties
  */
 export interface StringProperty extends BaseProperty<string> {
-
     dataType: "string";
 
     /**
@@ -426,8 +433,8 @@ export interface StringProperty extends BaseProperty<string> {
 /**
  * @group Entity properties
  */
-export interface ArrayProperty<T extends ArrayT[] = any[], ArrayT extends CMSType = any> extends BaseProperty<T> {
-
+export interface ArrayProperty<T extends ArrayT[] = any[], ArrayT extends CMSType = any>
+    extends BaseProperty<T> {
     dataType: "array";
 
     /**
@@ -507,14 +514,13 @@ export interface ArrayProperty<T extends ArrayT[] = any[], ArrayT extends CMSTyp
      * This prop has no effect if `disabled` is set to true.
      */
     canAddElements?: boolean;
-
 }
 
 /**
  * @group Entity properties
  */
-export interface MapProperty<T extends Record<string, CMSType> = Record<string, CMSType>> extends BaseProperty<T> {
-
+export interface MapProperty<T extends Record<string, CMSType> = Record<string, CMSType>>
+    extends BaseProperty<T> {
     dataType: "map";
 
     /**
@@ -534,7 +540,7 @@ export interface MapProperty<T extends Record<string, CMSType> = Record<string, 
      * NOTE: If you don't set `required` in the map property, an empty object
      * will be considered valid, even if you set `required` in the properties.
      */
-    validation?: PropertyValidationSchema,
+    validation?: PropertyValidationSchema;
 
     /**
      * Properties that are displayed when rendered as a preview
@@ -572,14 +578,12 @@ export interface MapProperty<T extends Record<string, CMSType> = Record<string, 
      * arbitrary keys. You don't need to define the properties in this case.
      */
     keyValue?: boolean;
-
 }
 
 /**
  * @group Entity properties
  */
 export interface DateProperty extends BaseProperty<Date> {
-
     dataType: "date";
 
     /**
@@ -600,7 +604,7 @@ export interface DateProperty extends BaseProperty<Date> {
      * update (including creation). Useful for creating `created_on` or
      * `updated_on` fields
      */
-    autoValue?: "on_create" | "on_update"
+    autoValue?: "on_create" | "on_update";
 
     /**
      * Add an icon to clear the value and set it to `null`. Defaults to `false`
@@ -613,21 +617,18 @@ export interface DateProperty extends BaseProperty<Date> {
  */
 // TODO: currently this is the only unsupported field
 export interface GeopointProperty extends BaseProperty<GeoPoint> {
-
     dataType: "geopoint";
 
     /**
      * Rules for validating this property
      */
-    validation?: PropertyValidationSchema,
-
+    validation?: PropertyValidationSchema;
 }
 
 /**
  * @group Entity properties
  */
 export interface ReferenceProperty extends BaseProperty<EntityReference> {
-
     dataType: "reference";
 
     /**
@@ -664,7 +665,6 @@ export interface ReferenceProperty extends BaseProperty<EntityReference> {
      * Should the reference include a link to the entity (open the entity details). Defaults to `true`
      */
     includeEntityLink?: boolean;
-
 }
 
 /**
@@ -753,7 +753,6 @@ export interface ArrayPropertyValidationSchema extends PropertyValidationSchema 
  * @group Entity properties
  */
 export type StorageConfig = {
-
     /**
      * File MIME types that can be uploaded to this reference. Don't specify for
      * all.
@@ -773,7 +772,7 @@ export type StorageConfig = {
      * For the default Firebase implementation, the values passed here are of type
      * `firebase.storage.UploadMetadata`
      */
-    metadata?: Record<string, unknown>,
+    metadata?: Record<string, unknown>;
 
     /**
      * You can use this prop to customize the uploaded filename.
@@ -816,12 +815,12 @@ export type StorageConfig = {
      *
      * Defaults to false.
      */
-    storeUrl?: boolean,
+    storeUrl?: boolean;
 
     /**
      * Define maximal file size in bytes
      */
-    maxSize?: number,
+    maxSize?: number;
 
     /**
      * Use this callback to process the file before uploading it to the storage.
@@ -841,7 +840,7 @@ export type StorageConfig = {
      * Useful when the file's path is different from the original field value
      */
     previewUrl?: (fileName: string) => string;
-}
+};
 
 /**
  * @group Entity properties
@@ -895,7 +894,7 @@ export type PreviewType = "image" | "video" | "audio" | "file";
  * @group Entity properties
  */
 export type FileType =
-    "image/*"
+    | "image/*"
     | "video/*"
     | "audio/*"
     | "application/*"

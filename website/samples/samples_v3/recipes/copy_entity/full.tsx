@@ -7,14 +7,14 @@ import {
     EntityCollection,
     useDataSource,
     useReferenceDialog,
-    useSnackbarController
+    useSnackbarController,
 } from "@firecms/core";
 import { Button } from "@firecms/ui";
 
 type Product = {
     name: string;
     price: number;
-}
+};
 
 type CopyEntityButtonProps = {
     pathFrom: string;
@@ -24,12 +24,11 @@ type CopyEntityButtonProps = {
 };
 
 function CopyEntityButton({
-                              pathFrom,
-                              collectionFrom,
-                              pathTo,
-                              collectionTo
-                          }: CopyEntityButtonProps) {
-
+    pathFrom,
+    collectionFrom,
+    pathTo,
+    collectionTo,
+}: CopyEntityButtonProps) {
     // The datasource allows us to create new documents
     const dataSource = useDataSource();
 
@@ -38,36 +37,37 @@ function CopyEntityButton({
 
     // We declare a callback function for the reference dialog that will
     // create the new entity and show a snackbar when completed
-    const copyEntity = useCallback((entity: Entity<any> | null) => {
-        if (entity) {
-            dataSource.saveEntity({
-                path: pathTo,
-                values: entity.values,
-                entityId: entity.id,
-                collection: collectionTo,
-                status: "new"
-            }).then(() => {
-                snackbarController.open({
-                    type: "success",
-                    message: "Copied entity " + entity.id
-                });
-            });
-        }
-    }, [collectionTo, dataSource, pathTo, snackbarController]);
+    const copyEntity = useCallback(
+        (entity: Entity<any> | null) => {
+            if (entity) {
+                dataSource
+                    .saveEntity({
+                        path: pathTo,
+                        values: entity.values,
+                        entityId: entity.id,
+                        collection: collectionTo,
+                        status: "new",
+                    })
+                    .then(() => {
+                        snackbarController.open({
+                            type: "success",
+                            message: "Copied entity " + entity.id,
+                        });
+                    });
+            }
+        },
+        [collectionTo, dataSource, pathTo, snackbarController]
+    );
 
     // This dialog is used to prompt the selected collection
     const referenceDialog = useReferenceDialog({
         path: pathFrom,
         collection: collectionFrom,
         multiselect: false,
-        onSingleEntitySelected: copyEntity
+        onSingleEntitySelected: copyEntity,
     });
 
-    return (
-        <Button onClick={referenceDialog.open}>
-            Copy from {pathFrom}
-        </Button>
-    );
+    return <Button onClick={referenceDialog.open}>Copy from {pathFrom}</Button>;
 }
 
 // Common properties of our target and source collections
@@ -75,16 +75,16 @@ const properties = buildProperties<Product>({
     name: {
         name: "Name",
         validation: { required: true },
-        dataType: "string"
+        dataType: "string",
     },
     price: {
         name: "Price",
         validation: {
             required: true,
-            min: 0
+            min: 0,
         },
-        dataType: "number"
-    }
+        dataType: "number",
+    },
 });
 
 // Source collection
@@ -92,7 +92,7 @@ export const productsCollection = buildCollection<Product>({
     name: "Products",
     id: "products",
     path: "products",
-    properties
+    properties,
 });
 
 // Target collection
@@ -101,11 +101,12 @@ export const productsCollectionCopy = buildCollection<Product>({
     id: "products_copied",
     path: "products_copied",
     properties,
-    Actions: ({ path, collection }: CollectionActionsProps<Product>) =>
+    Actions: ({ path, collection }: CollectionActionsProps<Product>) => (
         <CopyEntityButton
             pathFrom={"products"}
             collectionFrom={productsCollection}
             pathTo={path}
             collectionTo={collection}
         />
+    ),
 });

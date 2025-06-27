@@ -14,10 +14,9 @@ const queryProducts = async () => {
         .orderBy("available", "desc")
         .get()
         .then((snapshot) => {
-                snapshot.docs.forEach((doc) => {
-                    console.log(doc.id, "=>", doc.data());
-                });
-            }
-        );
+            snapshot.docs.forEach((doc) => {
+                console.log(doc.id, "=>", doc.data());
+            });
+        });
 };
 queryProducts();

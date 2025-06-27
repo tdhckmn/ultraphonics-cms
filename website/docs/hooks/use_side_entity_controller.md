@@ -20,9 +20,9 @@ entity schema are not included in the main navigation defined in `FireCMS`.
 
 The props provided by this hook are:
 
-* `close()` Close the last panel
-* `sidePanels` List of side entity panels currently open
-* `open (props: SideEntityPanelProps)`
+- `close()` Close the last panel
+- `sidePanels` List of side entity panels currently open
+- `open (props: SideEntityPanelProps)`
   Open a new entity sideDialog. By default, the schema and configuration of the
   view is fetched from the collections you have specified in the navigation. At
   least you need to pass the path of the entity you would like to
@@ -37,7 +37,6 @@ import { useSideEntityController } from "@firecms/core";
 import { Button } from "@firecms/ui";
 
 export function ExampleCMSView() {
-
     const sideEntityController = useSideEntityController();
 
     // You don't need to provide a schema if the collection path is mapped in
@@ -48,22 +47,24 @@ export function ExampleCMSView() {
             name: {
                 name: "Name",
                 validation: { required: true },
-                dataType: "string"
+                dataType: "string",
             },
-        }
+        },
     });
 
     return (
         <Button
-            onClick={() => sideEntityController.open({
-                entityId: "B003WT1622",
-                path: "/products",
-                collection: customProductCollection // optional
-            })}
-            color="primary">
+            onClick={() =>
+                sideEntityController.open({
+                    entityId: "B003WT1622",
+                    path: "/products",
+                    collection: customProductCollection, // optional
+                })
+            }
+            color="primary"
+        >
             Open entity with custom schema
         </Button>
     );
 }
 ```
-

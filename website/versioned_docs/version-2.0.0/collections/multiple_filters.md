@@ -33,34 +33,33 @@ const firestoreIndexesBuilder: FirestoreIndexesBuilder = ({ path }) => {
         return [
             {
                 category: "asc",
-                available: "desc"
+                available: "desc",
             },
             {
                 category: "asc",
-                available: "asc"
+                available: "asc",
             },
             {
                 category: "desc",
-                available: "desc"
+                available: "desc",
             },
             {
                 category: "desc",
-                available: "asc"
-            }
+                available: "asc",
+            },
         ];
     }
     return undefined;
-}
+};
 
 // Add your indexes builder to your app
 function MyApp() {
-
-    return <FirebaseCMSApp
-        // ...
-        firestoreIndexesBuilder={firestoreIndexesBuilder}
-        // ...
-    />;
+    return (
+        <FirebaseCMSApp
+            // ...
+            firestoreIndexesBuilder={firestoreIndexesBuilder}
+            // ...
+        />
+    );
 }
-
 ```
-

@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function AudiotrackIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"audiotrack"}/>
+    return <Icon {...props} iconKey={"audiotrack"} />;
 }

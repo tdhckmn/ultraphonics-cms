@@ -3,25 +3,21 @@ import { BreadcrumbEntry, BreadcrumbsController } from "../hooks/useBreadcrumbsC
 
 const DEFAULT_BREADCRUMBS_CONTROLLER = {
     breadcrumbs: [],
-    set: (props: {
-        breadcrumbs: BreadcrumbEntry[];
-    }) => {
-    }
+    set: (props: { breadcrumbs: BreadcrumbEntry[] }) => {},
 };
 
-export const BreadcrumbContext = React.createContext<BreadcrumbsController>(DEFAULT_BREADCRUMBS_CONTROLLER);
+export const BreadcrumbContext = React.createContext<BreadcrumbsController>(
+    DEFAULT_BREADCRUMBS_CONTROLLER
+);
 
 interface BreadcrumbsProviderProps {
     children: React.ReactNode;
 }
 
 export const BreadcrumbsProvider: React.FC<BreadcrumbsProviderProps> = ({ children }) => {
-
     const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbEntry[]>([]);
 
-    const set = (props: {
-        breadcrumbs: BreadcrumbEntry[];
-    }) => {
+    const set = (props: { breadcrumbs: BreadcrumbEntry[] }) => {
         setBreadcrumbs(props.breadcrumbs);
     };
 
@@ -29,7 +25,7 @@ export const BreadcrumbsProvider: React.FC<BreadcrumbsProviderProps> = ({ childr
         <BreadcrumbContext.Provider
             value={{
                 breadcrumbs,
-                set
+                set,
             }}
         >
             {children}

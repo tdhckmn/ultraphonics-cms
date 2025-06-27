@@ -3,7 +3,11 @@
 import React, { useRef, useState } from "react";
 import { CalendarMonthIcon, CloseIcon, ErrorIcon } from "../icons";
 import { IconButton } from "./IconButton";
-import { fieldBackgroundDisabledMixin, fieldBackgroundHoverMixin, fieldBackgroundMixin, } from "../styles";
+import {
+    fieldBackgroundDisabledMixin,
+    fieldBackgroundHoverMixin,
+    fieldBackgroundMixin,
+} from "../styles";
 import { InputLabel } from "./InputLabel";
 import { Typography } from "./Typography";
 import { cls } from "../util";
@@ -26,19 +30,19 @@ export type DateTimeFieldProps = {
 };
 
 export const DateTimeField: React.FC<DateTimeFieldProps> = ({
-                                                                value,
-                                                                label,
-                                                                onChange,
-                                                                disabled,
-                                                                clearable,
-                                                                mode = "date",
-                                                                error,
-                                                                size = "large",
-                                                                className,
-                                                                style,
-                                                                inputClassName,
-                                                                invisible,
-                                                            }) => {
+    value,
+    label,
+    onChange,
+    disabled,
+    clearable,
+    mode = "date",
+    error,
+    size = "large",
+    className,
+    style,
+    inputClassName,
+    invisible,
+}) => {
     const inputRef = useRef<HTMLInputElement>(null);
     const [focused, setFocused] = useState(false);
     const hasValue = value !== undefined && value !== null;
@@ -52,10 +56,7 @@ export const DateTimeField: React.FC<DateTimeFieldProps> = ({
     };
 
     // Convert Date object to input value string
-    const valueAsInputValue = (
-        dateValue: Date | null,
-        mode: "date" | "date_time"
-    ) => {
+    const valueAsInputValue = (dateValue: Date | null, mode: "date" | "date_time") => {
         if (!dateValue) {
             return "";
         }
@@ -163,7 +164,7 @@ export const DateTimeField: React.FC<DateTimeFieldProps> = ({
                         label ? "pt-8 pb-2" : "py-2",
                         inputClassName,
                         disabled &&
-                        "border border-transparent outline-none opacity-50 dark:opacity-50 text-surface-accent-600 dark:text-surface-accent-500"
+                            "border border-transparent outline-none opacity-50 dark:opacity-50 text-surface-accent-600 dark:text-surface-accent-500"
                     )}
                 />
                 <IconButton
@@ -173,24 +174,22 @@ export const DateTimeField: React.FC<DateTimeFieldProps> = ({
                     }}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 !text-surface-accent-500"
                 >
-                    <CalendarMonthIcon color={"disabled"}/>
+                    <CalendarMonthIcon color={"disabled"} />
                 </IconButton>
                 {clearable && value && (
                     <IconButton
                         onClick={handleClear}
                         className="absolute right-14 top-1/2 transform -translate-y-1/2 text-surface-accent-400 "
                     >
-                        <CloseIcon/>
+                        <CloseIcon />
                     </IconButton>
                 )}
             </div>
             {invalidValue && (
                 <div className="flex items-center m-2">
-                    <ErrorIcon size={"small"} color={"error"}/>
+                    <ErrorIcon size={"small"} color={"error"} />
                     <div className="pl-2">
-                        <Typography variant={"body2"}>
-                            Invalid date value for this field
-                        </Typography>
+                        <Typography variant={"body2"}>Invalid date value for this field</Typography>
                         <Typography variant={"body2"}>
                             {`The provided value is: ${JSON.stringify(value)}`}
                         </Typography>

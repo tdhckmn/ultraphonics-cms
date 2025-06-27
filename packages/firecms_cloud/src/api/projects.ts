@@ -7,120 +7,117 @@ export type ProjectsApi = ReturnType<typeof buildProjectsApi>;
 const rootCollectionsCache: { [key: string]: string[] } = {};
 
 export function buildProjectsApi(host: string, getBackendAuthToken: () => Promise<string>) {
-
-    async function createNewFireCMSProject(projectId: string, googleAccessToken: string | undefined, serviceAccount: object | undefined, creationType: "new" | "existing" | "existing_sa") {
-
+    async function createNewFireCMSProject(
+        projectId: string,
+        googleAccessToken: string | undefined,
+        serviceAccount: object | undefined,
+        creationType: "new" | "existing" | "existing_sa"
+    ) {
         const firebaseAccessToken = await getBackendAuthToken();
-        return fetch(host + "/projects",
-            {
-                method: "POST",
-                headers: buildHeaders({
-                    firebaseAccessToken,
-                    googleAccessToken,
-                    serviceAccount
-                }),
-                body: JSON.stringify({
-                    projectId,
-                    creationType,
-                    serviceAccount: serviceAccount ?? null
-                })
-            })
-            .then(async (res) => {
-                return handleApiResponse(res, projectId).then((_) => true);
-            });
+        return fetch(host + "/projects", {
+            method: "POST",
+            headers: buildHeaders({
+                firebaseAccessToken,
+                googleAccessToken,
+                serviceAccount,
+            }),
+            body: JSON.stringify({
+                projectId,
+                creationType,
+                serviceAccount: serviceAccount ?? null,
+            }),
+        }).then(async (res) => {
+            return handleApiResponse(res, projectId).then((_) => true);
+        });
     }
 
     async function createFirebaseWebapp(projectId: string) {
-
         const firebaseAccessToken = await getBackendAuthToken();
-        return fetch(host + `/projects/${projectId}/firebase_webapp`,
-            {
-                method: "POST",
-                headers: buildHeaders({ firebaseAccessToken }),
-                body: JSON.stringify({
-                    projectId
-                })
-            })
-            .then(async (res) => {
-                return handleApiResponse(res, projectId).then((_) => true);
-            });
+        return fetch(host + `/projects/${projectId}/firebase_webapp`, {
+            method: "POST",
+            headers: buildHeaders({ firebaseAccessToken }),
+            body: JSON.stringify({
+                projectId,
+            }),
+        }).then(async (res) => {
+            return handleApiResponse(res, projectId).then((_) => true);
+        });
     }
 
-    async function addSecurityRules(projectId: string, googleAccessToken?: string, serviceAccount?: object) {
-
+    async function addSecurityRules(
+        projectId: string,
+        googleAccessToken?: string,
+        serviceAccount?: object
+    ) {
         const firebaseAccessToken = await getBackendAuthToken();
-        return fetch(host + `/projects/${projectId}/firestore_security_rules`,
-            {
-                method: "PATCH",
-                headers: buildHeaders({
-                    firebaseAccessToken,
-                    googleAccessToken,
-                    serviceAccount
-                }),
-            })
-            .then(async (res) => {
-                return handleApiResponse(res, projectId).then((_) => true);
-            });
+        return fetch(host + `/projects/${projectId}/firestore_security_rules`, {
+            method: "PATCH",
+            headers: buildHeaders({
+                firebaseAccessToken,
+                googleAccessToken,
+                serviceAccount,
+            }),
+        }).then(async (res) => {
+            return handleApiResponse(res, projectId).then((_) => true);
+        });
     }
 
-    async function createNewUser(projectId: string,
-                                 user: FireCMSCloudUserWithRoles): Promise<FireCMSCloudUserWithRoles> {
-
+    async function createNewUser(
+        projectId: string,
+        user: FireCMSCloudUserWithRoles
+    ): Promise<FireCMSCloudUserWithRoles> {
         const firebaseAccessToken = await getBackendAuthToken();
         const persistedUserData = {
             ...user,
-            roles: user.roles.map(r => r.id),
-            updated_on: new Date()
-        }
-        return fetch(host + "/projects/" + projectId + "/users",
-            {
-                method: "POST",
-                headers: buildHeaders({ firebaseAccessToken }),
-                body: JSON.stringify(persistedUserData)
-            })
-            .then((res) => {
-                return handleApiResponse<FireCMSCloudUserWithRoles>(res, projectId);
-            });
+            roles: user.roles.map((r) => r.id),
+            updated_on: new Date(),
+        };
+        return fetch(host + "/projects/" + projectId + "/users", {
+            method: "POST",
+            headers: buildHeaders({ firebaseAccessToken }),
+            body: JSON.stringify(persistedUserData),
+        }).then((res) => {
+            return handleApiResponse<FireCMSCloudUserWithRoles>(res, projectId);
+        });
     }
 
-    async function updateUser(projectId: string,
-                              uid: string,
-                              user: FireCMSCloudUserWithRoles): Promise<FireCMSCloudUserWithRoles> {
+    async function updateUser(
+        projectId: string,
+        uid: string,
+        user: FireCMSCloudUserWithRoles
+    ): Promise<FireCMSCloudUserWithRoles> {
         const firebaseAccessToken = await getBackendAuthToken();
         const persistedUserData = {
             ...user,
-            roles: user.roles.map(r => r.id),
-            updated_on: new Date()
-        }
+            roles: user.roles.map((r) => r.id),
+            updated_on: new Date(),
+        };
         console.debug("Updating user", persistedUserData);
-        return fetch(host + "/projects/" + projectId + "/users/" + uid,
-            {
-                method: "PATCH",
-                headers: buildHeaders({ firebaseAccessToken }),
-                body: JSON.stringify(persistedUserData)
-            })
-            .then((res) => {
-                return handleApiResponse<FireCMSCloudUserWithRoles>(res, projectId);
-            });
+        return fetch(host + "/projects/" + projectId + "/users/" + uid, {
+            method: "PATCH",
+            headers: buildHeaders({ firebaseAccessToken }),
+            body: JSON.stringify(persistedUserData),
+        }).then((res) => {
+            return handleApiResponse<FireCMSCloudUserWithRoles>(res, projectId);
+        });
     }
 
-    async function deleteUser(projectId: string,
-                              uid: string): Promise<void> {
+    async function deleteUser(projectId: string, uid: string): Promise<void> {
         const firebaseAccessToken = await getBackendAuthToken();
-        return fetch(host + "/projects/" + projectId + "/users/" + uid,
-            {
-                method: "DELETE",
-                headers: buildHeaders({ firebaseAccessToken })
-            })
-            .then((res) => {
-                return handleApiResponse<void>(res, projectId);
-            });
+        return fetch(host + "/projects/" + projectId + "/users/" + uid, {
+            method: "DELETE",
+            headers: buildHeaders({ firebaseAccessToken }),
+        }).then((res) => {
+            return handleApiResponse<void>(res, projectId);
+        });
     }
 
-    async function getRootCollections(projectId: string,
-                                      googleAccessToken?: string,
-                                      serviceAccount?: object,
-                                      retries = 10): Promise<string[]> {
+    async function getRootCollections(
+        projectId: string,
+        googleAccessToken?: string,
+        serviceAccount?: object,
+        retries = 10
+    ): Promise<string[]> {
         if (rootCollectionsCache[projectId]) {
             return rootCollectionsCache[projectId];
         }
@@ -129,20 +126,19 @@ export function buildProjectsApi(host: string, getBackendAuthToken: () => Promis
 
         async function retry() {
             // wait 2 seconds
-            await new Promise(resolve => setTimeout(resolve, 5000));
+            await new Promise((resolve) => setTimeout(resolve, 5000));
             console.debug("Retrying getRootCollections", retries);
             return getRootCollections(projectId, googleAccessToken, serviceAccount, retries - 1);
         }
 
-        return fetch(host + "/projects/" + projectId + "/firestore_root_collections",
-            {
-                method: "GET",
-                headers: buildHeaders({
-                    firebaseAccessToken,
-                    googleAccessToken,
-                    serviceAccount
-                }),
-            })
+        return fetch(host + "/projects/" + projectId + "/firestore_root_collections", {
+            method: "GET",
+            headers: buildHeaders({
+                firebaseAccessToken,
+                googleAccessToken,
+                serviceAccount,
+            }),
+        })
             .then(async (res) => {
                 if (res.status >= 300) {
                     return await retry();
@@ -160,141 +156,146 @@ export function buildProjectsApi(host: string, getBackendAuthToken: () => Promis
             });
     }
 
-    async function createServiceAccount(googleAccessToken: string,
-                                        projectId: string,
-                                        reset: boolean): Promise<FireCMSCloudUserWithRoles> {
+    async function createServiceAccount(
+        googleAccessToken: string,
+        projectId: string,
+        reset: boolean
+    ): Promise<FireCMSCloudUserWithRoles> {
         const firebaseAccessToken = await getBackendAuthToken();
         const url = `${host}/projects/${projectId}/service_accounts?reset=${reset}`;
 
-        return fetch(url,
-            {
-                method: "POST",
-                headers: buildHeaders({
-                    firebaseAccessToken,
-                    googleAccessToken
-                }),
-            })
-            .then(async (res) => {
-                if (res.status === 409) // already exists
-                    throw Error("The service account already exists for this project.")
-                const data = await res.json();
-                return data.user as FireCMSCloudUserWithRoles;
-            });
+        return fetch(url, {
+            method: "POST",
+            headers: buildHeaders({
+                firebaseAccessToken,
+                googleAccessToken,
+            }),
+        }).then(async (res) => {
+            if (res.status === 409)
+                // already exists
+                throw Error("The service account already exists for this project.");
+            const data = await res.json();
+            return data.user as FireCMSCloudUserWithRoles;
+        });
     }
 
     async function doDelegatedLogin(projectId: string): Promise<string> {
         const firebaseAccessToken = await getBackendAuthToken();
-        return fetch(host + "/projects/" + projectId + "/delegated_login",
-            {
-                method: "POST",
-                headers: buildHeaders({ firebaseAccessToken }),
-                body: JSON.stringify({
-                    projectId
-                })
-            })
-            .then(async (res) => {
-                const data = await res.json();
-                if (!res.ok) {
-                    throw new ApiError(data.message, data.code, projectId, data.data);
-                }
-                return data.data as string;
-            });
+        return fetch(host + "/projects/" + projectId + "/delegated_login", {
+            method: "POST",
+            headers: buildHeaders({ firebaseAccessToken }),
+            body: JSON.stringify({
+                projectId,
+            }),
+        }).then(async (res) => {
+            const data = await res.json();
+            if (!res.ok) {
+                throw new ApiError(data.message, data.code, projectId, data.data);
+            }
+            return data.data as string;
+        });
     }
 
     async function getStripePortalLink(): Promise<string> {
         const firebaseAccessToken = await getBackendAuthToken();
-        return fetch(`${host}/customer/stripe_portal_link?return_url=${encodeURIComponent(window.location.href)}`,
+        return fetch(
+            `${host}/customer/stripe_portal_link?return_url=${encodeURIComponent(window.location.href)}`,
             {
                 method: "GET",
                 headers: buildHeaders({ firebaseAccessToken }),
-            })
-            .then(async (res) => {
-                const data = await res.json();
-                return data.url as string;
-            });
+            }
+        ).then(async (res) => {
+            const data = await res.json();
+            return data.url as string;
+        });
     }
 
     async function getStripeCancelLinkForSubscription(subscriptionId: string): Promise<string> {
         const firebaseAccessToken = await getBackendAuthToken();
-        return fetch(`${host}/customer/stripe_portal_link/cancel_subscription?return_url=${encodeURIComponent(window.location.href)}&subscription_id=${subscriptionId}`,
+        return fetch(
+            `${host}/customer/stripe_portal_link/cancel_subscription?return_url=${encodeURIComponent(window.location.href)}&subscription_id=${subscriptionId}`,
             {
                 method: "GET",
                 headers: buildHeaders({ firebaseAccessToken }),
-            })
-            .then(async (res) => {
-                const data = await res.json();
-                return data.url as string;
-            });
+            }
+        ).then(async (res) => {
+            const data = await res.json();
+            return data.url as string;
+        });
     }
 
     async function getStripeUpdateLinkForSubscription(subscriptionId: string): Promise<string> {
         const firebaseAccessToken = await getBackendAuthToken();
-        return fetch(`${host}/customer/stripe_portal_link/update_subscription?return_url=${encodeURIComponent(window.location.href)}&subscription_id=${subscriptionId}`,
+        return fetch(
+            `${host}/customer/stripe_portal_link/update_subscription?return_url=${encodeURIComponent(window.location.href)}&subscription_id=${subscriptionId}`,
             {
                 method: "GET",
                 headers: buildHeaders({ firebaseAccessToken }),
-            })
-            .then(async (res) => {
-                const data = await res.json();
-                return data.url as string;
-            });
+            }
+        ).then(async (res) => {
+            const data = await res.json();
+            return data.url as string;
+        });
     }
 
     async function getStripeUpdateLinkForPaymentMethod(subscriptionId: string): Promise<string> {
         const firebaseAccessToken = await getBackendAuthToken();
-        return fetch(`${host}/customer/stripe_portal_link/update_payment_method?return_url=${encodeURIComponent(window.location.href)}&subscription_id=${subscriptionId}`,
+        return fetch(
+            `${host}/customer/stripe_portal_link/update_payment_method?return_url=${encodeURIComponent(window.location.href)}&subscription_id=${subscriptionId}`,
             {
                 method: "GET",
                 headers: buildHeaders({ firebaseAccessToken }),
-            })
-            .then(async (res) => {
-                const data = await res.json();
-                return data.url as string;
-            });
+            }
+        ).then(async (res) => {
+            const data = await res.json();
+            return data.url as string;
+        });
     }
 
     async function createStripeNewSubscriptionLink(props: {
-        projectId?: string,
-        licenseId?: string,
-        quantity?: number,
-        productPriceId: string,
-        productPriceType: string,
-        type: SubscriptionType
+        projectId?: string;
+        licenseId?: string;
+        quantity?: number;
+        productPriceId: string;
+        productPriceType: string;
+        type: SubscriptionType;
     }): Promise<string> {
         const firebaseAccessToken = await getBackendAuthToken();
-        return fetch(`${host}/customer/create-checkout-session?return_url=${encodeURIComponent(window.location.href)}`,
+        return fetch(
+            `${host}/customer/create-checkout-session?return_url=${encodeURIComponent(window.location.href)}`,
             {
                 method: "POST",
                 headers: buildHeaders({ firebaseAccessToken }),
-                body: JSON.stringify(props)
-            })
-            .then(async (res) => {
-                const data = await res.json();
-                if (!res.ok) {
-                    throw new Error(data?.error ?? "Error creating checkout session");
-                }
-                return data.url as string;
-            });
+                body: JSON.stringify(props),
+            }
+        ).then(async (res) => {
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data?.error ?? "Error creating checkout session");
+            }
+            return data.url as string;
+        });
     }
 
     async function createCloudStripeNewSubscriptionLink(props: {
-        projectId: string,
-        currency: string
+        projectId: string;
+        currency: string;
     }): Promise<string> {
         const firebaseAccessToken = await getBackendAuthToken();
-        return fetch(`${host}/customer/cloud-checkout-session?return_url=${encodeURIComponent(window.location.href)}`,
+        return fetch(
+            `${host}/customer/cloud-checkout-session?return_url=${encodeURIComponent(window.location.href)}`,
             {
                 method: "POST",
                 headers: buildHeaders({ firebaseAccessToken }),
-                body: JSON.stringify(props)
-            })
-            .then(async (res) => {
-                const data = await res.json();
-                if (!res.ok) {
-                    throw new Error(data?.error ?? "Error creating checkout session");
-                }
-                return data.url as string;
-            });
+                body: JSON.stringify(props),
+            }
+        ).then(async (res) => {
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data?.error ?? "Error creating checkout session");
+            }
+            return data.url as string;
+        });
     }
 
     async function getRemoteConfigUrl(projectId: string, revisionId?: string) {
@@ -303,16 +304,17 @@ export function buildProjectsApi(host: string, getBackendAuthToken: () => Promis
 
     async function initialCollectionsSetup(projectId: string): Promise<EntityCollection[]> {
         const firebaseAccessToken = await getBackendAuthToken();
-        return fetch(`${host}/projects/${projectId}/initial_setup`,
-            {
-                method: "POST",
-                headers: buildHeaders({ firebaseAccessToken }),
-                body: JSON.stringify({ projectId })
-            })
-            .then(async (res) => {
-                const data = await handleApiResponse<{ collections: EntityCollection[] }>(res, projectId);
-                return data.collections;
-            });
+        return fetch(`${host}/projects/${projectId}/initial_setup`, {
+            method: "POST",
+            headers: buildHeaders({ firebaseAccessToken }),
+            body: JSON.stringify({ projectId }),
+        }).then(async (res) => {
+            const data = await handleApiResponse<{ collections: EntityCollection[] }>(
+                res,
+                projectId
+            );
+            return data.collections;
+        });
     }
 
     return {
@@ -336,18 +338,18 @@ export function buildProjectsApi(host: string, getBackendAuthToken: () => Promis
         getStripeCancelLinkForSubscription,
         getStripeUpdateLinkForPaymentMethod,
         host,
-        getRemoteConfigUrl
-    }
+        getRemoteConfigUrl,
+    };
 }
 
 function buildHeaders({
-                          firebaseAccessToken,
-                          googleAccessToken,
-                          serviceAccount
-                      }: {
-    firebaseAccessToken: string,
-    googleAccessToken?: string,
-    serviceAccount?: object
+    firebaseAccessToken,
+    googleAccessToken,
+    serviceAccount,
+}: {
+    firebaseAccessToken: string;
+    googleAccessToken?: string;
+    serviceAccount?: object;
 }): Record<string, string> {
     const headers: Record<string, string> = {
         "Content-Type": "application/json",

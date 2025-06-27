@@ -10,29 +10,29 @@ directly from their respective hooks.
 
 The props provided by this hook are:
 
-* `dateTimeFormat`?: Format of the dates in the CMS.
+- `dateTimeFormat`?: Format of the dates in the CMS.
   Defaults to 'MMMM dd, yyyy, HH:mm:ss'
 
-* `locale`?: Locale of the CMS, currently only affecting dates
+- `locale`?: Locale of the CMS, currently only affecting dates
 
-* `dataSource`:Connector to your database, e.g. your Firestore database
+- `dataSource`:Connector to your database, e.g. your Firestore database
 
-* `storageSource`: Used storage implementation
+- `storageSource`: Used storage implementation
 
-* `schemaRegistryController`: This controller is in charge of resolving the entity schemas from a given
+- `schemaRegistryController`: This controller is in charge of resolving the entity schemas from a given
   path. It takes into account the `navigation` prop set in the main level of the
   CMSApp as well as the `schemaResolver` in case you want to override schemas
   to specific entities.
 
-* `navigation`: Context that includes the resolved navigation and utility methods and
+- `navigation`: Context that includes the resolved navigation and utility methods and
   attributes.
 
-* `sideEntityController`: Controller to open the side dialog displaying entity forms
+- `sideEntityController`: Controller to open the side dialog displaying entity forms
 
-* `authController`: Used auth controller
+- `authController`: Used auth controller
 
-* `entityLinkBuilder`?: Builder for generating utility links for entities
+- `entityLinkBuilder`?: Builder for generating utility links for entities
 
-* `userConfigPersistence`: Use this controller to access data stored in the browser for the user
+- `userConfigPersistence`: Use this controller to access data stored in the browser for the user
 
-* `snackbarController`: Use this controller to display snackbars
+- `snackbarController`: Use this controller to display snackbars

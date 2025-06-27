@@ -34,26 +34,26 @@ const widthClasses = {
     "5xl": "max-w-5xl min-w-5xl w-5xl",
     "6xl": "max-w-6xl min-w-6xl w-6xl",
     "7xl": "max-w-7xl min-w-7xl w-7xl",
-    full: "max-w-full min-w-full w-full"
+    full: "max-w-full min-w-full w-full",
 };
 
 export const Dialog = ({
-                           open,
-                           onOpenChange,
-                           children,
-                           className,
-                           containerClassName,
-                           fullWidth = true,
-                           fullHeight,
-                           fullScreen,
-                           scrollable = true,
-                           maxWidth = "lg",
-                           modal = true,
-                           onOpenAutoFocus,
-                           onEscapeKeyDown,
-                           onPointerDownOutside,
-                           onInteractOutside
-                       }: DialogProps) => {
+    open,
+    onOpenChange,
+    children,
+    className,
+    containerClassName,
+    fullWidth = true,
+    fullHeight,
+    fullScreen,
+    scrollable = true,
+    maxWidth = "lg",
+    modal = true,
+    onOpenAutoFocus,
+    onEscapeKeyDown,
+    onPointerDownOutside,
+    onInteractOutside,
+}: DialogProps) => {
     const [displayed, setDisplayed] = useState(false);
 
     useEffect(() => {
@@ -64,26 +64,22 @@ export const Dialog = ({
             return () => clearTimeout(timeout);
         } else {
             setDisplayed(true);
-            return () => {
-            };
+            return () => {};
         }
     }, [open]);
 
     return (
-        <DialogPrimitive.Root open={displayed || open}
-                              modal={modal}
-                              onOpenChange={onOpenChange}>
+        <DialogPrimitive.Root open={displayed || open} modal={modal} onOpenChange={onOpenChange}>
             <DialogPrimitive.Portal>
-
                 <div className={cls("fixed inset-0 z-30", containerClassName)}>
-
                     <DialogPrimitive.Overlay
-                        className={cls("fixed inset-0 transition-opacity z-20 ease-in-out duration-200 bg-black bg-opacity-50 dark:bg-opacity-60 backdrop-blur-sm ",
+                        className={cls(
+                            "fixed inset-0 transition-opacity z-20 ease-in-out duration-200 bg-black bg-opacity-50 dark:bg-opacity-60 backdrop-blur-sm ",
                             displayed && open ? "opacity-100" : "opacity-0",
                             "z-20 fixed top-0 left-0 w-full h-full flex justify-center items-center"
                         )}
                         style={{
-                            pointerEvents: displayed ? "auto" : "none"
+                            pointerEvents: displayed ? "auto" : "none",
                         }}
                     />
 
@@ -92,10 +88,13 @@ export const Dialog = ({
                         onOpenAutoFocus={onOpenAutoFocus}
                         onPointerDownOutside={onPointerDownOutside}
                         onInteractOutside={onInteractOutside}
-                        className={cls("h-full outline-none flex justify-center items-center z-40 opacity-100 transition-all duration-200 ease-in-out")}
+                        className={cls(
+                            "h-full outline-none flex justify-center items-center z-40 opacity-100 transition-all duration-200 ease-in-out"
+                        )}
                     >
                         <div
-                            className={cls(paperMixin,
+                            className={cls(
+                                paperMixin,
                                 "z-30",
                                 "relative",
                                 "outline-none focus:outline-none",
@@ -109,15 +108,13 @@ export const Dialog = ({
                                 displayed && open ? "opacity-100" : "opacity-0",
                                 maxWidth && !fullScreen ? widthClasses[maxWidth] : undefined,
                                 className
-                            )}>
+                            )}
+                        >
                             {children}
                         </div>
-
                     </DialogPrimitive.Content>
                 </div>
-
             </DialogPrimitive.Portal>
         </DialogPrimitive.Root>
     );
 };
-

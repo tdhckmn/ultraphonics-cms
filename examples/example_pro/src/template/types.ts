@@ -2,7 +2,7 @@ import { EntityReference } from "@firecms/core";
 
 export type Product = {
     name: string;
-    category:string;
+    category: string;
     available: boolean;
     price: number;
     currency: string;
@@ -15,14 +15,14 @@ export type Product = {
     publisher: {
         name: string;
         external_id: string;
-    },
+    };
     added_on: Date;
     tags: string[];
-}
+};
 
 export type Locale = {
-    name: string,
-    description: string,
-    selectable?: boolean,
-    video: string
-}
+    name: string;
+    description: string;
+    selectable?: boolean;
+    video: string;
+};

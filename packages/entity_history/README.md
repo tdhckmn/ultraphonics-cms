@@ -4,7 +4,7 @@ This plugin adds a history view to your entities in FireCMS. It allows you to tr
 showing who made the change and when.
 
 The document history will be stored in a subcollection called `__history` within the entity's document.
-Each change will be recorded as a new document in this subcollection. 
+Each change will be recorded as a new document in this subcollection.
 
 ## Installation
 
@@ -30,19 +30,19 @@ import React from "react";
 import { FireCMS } from "@firecms/core";
 import { useEntityHistoryPlugin } from "@firecms/entity_history";
 
-
 export default function App() {
-
     // Basic setup with default options
     const entityHistoryPlugin = useEntityHistoryPlugin();
 
-    return <FireCMS
-        name={"My Online Shop"}
-        plugins={[entityHistoryPlugin]}
-        authentication={myAuthenticator}
-        collections={myCollections}
-        firebaseConfig={firebaseConfig}
-    />;
+    return (
+        <FireCMS
+            name={"My Online Shop"}
+            plugins={[entityHistoryPlugin]}
+            authentication={myAuthenticator}
+            collections={myCollections}
+            firebaseConfig={firebaseConfig}
+        />
+    );
 }
 ```
 
@@ -58,11 +58,11 @@ const productsCollection = buildCollection({
     properties: {
         name: {
             name: "Name",
-            dataType: "string"
-        }
+            dataType: "string",
+        },
         // ...other properties
     },
-    history: true // Enable history for this collection
+    history: true, // Enable history for this collection
 });
 ```
 
@@ -77,23 +77,22 @@ import { useEntityHistoryPlugin } from "@firecms/entity_history";
 import { User } from "@firecms/core";
 
 export function App() {
-
     // ...
 
     const userManagement = useBuildUserManagement({
         dataSourceDelegate: firestoreDelegate,
-        authController: authController
+        authController: authController,
     });
 
     const entityHistoryPlugin = useEntityHistoryPlugin({
         // Enable history for all collections by default
         // This can be overridden by setting `history: false` in a specific collection
         defaultEnabled: true,
-    
+
         // Provide a function to resolve user details from a UID
-        getUser: userManagement.getUser
+        getUser: userManagement.getUser,
     });
-    
+
     // ...
 }
 ```
@@ -101,7 +100,7 @@ export function App() {
 ## Configuration Options
 
 | Option           | Type                            | Description                                                                                                                                      |
-|------------------|---------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `defaultEnabled` | `boolean`                       | If `true`, the history view will be enabled for all collections by default. Each collection can override this by setting its `history` property. |
 | `getUser`        | `(uid: string) => User \| null` | Optional function to get the user object (display name, photo, etc.) from a user ID to display in the history log.                               |
 
@@ -112,7 +111,7 @@ To enable or disable history for a specific collection, set the `history` proper
 ```tsx
 const sampleCollection = buildCollection({
     // ...
-    history: true // or false
+    history: true, // or false
 });
 ```
 

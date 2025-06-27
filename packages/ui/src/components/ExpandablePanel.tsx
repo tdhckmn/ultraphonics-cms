@@ -8,29 +8,30 @@ import { cls } from "../util";
 import { useInjectStyles } from "../hooks";
 
 export function ExpandablePanel({
-                                    title,
-                                    children,
-                                    invisible = false,
-                                    expanded,
-                                    onExpandedChange,
-                                    initiallyExpanded = true,
-                                    titleClassName,
-                                    asField,
-                                    className,
-                                    innerClassName
-                                }: PropsWithChildren<{
-    title: React.ReactNode,
-    invisible?: boolean,
+    title,
+    children,
+    invisible = false,
+    expanded,
+    onExpandedChange,
+    initiallyExpanded = true,
+    titleClassName,
+    asField,
+    className,
+    innerClassName,
+}: PropsWithChildren<{
+    title: React.ReactNode;
+    invisible?: boolean;
     initiallyExpanded?: boolean;
     expanded?: boolean;
-    onExpandedChange?: (expanded: boolean) => void,
-    titleClassName?: string,
-    asField?: boolean,
-    className?: string,
-    innerClassName?: string
+    onExpandedChange?: (expanded: boolean) => void;
+    titleClassName?: string;
+    asField?: boolean;
+    className?: string;
+    innerClassName?: string;
 }>) {
-
-    useInjectStyles("ExpandablePanel", `
+    useInjectStyles(
+        "ExpandablePanel",
+        `
 .CollapsibleContent {
   overflow: hidden;
 }
@@ -57,7 +58,8 @@ export function ExpandablePanel({
   to {
     height: 0;
   }
-}`);
+}`
+    );
 
     const [open, setOpen] = useState(expanded !== undefined ? expanded : initiallyExpanded);
     const [allowOverflow, setAllowOverflow] = useState(open);
@@ -73,11 +75,11 @@ export function ExpandablePanel({
     }, [open]);
 
     useEffect(() => {
-        if (expanded !== undefined)
-            setOpen(expanded);
+        if (expanded !== undefined) setOpen(expanded);
     }, [expanded]);
 
-    return (<>
+    return (
+        <>
             <Collapsible.Root
                 className={cls(
                     !invisible && defaultBorderMixin + " border",
@@ -89,8 +91,8 @@ export function ExpandablePanel({
                 onOpenChange={(updatedOpen: boolean) => {
                     onExpandedChange?.(updatedOpen);
                     setOpen(updatedOpen);
-                }}>
-
+                }}
+            >
                 <Collapsible.Trigger
                     className={cls(
                         "rounded-t flex items-center justify-between w-full min-h-[52px]",
@@ -104,20 +106,20 @@ export function ExpandablePanel({
                     )}
                 >
                     {title}
-                    <KeyboardArrowDownIcon className={cls("transition", open ? "rotate-180" : "")}/>
+                    <KeyboardArrowDownIcon
+                        className={cls("transition", open ? "rotate-180" : "")}
+                    />
                 </Collapsible.Trigger>
 
                 <Collapsible.Content
                     className={cls("CollapsibleContent")}
                     style={{
-                        overflow: allowOverflow ? "visible" : "hidden"
+                        overflow: allowOverflow ? "visible" : "hidden",
                     }}
                 >
-                    <div className={innerClassName}>
-                        {children}
-                    </div>
+                    <div className={innerClassName}>{children}</div>
                 </Collapsible.Content>
             </Collapsible.Root>
         </>
-    )
+    );
 }

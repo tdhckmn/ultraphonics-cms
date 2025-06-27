@@ -7,7 +7,7 @@ import { useNavigationController, useReferenceDialog } from "../../../hooks";
 import { Button, Checkbox, Label, Select, SelectItem } from "@firecms/ui";
 
 interface ReferenceFilterFieldProps {
-    name: string,
+    name: string;
     value?: [op: VirtualTableWhereFilterOp, fieldValue: any];
     setValue: (filterValue?: [VirtualTableWhereFilterOp, any]) => void;
     isArray?: boolean;
@@ -29,22 +29,21 @@ const operationLabels = {
     in: "In",
     "not-in": "Not in",
     "array-contains": "Contains",
-    "array-contains-any": "Contains Any"
+    "array-contains-any": "Contains Any",
 };
 
 const multipleSelectOperations = ["array-contains-any", "in", "not-in"];
 
 export function ReferenceFilterField({
-                                         value,
-                                         setValue,
-                                         isArray,
-                                         path,
-                                         includeId = true,
-                                         previewProperties,
-                                         setHidden
-                                     }: ReferenceFilterFieldProps) {
-
-    const possibleOperations: (keyof typeof operationLabels) [] = isArray
+    value,
+    setValue,
+    isArray,
+    path,
+    includeId = true,
+    previewProperties,
+    setHidden,
+}: ReferenceFilterFieldProps) {
+    const possibleOperations: (keyof typeof operationLabels)[] = isArray
         ? ["array-contains"]
         : ["==", "!=", ">", "<", ">=", "<="];
 
@@ -56,41 +55,50 @@ export function ReferenceFilterField({
 
     const [fieldOperation, fieldValue] = value || [possibleOperations[0], undefined];
     const [operation, setOperation] = useState<VirtualTableWhereFilterOp>(fieldOperation);
-    const [internalValue, setInternalValue] = useState<EntityReference | EntityReference[] | undefined | null>(fieldValue);
+    const [internalValue, setInternalValue] = useState<
+        EntityReference | EntityReference[] | undefined | null
+    >(fieldValue);
 
     const selectedEntityIds = internalValue
-        ? (Array.isArray(internalValue) ? internalValue.map((ref) => {
-            if (!(ref?.isEntityReference && ref?.isEntityReference())) {
-                return null;
-            }
-            return ref.id;
-        }).filter(Boolean) as string[] : [internalValue.id])
+        ? Array.isArray(internalValue)
+            ? (internalValue
+                  .map((ref) => {
+                      if (!(ref?.isEntityReference && ref?.isEntityReference())) {
+                          return null;
+                      }
+                      return ref.id;
+                  })
+                  .filter(Boolean) as string[])
+            : [internalValue.id]
         : [];
 
-    function updateFilter(op: VirtualTableWhereFilterOp, val?: EntityReference | EntityReference[] | null) {
-
+    function updateFilter(
+        op: VirtualTableWhereFilterOp,
+        val?: EntityReference | EntityReference[] | null
+    ) {
         const prevOpIsArray = multipleSelectOperations.includes(operation);
         const newOpIsArray = multipleSelectOperations.includes(op);
         let newValue = val;
         if (prevOpIsArray !== newOpIsArray) {
             // @ts-ignore
-            newValue = newOpIsArray ? (newValue?.isEntityReference && newValue?.isEntityReference() ? [newValue] : []) : undefined
+            newValue = newOpIsArray
+                ? newValue?.isEntityReference && newValue?.isEntityReference()
+                    ? [newValue]
+                    : []
+                : undefined;
         }
 
         setOperation(op);
         setInternalValue(newValue);
 
-        const hasNewValue = newValue !== null && Array.isArray(newValue)
-            ? newValue.length > 0
-            : newValue !== undefined;
+        const hasNewValue =
+            newValue !== null && Array.isArray(newValue)
+                ? newValue.length > 0
+                : newValue !== undefined;
         if (op && hasNewValue) {
-            setValue(
-                [op, newValue]
-            );
+            setValue([op, newValue]);
         } else {
-            setValue(
-                undefined
-            );
+            setValue(undefined);
         }
     }
 
@@ -104,23 +112,25 @@ export function ReferenceFilterField({
     };
 
     const onMultipleEntitiesSelected = (entities: Entity<any>[]) => {
-        updateFilter(operation, entities.map(e => getReferenceFrom(e)));
+        updateFilter(
+            operation,
+            entities.map((e) => getReferenceFrom(e))
+        );
     };
 
     const multiple = multipleSelectOperations.includes(operation);
 
     const referenceDialogController = useReferenceDialog({
-            multiselect: multiple,
-            path,
-            collection,
-            onSingleEntitySelected,
-            onMultipleEntitiesSelected,
-            selectedEntityIds,
-            onClose: () => {
-                setHidden(false);
-            }
-        }
-    );
+        multiselect: multiple,
+        path,
+        collection,
+        onSingleEntitySelected,
+        onMultipleEntitiesSelected,
+        selectedEntityIds,
+        onClose: () => {
+            setHidden(false);
+        },
+    });
 
     const doOpenDialog = () => {
         setHidden(true);
@@ -143,16 +153,17 @@ export function ReferenceFilterField({
     };
 
     return (
-
         <div className="flex w-[480px] flex-row">
             <div className="w-[140px]">
-                <Select value={operation}
-                        size={"large"}
-                        fullWidth={true}
-                        onValueChange={(value) => {
-                            updateFilter(value as VirtualTableWhereFilterOp, internalValue);
-                        }}
-                        renderValue={(op) => operationLabels[op as VirtualTableWhereFilterOp]}>
+                <Select
+                    value={operation}
+                    size={"large"}
+                    fullWidth={true}
+                    onValueChange={(value) => {
+                        updateFilter(value as VirtualTableWhereFilterOp, internalValue);
+                    }}
+                    renderValue={(op) => operationLabels[op as VirtualTableWhereFilterOp]}
+                >
                     {possibleOperations.map((op) => (
                         <SelectItem key={op} value={op}>
                             {operationLabels[op]}
@@ -162,42 +173,44 @@ export function ReferenceFilterField({
             </div>
 
             <div className="flex-grow ml-2 h-full gap-2 flex flex-col w-[340px]">
+                {internalValue && Array.isArray(internalValue) && (
+                    <div>{internalValue.map((ref, index) => buildEntry(ref))}</div>
+                )}
 
-                {internalValue && Array.isArray(internalValue) && <div>
-                    {internalValue.map((ref, index) => buildEntry(ref))}
-                </div>}
+                {internalValue && !Array.isArray(internalValue) && (
+                    <div>{buildEntry(internalValue)}</div>
+                )}
 
-                {internalValue && !Array.isArray(internalValue) && <div>
-                    {buildEntry(internalValue)}
-                </div>}
-
-                {(!internalValue || (Array.isArray(internalValue) && internalValue.length === 0)) &&
-                    <Button onClick={doOpenDialog}
-                            variant={"outlined"}
-                            size={"large"}
-                            className="h-full w-full">
+                {(!internalValue ||
+                    (Array.isArray(internalValue) && internalValue.length === 0)) && (
+                    <Button
+                        onClick={doOpenDialog}
+                        variant={"outlined"}
+                        size={"large"}
+                        className="h-full w-full"
+                    >
                         {multiple ? "Select references" : "Select reference"}
                     </Button>
-                }
+                )}
 
-                {!isArray && <Label
-                    className="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-surface-100 dark:[&:has(:checked)]:bg-surface-800"
-                    htmlFor="null-filter"
-                >
-                    <Checkbox id="null-filter"
-                              checked={internalValue === null}
-                              size={"small"}
-                              onCheckedChange={(checked) => {
-                                  if (internalValue !== null)
-                                      updateFilter(operation, null);
-                                  else updateFilter(operation, undefined);
-                              }}/>
-                    Filter for null values
-                </Label>}
-
+                {!isArray && (
+                    <Label
+                        className="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&:has(:checked)]:bg-surface-100 dark:[&:has(:checked)]:bg-surface-800"
+                        htmlFor="null-filter"
+                    >
+                        <Checkbox
+                            id="null-filter"
+                            checked={internalValue === null}
+                            size={"small"}
+                            onCheckedChange={(checked) => {
+                                if (internalValue !== null) updateFilter(operation, null);
+                                else updateFilter(operation, undefined);
+                            }}
+                        />
+                        Filter for null values
+                    </Label>
+                )}
             </div>
-
         </div>
     );
-
 }

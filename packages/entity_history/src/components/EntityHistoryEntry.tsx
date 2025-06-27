@@ -5,10 +5,11 @@ import {
     cls,
     defaultBorderMixin,
     DescriptionIcon,
-    IconButton, KeyboardBackspaceIcon,
+    IconButton,
+    KeyboardBackspaceIcon,
     KeyboardTabIcon,
     Tooltip,
-    Typography
+    Typography,
 } from "@firecms/ui";
 import {
     Entity,
@@ -25,55 +26,64 @@ import {
     useAuthController,
     useCustomizationController,
     useNavigationController,
-    useSideEntityController
+    useSideEntityController,
 } from "@firecms/core";
 import { useHistoryController } from "../HistoryControllerProvider";
 import { UserChip } from "./UserChip";
 
 export type EntityPreviewProps = {
-    size: PreviewSize,
-    actions?: React.ReactNode,
-    collection?: EntityCollection,
+    size: PreviewSize;
+    actions?: React.ReactNode;
+    collection?: EntityCollection;
     hover?: boolean;
-    previewKeys?: string[],
-    entity: Entity<any>,
+    previewKeys?: string[];
+    entity: Entity<any>;
     previousValues?: EntityValues<any>;
     onClick?: (e: React.SyntheticEvent) => void;
 };
 
 function PreviousValueView({
-                               previousValueInPath,
-                               childProperty,
-                               key
-                           }: {
-    previousValueInPath: any,
-    childProperty: Property,
-    key: string
+    previousValueInPath,
+    childProperty,
+    key,
+}: {
+    previousValueInPath: any;
+    childProperty: Property;
+    key: string;
 }) {
     if (typeof previousValueInPath === "string" || typeof previousValueInPath === "number") {
-        return <Typography variant={"caption"} color={"secondary"} className="line-through">
-            {previousValueInPath}
-        </Typography>;
+        return (
+            <Typography variant={"caption"} color={"secondary"} className="line-through">
+                {previousValueInPath}
+            </Typography>
+        );
     } else if (typeof previousValueInPath === "boolean") {
-        return <Typography variant={"caption"} color={"secondary"} className="line-through">
-            {previousValueInPath ? "true" : "false"}
-        </Typography>;
-
+        return (
+            <Typography variant={"caption"} color={"secondary"} className="line-through">
+                {previousValueInPath ? "true" : "false"}
+            </Typography>
+        );
     } else {
-        return <Tooltip
-            side={"left"}
-            title={<div className={"flex flex-col gap-2"}>
-                <Typography variant={"caption"} color={"secondary"}>
-                    Previous value
-                </Typography>
-                <PropertyPreview
-                    propertyKey={key as string}
-                    value={previousValueInPath}
-                    property={childProperty as ResolvedProperty}
-                    size={"small"}/>
-            </div>}>
-            <KeyboardBackspaceIcon size={"smallest"} color={"disabled"} className={"mb-1"}/>
-        </Tooltip>
+        return (
+            <Tooltip
+                side={"left"}
+                title={
+                    <div className={"flex flex-col gap-2"}>
+                        <Typography variant={"caption"} color={"secondary"}>
+                            Previous value
+                        </Typography>
+                        <PropertyPreview
+                            propertyKey={key as string}
+                            value={previousValueInPath}
+                            property={childProperty as ResolvedProperty}
+                            size={"small"}
+                        />
+                    </div>
+                }
+            >
+                <KeyboardBackspaceIcon size={"smallest"} color={"disabled"} className={"mb-1"} />
+            </Tooltip>
+        );
     }
 }
 
@@ -82,16 +92,15 @@ function PreviousValueView({
  * It is used by default in reference fields and whenever a reference is displayed.
  */
 export function EntityHistoryEntry({
-                                       actions,
-                                       hover,
-                                       collection: collectionProp,
-                                       previewKeys,
-                                       onClick,
-                                       size,
-                                       entity,
-                                       previousValues
-                                   }: EntityPreviewProps) {
-
+    actions,
+    hover,
+    collection: collectionProp,
+    previewKeys,
+    onClick,
+    size,
+    entity,
+    previousValues,
+}: EntityPreviewProps) {
     const authController = useAuthController();
     const customizationController = useCustomizationController();
 
@@ -108,109 +117,127 @@ export function EntityHistoryEntry({
     const { getUser } = useHistoryController();
     const user = getUser?.(updatedBy);
 
-    const resolvedCollection = React.useMemo(() => resolveCollection({
-        collection,
-        path: entity.path,
-        values: entity.values,
-        propertyConfigs: customizationController.propertyConfigs,
-        authController
-    }), [collection]);
+    const resolvedCollection = React.useMemo(
+        () =>
+            resolveCollection({
+                collection,
+                path: entity.path,
+                values: entity.values,
+                propertyConfigs: customizationController.propertyConfigs,
+                authController,
+            }),
+        [collection],
+    );
 
-    return <div className={"w-full flex flex-col gap-2 mt-4"}>
-        <div className={"ml-4 flex items-center gap-4"}>
-            <Typography variant={"body2"} color={"secondary"}>{updatedOn.toLocaleString()}</Typography>
-            {!user && updatedBy && <Chip size={"small"}>{updatedBy}</Chip>}
-            {user && <UserChip user={user}/>}
-        </div>
-        <div
-            className={cls(
-                "bg-white dark:bg-surface-900",
-                "min-h-[42px]",
-                "w-full",
-                "items-center",
-                hover ? "hover:bg-surface-accent-50 dark:hover:bg-surface-800 group-hover:bg-surface-accent-50 dark:group-hover:bg-surface-800" : "",
-                size === "small" ? "p-1" : "px-2 py-1",
-                "flex border rounded-lg",
-                onClick ? "cursor-pointer" : "",
-                defaultBorderMixin
-            )}>
-
-
-            {actions}
-
-            {entity &&
-                <Tooltip title={"See details for this revision"}
-                         className={"my-2 grow-0 shrink-0 self-start"}>
-                    <IconButton
-                        color={"inherit"}
-                        className={""}
-                        onClick={(e) => {
-
-                            sideEntityController.open({
-                                entityId: entity.id,
-                                path: entity.path,
-                                allowFullScreen: false,
-                                collection: {
-                                    ...collection,
-                                    subcollections: undefined,
-                                    entityViews: undefined,
-                                    permissions: {
-                                        create: false,
-                                        delete: false,
-                                        edit: false,
-                                        read: true
-                                    }
-                                },
-                                updateUrl: true
-                            });
-                        }}>
-                        <KeyboardTabIcon/>
-                    </IconButton>
-                </Tooltip>}
-
-            <div className={"flex flex-col grow w-full m-1 shrink min-w-0"}>
-
-                {previewKeys && previewKeys.map((key) => {
-                    const childProperty = getPropertyInPath(resolvedCollection.properties, key);
-
-                    const valueInPath = getValueInPath(entity.values, key);
-                    const previousValueInPath = previousValues ? getValueInPath(previousValues, key) : undefined;
-
-                    const element = childProperty ? (entity
-                            ? <PropertyPreview
-                                propertyKey={key as string}
-                                value={valueInPath}
-                                property={childProperty as ResolvedProperty}
-                                size={"small"}/>
-                            : <SkeletonPropertyComponent
-                                property={childProperty as ResolvedProperty}
-                                size={"small"}/>) :
-                        <Typography variant={"body2"}>
-                            {typeof valueInPath === "string" ? valueInPath : JSON.stringify(valueInPath)}
-                        </Typography>;
-                    return (
-                        <div key={"ref_prev_" + key}
-                             className="flex w-full my-1 items-center">
-                            <Typography variant={"caption"}
-                                        color={"secondary"}
-                                        className="min-w-[140px] md:min-w-[200px] w-1/5 pr-8 overflow-hidden text-ellipsis text-right">
-                                {key}
-                            </Typography>
-                            <div className="w-4/5">
-                                {previousValueInPath !== undefined && previousValueInPath !== valueInPath &&
-                                    <PreviousValueView previousValueInPath={previousValueInPath}
-                                                       childProperty={childProperty as ResolvedProperty}
-                                                       key={key}/>
-                                }
-                                {element}
-                            </div>
-                        </div>
-                    );
-                })}
-
+    return (
+        <div className={"w-full flex flex-col gap-2 mt-4"}>
+            <div className={"ml-4 flex items-center gap-4"}>
+                <Typography variant={"body2"} color={"secondary"}>
+                    {updatedOn.toLocaleString()}
+                </Typography>
+                {!user && updatedBy && <Chip size={"small"}>{updatedBy}</Chip>}
+                {user && <UserChip user={user} />}
             </div>
+            <div
+                className={cls(
+                    "bg-white dark:bg-surface-900",
+                    "min-h-[42px]",
+                    "w-full",
+                    "items-center",
+                    hover
+                        ? "hover:bg-surface-accent-50 dark:hover:bg-surface-800 group-hover:bg-surface-accent-50 dark:group-hover:bg-surface-800"
+                        : "",
+                    size === "small" ? "p-1" : "px-2 py-1",
+                    "flex border rounded-lg",
+                    onClick ? "cursor-pointer" : "",
+                    defaultBorderMixin,
+                )}
+            >
+                {actions}
 
+                {entity && (
+                    <Tooltip title={"See details for this revision"} className={"my-2 grow-0 shrink-0 self-start"}>
+                        <IconButton
+                            color={"inherit"}
+                            className={""}
+                            onClick={(e) => {
+                                sideEntityController.open({
+                                    entityId: entity.id,
+                                    path: entity.path,
+                                    allowFullScreen: false,
+                                    collection: {
+                                        ...collection,
+                                        subcollections: undefined,
+                                        entityViews: undefined,
+                                        permissions: {
+                                            create: false,
+                                            delete: false,
+                                            edit: false,
+                                            read: true,
+                                        },
+                                    },
+                                    updateUrl: true,
+                                });
+                            }}
+                        >
+                            <KeyboardTabIcon />
+                        </IconButton>
+                    </Tooltip>
+                )}
+
+                <div className={"flex flex-col grow w-full m-1 shrink min-w-0"}>
+                    {previewKeys &&
+                        previewKeys.map((key) => {
+                            const childProperty = getPropertyInPath(resolvedCollection.properties, key);
+
+                            const valueInPath = getValueInPath(entity.values, key);
+                            const previousValueInPath = previousValues
+                                ? getValueInPath(previousValues, key)
+                                : undefined;
+
+                            const element = childProperty ? (
+                                entity ? (
+                                    <PropertyPreview
+                                        propertyKey={key as string}
+                                        value={valueInPath}
+                                        property={childProperty as ResolvedProperty}
+                                        size={"small"}
+                                    />
+                                ) : (
+                                    <SkeletonPropertyComponent
+                                        property={childProperty as ResolvedProperty}
+                                        size={"small"}
+                                    />
+                                )
+                            ) : (
+                                <Typography variant={"body2"}>
+                                    {typeof valueInPath === "string" ? valueInPath : JSON.stringify(valueInPath)}
+                                </Typography>
+                            );
+                            return (
+                                <div key={"ref_prev_" + key} className="flex w-full my-1 items-center">
+                                    <Typography
+                                        variant={"caption"}
+                                        color={"secondary"}
+                                        className="min-w-[140px] md:min-w-[200px] w-1/5 pr-8 overflow-hidden text-ellipsis text-right"
+                                    >
+                                        {key}
+                                    </Typography>
+                                    <div className="w-4/5">
+                                        {previousValueInPath !== undefined && previousValueInPath !== valueInPath && (
+                                            <PreviousValueView
+                                                previousValueInPath={previousValueInPath}
+                                                childProperty={childProperty as ResolvedProperty}
+                                                key={key}
+                                            />
+                                        )}
+                                        {element}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                </div>
+            </div>
         </div>
-    </div>
+    );
 }
-

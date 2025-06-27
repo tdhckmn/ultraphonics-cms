@@ -8,7 +8,7 @@ interface LabelWithIconAndTooltip {
     small?: boolean;
     className?: string;
     required?: boolean;
-    propertyKey: string
+    propertyKey: string;
 }
 
 /**
@@ -16,13 +16,13 @@ interface LabelWithIconAndTooltip {
  * @group Form custom fields
  */
 export function LabelWithIconAndTooltip({
-                                            propertyKey,
-                                            className,
-                                            ...props
-                                        }: LabelWithIconAndTooltip) {
+    propertyKey,
+    className,
+    ...props
+}: LabelWithIconAndTooltip) {
     return (
         <PropertyIdCopyTooltip propertyKey={propertyKey} className={className}>
-            <LabelWithIcon {...props}/>
+            <LabelWithIcon {...props} />
         </PropertyIdCopyTooltip>
     );
 }

@@ -16,7 +16,7 @@ import {
     NavigationController,
     PropertyConfig,
     ResolvedProperties,
-    SaveEntityProps
+    SaveEntityProps,
 } from "../types";
 import { resolveCollection, updateDateAutoValues } from "../util";
 
@@ -26,19 +26,17 @@ import { resolveCollection, updateDateAutoValues } from "../util";
  * @group Firebase
  */
 export function useBuildDataSource({
-                                       delegate,
-                                       propertyConfigs,
-                                       navigationController,
-                                       authController
-                                   }: {
-    delegate: DataSourceDelegate,
+    delegate,
+    propertyConfigs,
+    navigationController,
+    authController,
+}: {
+    delegate: DataSourceDelegate;
     propertyConfigs?: Record<string, PropertyConfig>;
     navigationController: NavigationController;
     authController: AuthController;
 }): DataSource {
-
     return {
-
         /**
          * Fetch entities in a Firestore path
          * @param path
@@ -53,29 +51,31 @@ export function useBuildDataSource({
          * @see useCollectionFetch if you need this functionality implemented as a hook
          * @group Firestore
          */
-        fetchCollection: useCallback(<M extends Record<string, any>>({
-                                                                         path,
-                                                                         collection,
-                                                                         filter,
-                                                                         limit,
-                                                                         startAfter,
-                                                                         searchString,
-                                                                         orderBy,
-                                                                         order,
-                                                                     }: FetchCollectionProps<M>
-        ): Promise<Entity<M>[]> => {
-            const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
-            return usedDelegate.fetchCollection<M>({
+        fetchCollection: useCallback(
+            <M extends Record<string, any>>({
                 path,
+                collection,
                 filter,
                 limit,
                 startAfter,
                 searchString,
                 orderBy,
                 order,
-                collection
-            });
-        }, [delegate]),
+            }: FetchCollectionProps<M>): Promise<Entity<M>[]> => {
+                const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
+                return usedDelegate.fetchCollection<M>({
+                    path,
+                    filter,
+                    limit,
+                    startAfter,
+                    searchString,
+                    orderBy,
+                    order,
+                    collection,
+                });
+            },
+            [delegate]
+        ),
 
         /**
          * Listen to a entities in a given path
@@ -94,40 +94,40 @@ export function useBuildDataSource({
          * @group Firestore
          */
         listenCollection: delegate.listenCollection
-            ? useCallback(<M extends Record<string, any>>(
-                {
-                    path,
-                    collection: collectionProp,
-                    filter,
-                    limit,
-                    startAfter,
-                    searchString,
-                    orderBy,
-                    order,
-                    onUpdate,
-                    onError
-                }: ListenCollectionProps<M>
-            ): () => void => {
+            ? useCallback(
+                  <M extends Record<string, any>>({
+                      path,
+                      collection: collectionProp,
+                      filter,
+                      limit,
+                      startAfter,
+                      searchString,
+                      orderBy,
+                      order,
+                      onUpdate,
+                      onError,
+                  }: ListenCollectionProps<M>): (() => void) => {
+                      const collection = collectionProp ?? navigationController.getCollection(path);
+                      const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
 
-                const collection = collectionProp ?? navigationController.getCollection(path);
-                const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
+                      if (!usedDelegate.listenCollection)
+                          throw Error("useBuildDataSource delegate not initialised");
 
-                if (!usedDelegate.listenCollection)
-                    throw Error("useBuildDataSource delegate not initialised");
-
-                return usedDelegate.listenCollection<M>({
-                    path,
-                    filter,
-                    limit,
-                    startAfter,
-                    searchString,
-                    orderBy,
-                    order,
-                    onUpdate,
-                    onError,
-                    collection,
-                });
-            }, [delegate, navigationController.getCollection])
+                      return usedDelegate.listenCollection<M>({
+                          path,
+                          filter,
+                          limit,
+                          startAfter,
+                          searchString,
+                          orderBy,
+                          order,
+                          onUpdate,
+                          onError,
+                          collection,
+                      });
+                  },
+                  [delegate, navigationController.getCollection]
+              )
             : undefined,
 
         /**
@@ -137,19 +137,21 @@ export function useBuildDataSource({
          * @param collection
          * @group Firestore
          */
-        fetchEntity: useCallback(<M extends Record<string, any>>({
-                                                                     path,
-                                                                     entityId,
-                                                                     collection
-                                                                 }: FetchEntityProps<M>
-        ): Promise<Entity<M> | undefined> => {
-            const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
-            return usedDelegate.fetchEntity({
+        fetchEntity: useCallback(
+            <M extends Record<string, any>>({
                 path,
                 entityId,
-                collection
-            });
-        }, [delegate.fetchEntity]),
+                collection,
+            }: FetchEntityProps<M>): Promise<Entity<M> | undefined> => {
+                const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
+                return usedDelegate.fetchEntity({
+                    path,
+                    entityId,
+                    collection,
+                });
+            },
+            [delegate.fetchEntity]
+        ),
 
         /**
          *
@@ -162,27 +164,30 @@ export function useBuildDataSource({
          * @group Firestore
          */
         listenEntity: delegate.listenEntity
-            ? useCallback(<M extends Record<string, any>>(
-                {
-                    path,
-                    entityId,
-                    collection,
-                    onUpdate,
-                    onError
-                }: ListenEntityProps<M>): () => void => {
-                const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
+            ? useCallback(
+                  <M extends Record<string, any>>({
+                      path,
+                      entityId,
+                      collection,
+                      onUpdate,
+                      onError,
+                  }: ListenEntityProps<M>): (() => void) => {
+                      const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
 
-                if (!usedDelegate.listenEntity)
-                    throw Error("useBuildDataSource delegate not initialised");
+                      if (!usedDelegate.listenEntity)
+                          throw Error("useBuildDataSource delegate not initialised");
 
-                return usedDelegate.listenEntity<M>({
-                    path,
-                    entityId,
-                    onUpdate,
-                    onError,
-                    collection
-                })
-            }, [delegate.listenEntity]) : undefined,
+                      return usedDelegate.listenEntity<M>({
+                          path,
+                          entityId,
+                          onUpdate,
+                          onError,
+                          collection,
+                      });
+                  },
+                  [delegate.listenEntity]
+              )
+            : undefined,
 
         /**
          * Save entity to the specified path. Note that Firestore does not allow
@@ -195,59 +200,60 @@ export function useBuildDataSource({
          * @param status
          * @group Firestore
          */
-        saveEntity: useCallback(<M extends Record<string, any>>(
-            {
+        saveEntity: useCallback(
+            <M extends Record<string, any>>({
                 path,
                 entityId,
                 values,
                 collection: collectionProp,
-                status
+                status,
             }: SaveEntityProps<M>): Promise<Entity<M>> => {
+                const collection = collectionProp ?? navigationController.getCollection(path);
+                const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
 
-            const collection = collectionProp ?? navigationController.getCollection(path);
-            const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
+                const resolvedCollection = collection
+                    ? resolveCollection<M>({
+                          collection,
+                          path,
+                          entityId,
+                          propertyConfigs: propertyConfigs,
+                          authController,
+                      })
+                    : undefined;
 
-            const resolvedCollection = collection
-                ? resolveCollection<M>({
-                    collection,
-                    path,
-                    entityId,
-                    propertyConfigs: propertyConfigs,
-                    authController
-                })
-                : undefined;
+                const properties: ResolvedProperties<M> | undefined =
+                    resolvedCollection?.properties;
 
-            const properties: ResolvedProperties<M> | undefined = resolvedCollection?.properties;
+                const delegateValues = usedDelegate.cmsToDelegateModel(values);
 
-            const delegateValues = usedDelegate.cmsToDelegateModel(
-                values,
-            );
+                const updatedValues: EntityValues<M> = properties
+                    ? updateDateAutoValues({
+                          inputValues: delegateValues,
+                          properties,
+                          status,
+                          timestampNowValue: usedDelegate.currentTime?.() ?? new Date(),
+                          setDateToMidnight: usedDelegate.setDateToMidnight,
+                      })
+                    : delegateValues;
 
-            const updatedValues: EntityValues<M> = properties
-                ? updateDateAutoValues(
-                    {
-                        inputValues: delegateValues,
-                        properties,
+                return usedDelegate
+                    .saveEntity({
+                        path,
+                        collection,
+                        entityId,
+                        values: updatedValues,
                         status,
-                        timestampNowValue: usedDelegate.currentTime?.() ?? new Date(),
-                        setDateToMidnight: usedDelegate.setDateToMidnight
                     })
-                : delegateValues;
-
-            return usedDelegate.saveEntity({
-                path,
-                collection,
-                entityId,
-                values: updatedValues,
-                status
-            }).then((res) => {
-                return {
-                    id: res.id,
-                    path: res.path,
-                    values: usedDelegate.delegateToCMSModel(updatedValues)
-                } as Entity<M>;
-            });
-        }, [delegate.saveEntity, navigationController.getCollection]),
+                    .then((res) => {
+                        return {
+                            id: res.id,
+                            path: res.path,
+                            values: usedDelegate.delegateToCMSModel(updatedValues),
+                        } as Entity<M>;
+                    });
+            },
+            [delegate.saveEntity, navigationController.getCollection]
+        ),
 
         /**
          * Delete an entity
@@ -255,18 +261,19 @@ export function useBuildDataSource({
          * @param collection
          * @group Firestore
          */
-        deleteEntity: useCallback(<M extends Record<string, any>>(
-            {
+        deleteEntity: useCallback(
+            <M extends Record<string, any>>({
                 entity,
-                collection
-            }: DeleteEntityProps<M>
-        ): Promise<void> => {
-            const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
-            return usedDelegate.deleteEntity({
-                entity,
-                collection
-            });
-        }, [delegate.deleteEntity]),
+                collection,
+            }: DeleteEntityProps<M>): Promise<void> => {
+                const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
+                return usedDelegate.deleteEntity({
+                    entity,
+                    collection,
+                });
+            },
+            [delegate.deleteEntity]
+        ),
 
         /**
          * Check if the given property is unique in the given collection
@@ -278,80 +285,88 @@ export function useBuildDataSource({
          * @return `true` if there are no other fields besides the given entity
          * @group Firestore
          */
-        checkUniqueField: useCallback((
-            path: string,
-            name: string,
-            value: any,
-            entityId?: string,
-            collection?: EntityCollection
-        ): Promise<boolean> => {
-            const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
-            return usedDelegate.checkUniqueField(path, name, value, entityId, collection);
-        }, [delegate.checkUniqueField]),
+        checkUniqueField: useCallback(
+            (
+                path: string,
+                name: string,
+                value: any,
+                entityId?: string,
+                collection?: EntityCollection
+            ): Promise<boolean> => {
+                const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
+                return usedDelegate.checkUniqueField(path, name, value, entityId, collection);
+            },
+            [delegate.checkUniqueField]
+        ),
 
-        generateEntityId: useCallback((path: string, collection: EntityCollection): string => {
-            const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
-            return usedDelegate.generateEntityId(path, collection);
-        }, [delegate.generateEntityId]),
+        generateEntityId: useCallback(
+            (path: string, collection: EntityCollection): string => {
+                const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
+                return usedDelegate.generateEntityId(path, collection);
+            },
+            [delegate.generateEntityId]
+        ),
 
-        countEntities: delegate.countEntities ? async ({
-                                                           path,
-                                                           collection,
-                                                           filter,
-                                                           order,
-                                                           orderBy
-                                                       }: {
-            path: string,
-            collection: EntityCollection<any>,
-            filter?: FilterValues<Extract<keyof any, string>>,
-            orderBy?: string,
-            order?: "desc" | "asc",
-        }): Promise<number> => {
-            const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
-            return usedDelegate.countEntities!({
+        countEntities: delegate.countEntities
+            ? async ({
+                  path,
+                  collection,
+                  filter,
+                  order,
+                  orderBy,
+              }: {
+                  path: string;
+                  collection: EntityCollection<any>;
+                  filter?: FilterValues<Extract<keyof any, string>>;
+                  orderBy?: string;
+                  order?: "desc" | "asc";
+              }): Promise<number> => {
+                  const usedDelegate = collection?.overrides?.dataSourceDelegate ?? delegate;
+                  return usedDelegate.countEntities!({
+                      path,
+                      filter,
+                      orderBy,
+                      order,
+                      collection,
+                  });
+              }
+            : undefined,
+
+        isFilterCombinationValid: useCallback(
+            ({
                 path,
-                filter,
-                orderBy,
-                order,
-                collection
-            });
-        } : undefined,
-
-        isFilterCombinationValid: useCallback(({
-                                                   path,
-                                                   databaseId,
-                                                   filterValues,
-                                                   sortBy
-                                               }: {
-            path: string,
-            databaseId?: string,
-            filterValues: FilterValues<any>,
-            sortBy?: [string, "asc" | "desc"]
-        }): boolean => {
-            if (!delegate.isFilterCombinationValid)
-                return true;
-            return delegate.isFilterCombinationValid(
-                {
+                databaseId,
+                filterValues,
+                sortBy,
+            }: {
+                path: string;
+                databaseId?: string;
+                filterValues: FilterValues<any>;
+                sortBy?: [string, "asc" | "desc"];
+            }): boolean => {
+                if (!delegate.isFilterCombinationValid) return true;
+                return delegate.isFilterCombinationValid({
                     path,
                     databaseId,
                     filterValues,
-                    sortBy
-                }
-            )
-        }, [delegate.isFilterCombinationValid]),
+                    sortBy,
+                });
+            },
+            [delegate.isFilterCombinationValid]
+        ),
 
-        initTextSearch: useCallback(async (props: {
-            context: FireCMSContext,
-            path: string,
-            collection: EntityCollection,
-            parentCollectionIds?: string[]
-        }): Promise<boolean> => {
-            const usedDelegate = props.collection?.overrides?.dataSourceDelegate ?? delegate;
-            if (!usedDelegate.initTextSearch)
-                return false;
-            return usedDelegate.initTextSearch(props)
-        }, [delegate.initTextSearch]),
-
+        initTextSearch: useCallback(
+            async (props: {
+                context: FireCMSContext;
+                path: string;
+                collection: EntityCollection;
+                parentCollectionIds?: string[];
+            }): Promise<boolean> => {
+                const usedDelegate = props.collection?.overrides?.dataSourceDelegate ?? delegate;
+                if (!usedDelegate.initTextSearch) return false;
+                return usedDelegate.initTextSearch(props);
+            },
+            [delegate.initTextSearch]
+        ),
     };
-
 }

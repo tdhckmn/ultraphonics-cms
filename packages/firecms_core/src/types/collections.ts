@@ -18,7 +18,6 @@ import { EntityOverrides } from "./entity_overrides";
  * @group Models
  */
 export interface EntityCollection<M extends Record<string, any> = any, USER extends User = any> {
-
     /**
      * You can set an alias that will be used internally instead of the `path`.
      * The `alias` value will be used to determine the URL of the collection,
@@ -126,7 +125,12 @@ export interface EntityCollection<M extends Record<string, any> = any, USER exte
      * `hidden` in the property definition,will be ignored.
      * `propertiesOrder` has precedence over `hidden`.
      */
-    propertiesOrder?: (Extract<keyof M, string> | string | `subcollection:${string}` | "collectionGroupParent")[];
+    propertiesOrder?: (
+        | Extract<keyof M, string>
+        | string
+        | `subcollection:${string}`
+        | "collectionGroupParent"
+    )[];
 
     /**
      * If enabled, content is loaded in batches. If `false` all entities in the
@@ -172,7 +176,9 @@ export interface EntityCollection<M extends Record<string, any> = any, USER exte
      * Builder for rendering additional components such as buttons in the
      * collection toolbar
      */
-    Actions?: React.ComponentType<CollectionActionsProps> | React.ComponentType<CollectionActionsProps>[];
+    Actions?:
+        | React.ComponentType<CollectionActionsProps>
+        | React.ComponentType<CollectionActionsProps>[];
 
     /**
      * You can define additional actions that can be performed on the entities
@@ -356,7 +362,11 @@ export interface EntityCollection<M extends Record<string, any> = any, USER exte
  *
  * @group Models
  */
-export interface CollectionActionsProps<M extends Record<string, any> = any, USER extends User = User, EC extends EntityCollection<M> = EntityCollection<M>> {
+export interface CollectionActionsProps<
+    M extends Record<string, any> = any,
+    USER extends User = User,
+    EC extends EntityCollection<M> = EntityCollection<M>,
+> {
     /**
      * Full collection path of this entity. This is the full path, like
      * `users/1234/addresses`
@@ -399,7 +409,6 @@ export interface CollectionActionsProps<M extends Record<string, any> = any, USE
      * Count of the entities in this collection
      */
     collectionEntitiesCount: number;
-
 }
 
 /**
@@ -412,7 +421,7 @@ export type SelectionController<M extends Record<string, any> = any> = {
     setSelectedEntities: Dispatch<SetStateAction<Entity<M>[]>>;
     isEntitySelected: (entity: Entity<M>) => boolean;
     toggleEntitySelection: (entity: Entity<M>, newSelectedState?: boolean) => void;
-}
+};
 
 /**
  * Filter conditions in a `Query.where()` clause are specified using the
@@ -438,8 +447,7 @@ export type WhereFilterOp =
  *
  * @group Models
  */
-export type FilterValues<Key extends string> =
-    Partial<Record<Key, [WhereFilterOp, any]>>;
+export type FilterValues<Key extends string> = Partial<Record<Key, [WhereFilterOp, any]>>;
 
 /**
  * Used to indicate valid filter combinations (e.g. created in Firestore)
@@ -455,9 +463,12 @@ export type FilterCombination<Key extends string> = Partial<Record<Key, "asc" | 
  */
 export type CollectionSize = "xs" | "s" | "m" | "l" | "xl";
 
-export type AdditionalFieldDelegateProps<M extends Record<string, any> = any, USER extends User = User> = {
-    entity: Entity<M>,
-    context: FireCMSContext<USER>
+export type AdditionalFieldDelegateProps<
+    M extends Record<string, any> = any,
+    USER extends User = User,
+> = {
+    entity: Entity<M>;
+    context: FireCMSContext<USER>;
 };
 
 /**
@@ -465,9 +476,10 @@ export type AdditionalFieldDelegateProps<M extends Record<string, any> = any, US
  * If you need to do some async loading you can use {@link AsyncPreviewComponent}
  * @group Models
  */
-export interface AdditionalFieldDelegate<M extends Record<string, any> = any,
-    USER extends User = User> {
-
+export interface AdditionalFieldDelegate<
+    M extends Record<string, any> = any,
+    USER extends User = User,
+> {
     /**
      * ID of this column. You can use this id in the `properties` field of the
      * collection in any order you want
@@ -507,8 +519,8 @@ export interface AdditionalFieldDelegate<M extends Record<string, any> = any,
      * @param entity
      */
     value?: (props: {
-        entity: Entity<M>,
-        context: FireCMSContext<any>
+        entity: Entity<M>;
+        context: FireCMSContext<any>;
     }) => string | number | Promise<string | number> | undefined;
 }
 
@@ -517,41 +529,40 @@ export interface AdditionalFieldDelegate<M extends Record<string, any> = any,
  * It gets rendered as a tab.
  * @group Models
  */
-export type EntityCustomView<M extends Record<string, any> = any> =
-    {
-        /**
-         * Key of this custom view.
-         */
-        key: string;
+export type EntityCustomView<M extends Record<string, any> = any> = {
+    /**
+     * Key of this custom view.
+     */
+    key: string;
 
-        /**
-         * Name of this custom view.
-         */
-        name: string;
+    /**
+     * Name of this custom view.
+     */
+    name: string;
 
-        /**
-         * Render this custom view in the tab of the entity view, instead of the name
-         */
-        tabComponent?: React.ReactNode;
+    /**
+     * Render this custom view in the tab of the entity view, instead of the name
+     */
+    tabComponent?: React.ReactNode;
 
-        /**
-         * If set to true, the actions of the entity (save, discard,delete) will be
-         * included in the view. By default the actions are located in the right or bottom,
-         * based on the screen size. You can force the actions to be located at the bottom
-         * by setting this prop to "bottom".
-         */
-        includeActions?: boolean | "bottom";
+    /**
+     * If set to true, the actions of the entity (save, discard,delete) will be
+     * included in the view. By default the actions are located in the right or bottom,
+     * based on the screen size. You can force the actions to be located at the bottom
+     * by setting this prop to "bottom".
+     */
+    includeActions?: boolean | "bottom";
 
-        /**
-         * Builder for rendering the custom view
-         */
-        Builder?: React.ComponentType<EntityCustomViewParams<M>>;
+    /**
+     * Builder for rendering the custom view
+     */
+    Builder?: React.ComponentType<EntityCustomViewParams<M>>;
 
-        /**
-         * Position of this tab in the entity view. Defaults to `end`.
-         */
-        position?: "start" | "end";
-    };
+    /**
+     * Position of this tab in the entity view. Defaults to `end`.
+     */
+    position?: "start" | "end";
+};
 
 /**
  * Parameters passed to the builder in charge of rendering a custom panel for
@@ -559,7 +570,6 @@ export type EntityCustomView<M extends Record<string, any> = any> =
  * @group Models
  */
 export interface EntityCustomViewParams<M extends Record<string, any> = any> {
-
     /**
      * collection used by this entity
      */
@@ -588,7 +598,8 @@ export interface EntityCustomViewParams<M extends Record<string, any> = any> {
     parentCollectionIds?: string[];
 }
 
-export type InferCollectionType<S extends EntityCollection> = S extends EntityCollection<infer M> ? M : never;
+export type InferCollectionType<S extends EntityCollection> =
+    S extends EntityCollection<infer M> ? M : never;
 
 /**
  * Used in the {@link EntityCollection#defaultSelectedView} to define the default
@@ -623,19 +634,21 @@ export type EntityTableController<M extends Record<string, any> = any> = {
     setItemCount?: (itemCount: number) => void;
     initialScroll?: number;
     onScroll?: (props: {
-        scrollDirection: "forward" | "backward",
-        scrollOffset: number,
-        scrollUpdateWasRequested: boolean
+        scrollDirection: "forward" | "backward";
+        scrollOffset: number;
+        scrollUpdateWasRequested: boolean;
     }) => void;
     paginationEnabled?: boolean;
     pageSize?: number;
-    checkFilterCombination?: (filterValues: FilterValues<any>,
-                              sortBy?: [string, "asc" | "desc"]) => boolean;
+    checkFilterCombination?: (
+        filterValues: FilterValues<any>,
+        sortBy?: [string, "asc" | "desc"]
+    ) => boolean;
     popupCell?: SelectedCellProps<M>;
     setPopupCell?: (popupCell?: SelectedCellProps<M>) => void;
 
     onAddColumn?: (column: string) => void;
-}
+};
 
 export type SelectedCellProps<M extends Record<string, any>> = {
     propertyKey: Extract<keyof M, string>;

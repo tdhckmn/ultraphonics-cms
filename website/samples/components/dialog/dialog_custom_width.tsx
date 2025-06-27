@@ -7,20 +7,13 @@ export default function DialogCustomWidthDemo() {
     return (
         <>
             <Button onClick={() => setOpen(true)}>Open Custom Width Dialog</Button>
-            <Dialog
-                open={open}
-                onOpenChange={setOpen}
-                maxWidth="5xl"
-            >
+            <Dialog open={open} onOpenChange={setOpen} maxWidth="5xl">
                 <DialogTitle variant={"h5"} gutterBottom>
                     Your dialog
                 </DialogTitle>
-                <DialogContent>
-                    Dialog with Custom Width
-                </DialogContent>
+                <DialogContent>Dialog with Custom Width</DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpen(false)}
-                            variant={"filled"}>
+                    <Button onClick={() => setOpen(false)} variant={"filled"}>
                         Close
                     </Button>
                 </DialogActions>

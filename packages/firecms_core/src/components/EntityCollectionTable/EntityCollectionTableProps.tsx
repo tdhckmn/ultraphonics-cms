@@ -8,16 +8,14 @@ import {
     ResolvedProperties,
     ResolvedProperty,
     SelectionController,
-    User
+    User,
 } from "../../types";
 import { OnCellValueChange, OnColumnResizeParams, UniqueFieldValidator } from "../common/types";
 
 /**
  * @group Collection components
  */
-export type EntityCollectionTableProps<M extends Record<string, any>,
-    USER extends User = User> = {
-
+export type EntityCollectionTableProps<M extends Record<string, any>, USER extends User = User> = {
     className?: string;
 
     style?: React.CSSProperties;
@@ -56,10 +54,10 @@ export type EntityCollectionTableProps<M extends Record<string, any>,
      * @param size
      */
     tableRowActionsBuilder?: (params: {
-        entity: Entity<M>,
-        size: CollectionSize,
-        width: number,
-        frozen?: boolean
+        entity: Entity<M>;
+        size: CollectionSize;
+        width: number;
+        frozen?: boolean;
     }) => React.ReactNode;
 
     /**
@@ -82,9 +80,9 @@ export type EntityCollectionTableProps<M extends Record<string, any>,
      * @param props
      */
     onScroll?: (props: {
-        scrollDirection: "forward" | "backward",
-        scrollOffset: number,
-        scrollUpdateWasRequested: boolean
+        scrollDirection: "forward" | "backward";
+        scrollOffset: number;
+        scrollUpdateWasRequested: boolean;
     }) => void;
 
     /**
@@ -133,9 +131,9 @@ export type EntityCollectionTableProps<M extends Record<string, any>,
     endAdornment?: React.ReactNode;
 
     AdditionalHeaderWidget?: React.ComponentType<{
-        property: ResolvedProperty,
-        propertyKey: string,
-        onHover: boolean,
+        property: ResolvedProperty;
+        propertyKey: string;
+        onHover: boolean;
     }>;
 
     AddColumnComponent?: React.ComponentType;
@@ -156,11 +154,11 @@ export type EntityCollectionTableProps<M extends Record<string, any>,
 };
 
 export type GetPropertyForProps<M extends Record<string, any>> = {
-    propertyKey: string,
-    entity: Entity<M>
+    propertyKey: string;
+    entity: Entity<M>;
 };
 
 export type PropertyColumnConfig = {
-    key: string,
-    disabled?: boolean,
+    key: string;
+    disabled?: boolean;
 };

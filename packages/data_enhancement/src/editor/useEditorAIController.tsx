@@ -11,12 +11,12 @@ export function useEditorAIController({ getAuthToken }: { getAuthToken?: () => P
             firebaseToken,
             textBefore,
             textAfter,
-            onUpdate
+            onUpdate,
         });
-    }
+    };
 
     return {
-        autocomplete
+        autocomplete,
     };
 }
 

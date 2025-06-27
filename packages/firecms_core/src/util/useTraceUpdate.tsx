@@ -1,6 +1,12 @@
 import { useEffect, useRef } from "react";
 
-export function printChanged(props: any, prev: any, path: string | undefined = "", depth: number | undefined = 0, maxDepth: number | undefined = 10) {
+export function printChanged(
+    props: any,
+    prev: any,
+    path: string | undefined = "",
+    depth: number | undefined = 0,
+    maxDepth: number | undefined = 10
+) {
     if (depth > maxDepth) {
         return;
     }
@@ -11,7 +17,6 @@ export function printChanged(props: any, prev: any, path: string | undefined = "
     } else if (props !== prev) {
         console.log("Changed props:", path);
     }
-
 }
 
 export function useTraceUpdate(props: any, maxDepth = 3) {

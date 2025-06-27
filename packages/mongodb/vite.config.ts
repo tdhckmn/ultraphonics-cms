@@ -2,7 +2,7 @@
 import path from "path";
 
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react"
+import react from "@vitejs/plugin-react";
 
 const isExternal = (id: string) => {
     return !id.startsWith(".") && !path.isAbsolute(id);
@@ -10,20 +10,20 @@ const isExternal = (id: string) => {
 
 export default defineConfig(() => ({
     esbuild: {
-        logOverride: { "this-is-undefined-in-esm": "silent" }
+        logOverride: { "this-is-undefined-in-esm": "silent" },
     },
     build: {
         lib: {
             entry: path.resolve(__dirname, "src/index.ts"),
             name: "FireCMS PRO",
-            fileName: (format) => `index.${format}.js`
+            fileName: (format) => `index.${format}.js`,
         },
         minify: false,
         target: "ESNEXT",
         sourcemap: true,
         rollupOptions: {
-            external: isExternal
-        }
+            external: isExternal,
+        },
     },
     resolve: {
         alias: {
@@ -33,7 +33,7 @@ export default defineConfig(() => ({
             "@firecms/data_import": path.resolve(__dirname, "../data_import/src"),
             "@firecms/data_export": path.resolve(__dirname, "../data_export/src"),
             "@firecms/data_import_export": path.resolve(__dirname, "../data_import_export/src"),
-        }
+        },
     },
-    plugins: [react({})]
+    plugins: [react({})],
 }));

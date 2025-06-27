@@ -4,8 +4,10 @@ import { getProducts } from "@/app/common/database";
 import { ProductsListView } from "../components/ProductsListView";
 import { parseQuery } from "./url";
 
-export default async function Page({ params }: {
-    params: Promise<{ searchParams: Map<string, string> | URLSearchParams }>
+export default async function Page({
+    params,
+}: {
+    params: Promise<{ searchParams: Map<string, string> | URLSearchParams }>;
 }) {
     const { searchParams } = await params;
     const filters = parseQuery(searchParams);
@@ -13,9 +15,8 @@ export default async function Page({ params }: {
         limit: 10,
         categoryFilter: filters.category,
         minPriceFilter: filters.priceMin,
-        maxPriceFilter: filters.priceMax
+        maxPriceFilter: filters.priceMax,
     });
 
-    return <ProductsListView initialProducts={products}
-                             initialCategoryFilter={filters.category}/>;
+    return <ProductsListView initialProducts={products} initialCategoryFilter={filters.category} />;
 }

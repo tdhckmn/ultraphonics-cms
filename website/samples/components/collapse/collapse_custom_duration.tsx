@@ -8,9 +8,7 @@ export default function CollapseCustomDurationDemo() {
         <div className={"flex flex-col items-center gap-4"}>
             <Button onClick={() => setIsOpen(!isOpen)}>Toggle</Button>
             <Collapse in={isOpen} duration={500}>
-                <Paper className={"p-4"}>
-                    This content has a custom animation duration.
-                </Paper>
+                <Paper className={"p-4"}>This content has a custom animation duration.</Paper>
             </Collapse>
         </div>
     );

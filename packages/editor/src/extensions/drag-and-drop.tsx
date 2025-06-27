@@ -24,7 +24,7 @@ function absoluteRect(element: Element) {
     return {
         top: data.top - (ancestorRect?.top ?? 0),
         left: data.left - (ancestorRect?.left ?? 0),
-        width: data.width
+        width: data.width,
     };
 }
 
@@ -35,7 +35,13 @@ function nodeDOMAtCoords(coords: { x: number; y: number }) {
             (elem: Element) =>
                 elem.parentElement?.matches?.(".ProseMirror") ||
                 elem.matches(
-                    ["li", "p:not(:first-child)", "pre", "blockquote", "h1, h2, h3, h4, h5, h6"].join(", ")
+                    [
+                        "li",
+                        "p:not(:first-child)",
+                        "pre",
+                        "blockquote",
+                        "h1, h2, h3, h4, h5, h6",
+                    ].join(", ")
                 )
         );
 }
@@ -45,7 +51,7 @@ function nodePosAtDOM(node: Element, view: EditorView, options: DragHandleOption
 
     return view.posAtCoords({
         left: boundingRect.left + 50 + options.dragHandleWidth,
-        top: boundingRect.top + 1
+        top: boundingRect.top + 1,
     })?.inside;
 }
 
@@ -57,7 +63,7 @@ function DragHandle(options: DragHandleOptions) {
 
         const node = nodeDOMAtCoords({
             x: event.clientX + 50 + options.dragHandleWidth,
-            y: event.clientY
+            y: event.clientY,
         });
 
         if (!(node instanceof Element)) return;
@@ -68,10 +74,7 @@ function DragHandle(options: DragHandleOptions) {
         view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, nodePos)));
 
         const slice = view.state.selection.content();
-        const {
-            dom,
-            text
-        } = serializeForClipboard(view, slice);
+        const { dom, text } = serializeForClipboard(view, slice);
 
         event.dataTransfer.clearData();
         event.dataTransfer.setData("text/html", dom.innerHTML);
@@ -82,7 +85,7 @@ function DragHandle(options: DragHandleOptions) {
 
         view.dragging = {
             slice,
-            move: event.ctrlKey
+            move: event.ctrlKey,
         };
     }
 
@@ -93,7 +96,7 @@ function DragHandle(options: DragHandleOptions) {
 
         const node = nodeDOMAtCoords({
             x: event.clientX + 50 + options.dragHandleWidth,
-            y: event.clientY
+            y: event.clientY,
         });
 
         if (!(node instanceof Element)) return;
@@ -139,7 +142,7 @@ function DragHandle(options: DragHandleOptions) {
                 destroy: () => {
                     // dragHandleElement?.remove?.();
                     // dragHandleElement = null;
-                }
+                },
             };
         },
         props: {
@@ -151,7 +154,7 @@ function DragHandle(options: DragHandleOptions) {
 
                     const node = nodeDOMAtCoords({
                         x: event.clientX + 50 + options.dragHandleWidth,
-                        y: event.clientY
+                        y: event.clientY,
                     });
 
                     if (!(node instanceof Element)) {
@@ -194,9 +197,9 @@ function DragHandle(options: DragHandleOptions) {
                 },
                 dragend: (view) => {
                     view.dom.classList.remove("dragging");
-                }
-            }
-        }
+                },
+            },
+        },
     });
 }
 
@@ -206,8 +209,8 @@ export const DragAndDrop = Extension.create({
     addProseMirrorPlugins() {
         return [
             DragHandle({
-                dragHandleWidth: 24
-            })
+                dragHandleWidth: 24,
+            }),
         ];
-    }
+    },
 });

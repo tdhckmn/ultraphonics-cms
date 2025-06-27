@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function SouthAmericaIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"south_america"}/>
+    return <Icon {...props} iconKey={"south_america"} />;
 }

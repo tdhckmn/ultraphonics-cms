@@ -31,13 +31,13 @@ buildProperty({
                 name: "Image",
                 storage: {
                     storagePath: "images",
-                    acceptedFiles: ["image/*"]
-                }
+                    acceptedFiles: ["image/*"],
+                },
             },
             text: {
                 dataType: "string",
                 name: "Text",
-                markdown: true
+                markdown: true,
             },
             products: {
                 name: "Products",
@@ -45,11 +45,11 @@ buildProperty({
                 of: {
                     dataType: "reference",
                     path: "products",
-                    previewProperties: ["name", "main_image"]
-                }
-            }
-        }
-    }
+                    previewProperties: ["name", "main_image"],
+                },
+            },
+        },
+    },
 });
 ```
 
@@ -57,4 +57,3 @@ The data type is [`array`](../config/array).
 
 Internally the component used
 is [`BlockFieldBinding`](../../api/functions/BlockFieldBinding).
-

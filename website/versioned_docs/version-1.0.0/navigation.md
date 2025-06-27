@@ -27,7 +27,7 @@ them and then build the schema with them.
 import {
     // ...
     NavigationBuilder,
-    NavigationBuilderProps
+    NavigationBuilderProps,
 } from "@camberi/firecms";
 
 // ...
@@ -37,9 +37,9 @@ const navigation: NavigationBuilder = async ({ user }: NavigationBuilderProps) =
         buildCollection({
             path: "products",
             collection: productSchema,
-            name: "Products"
-        })
-    ]
+            name: "Products",
+        }),
+    ],
 });
 ```
 
@@ -48,6 +48,3 @@ const navigation: NavigationBuilder = async ({ user }: NavigationBuilderProps) =
 FireCMS provides a set of **builder functions** that just return the input they
 receive but are useful for using the features of the type system and validate
 your schemas and properties at compile time.
-
-
-

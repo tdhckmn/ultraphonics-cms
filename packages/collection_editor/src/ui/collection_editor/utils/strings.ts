@@ -8,9 +8,12 @@ export function camelCase(str: string): string {
     if (parts.length === 0) return "";
 
     // Start with first part in lowercase
-    return parts[0].toLowerCase() +
+    return (
+        parts[0].toLowerCase() +
         // Transform remaining parts to have first letter uppercase
-        parts.slice(1)
-            .map(part => part.charAt(0).toUpperCase() + part.substring(1).toLowerCase())
-            .join('');
+        parts
+            .slice(1)
+            .map((part) => part.charAt(0).toUpperCase() + part.substring(1).toLowerCase())
+            .join("")
+    );
 }

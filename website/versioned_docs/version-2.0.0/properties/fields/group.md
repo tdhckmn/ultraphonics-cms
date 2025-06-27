@@ -20,14 +20,14 @@ buildProperty({
     properties: {
         street: {
             name: "Street",
-            dataType: "string"
+            dataType: "string",
         },
         postal_code: {
             name: "Postal code",
-            dataType: "number"
-        }
+            dataType: "number",
+        },
     },
-    expanded: true
+    expanded: true,
 });
 ```
 
@@ -35,4 +35,3 @@ The data type is [`map`](../config/map).
 
 Internally the component used
 is [`MapFieldBinding`].
-

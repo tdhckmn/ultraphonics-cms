@@ -14,19 +14,15 @@ interface LabelWithIconProps {
  * @group Form custom fields
  */
 export const LabelWithIcon = forwardRef<HTMLDivElement, LabelWithIconProps>(
-    ({
-         icon,
-         title,
-         small,
-         className,
-         required
-     }, ref) => {
+    ({ icon, title, small, className, required }, ref) => {
         return (
             <div
                 ref={ref}
-                className={cls("align-middle inline-flex items-center my-0.5",
+                className={cls(
+                    "align-middle inline-flex items-center my-0.5",
                     small ? "gap-1" : "gap-2",
-                    className)}
+                    className
+                )}
             >
                 {icon}
                 <span
@@ -34,8 +30,8 @@ export const LabelWithIcon = forwardRef<HTMLDivElement, LabelWithIconProps>(
                         small ? "translate-x-2 scale-75" : ""
                     }`}
                 >
-          {(title ?? "") + (required ? " *" : "")}
-        </span>
+                    {(title ?? "") + (required ? " *" : "")}
+                </span>
             </div>
         );
     }

@@ -2,13 +2,14 @@
 id: changelog
 title: Changelog
 ---
+
 ## [2.1.0] - 2023-09-12
 
 ### Changed
 
 - [BREAKING] The logic to verify valid filter combinations has been moved to the `DataSource` interface.
   This improves the ability to customize the data source and allows for more complex filters.
-  This change will only affect you if you have implemented a custom data source. You will need to 
+  This change will only affect you if you have implemented a custom data source. You will need to
   add a `isFilterCombinationValid` method to your data source.
 - [BREAKING] The prop `filterCombinations` has been removed from the `EntityCollection` component.
   This is now handled by the data source. If you need to allow multiple filters, you can use the
@@ -179,6 +180,7 @@ While still in beta, we consider this version stable enough to be used in
 production.
 
 > All changes related to V2 alpha are currently bundled in these documents:
+>
 > - [What's new in version 2.0.0](https://firecms.co/docs/new_in_v2)
 > - [Migration guide from version 1.x to 2.0.0](https://firecms.co/docs/migrating_from_v1)
 

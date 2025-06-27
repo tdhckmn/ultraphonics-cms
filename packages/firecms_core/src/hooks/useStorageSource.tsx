@@ -8,7 +8,6 @@ import { useContext } from "react";
  */
 export const useStorageSource = (collection?: EntityCollection): StorageSource => {
     const defaultStorageSource = useContext(StorageSourceContext);
-    if (collection?.overrides?.storageSource)
-        return collection.overrides.storageSource;
+    if (collection?.overrides?.storageSource) return collection.overrides.storageSource;
     return defaultStorageSource;
 };

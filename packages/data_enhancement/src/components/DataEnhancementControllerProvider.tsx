@@ -4,7 +4,7 @@ import {
     DataEnhancementController,
     EnhancedDataResult,
     EnhanceParams,
-    InputProperty
+    InputProperty,
 } from "../types/data_enhancement_controller";
 import {
     DataSource,
@@ -17,7 +17,7 @@ import {
     useCustomizationController,
     useDataSource,
     useNavigationController,
-    useSnackbarController
+    useSnackbarController,
 } from "@firecms/core";
 
 import { enhanceDataAPIStream, fetchEntityPromptSuggestion } from "../api";
@@ -28,18 +28,15 @@ import { useEditorAIController } from "../editor/useEditorAIController";
 export const DataEnhancementControllerContext = React.createContext<DataEnhancementController>({} as any);
 
 export type DataEnhancementControllerProviderProps = {
-
     apiKey: string;
 
-    getConfigForPath?: (props: {
-        path: string,
-        collection: EntityCollection
-    }) => boolean;
+    getConfigForPath?: (props: { path: string; collection: EntityCollection }) => boolean;
 
     host?: string;
-}
+};
 
-export const useDataEnhancementController = (): DataEnhancementController => useContext(DataEnhancementControllerContext);
+export const useDataEnhancementController = (): DataEnhancementController =>
+    useContext(DataEnhancementControllerContext);
 
 function getPropertyFromKey(properties: Record<string, InputProperty>, propertyKey: string) {
     if (propertyKey in properties) {
@@ -52,20 +49,18 @@ function getPropertyFromKey(properties: Record<string, InputProperty>, propertyK
         }
         const parentKey = split.slice(0, split.length - 1).join(".");
         return getPropertyFromKey(properties, parentKey);
-
     }
 }
 
 export function DataEnhancementControllerProvider({
-                                                      apiKey,
-                                                      getConfigForPath,
-                                                      children,
-                                                      host,
-                                                      path,
-                                                      collection,
-                                                      formContext,
-                                                  }: PropsWithChildren<DataEnhancementControllerProviderProps & PluginFormActionProps<any>>) {
-
+    apiKey,
+    getConfigForPath,
+    children,
+    host,
+    path,
+    collection,
+    formContext,
+}: PropsWithChildren<DataEnhancementControllerProviderProps & PluginFormActionProps<any>>) {
     const [enabled, setEnabled] = useState(false);
     const [suggestions, setSuggestions] = useState<Record<string, string | number>>({});
     const [loadingSuggestions, setLoadingSuggestions] = useState<string[]>([]);
@@ -82,15 +77,17 @@ export function DataEnhancementControllerProvider({
         entityId: formContext?.entityId,
         values: formContext?.values,
         propertyConfigs: customizationController.propertyConfigs,
-        authController
+        authController,
     });
 
-    const properties = useMemo(() => getSimplifiedProperties(resolvedCollection.properties, formContext?.values), [formContext?.values]);
+    const properties = useMemo(
+        () => getSimplifiedProperties(resolvedCollection.properties, formContext?.values),
+        [formContext?.values],
+    );
     // const preEnhanceValuesRef = React.useRef(formContext?.values ?? {});
     const valuesRef = React.useRef(formContext?.values ?? {});
     useEffect(() => {
-        if (!enhancingInProgress.current)
-            valuesRef.current = formContext?.values ?? {};
+        if (!enhancingInProgress.current) valuesRef.current = formContext?.values ?? {};
     }, [formContext?.values]);
 
     const allowReferenceDataSelection = false;
@@ -99,7 +96,7 @@ export function DataEnhancementControllerProvider({
         if (!getConfigForPath) return;
         const config = getConfigForPath({
             path,
-            collection
+            collection,
         });
         if (config) {
             setEnabled(true);
@@ -112,7 +109,6 @@ export function DataEnhancementControllerProvider({
         } else {
             updateConfig();
         }
-
     }, [getConfigForPath, updateConfig]);
 
     const dataSource = useDataSource(collection);
@@ -121,16 +117,12 @@ export function DataEnhancementControllerProvider({
     const clearSuggestion = useCallback((propertyKey: string) => {
         setSuggestions((prev) => {
             //remove propertyKey from prev
-            const {
-                [propertyKey]: _,
-                ...rest
-            } = prev;
+            const { [propertyKey]: _, ...rest } = prev;
             return rest;
         });
     }, []);
 
     const appendValueDelta = (propertyKey: string, delta: string) => {
-
         const property = getPropertyFromKey(properties, propertyKey);
         if (delta === null || property?.disabled) {
             return;
@@ -144,23 +136,25 @@ export function DataEnhancementControllerProvider({
         // if (currentValue.length === 0) updatedValue = updatedValue.trimStart();
         valuesRef.current = {
             ...valuesRef.current,
-            [propertyKey]: updatedValue
+            [propertyKey]: updatedValue,
         };
         formContext?.setFieldValue(propertyKey, updatedValue, false);
-        setSuggestions(prev => ({
+        setSuggestions((prev) => ({
             ...prev,
-            [propertyKey]: (prev[propertyKey] ?? "") + delta
+            [propertyKey]: (prev[propertyKey] ?? "") + delta,
         }));
     };
 
-    const updateSuggestedValues = (currentValues: object, updatedValues: Record<string, string | number>, replaceValues: boolean) => {
-
+    const updateSuggestedValues = (
+        currentValues: object,
+        updatedValues: Record<string, string | number>,
+        replaceValues: boolean,
+    ) => {
         setLoadingSuggestions((prev) => {
-            return prev.filter(p => !Object.keys(updatedValues).includes(p));
+            return prev.filter((p) => !Object.keys(updatedValues).includes(p));
         });
 
         Object.entries(updatedValues).forEach(([propertyKey, suggestion]) => {
-
             const value = getValueInPath(currentValues, propertyKey);
             const property = getPropertyFromKey(properties, propertyKey);
 
@@ -186,25 +180,33 @@ export function DataEnhancementControllerProvider({
             } else {
                 const multiline = property?.fieldConfigId === "multiline" || property?.fieldConfigId === "markdown";
                 const trimmedValue = currentValue.trimEnd();
-                if (multiline && (trimmedValue.endsWith(".") || trimmedValue.endsWith("?") || trimmedValue.endsWith("!") || trimmedValue.endsWith(":"))) {
+                if (
+                    multiline &&
+                    (trimmedValue.endsWith(".") ||
+                        trimmedValue.endsWith("?") ||
+                        trimmedValue.endsWith("!") ||
+                        trimmedValue.endsWith(":"))
+                ) {
                     formContext?.setFieldValue(propertyKey, trimmedValue + "\n\n" + (suggestion as string).trimStart());
                 } else {
-                    formContext?.setFieldValue(propertyKey, trimmedValue + (trimmedValue.length > 0 ? " " : "") + (suggestion as string));
+                    formContext?.setFieldValue(
+                        propertyKey,
+                        trimmedValue + (trimmedValue.length > 0 ? " " : "") + (suggestion as string),
+                    );
                 }
             }
         });
 
-        setSuggestions(prev => ({
+        setSuggestions((prev) => ({
             ...prev,
-            ...Object.keys(updatedValues)
-                .reduce((acc, key) => {
-                    const value = getValueInPath(formContext?.values, key);
-                    const suggestion = updatedValues[key];
-                    return {
-                        ...acc,
-                        [key]: getAppendableSuggestion(suggestion, value) ?? suggestion
-                    };
-                }, {})
+            ...Object.keys(updatedValues).reduce((acc, key) => {
+                const value = getValueInPath(formContext?.values, key);
+                const suggestion = updatedValues[key];
+                return {
+                    ...acc,
+                    [key]: getAppendableSuggestion(suggestion, value) ?? suggestion,
+                };
+            }, {}),
         }));
     };
 
@@ -212,18 +214,17 @@ export function DataEnhancementControllerProvider({
         snackbarController.open({
             type: "warning",
             message: "A valid subscription is needed in order to use this function.",
-            autoHideDuration: 4000
-        })
+            autoHideDuration: 4000,
+        });
     }
 
     const editorAIController = useEditorAIController({ getAuthToken: authController.getAuthToken });
 
     const enhance = async (props: EnhanceParams<any>): Promise<EnhancedDataResult | null> => {
-
         if (!authController.user) {
             snackbarController.open({
                 type: "warning",
-                message: "You need to be logged in to enhance data"
+                message: "You need to be logged in to enhance data",
             });
             return Promise.reject(new Error("Not logged in"));
         }
@@ -232,12 +233,15 @@ export function DataEnhancementControllerProvider({
         const firebaseToken = await authController.getAuthToken();
 
         if (props.propertyKey) {
-            clearSuggestion(props.propertyKey)
+            clearSuggestion(props.propertyKey);
         } else {
             clearAllSuggestions();
         }
 
-        setLoadingSuggestions((prev) => [...prev, ...(props.propertyKey ? [props.propertyKey] : Object.keys(properties))]);
+        setLoadingSuggestions((prev) => [
+            ...prev,
+            ...(props.propertyKey ? [props.propertyKey] : Object.keys(properties)),
+        ]);
         enhancingInProgress.current = true;
 
         const currentValues = valuesRef.current ?? {};
@@ -281,42 +285,45 @@ export function DataEnhancementControllerProvider({
                             result.errors.forEach((error) => {
                                 snackbarController.open({
                                     type: "warning",
-                                    message: error
-                                })
+                                    message: error,
+                                });
                             });
                         }
                         if (Object.keys(result.suggestions).length === 0) {
                             snackbarController.open({
                                 type: "info",
                                 autoHideDuration: 1800,
-                                message: "No fields were updated"
-                            })
+                                message: "No fields were updated",
+                            });
                         }
                         setLoadingSuggestions([]);
                         resolve(result);
                         enhancingInProgress.current = false;
-                    }
+                    },
                 }).catch(onError);
             } catch (e: any) {
                 onError(e);
             }
-        })
+        });
     };
 
     const clearAllSuggestions = useCallback(() => {
         setSuggestions({});
     }, []);
 
-    const getSamplePrompts = useCallback(async (entityName: string, input?: string) => {
-        const firebaseToken = await authController.getAuthToken()
-        return fetchEntityPromptSuggestion({
-            host,
-            entityName,
-            firebaseToken,
-            apiKey,
-            input
-        });
-    }, [apiKey, authController.getAuthToken]);
+    const getSamplePrompts = useCallback(
+        async (entityName: string, input?: string) => {
+            const firebaseToken = await authController.getAuthToken();
+            return fetchEntityPromptSuggestion({
+                host,
+                entityName,
+                firebaseToken,
+                apiKey,
+                input,
+            });
+        },
+        [apiKey, authController.getAuthToken],
+    );
 
     const dataEnhancementController: DataEnhancementController = {
         enabled,
@@ -327,12 +334,11 @@ export function DataEnhancementControllerProvider({
         clearAllSuggestions,
         getSamplePrompts,
         loadingSuggestions,
-        editorAIController
+        editorAIController,
     };
 
     return (
-        <DataEnhancementControllerContext.Provider
-            value={dataEnhancementController}>
+        <DataEnhancementControllerContext.Provider value={dataEnhancementController}>
             {children}
         </DataEnhancementControllerContext.Provider>
     );
@@ -340,24 +346,31 @@ export function DataEnhancementControllerProvider({
 
 const ENTITIES_COUNT = 1;
 
-async function getOtherEntities(collection: EntityCollection, dataSource: DataSource, path: string, entityId: string): Promise<Entity<any>[]> {
+async function getOtherEntities(
+    collection: EntityCollection,
+    dataSource: DataSource,
+    path: string,
+    entityId: string,
+): Promise<Entity<any>[]> {
     const fetchedDocs = await dataSource.fetchCollection({
         path,
         collection,
         filter: { __name__: [">", entityId] },
         orderBy: "__name__",
         order: "asc",
-        limit: ENTITIES_COUNT
+        limit: ENTITIES_COUNT,
     });
     if (fetchedDocs.length < ENTITIES_COUNT) {
-        fetchedDocs.push(...await dataSource.fetchCollection({
-            path,
-            collection,
-            filter: { __name__: ["<", entityId] },
-            orderBy: "__name__",
-            order: "asc",
-            limit: ENTITIES_COUNT - fetchedDocs.length
-        }))
+        fetchedDocs.push(
+            ...(await dataSource.fetchCollection({
+                path,
+                collection,
+                filter: { __name__: ["<", entityId] },
+                orderBy: "__name__",
+                order: "asc",
+                limit: ENTITIES_COUNT - fetchedDocs.length,
+            })),
+        );
     }
     return fetchedDocs;
 }

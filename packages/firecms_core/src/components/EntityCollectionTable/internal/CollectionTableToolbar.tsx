@@ -9,7 +9,7 @@ import {
     SearchBar,
     Select,
     SelectItem,
-    Tooltip
+    Tooltip,
 } from "@firecms/ui";
 import { CollectionSize } from "../../../types";
 import { useLargeLayout } from "../../../hooks";
@@ -19,7 +19,7 @@ interface CollectionTableToolbarProps {
     loading: boolean;
     actionsStart?: React.ReactNode;
     actions?: React.ReactNode;
-    title?: React.ReactNode,
+    title?: React.ReactNode;
     onTextSearchClick?: () => void;
     onTextSearch?: (searchString?: string) => void;
     onSizeChanged: (size: CollectionSize) => void;
@@ -27,17 +27,16 @@ interface CollectionTableToolbarProps {
 }
 
 export function CollectionTableToolbar({
-                                           actions,
-                                           actionsStart,
-                                           loading,
-                                           onSizeChanged,
-                                           onTextSearch,
-                                           onTextSearchClick,
-                                           size,
-                                           textSearchLoading,
-                                           title
-                                       }: CollectionTableToolbarProps) {
-
+    actions,
+    actionsStart,
+    loading,
+    onSizeChanged,
+    onTextSearch,
+    onTextSearchClick,
+    size,
+    textSearchLoading,
+    title,
+}: CollectionTableToolbarProps) {
     const searchInputRef = React.useRef<HTMLInputElement>(null);
     const largeLayout = useLargeLayout();
 
@@ -49,7 +48,6 @@ export function CollectionTableToolbar({
         }
         searchLoading.current = textSearchLoading ?? false;
     }, [textSearchLoading]);
-
 
     const sizeSelect = (
         <Tooltip title={"Table row size"} side={"right"} sideOffset={4}>
@@ -71,28 +69,27 @@ export function CollectionTableToolbar({
 
     return (
         <div
-            className={cls(defaultBorderMixin, "no-scrollbar min-h-[56px] overflow-x-auto px-2 md:px-4 bg-surface-50 dark:bg-surface-900 border-b flex flex-row justify-between items-center w-full")}>
-
+            className={cls(
+                defaultBorderMixin,
+                "no-scrollbar min-h-[56px] overflow-x-auto px-2 md:px-4 bg-surface-50 dark:bg-surface-900 border-b flex flex-row justify-between items-center w-full"
+            )}
+        >
             <div className="flex items-center gap-2 md:mr-4 mr-2">
-
-                {title && <div className={"hidden lg:block"}>
-                    {title}
-                </div>}
+                {title && <div className={"hidden lg:block"}>{title}</div>}
 
                 {sizeSelect}
 
                 {actionsStart}
-
             </div>
 
             <div className="flex items-center gap-2">
+                {largeLayout && (
+                    <div className="w-[22px] mr-4">
+                        {loading && <CircularProgress size={"smallest"} />}
+                    </div>
+                )}
 
-                {largeLayout && <div className="w-[22px] mr-4">
-                    {loading &&
-                        <CircularProgress size={"smallest"}/>}
-                </div>}
-
-                {(onTextSearch || onTextSearchClick) &&
+                {(onTextSearch || onTextSearchClick) && (
                     <SearchBar
                         key={"search-bar"}
                         inputRef={searchInputRef}
@@ -100,12 +97,12 @@ export function CollectionTableToolbar({
                         disabled={Boolean(onTextSearchClick)}
                         onClick={onTextSearchClick}
                         onTextSearch={onTextSearchClick ? undefined : onTextSearch}
-                        expandable={true}/>}
+                        expandable={true}
+                    />
+                )}
 
                 {actions}
-
             </div>
-
         </div>
     );
 }

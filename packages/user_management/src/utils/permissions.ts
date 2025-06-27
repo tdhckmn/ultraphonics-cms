@@ -6,18 +6,16 @@ const DEFAULT_PERMISSIONS = {
     read: false,
     edit: false,
     create: false,
-    delete: false
+    delete: false,
 };
 
-export function resolveUserRolePermissions<USER extends User>
-({
-     collection,
-     user
- }: {
-    collection: EntityCollection<any>,
-    user: USER | null
+export function resolveUserRolePermissions<USER extends User>({
+    collection,
+    user,
+}: {
+    collection: EntityCollection<any>;
+    user: USER | null;
 }): Permissions {
-
     const roles = user?.roles;
     if (!roles) {
         return DEFAULT_PERMISSIONS;
@@ -26,29 +24,28 @@ export function resolveUserRolePermissions<USER extends User>
             read: true,
             create: true,
             edit: true,
-            delete: true
+            delete: true,
         };
     } else {
         const basePermissions = {
             read: false,
             create: false,
             edit: false,
-            delete: false
+            delete: false,
         };
 
         return roles
-            .map(role => resolveCollectionRole(role, collection.id))
+            .map((role) => resolveCollectionRole(role, collection.id))
             .reduce(mergePermissions, basePermissions);
     }
 }
 
 function resolveCollectionRole(role: Role, id: string): Permissions {
-
     const basePermissions = {
         read: (role.isAdmin || role.defaultPermissions?.read) ?? false,
         create: (role.isAdmin || role.defaultPermissions?.create) ?? false,
         edit: (role.isAdmin || role.defaultPermissions?.edit) ?? false,
-        delete: (role.isAdmin || role.defaultPermissions?.delete) ?? false
+        delete: (role.isAdmin || role.defaultPermissions?.delete) ?? false,
     };
     const thisCollectionPermissions = role.collectionPermissions?.[id];
     if (thisCollectionPermissions) {
@@ -65,22 +62,24 @@ const mergePermissions = (permA: Permissions, permB: Permissions) => {
         read: permA.read || permB.read,
         create: permA.create || permB.create,
         edit: permA.edit || permB.edit,
-        delete: permA.delete || permB.delete
+        delete: permA.delete || permB.delete,
     };
-}
+};
 
 export function getUserRoles(roles: Role[], fireCMSUser: User): Role[] | undefined {
     return !roles
         ? undefined
-        : (fireCMSUser.roles
-            ? fireCMSUser.roles
-                .map(role => roles.find((r) => r.id === role.id))
-                .filter(Boolean) as Role[]
-            : []);
+        : fireCMSUser.roles
+          ? (fireCMSUser.roles
+                .map((role) => roles.find((r) => r.id === role.id))
+                .filter(Boolean) as Role[])
+          : [];
 }
 
 export const areRolesEqual = (rolesA: Role[], rolesB: Role[]) => {
-    const rolesAIds = rolesA.map(r => r.id);
-    const rolesBIds = rolesB.map(r => r.id);
-    return rolesAIds.length === rolesB.length && rolesAIds.every((role) => rolesBIds.includes(role));
-}
+    const rolesAIds = rolesA.map((r) => r.id);
+    const rolesBIds = rolesB.map((r) => r.id);
+    return (
+        rolesAIds.length === rolesB.length && rolesAIds.every((role) => rolesBIds.includes(role))
+    );
+};

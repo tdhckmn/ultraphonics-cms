@@ -1,5 +1,5 @@
 > This is a full-blown app that uses every feature of FireCMS in one way or
-another.
+> another.
 
 ## Testing the example
 
@@ -11,7 +11,7 @@ IMPORTANT: If you want to get started using FireCMS it is advisable to check the
 You need to specify a valid **Firebase config** in the file `firebase_config.ts`
 which is not in VCS, but there is a template `firebase_config.ts.template`
 
-To run the app, in the main folder run: 
+To run the app, in the main folder run:
 
 ```
 yarn
@@ -22,7 +22,6 @@ and in either in the root or the `example` folder, simply run:
 ```
 yarn dev
 ```
-
 
 ### vite and react-scripts
 
@@ -43,4 +42,3 @@ There are different `.env` keys depending on if you are using `vite` or
 
 Note that you only need to have a Cloud Functions backend such as this one if
 you want to enable text search or are extending functionality in any other way.
-

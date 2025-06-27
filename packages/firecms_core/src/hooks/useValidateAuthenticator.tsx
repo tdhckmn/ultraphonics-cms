@@ -11,40 +11,41 @@ import { AuthController, Authenticator, DataSourceDelegate, StorageSource, User 
  * @param storageSource
  * @param dataSourceDelegate
  */
-export function useValidateAuthenticator<USER extends User = any>
-({
-     disabled,
-     authController,
-     authenticator,
-     storageSource,
-     dataSourceDelegate
- }:
-     {
-         disabled?: boolean,
-         authController: AuthController<USER>,
-         authenticator?: boolean | Authenticator<USER>,
-         dataSourceDelegate: DataSourceDelegate;
-         storageSource: StorageSource;
-     }): {
-    canAccessMainView: boolean,
-    authLoading: boolean,
-    notAllowedError: any,
-    authVerified: boolean,
+export function useValidateAuthenticator<USER extends User = any>({
+    disabled,
+    authController,
+    authenticator,
+    storageSource,
+    dataSourceDelegate,
+}: {
+    disabled?: boolean;
+    authController: AuthController<USER>;
+    authenticator?: boolean | Authenticator<USER>;
+    dataSourceDelegate: DataSourceDelegate;
+    storageSource: StorageSource;
+}): {
+    canAccessMainView: boolean;
+    authLoading: boolean;
+    notAllowedError: any;
+    authVerified: boolean;
 } {
-
     const authenticationEnabled = Boolean(authenticator);
 
     const [authLoading, setAuthLoading] = useState<boolean>(authenticationEnabled);
     const [notAllowedError, setNotAllowedError] = useState<any>(false);
-    const [authVerified, setAuthVerified] = useState<boolean>(!authenticationEnabled || Boolean(authController.loginSkipped));
+    const [authVerified, setAuthVerified] = useState<boolean>(
+        !authenticationEnabled || Boolean(authController.loginSkipped)
+    );
 
-    const canAccessMainView = (authVerified) &&
-        (!authenticationEnabled || Boolean(authController.user) || Boolean(authController.loginSkipped)) &&
+    const canAccessMainView =
+        authVerified &&
+        (!authenticationEnabled ||
+            Boolean(authController.user) ||
+            Boolean(authController.loginSkipped)) &&
         !notAllowedError;
 
     useEffect(() => {
-        if (authController.loginSkipped)
-            setAuthVerified(true);
+        if (authController.loginSkipped) setAuthVerified(true);
     }, [authController.loginSkipped]);
 
     /**
@@ -54,7 +55,6 @@ export function useValidateAuthenticator<USER extends User = any>
     const checkedUserRef = useRef<User | undefined>();
 
     const checkAuthentication = useCallback(async () => {
-
         if (disabled) {
             return;
         }
@@ -72,14 +72,18 @@ export function useValidateAuthenticator<USER extends User = any>
 
         const delegateUser = authController.user;
 
-        if (authenticator instanceof Function && delegateUser && !equal(checkedUserRef.current?.uid, delegateUser.uid)) {
+        if (
+            authenticator instanceof Function &&
+            delegateUser &&
+            !equal(checkedUserRef.current?.uid, delegateUser.uid)
+        ) {
             setAuthLoading(true);
             try {
                 const allowed = await authenticator({
                     user: delegateUser,
                     authController,
                     dataSourceDelegate,
-                    storageSource
+                    storageSource,
                 });
                 if (!allowed) {
                     authController.signOut();
@@ -99,7 +103,6 @@ export function useValidateAuthenticator<USER extends User = any>
         if (!authController.initialLoading && !delegateUser) {
             setAuthVerified(true);
         }
-
     }, [disabled, authController, authenticator, dataSourceDelegate, storageSource]);
 
     useEffect(() => {
@@ -110,6 +113,6 @@ export function useValidateAuthenticator<USER extends User = any>
         canAccessMainView,
         authLoading: authenticationEnabled && authLoading,
         notAllowedError,
-        authVerified
-    }
+        authVerified,
+    };
 }

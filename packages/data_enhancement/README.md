@@ -37,34 +37,34 @@ const firebaseConfig = {
     projectId: "",
     storageBucket: "",
     messagingSenderId: "",
-    appId: ""
+    appId: "",
 };
 
 export default function App() {
-
     const dataEnhancementPlugin = useDataEnhancementPlugin({
         // Optional callback for defining which collections should be enhanced
         getConfigForPath: ({ path }) => {
-            if (path === "books")
-                return true;
+            if (path === "books") return true;
             return false;
-        }
+        },
     });
 
     const plugins = [dataEnhancementPlugin];
-    
+
     const navigationController = useBuildNavigationController({
         // ... rest of your config
-        plugins
-    }); 
-    
-    return <FireCMS
-        name={"My Online Shop"}
-        plugins={[dataEnhancementPlugin]}
-        authentication={myAuthenticator}
-        navigationController={navigationController}
-        firebaseConfig={firebaseConfig}
-    />;
+        plugins,
+    });
+
+    return (
+        <FireCMS
+            name={"My Online Shop"}
+            plugins={[dataEnhancementPlugin]}
+            authentication={myAuthenticator}
+            navigationController={navigationController}
+            firebaseConfig={firebaseConfig}
+        />
+    );
 }
 ```
 

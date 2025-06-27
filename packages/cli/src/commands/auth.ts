@@ -34,33 +34,33 @@ export async function login(env: "prod" | "dev", debug: boolean) {
     }
 
     const activeConnections: Set<any> = new Set();
-    const server = http.createServer(async (req, res) => {
-        res.setHeader("Cache-Control", "no-store, max-age=0");
+    const server = http
+        .createServer(async (req, res) => {
+            res.setHeader("Cache-Control", "no-store, max-age=0");
 
-        if (req.url === "/") {
-            const authURL = await getAuthURL(env);
-            console.log("Opening browser to", authURL);
-            res.writeHead(301, { "Location": authURL });
-            res.end();
-        }
-
-        if (req.url.startsWith("/oauth2callback")) {
-            const q = url.parse(req.url, true).query;
-
-            if (q.error) {
-                console.log("Error:" + q.error);
-                server.close();
-                throw q.error;
-            } else {
-                // return the imported html
-                res.writeHead(200, { "Content-Type": "text/html" });
-                res.end(done_html, () => req.socket.end());
-                emitter.emit("tokensReady", q.code);
-
+            if (req.url === "/") {
+                const authURL = await getAuthURL(env);
+                console.log("Opening browser to", authURL);
+                res.writeHead(301, { Location: authURL });
+                res.end();
             }
-        }
 
-    }).listen(3000);
+            if (req.url.startsWith("/oauth2callback")) {
+                const q = url.parse(req.url, true).query;
+
+                if (q.error) {
+                    console.log("Error:" + q.error);
+                    server.close();
+                    throw q.error;
+                } else {
+                    // return the imported html
+                    res.writeHead(200, { "Content-Type": "text/html" });
+                    res.end(done_html, () => req.socket.end());
+                    emitter.emit("tokensReady", q.code);
+                }
+            }
+        })
+        .listen(3000);
 
     server.on("connection", (socket) => {
         activeConnections.add(socket);
@@ -86,7 +86,7 @@ export async function login(env: "prod" | "dev", debug: boolean) {
                 socket.destroy();
             }
             server.close();
-        })
+        });
     });
 }
 
@@ -103,11 +103,9 @@ function saveTokens(tokens: object, env: "prod" | "dev") {
     const data = JSON.stringify(tokens);
 
     fs.writeFileSync(filePath, data);
-
 }
 
 export async function logout(env: "prod" | "dev", debug: boolean) {
-
     const userCredential = await getTokens(env, debug);
     if (!userCredential) {
         console.log("⚠️ You are not logged in");
@@ -120,7 +118,7 @@ export async function logout(env: "prod" | "dev", debug: boolean) {
     const dirPath = path.join(os.homedir(), ".firecms");
     const filePath = path.join(dirPath, (env === "dev" ? "staging." : "") + "tokens.json");
     fs.unlinkSync(filePath);
-    console.log("You have successfully logged out.")
+    console.log("You have successfully logged out.");
 }
 
 export async function getTokens(env: "prod" | "dev", debug: boolean): Promise<object | null> {
@@ -159,20 +157,20 @@ function revokeToken(accessToken: string, env: "prod" | "dev") {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded",
-            "Content-Length": Buffer.byteLength(postData)
-        }
+            "Content-Length": Buffer.byteLength(postData),
+        },
     };
 
     // Set up the request
     const postReq = https.request(postOptions, function (res) {
         res.setEncoding("utf8");
-        res.on("data", d => {
+        res.on("data", (d) => {
             // console.log("Response: " + d);
         });
     });
 
-    postReq.on("error", error => {
-        console.log(error)
+    postReq.on("error", (error) => {
+        console.log(error);
     });
 
     // Post the request with data
@@ -206,14 +204,18 @@ async function getAuthURL(env: "prod" | "dev") {
 
     const response = await axios.get(server + "/cli/generate_auth_url", {
         params: {
-            redirect_uri: "http://localhost:3000/oauth2callback/"
-        }
+            redirect_uri: "http://localhost:3000/oauth2callback/",
+        },
     });
 
     return response.data.data;
 }
 
-export async function refreshCredentials(env: "dev" | "prod", credentials?: object, onErr?: (e: any) => void) {
+export async function refreshCredentials(
+    env: "dev" | "prod",
+    credentials?: object,
+    onErr?: (e: any) => void
+) {
     if (credentials) {
         const expiryDate = new Date(credentials["expiry_date"]);
         const now = new Date();
@@ -226,16 +228,23 @@ export async function refreshCredentials(env: "dev" | "prod", credentials?: obje
 
         const response = await axios.post(server + "/cli/refresh_access_token", credentials);
         const newCredentials = response.data.data;
-        saveTokens({
-            ...credentials,
-            ...newCredentials,
+        saveTokens(
+            {
+                ...credentials,
+                ...newCredentials,
+                env,
+            },
             env
-        }, env);
+        );
         return newCredentials;
     } catch (error) {
         if (onErr) onErr(error);
         await logout(env, false);
-        console.error("\nError refreshing credentials", error.response?.status, error.response?.data?.message);
+        console.error(
+            "\nError refreshing credentials",
+            error.response?.status,
+            error.response?.data?.message
+        );
         console.log(`⚠️ Run ${chalk.red.bold("firecms login")} to log in again`);
         return null;
     }
@@ -246,11 +255,9 @@ async function exchangeCodeForToken(code: string, env: "prod" | "dev") {
 
     const response = await axios.get(server + "/cli/exchange_code_for_token", {
         params: {
-            code
-        }
+            code,
+        },
     });
 
     return response.data.data;
 }
-
-

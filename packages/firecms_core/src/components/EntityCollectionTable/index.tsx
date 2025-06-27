@@ -1,10 +1,6 @@
-export {
-    EntityCollectionTable
-} from "./EntityCollectionTable";
+export { EntityCollectionTable } from "./EntityCollectionTable";
 
-export type {
-    EntityCollectionTableProps,
-} from "./EntityCollectionTableProps";
+export type { EntityCollectionTableProps } from "./EntityCollectionTableProps";
 
 export * from "./PropertyTableCell";
 export * from "./EntityCollectionRowActions";

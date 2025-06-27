@@ -5,18 +5,8 @@ import { Field, getIn, useFormex } from "@firecms/formex";
 
 import { CloudUploadIcon, DebouncedTextField, ExpandablePanel, TextField, Typography } from "@firecms/ui";
 
-export function MarkdownPropertyField({
-                                          disabled,
-                                          showErrors
-                                      }: {
-    disabled: boolean;
-    showErrors: boolean;
-}) {
-
-    const {
-        values,
-        setFieldValue
-    } = useFormex();
+export function MarkdownPropertyField({ disabled, showErrors }: { disabled: boolean; showErrors: boolean }) {
+    const { values, setFieldValue } = useFormex();
 
     const baseStoragePath = "storage";
 
@@ -35,58 +25,53 @@ export function MarkdownPropertyField({
     return (
         <>
             <div className={"col-span-12"}>
-
                 <ValidationPanel>
-
-                    <StringPropertyValidation disabled={disabled}
-                                              length={true}
-                                              lowercase={true}
-                                              max={true}
-                                              min={true}
-                                              trim={true}
-                                              uppercase={true}
-                                              showErrors={showErrors}/>
-
+                    <StringPropertyValidation
+                        disabled={disabled}
+                        length={true}
+                        lowercase={true}
+                        max={true}
+                        min={true}
+                        trim={true}
+                        uppercase={true}
+                        showErrors={showErrors}
+                    />
                 </ValidationPanel>
-
             </div>
 
             <div className={"col-span-12"}>
                 <ExpandablePanel
                     title={
                         <div className="flex flex-row text-surface-500">
-                            <CloudUploadIcon/>
-                            <Typography variant={"subtitle2"}
-                                        className="ml-2">
+                            <CloudUploadIcon />
+                            <Typography variant={"subtitle2"} className="ml-2">
                                 File upload config
                             </Typography>
                         </div>
-                    }>
-
+                    }
+                >
                     <div className={"grid grid-cols-12 gap-2 p-4"}>
-
-
                         <div className={"col-span-12"}>
-                            <Field name={fileName}
-                                   as={DebouncedTextField}
-                                   label={"File name"}
-                                   size={"small"}
-                                   disabled={hasFilenameCallback || disabled}
-                                   value={hasFilenameCallback ? "-" : fileNameValue}
+                            <Field
+                                name={fileName}
+                                as={DebouncedTextField}
+                                label={"File name"}
+                                size={"small"}
+                                disabled={hasFilenameCallback || disabled}
+                                value={hasFilenameCallback ? "-" : fileNameValue}
                             />
                         </div>
                         <div className={"col-span-12"}>
-                            <Field name={storagePath}
-                                   as={DebouncedTextField}
-                                   label={"Storage path"}
-                                   disabled={hasStoragePathCallback || disabled}
-                                   size={"small"}
-                                   value={hasStoragePathCallback ? "-" : storagePathValue}
+                            <Field
+                                name={storagePath}
+                                as={DebouncedTextField}
+                                label={"Storage path"}
+                                disabled={hasStoragePathCallback || disabled}
+                                size={"small"}
+                                value={hasStoragePathCallback ? "-" : storagePathValue}
                             />
                             <Typography variant={"caption"} className={"ml-3.5 mt-1 mb-2"}>
-                                <p>You can use the following placeholders in
-                                    the file name
-                                    and storage path values:</p>
+                                <p>You can use the following placeholders in the file name and storage path values:</p>
                                 <ul>
                                     <li>{"{file} - Full name of the uploaded file"}</li>
                                     <li>{"{file.name} - Name of the uploaded file without extension"}</li>
@@ -100,39 +85,40 @@ export function MarkdownPropertyField({
 
                             <Typography variant={"caption"} className={"ml-3.5 mt-1 mb-2"}>
                                 When using Markdown, the URL of the uploaded files are always saved in the text value
-                                (not
-                                the path).
+                                (not the path).
                             </Typography>
                         </div>
 
                         <div className={"col-span-12"}>
-                            <DebouncedTextField name={maxSize}
-                                                type={"number"}
-                                                label={"Max size (in bytes)"}
-                                                size={"small"}
-                                                value={maxSizeValue !== undefined && maxSizeValue !== null ? maxSizeValue.toString() : ""}
-                                                onChange={(e) => {
-                                                    const value = e.target.value;
-                                                    if (value === "") setFieldValue(maxSize, undefined);
-                                                    else setFieldValue(maxSize, parseInt(value));
-                                                }}
+                            <DebouncedTextField
+                                name={maxSize}
+                                type={"number"}
+                                label={"Max size (in bytes)"}
+                                size={"small"}
+                                value={
+                                    maxSizeValue !== undefined && maxSizeValue !== null ? maxSizeValue.toString() : ""
+                                }
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value === "") setFieldValue(maxSize, undefined);
+                                    else setFieldValue(maxSize, parseInt(value));
+                                }}
                             />
                         </div>
-
                     </div>
                 </ExpandablePanel>
             </div>
 
             <div className={"col-span-12"}>
-
-                <TextField name={"defaultValue"}
-                           disabled={disabled}
-                           onChange={(e: any) => {
-                               setFieldValue("defaultValue", e.target.value === "" ? undefined : e.target.value);
-                           }}
-                           label={"Default value"}
-                           value={getIn(values, "defaultValue") ?? ""}/>
-
+                <TextField
+                    name={"defaultValue"}
+                    disabled={disabled}
+                    onChange={(e: any) => {
+                        setFieldValue("defaultValue", e.target.value === "" ? undefined : e.target.value);
+                    }}
+                    label={"Default value"}
+                    value={getIn(values, "defaultValue") ?? ""}
+                />
             </div>
         </>
     );

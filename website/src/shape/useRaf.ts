@@ -1,6 +1,6 @@
 import { useLayoutEffect, useState } from "react";
 
-const useRaf = (value:number, ms: number = 1e12): number => {
+const useRaf = (value: number, ms: number = 1e12): number => {
     const [elapsed, set] = useState<number>(0);
 
     useLayoutEffect(() => {

@@ -5,7 +5,6 @@ import React from "react";
  * @group Hooks and utilities
  */
 export interface DialogsController {
-
     /**
      * Close the last dialog
      */
@@ -15,7 +14,9 @@ export interface DialogsController {
      * Open a dialog
      * @param props
      */
-    open: <T extends object = object>(props: DialogControllerEntryProps<T>) => { closeDialog: () => void };
+    open: <T extends object = object>(
+        props: DialogControllerEntryProps<T>
+    ) => { closeDialog: () => void };
 }
 
 /**
@@ -23,15 +24,13 @@ export interface DialogsController {
  * @group Hooks and utilities
  */
 export interface DialogControllerEntryProps<T extends object = object> {
-
     key: string;
     /**
      * The component type that will be rendered
      */
-    Component: React.ComponentType<{ open: boolean, closeDialog: () => void } & T>;
+    Component: React.ComponentType<{ open: boolean; closeDialog: () => void } & T>;
     /**
      * Props to pass to the dialog component
      */
     props?: T;
-
 }

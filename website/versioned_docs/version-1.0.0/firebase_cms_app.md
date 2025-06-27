@@ -60,6 +60,7 @@ example included in the code, which indexes documents with Cloud Functions.
 We provide a utility method for performing searches in Algolia `performAlgoliaTextSearch`
 
 Example:
+
 ```tsx
 import algoliasearch, { SearchClient } from "algoliasearch";
 
@@ -70,55 +71,53 @@ import {
     buildCollection,
     FirebaseCMSApp,
     NavigationBuilder,
-    NavigationBuilderProps
+    NavigationBuilderProps,
 } from "@camberi/firecms";
 
-const client: SearchClient | undefined = algoliasearch("YOUR_ALGOLIA_APP_ID", "YOUR_ALGOLIA_SEARCH_KEY");
+const client: SearchClient | undefined = algoliasearch(
+    "YOUR_ALGOLIA_APP_ID",
+    "YOUR_ALGOLIA_SEARCH_KEY"
+);
 
 const productsIndex = client.initIndex("products");
 const usersIndex = client.initIndex("users");
 const blogIndex = client.initIndex("blog");
 
-const textSearchController: FirestoreTextSearchController =
-    ({ path, searchString }) => {
-        if (path === "products")
-            return performAlgoliaTextSearch(productsIndex, searchString);
-        if (path === "users")
-            return performAlgoliaTextSearch(usersIndex, searchString);
-        if (path === "blog")
-            return performAlgoliaTextSearch(blogIndex, searchString);
-        return undefined;
-    };
+const textSearchController: FirestoreTextSearchController = ({ path, searchString }) => {
+    if (path === "products") return performAlgoliaTextSearch(productsIndex, searchString);
+    if (path === "users") return performAlgoliaTextSearch(usersIndex, searchString);
+    if (path === "blog") return performAlgoliaTextSearch(blogIndex, searchString);
+    return undefined;
+};
 
 export default function App() {
-
     const productSchema = buildCollection({
         name: "Product",
         properties: {
             name: {
                 title: "Name",
                 validation: { required: true },
-                dataType: "string"
-            }
-        }
+                dataType: "string",
+            },
+        },
     });
     const navigation: NavigationBuilder = ({ user }: NavigationBuilderProps) => ({
         collections: [
             buildCollection({
                 path: "products",
                 collection: productSchema,
-                name: "Products"
-            })
-        ]
+                name: "Products",
+            }),
+        ],
     });
 
-    return <FirebaseCMSApp
-        name={"My Online Shop"}
-        navigation={navigation}
-        textSearchController={textSearchController}
-        firebaseConfig={firebaseConfig}
-    />;
+    return (
+        <FirebaseCMSApp
+            name={"My Online Shop"}
+            navigation={navigation}
+            textSearchController={textSearchController}
+            firebaseConfig={firebaseConfig}
+        />
+    );
 }
-
 ```
-

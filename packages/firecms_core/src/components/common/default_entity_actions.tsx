@@ -5,34 +5,37 @@ import { addRecentId } from "../EntityCollectionView/utils";
 import { navigateToEntity, resolveDefaultSelectedView } from "../../util";
 
 export const editEntityAction: EntityAction = {
-    icon: <EditIcon/>,
+    icon: <EditIcon />,
     key: "edit",
     name: "Edit",
     collapsed: false,
     onClick({
-                entity,
-                collection,
-                fullPath,
-                fullIdPath,
-                context,
-                highlightEntity,
-                unhighlightEntity,
-                openEntityMode
-            }): Promise<void> {
-
+        entity,
+        collection,
+        fullPath,
+        fullIdPath,
+        context,
+        highlightEntity,
+        unhighlightEntity,
+        openEntityMode,
+    }): Promise<void> {
         highlightEntity?.(entity);
 
         context.analyticsController?.onAnalyticsEvent?.("entity_click", {
             path: entity.path,
-            entityId: entity.id
+            entityId: entity.id,
         });
 
         if (collection) {
             addRecentId(collection.id, entity.id);
         }
 
-        const path = collection?.collectionGroup ? collection.path : (fullPath ?? collection?.path ?? entity.path);
-        const newFullIdPath = collection?.collectionGroup ? collection.id : (fullIdPath ?? collection?.id ?? entity.path);
+        const path = collection?.collectionGroup
+            ? collection.path
+            : (fullPath ?? collection?.path ?? entity.path);
+        const newFullIdPath = collection?.collectionGroup
+            ? collection.id
+            : (fullIdPath ?? collection?.id ?? entity.path);
         const defaultSelectedView = resolveDefaultSelectedView(
             collection ? collection.defaultSelectedView : undefined,
             {
@@ -49,34 +52,38 @@ export const editEntityAction: EntityAction = {
             sideEntityController: context.sideEntityController,
             onClose: () => unhighlightEntity?.(entity),
             navigation: context.navigation,
-            selectedTab: defaultSelectedView
+            selectedTab: defaultSelectedView,
         });
 
         return Promise.resolve(undefined);
-    }
-}
+    },
+};
 
 export const copyEntityAction: EntityAction = {
-    icon: <FileCopyIcon/>,
+    icon: <FileCopyIcon />,
     name: "Copy",
     key: "copy",
     onClick({
-                entity,
-                collection,
-                context,
-                fullPath,
-                highlightEntity,
-                unhighlightEntity,
-                openEntityMode
-            }): Promise<void> {
+        entity,
+        collection,
+        context,
+        fullPath,
+        highlightEntity,
+        unhighlightEntity,
+        openEntityMode,
+    }): Promise<void> {
         highlightEntity?.(entity);
         context.analyticsController?.onAnalyticsEvent?.("copy_entity_click", {
             path: entity.path,
-            entityId: entity.id
+            entityId: entity.id,
         });
 
-        const path = collection?.collectionGroup ? collection.path : (fullPath ?? collection?.path ?? entity.path);
-        const fullIdPath = collection?.collectionGroup ? collection.id : (fullPath ?? collection?.id ?? entity.path);
+        const path = collection?.collectionGroup
+            ? collection.path
+            : (fullPath ?? collection?.path ?? entity.path);
+        const fullIdPath = collection?.collectionGroup
+            ? collection.id
+            : (fullPath ?? collection?.id ?? entity.path);
         navigateToEntity({
             openEntityMode,
             collection,
@@ -86,48 +93,58 @@ export const copyEntityAction: EntityAction = {
             copy: true,
             sideEntityController: context.sideEntityController,
             onClose: () => unhighlightEntity?.(entity),
-            navigation: context.navigation
+            navigation: context.navigation,
         });
 
         return Promise.resolve(undefined);
-    }
-}
+    },
+};
 
 export const deleteEntityAction: EntityAction = {
-    icon: <DeleteIcon/>,
+    icon: <DeleteIcon />,
     name: "Delete",
     key: "delete",
     onClick({
-                entity,
-                fullPath,
-                collection,
-                context,
-                selectionController,
-                onCollectionChange,
-                sideEntityController
-            }): Promise<void> {
+        entity,
+        fullPath,
+        collection,
+        context,
+        selectionController,
+        onCollectionChange,
+        sideEntityController,
+    }): Promise<void> {
         const { closeDialog } = context.dialogsController.open({
             key: "delete_entity_dialog_" + entity.id,
             Component: ({ open }) => {
                 if (!collection || !fullPath)
                     throw new Error("deleteEntityAction: Collection is undefined");
-                return <DeleteEntityDialog
-                    entityOrEntitiesToDelete={entity}
-                    path={fullPath}
-                    collection={collection}
-                    callbacks={collection.callbacks}
-                    open={open}
-                    onEntityDelete={() => {
-                        context.analyticsController?.onAnalyticsEvent?.("single_entity_deleted", {
-                            path: fullPath
-                        });
-                        selectionController?.setSelectedEntities(selectionController.selectedEntities.filter(e => e.id !== entity.id));
-                        onCollectionChange?.();
-                        sideEntityController?.close();
-                    }}
-                    onClose={closeDialog}/>;
-            }
-        })
+                return (
+                    <DeleteEntityDialog
+                        entityOrEntitiesToDelete={entity}
+                        path={fullPath}
+                        collection={collection}
+                        callbacks={collection.callbacks}
+                        open={open}
+                        onEntityDelete={() => {
+                            context.analyticsController?.onAnalyticsEvent?.(
+                                "single_entity_deleted",
+                                {
+                                    path: fullPath,
+                                }
+                            );
+                            selectionController?.setSelectedEntities(
+                                selectionController.selectedEntities.filter(
+                                    (e) => e.id !== entity.id
+                                )
+                            );
+                            onCollectionChange?.();
+                            sideEntityController?.close();
+                        }}
+                        onClose={closeDialog}
+                    />
+                );
+            },
+        });
         return Promise.resolve(undefined);
-    }
-}
+    },
+};

@@ -9,7 +9,6 @@ import { DocumentSnapshot } from "firebase-functions/v1/firestore";
 import { importDatabaseBackup } from "./backup";
 import { deleteInAlgolia, indexInAlgolia } from "./indexing/algolia";
 
-
 export { setProductAvailableLocales, onDeleteSubcollections } from "./products";
 
 function updateIndex(snap: Change<DocumentSnapshot>, indexName: string) {
@@ -19,8 +18,7 @@ function updateIndex(snap: Change<DocumentSnapshot>, indexName: string) {
 
 export const onBlogUpdateIndexAlgolia = functions
     .region("europe-west3")
-    .firestore
-    .document("blog/{blogId}")
+    .firestore.document("blog/{blogId}")
     .onWrite((snap, context) => {
         const indexName = "blog";
         return updateIndex(snap, indexName);
@@ -28,8 +26,7 @@ export const onBlogUpdateIndexAlgolia = functions
 
 export const onProductsUpdateIndexAlgolia = functions
     .region("europe-west3")
-    .firestore
-    .document("products/{productId}")
+    .firestore.document("products/{productId}")
     .onWrite((snap, context) => {
         const indexName = "products";
         return updateIndex(snap, indexName);
@@ -37,8 +34,7 @@ export const onProductsUpdateIndexAlgolia = functions
 
 export const onUsersUpdateIndexAlgolia = functions
     .region("europe-west3")
-    .firestore
-    .document("users/{userId}")
+    .firestore.document("users/{userId}")
     .onWrite((snap, context) => {
         const indexName = "users";
         return updateIndex(snap, indexName);
@@ -46,8 +42,7 @@ export const onUsersUpdateIndexAlgolia = functions
 
 export const onBooksUpdateIndexAlgolia = functions
     .region("europe-west3")
-    .firestore
-    .document("books/{userId}")
+    .firestore.document("books/{userId}")
     .onWrite((snap, context) => {
         const indexName = "books";
         return updateIndex(snap, indexName);
@@ -58,13 +53,9 @@ export const onBooksUpdateIndexAlgolia = functions
  */
 export const scheduledFirestoreImport = functions
     .region("europe-west3")
-    .pubsub
-    .schedule("every 30 minutes")
+    .pubsub.schedule("every 30 minutes")
     .onRun((context) => {
         return importDatabaseBackup();
     });
 
-
-export {
-    coingeckoMultipleFirestoreImport,
-} from "./crypto";
+export { coingeckoMultipleFirestoreImport } from "./crypto";

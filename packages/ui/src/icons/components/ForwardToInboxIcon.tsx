@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function ForwardToInboxIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"forward_to_inbox"}/>
+    return <Icon {...props} iconKey={"forward_to_inbox"} />;
 }

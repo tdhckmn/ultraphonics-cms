@@ -4,7 +4,7 @@ import { Locale } from "@/app/common/types";
 const locales = buildEnumValues({
     "en-US": "English (United States)",
     "es-ES": "Spanish (Spain)",
-    "de-DE": "German"
+    "de-DE": "German",
 });
 
 export const localeCollection = buildCollection<Locale>({
@@ -17,12 +17,12 @@ export const localeCollection = buildCollection<Locale>({
         name: {
             name: "Title",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         description: {
             name: "Description",
             dataType: "string",
-            markdown: true
-        }
-    }
+            markdown: true,
+        },
+    },
 });

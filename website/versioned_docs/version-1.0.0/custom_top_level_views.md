@@ -13,37 +13,38 @@ navigation, as the example below.
 By default, it will show in the main navigation view.
 
 For custom views you can define the following props:
-* `path` string | string[]
 
-  CMS Path (or paths) you can reach this view from.
-  If you include multiple paths, only the first one will be included in the
-  main menu
+- `path` string | string[]
 
-* `name`: string
+    CMS Path (or paths) you can reach this view from.
+    If you include multiple paths, only the first one will be included in the
+    main menu
 
-  Name of this view
+- `name`: string
 
-* `description`?: string
+    Name of this view
 
-  Optional description of this view. You can use Markdown
+- `description`?: string
 
-* `hideFromNavigation`?: boolean
+    Optional description of this view. You can use Markdown
 
-  Should this view be hidden from the main navigation panel.
-  It will still be accessible if you reach the specified path
+- `hideFromNavigation`?: boolean
 
-* `view`: React.ReactNode
+    Should this view be hidden from the main navigation panel.
+    It will still be accessible if you reach the specified path
 
-  Component to be rendered. This can be any React component, and can use any
-  of the provided hooks
+- `view`: React.ReactNode
 
-* `group`?: string
+    Component to be rendered. This can be any React component, and can use any
+    of the provided hooks
 
-  Optional field used to group top level navigation entries under a
-  navigation view.
+- `group`?: string
 
+    Optional field used to group top level navigation entries under a
+    navigation view.
 
 ### Example:
+
 A quick example for a custom view:
 
 ```tsx
@@ -53,46 +54,49 @@ import {
     NavigationBuilder,
     NavigationBuilderProps,
     buildCollection,
-    FirebaseCMSApp
-} from "@camberi/firecms"
+    FirebaseCMSApp,
+} from "@camberi/firecms";
 
 export default function App() {
-
     const productSchema = buildCollection({
         name: "Product",
         properties: {
             name: {
                 title: "Name",
                 validation: { required: true },
-                dataType: "string"
-            }
-        }
+                dataType: "string",
+            },
+        },
     });
 
-    const customViews: CMSView[] = [{
-        path: ["additional", "additional/:id"],
-        name: "Additional view",
-        description: "This is an example of an additional view that is defined by the user",
-        // This can be any React component
-        view: <ExampleCMSView/>
-    }];
+    const customViews: CMSView[] = [
+        {
+            path: ["additional", "additional/:id"],
+            name: "Additional view",
+            description: "This is an example of an additional view that is defined by the user",
+            // This can be any React component
+            view: <ExampleCMSView />,
+        },
+    ];
 
     const navigation: NavigationBuilder = ({ user }: NavigationBuilderProps) => ({
         collections: [
             buildCollection({
                 path: "products",
                 collection: productSchema,
-                name: "Products"
-            })
+                name: "Products",
+            }),
         ],
-        views: customViews
+        views: customViews,
     });
 
-    return <FirebaseCMSApp
-        name={"My Online Shop"}
-        navigation={navigation}
-        firebaseConfig={firebaseConfig}
-    />;
+    return (
+        <FirebaseCMSApp
+            name={"My Online Shop"}
+            navigation={navigation}
+            firebaseConfig={firebaseConfig}
+        />
+    );
 }
 ```
 
@@ -107,7 +111,7 @@ import {
     buildCollection,
     useAuthController,
     useSideEntityController,
-    useSnackbarController
+    useSnackbarController,
 } from "@camberi/firecms";
 
 /**
@@ -115,7 +119,6 @@ import {
  * @constructor
  */
 export function ExampleCMSView() {
-
     // hook to display custom snackbars
     const snackbarController = useSnackbarController();
 
@@ -131,57 +134,58 @@ export function ExampleCMSView() {
             name: {
                 title: "Name",
                 validation: { required: true },
-                dataType: "string"
+                dataType: "string",
             },
             very_custom_field: {
                 title: "Very custom field",
-                dataType: "string"
-            }
-        }
+                dataType: "string",
+            },
+        },
     });
 
     return (
-        <Box
-            display="flex"
-            width={"100%"}
-            height={"100%"}>
-
-            <Box m="auto"
-                 display="flex"
-                 flexDirection={"column"}
-                 alignItems={"center"}
-                 justifyItems={"center"}>
-
+        <Box display="flex" width={"100%"} height={"100%"}>
+            <Box
+                m="auto"
+                display="flex"
+                flexDirection={"column"}
+                alignItems={"center"}
+                justifyItems={"center"}
+            >
                 <div>This is an example of an additional view</div>
 
-                {authController.user ?
-                    <div>Logged in
-                        as {authController.user.displayName}</div>
-                    :
-                    <div>You are not logged in</div>}
+                {authController.user ? (
+                    <div>Logged in as {authController.user.displayName}</div>
+                ) : (
+                    <div>You are not logged in</div>
+                )}
 
                 <Button
-                    onClick={() => snackbarController.open({
-                        type: "success",
-                        message: "This is pretty cool"
-                    })}
-                    color="primary">
+                    onClick={() =>
+                        snackbarController.open({
+                            type: "success",
+                            message: "This is pretty cool",
+                        })
+                    }
+                    color="primary"
+                >
                     Test snackbar
                 </Button>
 
                 <Button
-                    onClick={() => sideEntityController.open({
-                        entityId: "B003WT1622",
-                        path: "/products-test",
-                        collection: customProductSchema
-                    })}
-                    color="primary">
+                    onClick={() =>
+                        sideEntityController.open({
+                            entityId: "B003WT1622",
+                            path: "/products-test",
+                            collection: customProductSchema,
+                        })
+                    }
+                    color="primary"
+                >
                     Open entity with custom schema
                 </Button>
-
             </Box>
         </Box>
     );
 }
 ```
-

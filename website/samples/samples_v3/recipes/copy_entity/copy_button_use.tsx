@@ -7,11 +7,12 @@ export const productsCollectionCopy = buildCollection<Product>({
     name: "Products copy target",
     path: "products_copied",
     properties,
-    Actions: ({ path, collection }: CollectionActionsProps<Product>) =>
+    Actions: ({ path, collection }: CollectionActionsProps<Product>) => (
         <CopyEntityButton
             pathFrom={"products"}
             collectionFrom={productsCollection}
             pathTo={path}
             collectionTo={collection}
         />
+    ),
 });

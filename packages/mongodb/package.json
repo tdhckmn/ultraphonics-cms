@@ -1,43 +1,43 @@
 {
-  "version": "3.0.0-canary.254",
-  "type": "module",
-  "name": "@firecms/mongodb",
-  "access": "public",
-  "main": "./dist/index.umd.js",
-  "module": "./dist/index.es.js",
-  "types": "dist/index.d.ts",
-  "source": "src/index.ts",
-  "dependencies": {
-    "@firecms/core": "^3.0.0-canary.254",
-    "@firecms/firebase": "^3.0.0-canary.254",
-    "@firecms/ui": "^3.0.0-canary.254"
-  },
-  "exports": {
-    ".": {
-      "import": "./dist/index.es.js",
-      "require": "./dist/index.umd.js",
-      "types": "./dist/index.d.ts"
+    "version": "3.0.0-canary.254",
+    "type": "module",
+    "name": "@firecms/mongodb",
+    "access": "public",
+    "main": "./dist/index.umd.js",
+    "module": "./dist/index.es.js",
+    "types": "dist/index.d.ts",
+    "source": "src/index.ts",
+    "dependencies": {
+        "@firecms/core": "^3.0.0-canary.254",
+        "@firecms/firebase": "^3.0.0-canary.254",
+        "@firecms/ui": "^3.0.0-canary.254"
     },
-    "./package.json": "./package.json"
-  },
-  "devDependencies": {
-    "@types/node": "^20.17.14",
-    "typescript": "^5.7.3",
-    "vite": "^5.4.14"
-  },
-  "peerDependencies": {
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0",
-    "realm-web": "^2.0.0"
-  },
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build && tsc --emitDeclarationOnly -p tsconfig.prod.json"
-  },
-  "files": [
-    "dist",
-    "src",
-    "tailwind.config.js"
-  ],
-  "gitHead": "946e1f4f5695190e903af3a71dd7111accfc1efa"
+    "exports": {
+        ".": {
+            "import": "./dist/index.es.js",
+            "require": "./dist/index.umd.js",
+            "types": "./dist/index.d.ts"
+        },
+        "./package.json": "./package.json"
+    },
+    "devDependencies": {
+        "@types/node": "^20.17.14",
+        "typescript": "^5.7.3",
+        "vite": "^5.4.14"
+    },
+    "peerDependencies": {
+        "react": ">=18.0.0",
+        "react-dom": ">=18.0.0",
+        "realm-web": "^2.0.0"
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build && tsc --emitDeclarationOnly -p tsconfig.prod.json"
+    },
+    "files": [
+        "dist",
+        "src",
+        "tailwind.config.js"
+    ],
+    "gitHead": "946e1f4f5695190e903af3a71dd7111accfc1efa"
 }

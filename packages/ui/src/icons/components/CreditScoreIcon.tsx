@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function CreditScoreIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"credit_score"}/>
+    return <Icon {...props} iconKey={"credit_score"} />;
 }

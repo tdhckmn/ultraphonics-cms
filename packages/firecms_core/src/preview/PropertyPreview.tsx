@@ -1,5 +1,5 @@
 import React, { createElement } from "react";
-import equal from "react-fast-compare"
+import equal from "react-fast-compare";
 
 import {
     CMSType,
@@ -7,7 +7,7 @@ import {
     ResolvedArrayProperty,
     ResolvedMapProperty,
     ResolvedNumberProperty,
-    ResolvedStringProperty
+    ResolvedStringProperty,
 } from "../types";
 
 import { resolveProperty } from "../util";
@@ -35,86 +35,85 @@ import { ErrorView } from "../components";
 /**
  * @group Preview components
  */
-export const PropertyPreview = React.memo(function PropertyPreview<T extends CMSType>(props: PropertyPreviewProps<T>) {
-
+export const PropertyPreview = React.memo(function PropertyPreview<T extends CMSType>(
+    props: PropertyPreviewProps<T>
+) {
     const authController = useAuthController();
     const customizationController = useCustomizationController();
 
     let content: React.ReactNode | any;
-    const {
-        property: inputProperty,
-        propertyKey,
-        value,
-        size,
-        height,
-        width,
-        interactive
-    } = props;
+    const { property: inputProperty, propertyKey, value, size, height, width, interactive } = props;
 
     const property = resolveProperty({
         propertyKey,
         propertyOrBuilder: inputProperty,
         propertyConfigs: customizationController.propertyConfigs,
-        authController
+        authController,
     });
 
     if (property === null) {
-        content = <EmptyValue/>;
+        content = <EmptyValue />;
     } else if (property.Preview) {
-        content = createElement(property.Preview as React.ComponentType<PropertyPreviewProps>,
-            {
-                propertyKey,
-                value,
-                property,
-                size,
-                height,
-                width,
-                // entity,
-                customProps: property.customProps
-            });
+        content = createElement(property.Preview as React.ComponentType<PropertyPreviewProps>, {
+            propertyKey,
+            value,
+            property,
+            size,
+            height,
+            width,
+            // entity,
+            customProps: property.customProps,
+        });
     } else if (value === undefined || value === null) {
-        content = <EmptyValue/>;
+        content = <EmptyValue />;
     } else if (property.dataType === "string") {
         const stringProperty = property as ResolvedStringProperty;
         if (typeof value === "string") {
             if (stringProperty.storage) {
-                const filePath = stringProperty.storage.previewUrl ? stringProperty.storage.previewUrl(value) : value;
-                content = <StorageThumbnail
-                    interactive={interactive}
-                    storeUrl={property.storage?.storeUrl ?? false}
-                    size={props.size}
-                    storagePathOrDownloadUrl={filePath}/>;
+                const filePath = stringProperty.storage.previewUrl
+                    ? stringProperty.storage.previewUrl(value)
+                    : value;
+                content = (
+                    <StorageThumbnail
+                        interactive={interactive}
+                        storeUrl={property.storage?.storeUrl ?? false}
+                        size={props.size}
+                        storagePathOrDownloadUrl={filePath}
+                    />
+                );
             } else if (stringProperty.url) {
                 if (typeof stringProperty.url === "boolean")
-                    content =
-                        <UrlComponentPreview size={props.size}
-                                             url={value}/>;
+                    content = <UrlComponentPreview size={props.size} url={value} />;
                 else if (typeof stringProperty.url === "string")
-                    content =
-                        <UrlComponentPreview size={props.size}
-                                             url={value}
-                                             interactive={interactive}
-                                             previewType={stringProperty.url}/>;
+                    content = (
+                        <UrlComponentPreview
+                            size={props.size}
+                            url={value}
+                            interactive={interactive}
+                            previewType={stringProperty.url}
+                        />
+                    );
             } else if (stringProperty.markdown) {
-                content = <Markdown source={value} size={"small"}/>;
+                content = <Markdown source={value} size={"small"} />;
             } else if (stringProperty.reference) {
                 if (typeof stringProperty.reference.path === "string") {
-                    content = <ReferencePreview
-                        disabled={!stringProperty.reference.path}
-                        previewProperties={stringProperty.reference.previewProperties}
-                        includeId={stringProperty.reference.includeId}
-                        includeEntityLink={stringProperty.reference.includeEntityLink}
-                        size={props.size}
-                        reference={new EntityReference(value, stringProperty.reference.path)}
-                    />;
+                    content = (
+                        <ReferencePreview
+                            disabled={!stringProperty.reference.path}
+                            previewProperties={stringProperty.reference.previewProperties}
+                            includeId={stringProperty.reference.includeId}
+                            includeEntityLink={stringProperty.reference.includeEntityLink}
+                            size={props.size}
+                            reference={new EntityReference(value, stringProperty.reference.path)}
+                        />
+                    );
                 } else {
-                    content = <EmptyValue/>;
+                    content = <EmptyValue />;
                 }
-
             } else {
-                content = <StringPropertyPreview {...props}
-                                                 property={stringProperty}
-                                                 value={value}/>;
+                content = (
+                    <StringPropertyPreview {...props} property={stringProperty} value={value} />
+                );
             }
         } else {
             content = buildWrongValueType(propertyKey, property.dataType, value);
@@ -123,96 +122,133 @@ export const PropertyPreview = React.memo(function PropertyPreview<T extends CMS
         if (value instanceof Array) {
             const arrayProperty = property as ResolvedArrayProperty;
             if (!arrayProperty.of && !arrayProperty.oneOf) {
-                throw Error(`You need to specify an 'of' or 'oneOf' prop (or specify a custom field) in your array property ${propertyKey}`);
+                throw Error(
+                    `You need to specify an 'of' or 'oneOf' prop (or specify a custom field) in your array property ${propertyKey}`
+                );
             }
 
             if (arrayProperty.of) {
                 if (Array.isArray(arrayProperty.of)) {
-                    content = <ArrayPropertyPreview {...props}
-                                                    value={value}
-                                                    property={property as ResolvedArrayProperty}/>;
-                } else if (arrayProperty.of.dataType === "reference") {
-                    content = <ArrayOfReferencesPreview {...props}
-                                                        value={value}
-                                                        property={property as ResolvedArrayProperty}/>;
-                } else if (arrayProperty.of.dataType === "string") {
-                    if (arrayProperty.of.enumValues) {
-                        content = <ArrayPropertyEnumPreview
-                            {...props}
-                            value={value as string[]}
-                            property={property as ResolvedArrayProperty}/>;
-                    } else if (arrayProperty.of.storage) {
-                        content = <ArrayOfStorageComponentsPreview
+                    content = (
+                        <ArrayPropertyPreview
                             {...props}
                             value={value}
-                            property={property as ResolvedArrayProperty}/>;
-                    } else {
-                        content = <ArrayOfStringsPreview
+                            property={property as ResolvedArrayProperty}
+                        />
+                    );
+                } else if (arrayProperty.of.dataType === "reference") {
+                    content = (
+                        <ArrayOfReferencesPreview
                             {...props}
-                            value={value as string[]}
-                            property={property as ResolvedArrayProperty}/>;
+                            value={value}
+                            property={property as ResolvedArrayProperty}
+                        />
+                    );
+                } else if (arrayProperty.of.dataType === "string") {
+                    if (arrayProperty.of.enumValues) {
+                        content = (
+                            <ArrayPropertyEnumPreview
+                                {...props}
+                                value={value as string[]}
+                                property={property as ResolvedArrayProperty}
+                            />
+                        );
+                    } else if (arrayProperty.of.storage) {
+                        content = (
+                            <ArrayOfStorageComponentsPreview
+                                {...props}
+                                value={value}
+                                property={property as ResolvedArrayProperty}
+                            />
+                        );
+                    } else {
+                        content = (
+                            <ArrayOfStringsPreview
+                                {...props}
+                                value={value as string[]}
+                                property={property as ResolvedArrayProperty}
+                            />
+                        );
                     }
                 } else if (arrayProperty.of.dataType === "number" && arrayProperty.of.enumValues) {
-                    content = <ArrayPropertyEnumPreview
-                        {...props}
-                        value={value as string[]}
-                        property={property as ResolvedArrayProperty}/>;
+                    content = (
+                        <ArrayPropertyEnumPreview
+                            {...props}
+                            value={value as string[]}
+                            property={property as ResolvedArrayProperty}
+                        />
+                    );
                 } else {
-                    content = <ArrayPropertyPreview {...props}
-                                                    value={value}
-                                                    property={property as ResolvedArrayProperty}/>;
+                    content = (
+                        <ArrayPropertyPreview
+                            {...props}
+                            value={value}
+                            property={property as ResolvedArrayProperty}
+                        />
+                    );
                 }
             } else if (arrayProperty.oneOf) {
-                content = <ArrayOneOfPreview {...props}
-                                             value={value}
-                                             property={property as ResolvedArrayProperty}/>;
+                content = (
+                    <ArrayOneOfPreview
+                        {...props}
+                        value={value}
+                        property={property as ResolvedArrayProperty}
+                    />
+                );
             }
         } else {
             content = buildWrongValueType(propertyKey, property.dataType, value);
         }
     } else if (property.dataType === "map") {
         if (typeof value === "object") {
-            content =
-                <MapPropertyPreview {...props}
-                                    property={property as ResolvedMapProperty}/>;
+            content = <MapPropertyPreview {...props} property={property as ResolvedMapProperty} />;
         } else {
             content = buildWrongValueType(propertyKey, property.dataType, value);
         }
     } else if (property.dataType === "date") {
         if (value instanceof Date) {
-            content = <DatePreview date={value}/>;
+            content = <DatePreview date={value} />;
         } else {
             content = buildWrongValueType(propertyKey, property.dataType, value);
         }
     } else if (property.dataType === "reference") {
         if (typeof property.path === "string") {
-            if (typeof value === "object" && "isEntityReference" in value && value.isEntityReference()) {
-                content = <ReferencePreview
-                    disabled={!property.path}
-                    previewProperties={property.previewProperties}
-                    includeId={property.includeId}
-                    includeEntityLink={property.includeEntityLink}
-                    size={props.size}
-                    reference={value as EntityReference}
-                />;
+            if (
+                typeof value === "object" &&
+                "isEntityReference" in value &&
+                value.isEntityReference()
+            ) {
+                content = (
+                    <ReferencePreview
+                        disabled={!property.path}
+                        previewProperties={property.previewProperties}
+                        includeId={property.includeId}
+                        includeEntityLink={property.includeEntityLink}
+                        size={props.size}
+                        reference={value as EntityReference}
+                    />
+                );
             } else {
                 content = buildWrongValueType(propertyKey, property.dataType, value);
             }
         } else {
-            content = <EmptyValue/>;
+            content = <EmptyValue />;
         }
-
     } else if (property.dataType === "boolean") {
         if (typeof value === "boolean") {
-            content = <BooleanPreview value={value} size={size} property={property}/>;
+            content = <BooleanPreview value={value} size={size} property={property} />;
         } else {
             content = buildWrongValueType(propertyKey, property.dataType, value);
         }
     } else if (property.dataType === "number") {
         if (typeof value === "number") {
-            content = <NumberPropertyPreview {...props}
-                                             value={value}
-                                             property={property as ResolvedNumberProperty}/>;
+            content = (
+                <NumberPropertyPreview
+                    {...props}
+                    value={value}
+                    property={property as ResolvedNumberProperty}
+                />
+            );
         } else {
             content = buildWrongValueType(propertyKey, property.dataType, value);
         }
@@ -220,15 +256,16 @@ export const PropertyPreview = React.memo(function PropertyPreview<T extends CMS
         content = JSON.stringify(value);
     }
 
-    return content === undefined || content === null || (Array.isArray(content) && content.length === 0)
-        ? <EmptyValue/>
-        : content;
+    return content === undefined ||
+        content === null ||
+        (Array.isArray(content) && content.length === 0) ? (
+        <EmptyValue />
+    ) : (
+        content
+    );
 }, equal);
 
 function buildWrongValueType(name: string | undefined, dataType: string, value: any) {
     console.warn(`Unexpected value for property ${name}, of type ${dataType}`, value);
-    return (
-        <ErrorView title={"Unexpected value"}
-                   error={`${JSON.stringify(value)}`}/>
-    );
+    return <ErrorView title={"Unexpected value"} error={`${JSON.stringify(value)}`} />;
 }

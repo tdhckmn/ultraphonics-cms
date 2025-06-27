@@ -18,21 +18,9 @@ import { useLocation, useNavigate } from "react-router-dom";
  * @group Components
  */
 export function EntitySidePanel(props: EntitySidePanelProps) {
+    const { allowFullScreen = true, path, entityId, fullIdPath, formProps } = props;
 
-    const {
-        allowFullScreen = true,
-        path,
-        entityId,
-        fullIdPath,
-        formProps,
-    } = props;
-
-    const {
-        blocked,
-        setBlocked,
-        setBlockedNavigationMessage,
-        close,
-    } = useSideDialogContext();
+    const { blocked, setBlocked, setBlockedNavigationMessage, close } = useSideDialogContext();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -48,7 +36,7 @@ export function EntitySidePanel(props: EntitySidePanelProps) {
 
         setBlocked(false);
         close(true);
-    }
+    };
 
     const onUpdate = (params: OnUpdateParams) => {
         if (props.onUpdate) {
@@ -69,8 +57,7 @@ export function EntitySidePanel(props: EntitySidePanelProps) {
             sideDialogsController.setPendingClose(false);
             onClose();
         }
-
-    }
+    };
 
     const parentCollectionIds = useMemo(() => {
         return navigationController.getParentCollectionIds(path);
@@ -86,25 +73,32 @@ export function EntitySidePanel(props: EntitySidePanelProps) {
             }
         }
 
-        if (typeof window !== "undefined")
-            window.addEventListener("beforeunload", beforeunload);
+        if (typeof window !== "undefined") window.addEventListener("beforeunload", beforeunload);
 
         return () => {
             if (typeof window !== "undefined")
                 window.removeEventListener("beforeunload", beforeunload);
         };
-
     }, [blocked, collection]);
 
-    const onValuesModified = useCallback((modified: boolean) => {
-        setBlockedNavigationMessage(modified
-            ? <> You have unsaved changes in this <b>{collection?.singularName ?? collection?.name}</b>.</>
-            : undefined)
-        setBlocked(modified);
-    }, [collection?.name, setBlocked, setBlockedNavigationMessage]);
+    const onValuesModified = useCallback(
+        (modified: boolean) => {
+            setBlockedNavigationMessage(
+                modified ? (
+                    <>
+                        {" "}
+                        You have unsaved changes in this{" "}
+                        <b>{collection?.singularName ?? collection?.name}</b>.
+                    </>
+                ) : undefined
+            );
+            setBlocked(modified);
+        },
+        [collection?.name, setBlocked, setBlockedNavigationMessage]
+    );
 
     if (!props || !collection) {
-        return <div className={"w-full"}/>;
+        return <div className={"w-full"} />;
     }
 
     return (
@@ -118,28 +112,25 @@ export function EntitySidePanel(props: EntitySidePanelProps) {
                     parentCollectionIds={parentCollectionIds}
                     onValuesModified={onValuesModified}
                     onSaved={onUpdate}
-                    barActions={<>
-                        <IconButton
-                            className="self-center"
-                            onClick={onClose}>
-                            <CloseIcon size={"small"}/>
-                        </IconButton>
-                        {allowFullScreen && <IconButton
-                            className="self-center"
-                            onClick={() => {
-                                if (entityId)
-                                    navigate(location.pathname);
-                                else
-                                    navigate(location.pathname + "#new");
-                            }}>
-                            <OpenInFullIcon size={"small"}/>
-                        </IconButton>}
-                    </>}
-                    onTabChange={({
-                                      entityId,
-                                      selectedTab,
-                                      collection,
-                                  }) => {
+                    barActions={
+                        <>
+                            <IconButton className="self-center" onClick={onClose}>
+                                <CloseIcon size={"small"} />
+                            </IconButton>
+                            {allowFullScreen && (
+                                <IconButton
+                                    className="self-center"
+                                    onClick={() => {
+                                        if (entityId) navigate(location.pathname);
+                                        else navigate(location.pathname + "#new");
+                                    }}
+                                >
+                                    <OpenInFullIcon size={"small"} />
+                                </IconButton>
+                            )}
+                        </>
+                    }
+                    onTabChange={({ entityId, selectedTab, collection }) => {
                         sideEntityController.replace({
                             path,
                             entityId,
@@ -152,7 +143,6 @@ export function EntitySidePanel(props: EntitySidePanelProps) {
                     formProps={formProps}
                 />
             </ErrorBoundary>
-
         </>
     );
 }

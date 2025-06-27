@@ -6,7 +6,7 @@ import "@fontsource/jetbrains-mono";
 import { getAnalytics, logEvent } from "@firebase/analytics";
 import { ReCaptchaEnterpriseProvider } from "@firebase/app-check";
 
-import { CenteredView, } from "@firecms/ui";
+import { CenteredView } from "@firecms/ui";
 import {
     AppBar,
     CircularProgressCenter,
@@ -29,7 +29,7 @@ import {
     useFirebaseAuthController,
     useFirebaseStorageSource,
     useFirestoreDelegate,
-    useInitialiseFirebase
+    useInitialiseFirebase,
 } from "@firecms/firebase";
 import { useDataEnhancementPlugin } from "@firecms/data_enhancement";
 import { booksCollection } from "./books_collection";
@@ -43,22 +43,19 @@ export const firebaseConfig = {
     storageBucket: "firecms-demo-27150.appspot.com",
     messagingSenderId: "837544933711",
     appId: "1:837544933711:web:75822ffc0840e3ae01ad3a",
-    measurementId: "G-8HRE8MVXZJ"
+    measurementId: "G-8HRE8MVXZJ",
 };
 
 function ProSample() {
     return (
         <BrowserRouter>
-            <ProSampleInner/>
+            <ProSampleInner />
         </BrowserRouter>
     );
 }
 
 function ProSampleInner() {
-
-    const collections = [
-        booksCollection
-    ];
+    const collections = [booksCollection];
 
     const onAnalyticsEvent = useCallback((event: string, data?: object) => {
         const analytics = getAnalytics();
@@ -67,22 +64,15 @@ function ProSampleInner() {
 
     const dataEnhancementPlugin = useDataEnhancementPlugin({
         getConfigForPath: ({ path }) => {
-            if (process.env.NODE_ENV !== "production")
-                return true;
-            if (path === "books")
-                return true;
-            if (path === "blog")
-                return true;
+            if (process.env.NODE_ENV !== "production") return true;
+            if (path === "books") return true;
+            if (path === "blog") return true;
             return false;
-        }
+        },
     });
 
-    const {
-        firebaseApp,
-        firebaseConfigLoading,
-        configError
-    } = useInitialiseFirebase({
-        firebaseConfig
+    const { firebaseApp, firebaseConfigLoading, configError } = useInitialiseFirebase({
+        firebaseConfig,
     });
 
     /**
@@ -90,13 +80,13 @@ function ProSampleInner() {
      */
     const modeController = useBuildModeController();
 
-    const {
-        loading
-    } = useAppCheck({
+    const { loading } = useAppCheck({
         firebaseApp,
         options: {
-            provider: new ReCaptchaEnterpriseProvider(process.env.VITE_RECAPTCHA_SITE_KEY as string)
-        }
+            provider: new ReCaptchaEnterpriseProvider(
+                process.env.VITE_RECAPTCHA_SITE_KEY as string
+            ),
+        },
     });
 
     const signInOptions: FirebaseSignInProvider[] = ["google.com"];
@@ -105,7 +95,7 @@ function ProSampleInner() {
      */
     const authController: FirebaseAuthController = useFirebaseAuthController({
         firebaseApp,
-        signInOptions
+        signInOptions,
     });
 
     /**
@@ -114,24 +104,24 @@ function ProSampleInner() {
     const userConfigPersistence = useBuildLocalConfigurationPersistence();
 
     const firestoreDelegate = useFirestoreDelegate({
-        firebaseApp
+        firebaseApp,
     });
 
     /**
      * Controller used for saving and fetching files in storage
      */
     const storageSource = useFirebaseStorageSource({
-        firebaseApp
+        firebaseApp,
     });
 
     const navigationController = useBuildNavigationController({
         collections: [booksCollection],
         authController,
-        dataSourceDelegate: firestoreDelegate
+        dataSourceDelegate: firestoreDelegate,
     });
 
     if (firebaseConfigLoading || !firebaseApp || loading) {
-        return <CircularProgressCenter/>;
+        return <CircularProgressCenter />;
     }
 
     if (configError) {
@@ -140,35 +130,31 @@ function ProSampleInner() {
     return (
         <SnackbarProvider>
             <ModeControllerProvider value={modeController}>
-
                 <FireCMS
                     navigationController={navigationController}
                     authController={authController}
                     userConfigPersistence={userConfigPersistence}
                     dataSourceDelegate={firestoreDelegate}
-                    storageSource={storageSource}>
-                    {({
-                          context,
-                          loading
-                      }) => {
-
+                    storageSource={storageSource}
+                >
+                    {({ context, loading }) => {
                         if (loading) {
-                            return <CircularProgressCenter size={"large"}/>;
+                            return <CircularProgressCenter size={"large"} />;
                         }
 
-                        return <Scaffold
-                            autoOpenDrawer={false}>
-                            <AppBar title={"My demo app"}/>
-                            <Drawer/>
-                            <NavigationRoutes/>
-                            <SideDialogs/>
-                        </Scaffold>;
+                        return (
+                            <Scaffold autoOpenDrawer={false}>
+                                <AppBar title={"My demo app"} />
+                                <Drawer />
+                                <NavigationRoutes />
+                                <SideDialogs />
+                            </Scaffold>
+                        );
                     }}
                 </FireCMS>
             </ModeControllerProvider>
         </SnackbarProvider>
     );
-
 }
 
 export default ProSample;

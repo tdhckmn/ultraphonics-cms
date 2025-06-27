@@ -11,11 +11,13 @@ export function cacheDelegatedLoginToken(projectId: string, delegatedToken?: str
     const data = parseJwt(delegatedToken);
     // @ts-ignore
     const expiry = new Date(data.exp * 1000);
-    localStorage.setItem(`auth_token::${projectId}`, JSON.stringify({
-        token: delegatedToken,
-        expiry
-    }));
-
+    localStorage.setItem(
+        `auth_token::${projectId}`,
+        JSON.stringify({
+            token: delegatedToken,
+            expiry,
+        })
+    );
 }
 
 export function getDelegatedLoginTokenFromCache(projectId: string) {
@@ -45,9 +47,15 @@ function parseJwt(token?: string): object {
     }
     const base64Url = token.split(".")[1];
     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    const jsonPayload = decodeURIComponent(window.atob(base64).split("").map(function (c) {
-        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(""));
+    const jsonPayload = decodeURIComponent(
+        window
+            .atob(base64)
+            .split("")
+            .map(function (c) {
+                return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+            })
+            .join("")
+    );
 
     return JSON.parse(jsonPayload);
 }

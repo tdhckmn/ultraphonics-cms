@@ -16,8 +16,8 @@ export const productsCollection = buildCollection<Product>({
             name: "Name",
             description: "Name of this product",
             validation: {
-                required: true
-            }
+                required: true,
+            },
         },
         main_image: {
             dataType: "string",
@@ -27,19 +27,19 @@ export const productsCollection = buildCollection<Product>({
                 acceptedFiles: ["image/*"],
                 maxSize: 1024 * 1024,
                 metadata: {
-                    cacheControl: "max-age=1000000"
-                }
+                    cacheControl: "max-age=1000000",
+                },
             },
             description: "Upload field for images",
             validation: {
-                required: true
-            }
+                required: true,
+            },
         },
         available: {
             dataType: "boolean",
             name: "Available",
             columnWidth: 100,
-            description: "Is this product available in the website"
+            description: "Is this product available in the website",
         },
         price: ({ values }) => ({
             dataType: "number",
@@ -47,37 +47,37 @@ export const productsCollection = buildCollection<Product>({
             validation: {
                 requiredMessage: "You must set a price between 0 and 1000",
                 min: 0,
-                max: 1000
+                max: 1000,
             },
             disabled: !values.available && {
                 clearOnDisabled: true,
-                disabledMessage: "You can only set the price on available items"
+                disabledMessage: "You can only set the price on available items",
             },
-            description: "Price with range validation"
+            description: "Price with range validation",
         }),
         public: {
             dataType: "boolean",
             name: "Public",
-            description: "Should this product be visible in the website"
+            description: "Should this product be visible in the website",
             // longDescription: "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros."
         },
         brand: {
             dataType: "string",
             name: "Brand",
             validation: {
-                required: true
-            }
+                required: true,
+            },
         },
         description: {
             dataType: "string",
             name: "Description",
             description: "Example of a markdown field",
-            markdown: true
+            markdown: true,
         },
         amazon_link: {
             dataType: "string",
             name: "Amazon link",
-            url: true
+            url: true,
         },
         images: {
             dataType: "array",
@@ -89,11 +89,11 @@ export const productsCollection = buildCollection<Product>({
                     storagePath: "images",
                     acceptedFiles: ["image/*"],
                     metadata: {
-                        cacheControl: "max-age=1000000"
-                    }
-                }
+                        cacheControl: "max-age=1000000",
+                    },
+                },
             },
-            description: "This fields allows uploading multiple images at once"
+            description: "This fields allows uploading multiple images at once",
         },
         related_products: {
             dataType: "array",
@@ -101,8 +101,8 @@ export const productsCollection = buildCollection<Product>({
             description: "Reference to self",
             of: {
                 dataType: "reference",
-                path: "ppp"
-            }
+                path: "ppp",
+            },
         },
         publisher: {
             name: "Publisher",
@@ -111,26 +111,25 @@ export const productsCollection = buildCollection<Product>({
             properties: {
                 name: {
                     name: "Name",
-                    dataType: "string"
+                    dataType: "string",
                 },
                 external_id: {
                     name: "External id",
-                    dataType: "string"
-                }
+                    dataType: "string",
+                },
             },
-            expanded: true
+            expanded: true,
         },
         uppercase_name: {
             name: "Uppercase Name",
             dataType: "string",
             readOnly: true,
-            description: "This field gets updated with a preSave callback"
+            description: "This field gets updated with a preSave callback",
         },
         added_on: {
             dataType: "date",
             name: "Added on",
-            autoValue: "on_create"
-        }
-    }
-
+            autoValue: "on_create",
+        },
+    },
 });

@@ -23,9 +23,9 @@ import { ExportMappingFunction, buildCollection } from "@camberi/firecms";
 export const sampleAdditionalExportColumn: ExportMappingFunction = {
     key: "extra",
     builder: async ({ entity }) => {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
         return "Additional exported value " + entity.id;
-    }
+    },
 };
 
 const blogCollection = buildCollection({
@@ -33,7 +33,7 @@ const blogCollection = buildCollection({
     collection: blogSchema,
     name: "Blog",
     exportable: {
-        additionalColumns: [sampleAdditionalExportColumn]
+        additionalColumns: [sampleAdditionalExportColumn],
     },
 });
 ```

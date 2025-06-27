@@ -12,9 +12,7 @@ interface CurrentSubscriptionViewProps {
 /**
  * @deprecated
  */
-export function CurrentSubscriptionView({
-                                            subscription,
-                                        }: CurrentSubscriptionViewProps) {
+export function CurrentSubscriptionView({ subscription }: CurrentSubscriptionViewProps) {
     const { projectsApi } = useFireCMSBackend();
 
     const statusText = getSubscriptionStatusText(subscription);
@@ -22,62 +20,65 @@ export function CurrentSubscriptionView({
 
     useEffect(() => {
         if (!stripePortalUrl) {
-            projectsApi.getStripeCancelLinkForSubscription(subscription.id)
-                .then(setStripePortalUrl)
-            ;
+            projectsApi
+                .getStripeCancelLinkForSubscription(subscription.id)
+                .then(setStripePortalUrl);
         }
     }, []);
 
     return (
-        <Paper
-            key={subscription.id}
-            className="mt-2 mb-2 p-4 -mx-2"
-        >
+        <Paper key={subscription.id} className="mt-2 mb-2 p-4 -mx-2">
             <div className="flex">
-                <Typography
-                    className="flex-grow"
-                    variant={"h6"}>{subscription.product.name}</Typography>
+                <Typography className="flex-grow" variant={"h6"}>
+                    {subscription.product.name}
+                </Typography>
 
                 <Chip
                     size={"small"}
-                    colorScheme={statusText === "Active" ? "greenDark" : "orangeDark"}>
+                    colorScheme={statusText === "Active" ? "greenDark" : "orangeDark"}
+                >
                     {statusText}
                 </Chip>
             </div>
             <div className="flex mt-2 items-center">
-                <div
-                    className="flex-grow flex flex-col items-start gap-2">
-                    {subscription.metadata.projectId && <Typography>
-                        Project: <b>{subscription.metadata.projectId}</b>
-                    </Typography>}
-                    {subscription.metadata.licenseId && <Typography>
-                        License: <b>{subscription.metadata.licenseId}</b>
-                    </Typography>}
-                    {subscription.price && <Chip
-                        size={"small"}>
-                        {getPriceString(subscription.price)}
-                    </Chip>}
-                    {subscription.cancel_at &&
-                        <Typography variant={"caption"}
-                                    className="text-secondary">
-                            This subscription was <b>cancelled</b> and
-                            will be
-                            active
-                            until {subscription.cancel_at.toDate().toLocaleDateString()}
-                        </Typography>}
+                <div className="flex-grow flex flex-col items-start gap-2">
+                    {subscription.metadata.projectId && (
+                        <Typography>
+                            Project: <b>{subscription.metadata.projectId}</b>
+                        </Typography>
+                    )}
+                    {subscription.metadata.licenseId && (
+                        <Typography>
+                            License: <b>{subscription.metadata.licenseId}</b>
+                        </Typography>
+                    )}
+                    {subscription.price && (
+                        <Chip size={"small"}>{getPriceString(subscription.price)}</Chip>
+                    )}
+                    {subscription.cancel_at && (
+                        <Typography variant={"caption"} className="text-secondary">
+                            This subscription was <b>cancelled</b> and will be active until{" "}
+                            {subscription.cancel_at.toDate().toLocaleDateString()}
+                        </Typography>
+                    )}
                 </div>
 
-                <Button component={"a"}
-                        variant={"text"}
-                        className={" " + subscription.canceled_at ? undefined : "text-text-secondary dark:text-text-secondary-dark"}
-                        size={"small"}
-                        href={stripePortalUrl}
-                        target="_blank"
-                        rel="noreferrer">{
-                    subscription.canceled_at ? "Renew" : "Manage"
-                }</Button>
+                <Button
+                    component={"a"}
+                    variant={"text"}
+                    className={
+                        " " + subscription.canceled_at
+                            ? undefined
+                            : "text-text-secondary dark:text-text-secondary-dark"
+                    }
+                    size={"small"}
+                    href={stripePortalUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                >
+                    {subscription.canceled_at ? "Renew" : "Manage"}
+                </Button>
             </div>
-
         </Paper>
     );
 }
@@ -85,20 +86,22 @@ export function CurrentSubscriptionView({
 /**
  * @deprecated
  */
-export function ActiveSubscriptions({ activeSubscriptions }: {
-    activeSubscriptions: Subscription[],
+export function ActiveSubscriptions({
+    activeSubscriptions,
+}: {
+    activeSubscriptions: Subscription[];
 }) {
+    return (
+        <div className={cls("my-8")}>
+            <Typography className="my-4 mt-8 font-medium uppercase">
+                Active Subscriptions
+            </Typography>
 
-    return <div className={cls("my-8")}>
-
-        <Typography className="my-4 mt-8 font-medium uppercase">
-            Active Subscriptions
-        </Typography>
-
-        {activeSubscriptions.map(subscription => {
-            return <CurrentSubscriptionView key={subscription.id}
-                                            subscription={subscription}/>;
-        })}
-    </div>
-
+            {activeSubscriptions.map((subscription) => {
+                return (
+                    <CurrentSubscriptionView key={subscription.id} subscription={subscription} />
+                );
+            })}
+        </div>
+    );
 }

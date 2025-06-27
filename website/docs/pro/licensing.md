@@ -20,5 +20,3 @@ using the license. You can find your project ID in the Firebase console.
 
 You will receive an API key that you need to pass to your `FireCMS` component.
 If you are using a starter template, you can set it in the `.env` file.
-
-

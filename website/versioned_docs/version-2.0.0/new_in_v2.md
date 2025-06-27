@@ -33,10 +33,10 @@ this version:
   which now serves both previous purposes.
 - You can now define a specific logo for dark mode.
 - If you are using `FireCMS` instead of `FirebaseAppCMS`:
-  - You need to add an additional `SnackbarProvider` and a `ModeControllerProvider` 
-  in your tree.
-  It was provided by `FireCMS` before, but we treat it as a separate component 
-  now for better customization.
+    - You need to add an additional `SnackbarProvider` and a `ModeControllerProvider`
+      in your tree.
+      It was provided by `FireCMS` before, but we treat it as a separate component
+      now for better customization.
 - In the collection view, text inputs now save the values onBlur instead of
   onChange, or after pressing enter. This is to avoid saving the value on every
   keystroke, which can be annoying for the user.
@@ -63,10 +63,10 @@ this version:
   allows developers to use the internal callbacks of properties that depend on
   the id of the new entity, such as file upload paths or file names.
 - New entity callbacks:
-  - `onFetch` you can use this callback if you need to modify data after it is 
-  read from the data source.
-  - `onIdUpdate` you can use this callback to modify the id based on other
-  values
+    - `onFetch` you can use this callback if you need to modify data after it is
+      read from the data source.
+    - `onIdUpdate` you can use this callback to modify the id based on other
+      values
 
 ### Properties and builders
 
@@ -84,7 +84,7 @@ this version:
 - Date properties: you can now select between date or date/time modes.
 - Enums can be defined now as arrays of objects with multiple configuration
   options such as the color of the tag.
-- You can add a `clearable` prop to `StringProperty`, `NumberProperty` and `DateProperty` 
+- You can add a `clearable` prop to `StringProperty`, `NumberProperty` and `DateProperty`
   to allow users to clear the value.
 - Storage fields have been simplified and now the preview type can be inferred
   from the uploaded file.
@@ -95,17 +95,17 @@ this version:
 - You can now copy the values of arrays.
 - It should be easier now to create your own custom fields and to reuse the
   internal fields of the CMS, which have been renamed and are now exported as:
-  - `ArrayCustomShapedFieldBinding`
-  - `ArrayEnumSelectBinding`
-  - `ArrayOfReferencesFieldBinding`
-  - `BlockFieldBinding`
-  - `DateTimeFieldBinding`
-  - `MapFieldBinding`
-  - `MarkdownFieldBinding`
-  - `ReadOnlyFieldBinding`
-  - `ReferenceFieldBinding`
-  - `RepeatFieldBinding`
-  - `SelectFieldBinding`
-  - `StorageUploadFieldBinding`
-  - `SwitchFieldBinding`
-  - `TextFieldBinding`
+    - `ArrayCustomShapedFieldBinding`
+    - `ArrayEnumSelectBinding`
+    - `ArrayOfReferencesFieldBinding`
+    - `BlockFieldBinding`
+    - `DateTimeFieldBinding`
+    - `MapFieldBinding`
+    - `MarkdownFieldBinding`
+    - `ReadOnlyFieldBinding`
+    - `ReferenceFieldBinding`
+    - `RepeatFieldBinding`
+    - `SelectFieldBinding`
+    - `StorageUploadFieldBinding`
+    - `SwitchFieldBinding`
+    - `TextFieldBinding`

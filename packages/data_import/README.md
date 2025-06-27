@@ -24,19 +24,19 @@ import React from "react";
 import { FireCMS } from "@firecms/core";
 import { useImportPlugin } from "@firecms/data_import";
 
-
 export default function App() {
-
     // Basic setup with default options
     const importPlugin = useImportPlugin();
 
-    return <FireCMS
-        name={"My Online Shop"}
-        plugins={[importPlugin]}
-        authentication={myAuthenticator}
-        collections={myCollections}
-        firebaseConfig={firebaseConfig}
-    />;
+    return (
+        <FireCMS
+            name={"My Online Shop"}
+            plugins={[importPlugin]}
+            authentication={myAuthenticator}
+            collections={myCollections}
+            firebaseConfig={firebaseConfig}
+        />
+    );
 }
 ```
 
@@ -50,14 +50,14 @@ const importPlugin = useImportPlugin({
     onAnalyticsEvent: (event, params) => {
         console.log("Import event:", event, params);
         // Example events: "import_started", "import_completed", "import_error"
-    }
+    },
 });
 ```
 
 ## Configuration Options
 
-| Option | Type | Description |
-|--------|------|-------------|
+| Option             | Type                                    | Description                         |
+| ------------------ | --------------------------------------- | ----------------------------------- |
 | `onAnalyticsEvent` | `(event: string, params?: any) => void` | Callback for tracking import events |
 
 ## Integration with Export

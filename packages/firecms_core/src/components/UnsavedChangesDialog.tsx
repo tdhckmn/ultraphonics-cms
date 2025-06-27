@@ -9,13 +9,12 @@ export interface UnsavedChangesDialogProps {
 }
 
 export function UnsavedChangesDialog({
-                                         open,
-                                         handleOk,
-                                         handleCancel,
-                                         body,
-                                         title
-                                     }: UnsavedChangesDialogProps) {
-
+    open,
+    handleOk,
+    handleCancel,
+    body,
+    title,
+}: UnsavedChangesDialogProps) {
     return (
         <Dialog
             onEscapeKeyDown={() => {
@@ -25,16 +24,15 @@ export function UnsavedChangesDialog({
         >
             <DialogTitle variant={"h6"}>{title}</DialogTitle>
             <DialogContent>
-
                 {body}
 
-                <Typography>
-                    Are you sure you want to leave this page?
-                </Typography>
-
+                <Typography>Are you sure you want to leave this page?</Typography>
             </DialogContent>
             <DialogActions>
-                <Button variant="text" onClick={handleCancel} autoFocus> Cancel </Button>
+                <Button variant="text" onClick={handleCancel} autoFocus>
+                    {" "}
+                    Cancel{" "}
+                </Button>
                 <Button onClick={handleOk}> Ok </Button>
             </DialogActions>
         </Dialog>

@@ -6,8 +6,5 @@
         "allowJs": true,
         "esModuleInterop": true
     },
-    "include": [
-        "test",
-        "./test/**/*.ts"
-    ]
+    "include": ["test", "./test/**/*.ts"]
 }

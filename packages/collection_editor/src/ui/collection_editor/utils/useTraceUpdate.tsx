@@ -11,7 +11,6 @@ function printChanged(props: any, prev: any, path = "", depth = 0) {
     } else if (props !== prev) {
         console.log("Changed props:", path);
     }
-
 }
 
 export function useTraceUpdate(props: any) {

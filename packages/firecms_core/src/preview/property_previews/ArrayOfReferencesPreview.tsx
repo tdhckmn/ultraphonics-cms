@@ -8,18 +8,18 @@ import { ReferencePreview } from "../components/ReferencePreview";
  * @group Preview components
  */
 export function ArrayOfReferencesPreview({
-                                             propertyKey,
-                                             value,
-                                             property: inputProperty,
-                                             size
-                                         }: PropertyPreviewProps<any[]>) {
+    propertyKey,
+    value,
+    property: inputProperty,
+    size,
+}: PropertyPreviewProps<any[]>) {
     const authController = useAuthController();
     const customizationController = useCustomizationController();
     const property = resolveArrayProperty({
         propertyKey,
         property: inputProperty,
         propertyConfigs: customizationController.propertyConfigs,
-        authController
+        authController,
     });
 
     if (Array.isArray(property?.of)) {
@@ -35,9 +35,12 @@ export function ArrayOfReferencesPreview({
         <div className="flex flex-col w-full">
             {value &&
                 value.map((reference, index) => {
-                        const ofProperty = property.of as ResolvedReferenceProperty;
-                        return <div className="mt-1 mb-1 w-full"
-                                    key={`preview_array_ref_${propertyKey}_${index}`}>
+                    const ofProperty = property.of as ResolvedReferenceProperty;
+                    return (
+                        <div
+                            className="mt-1 mb-1 w-full"
+                            key={`preview_array_ref_${propertyKey}_${index}`}
+                        >
                             <ReferencePreview
                                 disabled={!ofProperty.path}
                                 previewProperties={ofProperty.previewProperties}
@@ -46,9 +49,9 @@ export function ArrayOfReferencesPreview({
                                 includeId={ofProperty.includeId}
                                 includeEntityLink={ofProperty.includeEntityLink}
                             />
-                        </div>;
-                    }
-                )}
+                        </div>
+                    );
+                })}
         </div>
     );
 }

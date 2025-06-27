@@ -44,7 +44,7 @@ export const CHIP_COLORS: Record<string, ChipColorScheme> = {
     redDarker: { color: "#ba1e45", text: "#ffdce5" },
     pinkDarker: { color: "#b2158b", text: "#ffdaf6" },
     purpleDarker: { color: "#6b1cb0", text: "#ede2fe" },
-    grayDarker: { color: "#444", text: "#eee" }
+    grayDarker: { color: "#444", text: "#eee" },
 };
 
 export function getColorSchemeForKey(key: ChipColorKey): ChipColorScheme {

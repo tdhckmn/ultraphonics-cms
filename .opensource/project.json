@@ -1,11 +1,6 @@
 {
     "name": "FireCMS",
-    "platforms": [
-        "Admin",
-        "CMS",
-        "Firebase",
-        "Web"
-    ],
+    "platforms": ["Admin", "CMS", "Firebase", "Web"],
     "content": "README.md",
     "pages": {
         "website/docs/index.md": "Intro",

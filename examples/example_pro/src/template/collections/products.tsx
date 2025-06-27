@@ -24,8 +24,8 @@ export const productsCollection = buildCollection<Product>({
         {
             key: "preview",
             name: "Sample preview",
-            Builder: ProductDetailPreview
-        }
+            Builder: ProductDetailPreview,
+        },
     ],
     properties: {
         name: {
@@ -34,8 +34,8 @@ export const productsCollection = buildCollection<Product>({
             description: "Name of this product",
             clearable: true,
             validation: {
-                required: true
-            }
+                required: true,
+            },
         },
         category: {
             dataType: "string",
@@ -46,8 +46,8 @@ export const productsCollection = buildCollection<Product>({
                 books: "Books",
                 furniture: "Furniture",
                 clothing: "Clothing",
-                food: "Food"
-            }
+                food: "Food",
+            },
         },
         images: {
             dataType: "array",
@@ -59,17 +59,17 @@ export const productsCollection = buildCollection<Product>({
                     storagePath: "images",
                     acceptedFiles: ["image/*"],
                     metadata: {
-                        cacheControl: "max-age=1000000"
-                    }
-                }
+                        cacheControl: "max-age=1000000",
+                    },
+                },
             },
-            description: "This fields allows uploading multiple images at once"
+            description: "This fields allows uploading multiple images at once",
         },
         available: {
             dataType: "boolean",
             name: "Available",
             columnWidth: 100,
-            description: "Is this product available in the website"
+            description: "Is this product available in the website",
         },
         price: ({ values }) => ({
             dataType: "number",
@@ -78,12 +78,12 @@ export const productsCollection = buildCollection<Product>({
                 required: true,
                 requiredMessage: "You must set a price between 0 and 10000",
                 min: 0,
-                max: 10000
+                max: 10000,
             },
             disabled: !values.available && {
                 clearOnDisabled: true,
-                disabledMessage: "You can only set the price on available items"
-            }
+                disabledMessage: "You can only set the price on available items",
+            },
         }),
         currency: {
             dataType: "string",
@@ -92,41 +92,41 @@ export const productsCollection = buildCollection<Product>({
                 {
                     id: "EUR",
                     label: "Euros",
-                    color: "blueDark"
+                    color: "blueDark",
                 },
                 {
                     id: "DOL",
                     label: "Dollars",
-                    color: "greenLight"
-                }
+                    color: "greenLight",
+                },
             ],
             validation: {
-                required: true
-            }
+                required: true,
+            },
         },
         public: {
             dataType: "boolean",
             name: "Public",
-            description: "Should this product be visible in the website"
+            description: "Should this product be visible in the website",
             // longDescription: "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros."
         },
         brand: {
             dataType: "string",
             name: "Brand",
             validation: {
-                required: true
-            }
+                required: true,
+            },
         },
         description: {
             dataType: "string",
             name: "Description",
             description: "Example of a markdown field",
-            markdown: true
+            markdown: true,
         },
         amazon_link: {
             dataType: "string",
             name: "Amazon link",
-            url: true
+            url: true,
         },
         related_products: {
             dataType: "array",
@@ -134,8 +134,8 @@ export const productsCollection = buildCollection<Product>({
             description: "Reference to self",
             of: {
                 dataType: "reference",
-                path: "products"
-            }
+                path: "products",
+            },
         },
         publisher: {
             name: "Publisher",
@@ -144,25 +144,25 @@ export const productsCollection = buildCollection<Product>({
             properties: {
                 name: {
                     name: "Name",
-                    dataType: "string"
+                    dataType: "string",
                 },
                 external_id: {
                     name: "External id",
-                    dataType: "string"
-                }
-            }
+                    dataType: "string",
+                },
+            },
         },
         added_on: {
             dataType: "date",
             name: "Added on",
-            autoValue: "on_create"
+            autoValue: "on_create",
         },
         tags: {
             dataType: "array",
             name: "Tags",
             of: {
-                dataType: "string"
-            }
-        }
-    }
+                dataType: "string",
+            },
+        },
+    },
 });

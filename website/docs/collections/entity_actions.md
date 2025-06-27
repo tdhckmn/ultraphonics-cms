@@ -22,7 +22,6 @@ In the `icon` prop, you can pass a React element to show an icon next to the act
 We recommend using any of the [FireCMS icons](/docs/icons), which are available in the `@firecms/ui` package.
 
 ```tsx
-
 export const productsCollection = buildCollection<Product>({
     id: "products",
     path: "products",
@@ -32,54 +31,49 @@ export const productsCollection = buildCollection<Product>({
     description: "List of the products currently sold in our shop",
     entityActions: [
         {
-            icon: <ArchiveIcon/>,
+            icon: <ArchiveIcon />,
             name: "Archive",
-            onClick({
-                        entity,
-                        collection,
-                        context,
-                    }): Promise<void> {
-
+            onClick({ entity, collection, context }): Promise<void> {
                 // note that you can access all the controllers in the context
                 const dataSource = context.dataSource;
 
                 // Add your code here
                 return Promise.resolve(undefined);
-            }
-        }
+            },
+        },
     ],
-    properties: {}
+    properties: {},
 });
 ```
 
 #### EntityAction
 
-* `name`: Name of the action
-* `key`?: Key of the action. You only need to provide this if you want to
+- `name`: Name of the action
+- `key`?: Key of the action. You only need to provide this if you want to
   override the default actions.
   The default actions are:
     - edit
     - delete
     - copy
-* `icon`?: React.ReactElement Icon of the action
-* `onClick`: (props: EntityActionClickProps) => Promise
+- `icon`?: React.ReactElement Icon of the action
+- `onClick`: (props: EntityActionClickProps) => Promise
   Function to be called when the action is clicked
-* `collapsed`?: boolean Show this action collapsed in the menu of the collection view. Defaults to true. If false, the
+- `collapsed`?: boolean Show this action collapsed in the menu of the collection view. Defaults to true. If false, the
   action will be shown in the menu
-* `includeInForm`?: boolean Show this action in the form, defaults to true
-* `disabled`?: boolean Disable this action, defaults to false
+- `includeInForm`?: boolean Show this action in the form, defaults to true
+- `disabled`?: boolean Disable this action, defaults to false
 
 #### EntityActionClickProps
 
-* `entity`: Entity being edited
-* `context`: FireCMSContext, used for accessing all the controllers
-* `fullPath`?: string
-* `collection`?: EntityCollection
-* `selectionController`?: SelectionController, used for accessing the selected entities or modifying the selection
-* `highlightEntity`?: (entity: Entity) => void
-* `unhighlightEntity`?: (entity: Entity) => void
-* `onCollectionChange`?: () => void
-* `sideEntityController`?: SideEntityController
+- `entity`: Entity being edited
+- `context`: FireCMSContext, used for accessing all the controllers
+- `fullPath`?: string
+- `collection`?: EntityCollection
+- `selectionController`?: SelectionController, used for accessing the selected entities or modifying the selection
+- `highlightEntity`?: (entity: Entity) => void
+- `unhighlightEntity`?: (entity: Entity) => void
+- `onCollectionChange`?: () => void
+- `sideEntityController`?: SideEntityController
 
 ## Example
 
@@ -96,39 +90,34 @@ export const productsCollection = buildCollection<Product>({
     // other properties
     entityActions: [
         {
-            icon: <ArchiveIcon/>,
+            icon: <ArchiveIcon />,
             name: "Archive",
             collapsed: false,
-            onClick({
-                        entity,
-                        collection,
-                        context,
-                    }) {
+            onClick({ entity, collection, context }) {
                 const snackbarController = context.snackbarController;
                 return fetch("[YOUR_ENDPOINT]/archiveProduct", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        productId: entity.id
+                        productId: entity.id,
+                    }),
+                })
+                    .then(() => {
+                        snackbarController.open({
+                            message: "Product archived",
+                            type: "success",
+                        });
                     })
-                }).then(() => {
-                    snackbarController.open({
-                        message: "Product archived",
-                        type: "success"
+                    .catch((error) => {
+                        snackbarController.open({
+                            message: "Error archiving product",
+                            type: "error",
+                        });
                     });
-                }).catch((error) => {
-                    snackbarController.open({
-                        message: "Error archiving product",
-                        type: "error"
-                    });
-                });
-            }
-        }
+            },
+        },
     ],
 });
 ```
-
-
-

@@ -3,7 +3,7 @@ import { Role } from "@firecms/core";
 
 export type RoleChipProps = {
     role: Role;
-}
+};
 
 export function RoleChip({ role }: RoleChipProps) {
     let colorScheme;
@@ -18,11 +18,8 @@ export function RoleChip({ role }: RoleChipProps) {
     }
 
     return (
-        <Chip
-            colorScheme={colorScheme}
-            key={role.id}>
+        <Chip colorScheme={colorScheme} key={role.id}>
             {role.name}
         </Chip>
     );
-
 }

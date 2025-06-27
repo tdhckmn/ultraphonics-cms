@@ -41,90 +41,99 @@ import { getRowHeight } from "../common/table_height";
  * @see VirtualTable
  * @group Components
  */
-export const EntityCollectionTable = function EntityCollectionTable<M extends Record<string, any> = any, USER extends User = any>
-({
-     className,
-     style,
-     forceFilter,
-     actionsStart,
-     actions,
-     title,
-     tableRowActionsBuilder,
-     uniqueFieldValidator,
-     getPropertyFor,
-     onValueChange,
-     selectionController,
-     highlightedEntities,
-     onEntityClick,
-     onColumnResize,
-     initialScroll,
-     onScroll,
-     onSizeChanged,
-     textSearchEnabled = false,
-     hoverRow = true,
-     inlineEditing = false,
-     additionalFields,
-     displayedColumnIds,
-     defaultSize,
-     properties,
-     tableController,
-     filterable = true,
-     sortable = true,
-     endAdornment,
-     AddColumnComponent,
-     AdditionalHeaderWidget,
-     additionalIDHeaderWidget,
-     emptyComponent,
-     getIdColumnWidth,
-     onTextSearchClick,
-     textSearchLoading,
-     enablePopupIcon,
-     openEntityMode = "side_panel"
- }: EntityCollectionTableProps<M>) {
-
+export const EntityCollectionTable = function EntityCollectionTable<
+    M extends Record<string, any> = any,
+    USER extends User = any,
+>({
+    className,
+    style,
+    forceFilter,
+    actionsStart,
+    actions,
+    title,
+    tableRowActionsBuilder,
+    uniqueFieldValidator,
+    getPropertyFor,
+    onValueChange,
+    selectionController,
+    highlightedEntities,
+    onEntityClick,
+    onColumnResize,
+    initialScroll,
+    onScroll,
+    onSizeChanged,
+    textSearchEnabled = false,
+    hoverRow = true,
+    inlineEditing = false,
+    additionalFields,
+    displayedColumnIds,
+    defaultSize,
+    properties,
+    tableController,
+    filterable = true,
+    sortable = true,
+    endAdornment,
+    AddColumnComponent,
+    AdditionalHeaderWidget,
+    additionalIDHeaderWidget,
+    emptyComponent,
+    getIdColumnWidth,
+    onTextSearchClick,
+    textSearchLoading,
+    enablePopupIcon,
+    openEntityMode = "side_panel",
+}: EntityCollectionTableProps<M>) {
     const ref = useRef<HTMLDivElement>(null);
 
     const largeLayout = useLargeLayout();
-    const selectedEntities = (selectionController?.selectedEntities?.length > 0 ? selectionController?.selectedEntities : highlightedEntities)?.filter(Boolean);
+    const selectedEntities = (
+        selectionController?.selectedEntities?.length > 0
+            ? selectionController?.selectedEntities
+            : highlightedEntities
+    )?.filter(Boolean);
 
     const context: FireCMSContext<USER> = useFireCMSContext();
 
     const [size, setSize] = React.useState<CollectionSize>(defaultSize ?? "m");
 
     const updateSize = useCallback((size: CollectionSize) => {
-        if (onSizeChanged)
-            onSizeChanged(size);
+        if (onSizeChanged) onSizeChanged(size);
         setSize(size);
     }, []);
 
-    const onTextSearch = useCallback((newSearchString?: string) => tableController.setSearchString?.(newSearchString), []);
+    const onTextSearch = useCallback(
+        (newSearchString?: string) => tableController.setSearchString?.(newSearchString),
+        []
+    );
 
     const additionalFieldsMap: Record<string, AdditionalFieldDelegate<M, USER>> = useMemo(() => {
-        return (additionalFields
-            ? additionalFields
-                .map((aC) => ({ [aC.key]: aC as AdditionalFieldDelegate<M, any> }))
-                .reduce((a, b) => ({ ...a, ...b }), {})
-            : {}) as Record<string, AdditionalFieldDelegate<M, USER>>;
+        return (
+            additionalFields
+                ? additionalFields
+                      .map((aC) => ({ [aC.key]: aC as AdditionalFieldDelegate<M, any> }))
+                      .reduce((a, b) => ({ ...a, ...b }), {})
+                : {}
+        ) as Record<string, AdditionalFieldDelegate<M, USER>>;
     }, [additionalFields]);
 
     const customFieldValidator: CustomFieldValidator | undefined = uniqueFieldValidator;
 
     const propertyCellRenderer = ({
-                                      column,
-                                      columnIndex,
-                                      rowData,
-                                      rowIndex
-                                  }: CellRendererParams<any>) => {
-
+        column,
+        columnIndex,
+        rowData,
+        rowIndex,
+    }: CellRendererParams<any>) => {
         const entity: Entity<M> = rowData;
 
         const propertyKey = column.key;
 
         let disabled = column.custom?.disabled;
-        const property = getPropertyFor?.({
-            propertyKey,
-            entity
-        }) ?? column.custom.resolvedProperty;
+        const property =
+            getPropertyFor?.({
+                propertyKey,
+                entity,
+            }) ?? column.custom.resolvedProperty;
         if (!property?.disabled) {
             disabled = false;
         }
@@ -135,14 +144,16 @@ export const EntityCollectionTable = function EntityCollectionTable<M extends Re
 
         return (
             <ErrorBoundary>
-                {entity
-                    ? <PropertyTableCell
+                {entity ? (
+                    <PropertyTableCell
                         key={`property_table_cell_${entity.id}_${propertyKey}`}
                         readonly={!inlineEditing}
                         align={column.align ?? "left"}
                         propertyKey={propertyKey as string}
                         property={property}
-                        value={entity?.values ? getValueInPath(entity.values, propertyKey) : undefined}
+                        value={
+                            entity?.values ? getValueInPath(entity.values, propertyKey) : undefined
+                        }
                         customFieldValidator={customFieldValidator}
                         columnIndex={columnIndex}
                         width={column.width}
@@ -150,80 +161,84 @@ export const EntityCollectionTable = function EntityCollectionTable<M extends Re
                         entity={entity}
                         disabled={disabled}
                         enablePopupIcon={enablePopupIcon}
-                        path={entity.path}/>
-                    : renderSkeletonText()
-                }
-            </ErrorBoundary>);
-
+                        path={entity.path}
+                    />
+                ) : (
+                    renderSkeletonText()
+                )}
+            </ErrorBoundary>
+        );
     };
 
-    const additionalCellRenderer = useCallback(({
-                                                    column,
-                                                    rowData,
-                                                    width
-                                                }: CellRendererParams<any>) => {
+    const additionalCellRenderer = useCallback(
+        ({ column, rowData, width }: CellRendererParams<any>) => {
+            const entity: Entity<M> = rowData;
 
-        const entity: Entity<M> = rowData;
+            const additionalField = additionalFieldsMap[column.key as string];
+            const value = additionalField.dependencies
+                ? Object.entries(entity.values)
+                      .filter(([key, value]) =>
+                          additionalField.dependencies!.includes(key as Extract<keyof M, string>)
+                      )
+                      .reduce((a, b) => ({ ...a, ...b }), {})
+                : entity;
 
-        const additionalField = additionalFieldsMap[column.key as string];
-        const value = additionalField.dependencies
-            ? Object.entries(entity.values)
-                .filter(([key, value]) => additionalField.dependencies!.includes(key as Extract<keyof M, string>))
-                .reduce((a, b) => ({ ...a, ...b }), {})
-            : entity;
+            const Builder = additionalField.Builder;
+            if (!Builder && !additionalField.value) {
+                throw new Error(
+                    "When using additional fields you need to provide a Builder or a value"
+                );
+            }
 
-        const Builder = additionalField.Builder;
-        if (!Builder && !additionalField.value) {
-            throw new Error("When using additional fields you need to provide a Builder or a value");
-        }
+            const child: React.ReactNode = Builder ? (
+                <Builder entity={entity} context={context} />
+            ) : (
+                <>
+                    {additionalField
+                        .value?.({
+                            entity,
+                            context,
+                        })
+                        ?.toString()}
+                </>
+            );
 
-        const child: React.ReactNode = Builder
-            ? <Builder entity={entity} context={context}/>
-            : <>
-                {additionalField.value?.({
-                    entity,
-                    context
-                })?.toString()}
-            </>;
-
-        return (
-            <EntityTableCell
-                key={`additional_table_cell_${entity.id}_${column.key}`}
-                width={width}
-                size={size}
-                value={value}
-                selected={false}
-                disabled={true}
-                align={"left"}
-                allowScroll={false}
-                showExpandIcon={false}
-                disabledTooltip={"This column can't be edited directly"}
-            >
-                <ErrorBoundary>
-                    {child}
-                </ErrorBoundary>
-            </EntityTableCell>
-        );
-
-    }, [size]);
+            return (
+                <EntityTableCell
+                    key={`additional_table_cell_${entity.id}_${column.key}`}
+                    width={width}
+                    size={size}
+                    value={value}
+                    selected={false}
+                    disabled={true}
+                    align={"left"}
+                    allowScroll={false}
+                    showExpandIcon={false}
+                    disabledTooltip={"This column can't be edited directly"}
+                >
+                    <ErrorBoundary>{child}</ErrorBoundary>
+                </EntityTableCell>
+            );
+        },
+        [size]
+    );
 
     const collectionColumns: VirtualTableColumn[] = (() => {
         const columnsResult: VirtualTableColumn[] = propertiesToColumns({
             properties,
             sortable,
             forceFilter,
-            AdditionalHeaderWidget
+            AdditionalHeaderWidget,
         });
 
         const additionalTableColumns: VirtualTableColumn[] = additionalFields
-            ? additionalFields.map((additionalField) =>
-                ({
-                    key: additionalField.key,
-                    align: "left",
-                    sortable: false,
-                    title: additionalField.name,
-                    width: additionalField.width ?? 200
-                }))
+            ? additionalFields.map((additionalField) => ({
+                  key: additionalField.key,
+                  align: "left",
+                  sortable: false,
+                  title: additionalField.name,
+                  width: additionalField.width ?? 200,
+              }))
             : [];
         return [...columnsResult, ...additionalTableColumns];
     })();
@@ -236,68 +251,79 @@ export const EntityCollectionTable = function EntityCollectionTable<M extends Re
         frozen: largeLayout,
         headerAlign: "center",
         align: "center",
-        AdditionalHeaderWidget: () => additionalIDHeaderWidget
-    }
+        AdditionalHeaderWidget: () => additionalIDHeaderWidget,
+    };
 
     const columns: VirtualTableColumn[] = [
         idColumn,
-        ...(displayedColumnIds
+        ...((displayedColumnIds
             ? displayedColumnIds
-                .map((p) => {
-                    return collectionColumns.find(c => c.key === p.key);
-                }).filter(Boolean)
-            : collectionColumns) as VirtualTableColumn[]
+                  .map((p) => {
+                      return collectionColumns.find((c) => c.key === p.key);
+                  })
+                  .filter(Boolean)
+            : collectionColumns) as VirtualTableColumn[]),
     ];
 
-    const cellRenderer = useCallback((props: CellRendererParams<any>) => {
-        const column = props.column;
-        const columns = props.columns;
-        const columnKey = column.key;
+    const cellRenderer = useCallback(
+        (props: CellRendererParams<any>) => {
+            const column = props.column;
+            const columns = props.columns;
+            const columnKey = column.key;
 
-        try {
-            if (props.columnIndex === 0) {
-                if (tableRowActionsBuilder)
-                    return tableRowActionsBuilder({
-                        entity: props.rowData,
-                        size,
-                        width: column.width,
-                        frozen: column.frozen
-                    });
-                else
-                    return <EntityCollectionRowActions entity={props.rowData}
-                                                       width={column.width}
-                                                       frozen={column.frozen}
-                                                       isSelected={false}
-                                                       size={size}
-                                                       openEntityMode={openEntityMode}/>;
-            } else if (additionalFieldsMap[columnKey]) {
-                return additionalCellRenderer(props);
-            } else if (props.columnIndex < columns.length + 1) {
-                return propertyCellRenderer(props);
-            } else {
-                throw Error("Internal: columns not mapped properly");
+            try {
+                if (props.columnIndex === 0) {
+                    if (tableRowActionsBuilder)
+                        return tableRowActionsBuilder({
+                            entity: props.rowData,
+                            size,
+                            width: column.width,
+                            frozen: column.frozen,
+                        });
+                    else
+                        return (
+                            <EntityCollectionRowActions
+                                entity={props.rowData}
+                                width={column.width}
+                                frozen={column.frozen}
+                                isSelected={false}
+                                size={size}
+                                openEntityMode={openEntityMode}
+                            />
+                        );
+                } else if (additionalFieldsMap[columnKey]) {
+                    return additionalCellRenderer(props);
+                } else if (props.columnIndex < columns.length + 1) {
+                    return propertyCellRenderer(props);
+                } else {
+                    throw Error("Internal: columns not mapped properly");
+                }
+            } catch (e: any) {
+                console.error("Error rendering cell", e);
+                return (
+                    <EntityTableCell
+                        size={size}
+                        width={column.width}
+                        saved={false}
+                        value={null}
+                        align={"left"}
+                        fullHeight={false}
+                        disabled={true}
+                    >
+                        <ErrorView error={e} />
+                    </EntityTableCell>
+                );
             }
-        } catch (e: any) {
-            console.error("Error rendering cell", e);
-            return <EntityTableCell
-                size={size}
-                width={column.width}
-                saved={false}
-                value={null}
-                align={"left"}
-                fullHeight={false}
-                disabled={true}>
-                <ErrorView error={e}/>
-            </EntityTableCell>;
-        }
-    }, [tableRowActionsBuilder, additionalCellRenderer, propertyCellRenderer, size]);
+        },
+        [tableRowActionsBuilder, additionalCellRenderer, propertyCellRenderer, size]
+    );
 
     return (
-
-        <div ref={ref}
-             style={style}
-             className={cls("h-full w-full flex flex-col bg-white dark:bg-surface-950", className)}>
-
+        <div
+            ref={ref}
+            style={style}
+            className={cls("h-full w-full flex flex-col bg-white dark:bg-surface-950", className)}
+        >
             <CollectionTableToolbar
                 onTextSearch={textSearchEnabled ? onTextSearch : undefined}
                 textSearchLoading={textSearchLoading}
@@ -307,26 +333,31 @@ export const EntityCollectionTable = function EntityCollectionTable<M extends Re
                 title={title}
                 actionsStart={actionsStart}
                 actions={actions}
-                loading={tableController.dataLoading}/>
+                loading={tableController.dataLoading}
+            />
 
-            <SelectableTable columns={columns}
-                             size={size}
-                             inlineEditing={inlineEditing}
-                             cellRenderer={cellRenderer}
-                             onEntityClick={onEntityClick}
-                             highlightedRow={(entity: Entity<M>) => Boolean(selectedEntities?.find(e => e.id === entity.id && e.path === entity.path))}
-                             tableController={tableController}
-                             onValueChange={onValueChange}
-                             initialScroll={initialScroll}
-                             onScroll={onScroll}
-                             onColumnResize={onColumnResize}
-                             hoverRow={hoverRow}
-                             filterable={filterable}
-                             emptyComponent={emptyComponent}
-                             endAdornment={endAdornment}
-                             AddColumnComponent={AddColumnComponent}/>
-
+            <SelectableTable
+                columns={columns}
+                size={size}
+                inlineEditing={inlineEditing}
+                cellRenderer={cellRenderer}
+                onEntityClick={onEntityClick}
+                highlightedRow={(entity: Entity<M>) =>
+                    Boolean(
+                        selectedEntities?.find((e) => e.id === entity.id && e.path === entity.path)
+                    )
+                }
+                tableController={tableController}
+                onValueChange={onValueChange}
+                initialScroll={initialScroll}
+                onScroll={onScroll}
+                onColumnResize={onColumnResize}
+                hoverRow={hoverRow}
+                filterable={filterable}
+                emptyComponent={emptyComponent}
+                endAdornment={endAdornment}
+                AddColumnComponent={AddColumnComponent}
+            />
         </div>
     );
-
 };

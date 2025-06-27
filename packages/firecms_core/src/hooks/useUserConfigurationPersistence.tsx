@@ -8,4 +8,5 @@ import { UserConfigurationPersistenceContext } from "../contexts/UserConfigurati
  *
  * @group Hooks and utilities
  */
-export const useUserConfigurationPersistence = (): UserConfigurationPersistence | undefined => useContext(UserConfigurationPersistenceContext);
+export const useUserConfigurationPersistence = (): UserConfigurationPersistence | undefined =>
+    useContext(UserConfigurationPersistenceContext);

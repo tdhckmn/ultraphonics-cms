@@ -3,15 +3,15 @@ import { NeatGradient } from "@firecms/neat";
 import { easeInOut } from "../partials/styles";
 
 function getBrightnessFrom(scroll: number) {
-    const min = .3;
-    const max = .7;
+    const min = 0.3;
+    const max = 0.7;
     return Math.min(max, Math.max(min, min + scroll / 1000));
 }
 
 function getAlphaFrom(scroll: number) {
     const min = 0;
     const max = 1;
-    return easeInOut(Math.min(max, Math.max(min, min + (scroll) / 1000)));
+    return easeInOut(Math.min(max, Math.max(min, min + scroll / 1000)));
 }
 
 function getSaturateFrom(scroll: number) {
@@ -35,7 +35,6 @@ function getResolution(width: number) {
 }
 
 export default function HomeHeroNeatGradient() {
-
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const gradientRef = useRef<NeatGradient | null>(null);
     const scrollRef = useRef<number>(0);
@@ -49,7 +48,7 @@ export default function HomeHeroNeatGradient() {
             //
             // gradientRef.current.backgroundAlpha = getAlphaFrom(scroll);
             // gradientRef.current.resolution = getResolution(width);
-            gradientRef.current.yOffset = scroll * .6;
+            gradientRef.current.yOffset = scroll * 0.6;
         }
     }
 
@@ -60,11 +59,9 @@ export default function HomeHeroNeatGradient() {
             }
         };
         listener();
-        if (typeof window !== "undefined")
-            window.addEventListener("resize", listener);
+        if (typeof window !== "undefined") window.addEventListener("resize", listener);
         return () => {
-            if (typeof window !== "undefined")
-                window.removeEventListener("resize", listener);
+            if (typeof window !== "undefined") window.removeEventListener("resize", listener);
         };
     }, [window]);
 
@@ -72,23 +69,17 @@ export default function HomeHeroNeatGradient() {
         const listener = () => {
             if (typeof window !== "undefined") {
                 onScrollUpdate(window?.scrollY ?? 0, window?.innerWidth ?? 0);
-
             }
         };
         listener();
-        if (typeof window !== "undefined")
-            window.addEventListener("scroll", listener);
+        if (typeof window !== "undefined") window.addEventListener("scroll", listener);
         return () => {
-            if (typeof window !== "undefined")
-                window.removeEventListener("scroll", listener);
+            if (typeof window !== "undefined") window.removeEventListener("scroll", listener);
         };
     }, [window]);
 
     useEffect(() => {
-
-        if (!canvasRef.current)
-            return () => {
-            };
+        if (!canvasRef.current) return () => {};
 
         const backgroundColor = "rgb(16,24,39)";
 
@@ -143,23 +134,23 @@ export default function HomeHeroNeatGradient() {
             ref: canvasRef.current,
             colors: [
                 {
-                    color: '#001010',
+                    color: "#001010",
                     enabled: true,
                 },
                 {
-                    color: '#0C0500',
+                    color: "#0C0500",
                     enabled: true,
                 },
                 {
-                    color: '#160F00',
+                    color: "#160F00",
                     enabled: true,
                 },
                 {
-                    color: '#0E0808',
+                    color: "#0E0808",
                     enabled: true,
                 },
                 {
-                    color: '#0C223B',
+                    color: "#0C223B",
                     enabled: true,
                 },
             ],
@@ -182,12 +173,11 @@ export default function HomeHeroNeatGradient() {
             grainIntensity: 0,
             grainSpeed: 1,
             resolution: 0.2,
-            yOffset: 0
+            yOffset: 0,
         });
 
         return gradientRef.current.destroy;
-
-    }, [canvasRef.current])
+    }, [canvasRef.current]);
 
     return (
         <canvas
@@ -204,5 +194,4 @@ export default function HomeHeroNeatGradient() {
             ref={canvasRef}
         />
     );
-
 }

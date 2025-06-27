@@ -20,12 +20,18 @@ function DevelopersPage() {
     return (
         <Layout
             title={"For Developers - FireCMS"}
-            description="FireCMS helps developers rapidly build internal tools, CRUD interfaces, and back-offices without the frontend hassle">
+            description="FireCMS helps developers rapidly build internal tools, CRUD interfaces, and back-offices without the frontend hassle"
+        >
             <Head>
-                <meta property="og:title" content="FireCMS for Developers - Firestore/Firebase headless CMS"/>
-                <meta property="og:description"
-                      content="FireCMS helps developers rapidly build internal tools, CRUD interfaces, and back-offices without the frontend hassle"/>
-                <meta property="og:image" content="https://firecms.co/img/firecms_logo.svg"/>
+                <meta
+                    property="og:title"
+                    content="FireCMS for Developers - Firestore/Firebase headless CMS"
+                />
+                <meta
+                    property="og:description"
+                    content="FireCMS helps developers rapidly build internal tools, CRUD interfaces, and back-offices without the frontend hassle"
+                />
+                <meta property="og:image" content="https://firecms.co/img/firecms_logo.svg" />
             </Head>
 
             <div className="flex flex-col min-h-screen">
@@ -34,22 +40,27 @@ function DevelopersPage() {
                         subtitleColor={"dark_gray"}
                         title={
                             <>
-                                <span className="block lg:inline font-mono uppercase">FireCMS for Developers</span>
-
+                                <span className="block lg:inline font-mono uppercase">
+                                    FireCMS for Developers
+                                </span>
                             </>
                         }
                         subtitle={
                             <>
                                 <p>
-                                    Build powerful internal tools, CRUD interfaces, amazing GUIs and back-offices
-                                    <b> without the frontend hassle</b>. Focus on your core application logic.
+                                    Build powerful internal tools, CRUD interfaces, amazing GUIs and
+                                    back-offices
+                                    <b> without the frontend hassle</b>. Focus on your core
+                                    application logic.
                                 </p>
                                 <iframe
                                     src="https://ghbtns.com/github-btn.html?user=firecmsco&repo=firecms&type=star&count=true&size=large"
                                     frameBorder="0"
                                     scrolling="0"
                                     width="170"
-                                    height="30" title="GitHub"></iframe>
+                                    height="30"
+                                    title="GitHub"
+                                ></iframe>
 
                                 {/*<a href="https://github.com/firecmsco/firecms" target="_blank"*/}
                                 {/*   rel="noopener noreferrer">*/}
@@ -63,57 +74,55 @@ function DevelopersPage() {
                     />
 
                     <Panel color={"gray"} includeMargin={false} includePadding={false}>
-
                         <TwoColumns
                             reverseSmall={true}
                             animation={false}
                             className={"py-8 p-4"}
                             // className={"p-4 md:p-8"}
-                            left={<div
-                                className="relative flex-col font-mono overflow-x-hidden">
+                            left={
+                                <div className="relative flex-col font-mono overflow-x-hidden">
+                                    <pre
+                                        className={"bg-gray-900 mt-8 p-4 rounded"}
+                                        dangerouslySetInnerHTML={{ __html: priceCodeDemo }}
+                                    ></pre>
 
-                        <pre className={"bg-gray-900 mt-8 p-4 rounded"}
-                             dangerouslySetInnerHTML={{ __html: priceCodeDemo }}></pre>
-
-                                <div
-                                    className={"p-1 flex justify-center"}>
-                                    <img loading="lazy"
-                                         className=""
-                                         src={pricePreview}
-                                         width="500"
-                                         alt="Price textfield preview"
-                                    />
+                                    <div className={"p-1 flex justify-center"}>
+                                        <img
+                                            loading="lazy"
+                                            className=""
+                                            src={pricePreview}
+                                            width="500"
+                                            alt="Price textfield preview"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
                             }
-                            right={<div className={"p-4"}>
+                            right={
+                                <div className={"p-4"}>
+                                    <div className={"flex items-center mb-3"}>
+                                        <h3 className="m-0 font-mono uppercase">
+                                            Easy schema definition
+                                        </h3>
+                                    </div>
 
-                                <div
-                                    className={"flex items-center mb-3"}>
-                                    <h3 className="m-0 font-mono uppercase">
-                                        Easy schema definition
-                                    </h3>
+                                    <p className="text-xl md:text-2xl ">
+                                        Define your schemas and choose from multiple form widgets
+                                        and validation options.
+                                    </p>
 
+                                    <p className="text-xl md:text-2xl ">
+                                        Integrate your own conditional logic for your fields,
+                                        references to other collections, markdown, file uploads, and
+                                        dozens of other features.
+                                    </p>
                                 </div>
-
-                                <p className="text-xl md:text-2xl ">
-                                    Define your schemas and choose from
-                                    multiple form widgets and validation
-                                    options.
-                                </p>
-
-                                <p className="text-xl md:text-2xl ">
-                                    Integrate your own conditional logic
-                                    for your fields, references to other
-                                    collections, markdown, file uploads, and dozens of other features.
-                                </p>
-
-                            </div>}/>
+                            }
+                        />
                     </Panel>
 
-                    <DataTalkBatch/>
+                    <DataTalkBatch />
 
-                    <UITeaser/>
+                    <UITeaser />
 
                     <Panel color={"gray"} includeMargin={false} includePadding={false}>
                         <TwoColumns
@@ -123,48 +132,49 @@ function DevelopersPage() {
                             left={
                                 <div className={"p-4"}>
                                     <div className={"flex items-center mb-3"}>
-
                                         <h3 className="m-0 font-mono uppercase">
                                             Built for every project
                                         </h3>
-
                                     </div>
                                     <p className="text-xl md:text-2xl ">
-                                        FireCMS is a headless CMS built to work
-                                        with every existing project. It does not
-                                        enforce any data structure.
+                                        FireCMS is a headless CMS built to work with every existing
+                                        project. It does not enforce any data structure.
                                     </p>
                                     <p className="text-xl md:text-2xl ">
-                                        Use the integrated hooks and callbacks to
-                                        integrate your business logic in multiple
-                                        ways.
+                                        Use the integrated hooks and callbacks to integrate your
+                                        business logic in multiple ways.
                                     </p>
-
                                 </div>
-                            } right={
-                            <>
-                                <div
-                                    className="relative flex-col font-mono overflow-x-hidden">
-
-                        <pre className={"bg-gray-900 mt-8 p-4 rounded"}
-                             dangerouslySetInnerHTML={{ __html: builtForEveryProjectCode }}></pre>
-
-                                </div>
-                            </>
-                        }/>
-
+                            }
+                            right={
+                                <>
+                                    <div className="relative flex-col font-mono overflow-x-hidden">
+                                        <pre
+                                            className={"bg-gray-900 mt-8 p-4 rounded"}
+                                            dangerouslySetInnerHTML={{
+                                                __html: builtForEveryProjectCode,
+                                            }}
+                                        ></pre>
+                                    </div>
+                                </>
+                            }
+                        />
                     </Panel>
 
                     <Panel color={"dark_gray"} includePadding={true}>
                         <div className="max-w-5xl mx-auto">
-                            <h2 className="text-3xl font-bold mb-8 text-center">Why Developers Choose FireCMS</h2>
+                            <h2 className="text-3xl font-bold mb-8 text-center">
+                                Why Developers Choose FireCMS
+                            </h2>
                             <div className="grid md:grid-cols-2 gap-8 mb-12">
                                 <div className="p-6 rounded-xl border border-gray-700 bg-gray-800">
-                                    <h3 className="text-xl font-mono uppercase mb-3">Type-Safe Schema
-                                        Definitions</h3>
+                                    <h3 className="text-xl font-mono uppercase mb-3">
+                                        Type-Safe Schema Definitions
+                                    </h3>
                                     <p className="text-gray-300 leading-relaxed mb-4">
-                                        Define your data models in TypeScript for complete type safety. Your schemas
-                                        become the single source of truth for both your admin panel and application.
+                                        Define your data models in TypeScript for complete type
+                                        safety. Your schemas become the single source of truth for
+                                        both your admin panel and application.
                                     </p>
                                     <CodeBlock language="typescript">
                                         {`const productsCollection = buildCollection({
@@ -187,11 +197,13 @@ function DevelopersPage() {
                                     </CodeBlock>
                                 </div>
                                 <div className="p-6 rounded-xl border border-gray-700 bg-gray-800">
-                                    <h3 className="text-xl font-mono uppercase mb-3">Real-time Data Updates</h3>
+                                    <h3 className="text-xl font-mono uppercase mb-3">
+                                        Real-time Data Updates
+                                    </h3>
                                     <p className="text-gray-300 leading-relaxed mb-4">
-                                        FireCMS leverages Firestore&#39;s real-time capabilities. Any changes to your
-                                        data
-                                        are immediately reflected in the CMS without extra configuration.
+                                        FireCMS leverages Firestore&#39;s real-time capabilities.
+                                        Any changes to your data are immediately reflected in the
+                                        CMS without extra configuration.
                                     </p>
                                     <CodeBlock language="typescript">
                                         {`import { useCollectionFetch } from "@firecms/core";
@@ -214,11 +226,13 @@ function MyComponent() {
 
                             <div className="grid md:grid-cols-2 gap-8">
                                 <div className="p-6 rounded-xl border border-gray-700 bg-gray-800">
-                                    <h3 className="text-xl font-mono uppercase mb-3">Custom React Components</h3>
+                                    <h3 className="text-xl font-mono uppercase mb-3">
+                                        Custom React Components
+                                    </h3>
                                     <p className="text-gray-300 leading-relaxed mb-4">
-                                        Extend the CMS with your own React components. Create custom property fields,
-                                        entity views,
-                                        or navigation items that perfectly fit your project needs.
+                                        Extend the CMS with your own React components. Create custom
+                                        property fields, entity views, or navigation items that
+                                        perfectly fit your project needs.
                                     </p>
                                     <CodeBlock language="typescript">
                                         {`const PriceField = ({ property, value, setValue }) => {
@@ -249,11 +263,13 @@ const productsCollection = buildCollection({
                                     </CodeBlock>
                                 </div>
                                 <div className="p-6 rounded-xl border border-gray-700 bg-gray-800">
-                                    <h3 className="text-xl font-mono uppercase mb-3">Custom Logic & Hooks</h3>
+                                    <h3 className="text-xl font-mono uppercase mb-3">
+                                        Custom Logic & Hooks
+                                    </h3>
                                     <p className="text-gray-300 leading-relaxed mb-4">
-                                        Implement business logic with hooks and callbacks. Validate, transform, or
-                                        enhance
-                                        your data at any point in the CRUD lifecycle.
+                                        Implement business logic with hooks and callbacks. Validate,
+                                        transform, or enhance your data at any point in the CRUD
+                                        lifecycle.
                                     </p>
                                     <CodeBlock language="typescript">
                                         {`const productCallbacks = {
@@ -286,50 +302,75 @@ const productsCollection = buildCollection({
                         </div>
                     </Panel>
 
-                    <TechSplash/>
+                    <TechSplash />
 
                     <Panel color={"gray"} includePadding={true}>
                         <div className="max-w-5xl mx-auto text-center">
                             <h2 className="text-3xl font-bold mb-8">Technical Architecture</h2>
                             <p className="text-xl mb-12">
-                                FireCMS is built on React and integrates directly with Google Cloud Platform.
-                                It&#39;s designed to be extensible, performant, and easy to customize.
+                                FireCMS is built on React and integrates directly with Google Cloud
+                                Platform. It&#39;s designed to be extensible, performant, and easy
+                                to customize.
                             </p>
 
                             <div className="grid md:grid-cols-3 gap-8 mb-12">
-                                <div className={"p-6 rounded-xl border shadow-sm " + defaultBorderMixin}>
-                                    <h3 className="text-xl font-mono uppercase mb-3">React + TypeScript</h3>
+                                <div
+                                    className={
+                                        "p-6 rounded-xl border shadow-sm " + defaultBorderMixin
+                                    }
+                                >
+                                    <h3 className="text-xl font-mono uppercase mb-3">
+                                        React + TypeScript
+                                    </h3>
                                     <p className="text-gray-200 leading-relaxed">
-                                        Built with modern React and full TypeScript support, ensuring type safety
-                                        throughout your project.
+                                        Built with modern React and full TypeScript support,
+                                        ensuring type safety throughout your project.
                                     </p>
                                 </div>
-                                <div className={"p-6 rounded-xl border shadow-sm " + defaultBorderMixin}>
-                                    <h3 className="text-xl font-mono uppercase mb-3">Firebase Integration</h3>
+                                <div
+                                    className={
+                                        "p-6 rounded-xl border shadow-sm " + defaultBorderMixin
+                                    }
+                                >
+                                    <h3 className="text-xl font-mono uppercase mb-3">
+                                        Firebase Integration
+                                    </h3>
                                     <p className="text-gray-200 leading-relaxed">
-                                        Direct integration with Firebase/Firestore for authentication, storage,
-                                        and real-time database capabilities.
+                                        Direct integration with Firebase/Firestore for
+                                        authentication, storage, and real-time database
+                                        capabilities.
                                     </p>
                                 </div>
-                                <div className={"p-6 rounded-xl border shadow-sm " + defaultBorderMixin}>
-                                    <h3 className="text-xl font-mono uppercase mb-3">Extensible Design</h3>
+                                <div
+                                    className={
+                                        "p-6 rounded-xl border shadow-sm " + defaultBorderMixin
+                                    }
+                                >
+                                    <h3 className="text-xl font-mono uppercase mb-3">
+                                        Extensible Design
+                                    </h3>
                                     <p className="text-gray-200 leading-relaxed">
-                                        Plugin architecture allows for custom views, fields, and authentication
-                                        mechanisms to extend functionality.
+                                        Plugin architecture allows for custom views, fields, and
+                                        authentication mechanisms to extend functionality.
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </Panel>
 
+                    <CustomFields />
 
-                    <CustomFields/>
-
-                    <EnterpriseArchitectures/>
+                    <EnterpriseArchitectures />
 
                     <Panel color={"dark_gray"} includePadding={true}>
-                        <h2 className="text-3xl font-bold mb-8 text-center">Simple deployment to FireCMS Cloud</h2>
-                        <div className={"mt-8 mb-12 bg-gray-800 rounded-xl p-6 border " + defaultBorderMixin}>
+                        <h2 className="text-3xl font-bold mb-8 text-center">
+                            Simple deployment to FireCMS Cloud
+                        </h2>
+                        <div
+                            className={
+                                "mt-8 mb-12 bg-gray-800 rounded-xl p-6 border " + defaultBorderMixin
+                            }
+                        >
                             <div className="flex items-center mb-3">
                                 <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
                                 <div className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
@@ -340,12 +381,13 @@ const productsCollection = buildCollection({
                                 <span className="text-green-500">&gt;</span>
                                 <span className="text-white ml-2">firecms deploy</span>
                                 <span
-                                    className={`ml-1 inline-block w-2 h-5 bg-white animate-pulse`}></span>
+                                    className={`ml-1 inline-block w-2 h-5 bg-white animate-pulse`}
+                                ></span>
                             </div>
                         </div>
                     </Panel>
                     <Panel color={"dark_gray"} includePadding={true}>
-                        <StartHacking/>
+                        <StartHacking />
                     </Panel>
                 </main>
             </div>
@@ -365,9 +407,7 @@ const priceCodeDemo = `<span class="token keyword">const</span> price <span clas
         <span class="token literal-property property">min</span><span class="token operator">:</span> <span class="token number">0</span><span class="token punctuation">,</span>
         <span class="token literal-property property">max</span><span class="token operator">:</span> <span class="token number">1000</span>
     <span class="token punctuation">}</span>
-<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>`
-;
-
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>`;
 const builtForEveryProjectCode = `<span class="token keyword">const</span> productCollection <span class="token operator">=</span> <span class="token function">buildCollection</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
     <span class="token literal-property property">name</span><span class="token operator">:</span> <span class="token string">"Product"</span><span class="token punctuation">,</span>
     <span class="token literal-property property">properties</span><span class="token operator">:</span> <span class="token punctuation">{</span>
@@ -390,4 +430,3 @@ const builtForEveryProjectCode = `<span class="token keyword">const</span> produ
         <span class="token keyword">return</span> values<span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
 <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>`;
-

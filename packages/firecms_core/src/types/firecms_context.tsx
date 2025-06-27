@@ -18,8 +18,10 @@ import { AnalyticsController } from "./analytics_controller";
  * @group Hooks and utilities
  * @see useFireCMSContext
  */
-export type FireCMSContext<USER extends User = User, AuthControllerType extends AuthController<USER> = AuthController<USER>> = {
-
+export type FireCMSContext<
+    USER extends User = User,
+    AuthControllerType extends AuthController<USER> = AuthController<USER>,
+> = {
     /**
      * Connector to your database, e.g. your Firestore database
      */
@@ -79,5 +81,4 @@ export type FireCMSContext<USER extends User = User, AuthControllerType extends 
      * Callback to send analytics events
      */
     analyticsController?: AnalyticsController;
-
 };

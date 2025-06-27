@@ -15,7 +15,7 @@ const nameProperty = buildProperty({
     name: "Name",
     description: "Basic string property with validation",
     validation: { required: true },
-    dataType: "string"
+    dataType: "string",
 });
 ```
 
@@ -24,25 +24,25 @@ const nameProperty = buildProperty({
 You can specify a `StorageMeta` configuration. It is used to
 indicate that this string refers to a path in Google Cloud Storage.
 
-* `mediaType` Media type of this reference, used for displaying the
+- `mediaType` Media type of this reference, used for displaying the
   preview.
-* `storagePath` Absolute path in your bucket. You can specify it
+- `storagePath` Absolute path in your bucket. You can specify it
   directly or use a callback
-* `acceptedFiles` File [MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) that can be uploaded to this
+- `acceptedFiles` File [MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) that can be uploaded to this
   reference. Note that you can also use the asterisk notation, so `image/*`
   accepts any image file, and so on.
-* `metadata` Specific metadata set in your uploaded file.
-* `fileName` You can specify a fileName callback if you need to
+- `metadata` Specific metadata set in your uploaded file.
+- `fileName` You can specify a fileName callback if you need to
   customize the name of the file
-* `storagePath` You can specify a storage path callback if you need to
+- `storagePath` You can specify a storage path callback if you need to
   customize the path where it is stored.
-* `storeUrl` When set to `true`, this flag indicates that the download
+- `storeUrl` When set to `true`, this flag indicates that the download
   URL of the file will be saved in Firestore instead of the Cloud
   storage path. Note that the generated URL may use a token that, if
   disabled, may make the URL unusable and lose the original reference to
   Cloud Storage, so it is not encouraged to use this flag. Defaults to
   false.
-* `imageCompression` Use client side image compression and resizing
+- `imageCompression` Use client side image compression and resizing
   Will only be applied to these MIME types: `image/jpeg`, `image/png`
   and `image/webp`
 
@@ -59,8 +59,8 @@ const imageProperty = buildProperty({
         acceptedFiles: ["image/*"],
         fileName: (context) => {
             return context.file.name;
-        }
-    }
+        },
+    },
 });
 ```
 
@@ -76,7 +76,7 @@ import { buildProperty } from "./builders";
 const amazonLinkProperty = buildProperty({
     dataType: "string",
     name: "Amazon link",
-    url: true
+    url: true,
 });
 ```
 
@@ -110,16 +110,16 @@ const amazonLinkProperty = buildProperty({
     dataType: "string",
     name: "Amazon link",
     enumValues: {
-        "es": "Spanish",
-        "de": "German",
-        "en": "English",
-        "it": "Italian",
-        "fr": {
+        es: "Spanish",
+        de: "German",
+        en: "English",
+        it: "Italian",
+        fr: {
             id: "fr",
             label: "French",
-            disabled: true
-        }
-    }
+            disabled: true,
+        },
+    },
 });
 ```
 
@@ -135,7 +135,7 @@ import { buildProperty } from "./builders";
 const property = buildProperty({
     name: "Description",
     dataType: "string",
-    multiline: true
+    multiline: true,
 });
 ```
 
@@ -155,7 +155,7 @@ import { buildProperty } from "./builders";
 const property = buildProperty({
     dataType: "string",
     name: "Text",
-    markdown: true
+    markdown: true,
 });
 ```
 
@@ -172,31 +172,31 @@ const property = buildProperty({
     dataType: "array",
     of: {
         dataType: "string",
-        previewAsTag: true
-    }
+        previewAsTag: true,
+    },
 });
 ```
 
 ### `validation`
 
-* `required` Should this field be compulsory.
-* `requiredMessage` Message to be displayed as a validation error.
-* `unique` The value of this field must be unique in this collection.
-* `uniqueInArray` If you set it to `true`, the user will only be allowed to
+- `required` Should this field be compulsory.
+- `requiredMessage` Message to be displayed as a validation error.
+- `unique` The value of this field must be unique in this collection.
+- `uniqueInArray` If you set it to `true`, the user will only be allowed to
   have the value of that property once in the parent
   `ArrayProperty`. It works on direct children properties or on first level
   children of a `MapProperty` (if set as the `.of` property of
   the `ArrayProperty`).
-* `length` Set a required length for the string value.
-* `min` Set a minimum length limit for the string value.
-* `max` Set a maximum length limit for the string value.
-* `matches` Provide an arbitrary regex to match the value against.
-* `email` Validates the value as an email address via a regex.
-* `url` Validates the value as a valid URL via a regex.
-* `trim` Transforms string values by removing leading and trailing
+- `length` Set a required length for the string value.
+- `min` Set a minimum length limit for the string value.
+- `max` Set a maximum length limit for the string value.
+- `matches` Provide an arbitrary regex to match the value against.
+- `email` Validates the value as an email address via a regex.
+- `url` Validates the value as a valid URL via a regex.
+- `trim` Transforms string values by removing leading and trailing
   whitespace.
-* `lowercase` Transforms the string value to lowercase.
-* `uppercase` Transforms the string value to uppercase.
+- `lowercase` Transforms the string value to lowercase.
+- `uppercase` Transforms the string value to uppercase.
 
 ---
 

@@ -7,26 +7,24 @@ const isExternal = (id: string) => !id.startsWith(".") && !path.isAbsolute(id);
 
 export default defineConfig(() => ({
     esbuild: {
-        logOverride: { "this-is-undefined-in-esm": "silent" }
+        logOverride: { "this-is-undefined-in-esm": "silent" },
     },
     build: {
         lib: {
             entry: path.resolve(__dirname, "src/index.ts"),
             name: "FireCMS CLI",
             fileName: (format) => {
-                if (format === "es")
-                    return `index.${format}.js`;
-                else if (format === "umd")
-                    return `index.cjs`;
+                if (format === "es") return `index.${format}.js`;
+                else if (format === "umd") return `index.cjs`;
                 throw new Error("Unexpected format");
-            }
+            },
         },
         minify: false,
         target: "ESNEXT",
         sourcemap: true,
         rollupOptions: {
-            external: isExternal
-        }
+            external: isExternal,
+        },
     },
     resolve: {
         alias: {
@@ -38,8 +36,7 @@ export default defineConfig(() => ({
             "@firecms/data_import": path.resolve(__dirname, "../data_import/src"),
             "@firecms/data_export": path.resolve(__dirname, "../data_export/src"),
             "@firecms/data_import_export": path.resolve(__dirname, "../data_import_export/src"),
-        }
+        },
     },
-    plugins: [
-    ]
+    plugins: [],
 }));

@@ -1,6 +1,5 @@
 export function parseQuery(params?: Map<string, string> | URLSearchParams) {
-
-    if(!params) {
+    if (!params) {
         return {};
     }
 
@@ -16,7 +15,6 @@ export function parseQuery(params?: Map<string, string> | URLSearchParams) {
     return {
         category: category ?? undefined,
         priceMax: isNaN(priceMax) ? undefined : priceMax,
-        priceMin: isNaN(priceMin) ? undefined : priceMin
-    }
-
+        priceMin: isNaN(priceMin) ? undefined : priceMin,
+    };
 }

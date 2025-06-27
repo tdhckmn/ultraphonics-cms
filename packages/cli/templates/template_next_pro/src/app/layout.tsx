@@ -10,21 +10,14 @@ export const metadata: Metadata = {
     description: "This is a demo for using FireCMS as an e-commerce backend",
 };
 
-
 export default function RootLayout({
-                                       children,
-                                   }: Readonly<{
+    children,
+}: Readonly<{
     children: React.ReactNode;
 }>) {
-
     return (
         <html lang="en">
-        <body>
-
-        {children}
-
-        </body>
+            <body>{children}</body>
         </html>
     );
 }
-

@@ -6,10 +6,10 @@ const nextConfig: NextConfig = {
             {
                 source: "/",
                 destination: "/products",
-                permanent: false
-            }
-        ]
-    }
+                permanent: false,
+            },
+        ];
+    },
 };
 
 export default nextConfig;

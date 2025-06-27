@@ -19,25 +19,24 @@ type DateTimeFieldProps = FieldProps<Date>;
  * @group Form fields
  */
 export function DateTimeFieldBinding({
-                                         propertyKey,
-                                         value,
-                                         setValue,
-                                         autoFocus,
-                                         error,
-                                         showError,
-                                         disabled,
-                                         touched,
-                                         property,
-                                         includeDescription
-                                     }: DateTimeFieldProps) {
-
+    propertyKey,
+    value,
+    setValue,
+    autoFocus,
+    error,
+    showError,
+    disabled,
+    touched,
+    property,
+    includeDescription,
+}: DateTimeFieldProps) {
     const { locale } = useCustomizationController();
     const internalValue = value || null;
 
     useClearRestoreValue({
         property,
         value,
-        setValue
+        setValue,
     });
 
     return (
@@ -52,20 +51,28 @@ export function DateTimeFieldBinding({
                     locale={locale}
                     error={showError}
                     disabled={disabled}
-                    label={<LabelWithIcon
-                        icon={getIconForProperty(property, "small")}
-                        required={property.validation?.required}
-                        className={showError ? "text-red-500 dark:text-red-500" : "text-text-secondary dark:text-text-secondary-dark"}
-                        title={property.name}/>}
+                    label={
+                        <LabelWithIcon
+                            icon={getIconForProperty(property, "small")}
+                            required={property.validation?.required}
+                            className={
+                                showError
+                                    ? "text-red-500 dark:text-red-500"
+                                    : "text-text-secondary dark:text-text-secondary-dark"
+                            }
+                            title={property.name}
+                        />
+                    }
                 />
             </PropertyIdCopyTooltip>
 
-            <FieldHelperText includeDescription={includeDescription}
-                             showError={showError}
-                             error={error}
-                             disabled={disabled}
-                             property={property}/>
-
+            <FieldHelperText
+                includeDescription={includeDescription}
+                showError={showError}
+                error={error}
+                disabled={disabled}
+                property={property}
+            />
         </>
     );
 }

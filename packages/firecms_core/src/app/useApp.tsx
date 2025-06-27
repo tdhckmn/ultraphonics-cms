@@ -5,14 +5,14 @@ import React from "react";
  * @group Core
  */
 export type AppState = {
-    hasDrawer: boolean,
-    drawerHovered: boolean,
-    drawerOpen: boolean,
-    openDrawer: () => void,
-    closeDrawer: () => void,
-    autoOpenDrawer?: boolean,
-    logo?: string
-}
+    hasDrawer: boolean;
+    drawerHovered: boolean;
+    drawerOpen: boolean;
+    openDrawer: () => void;
+    closeDrawer: () => void;
+    autoOpenDrawer?: boolean;
+    logo?: string;
+};
 
 export const AppContext = React.createContext<AppState>({
     hasDrawer: false,
@@ -24,7 +24,7 @@ export const AppContext = React.createContext<AppState>({
     closeDrawer: () => {
         throw new Error("closeDrawer not implemented");
     },
-    autoOpenDrawer: false
+    autoOpenDrawer: false,
 });
 
 export function useApp() {

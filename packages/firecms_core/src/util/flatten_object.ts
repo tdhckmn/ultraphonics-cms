@@ -1,24 +1,26 @@
 export function flattenObject(obj: any, parentKey = "") {
     if (!obj) return obj;
-    return Object.keys(obj).reduce((flatObj, key) => {
-        const newKey = parentKey ? `${parentKey}.${key}` : key;
+    return Object.keys(obj).reduce(
+        (flatObj, key) => {
+            const newKey = parentKey ? `${parentKey}.${key}` : key;
 
-        if (typeof obj[key] === "object" && obj[key] !== null) {
-            if (Array.isArray(obj[key])) {
-                obj[key].forEach((item: any, index: number) => {
-                    Object.assign(flatObj, flattenObject(item, `${newKey}[${index}]`));
-                });
+            if (typeof obj[key] === "object" && obj[key] !== null) {
+                if (Array.isArray(obj[key])) {
+                    obj[key].forEach((item: any, index: number) => {
+                        Object.assign(flatObj, flattenObject(item, `${newKey}[${index}]`));
+                    });
+                } else {
+                    Object.assign(flatObj, flattenObject(obj[key], newKey));
+                }
             } else {
-                Object.assign(flatObj, flattenObject(obj[key], newKey));
+                flatObj[newKey] = obj[key];
             }
-        } else {
-            flatObj[newKey] = obj[key];
-        }
 
-        return flatObj;
-    }, {} as { [key: string]: any });
+            return flatObj;
+        },
+        {} as { [key: string]: any }
+    );
 }
-
 
 // map from nested property key like "a.b.c" to the maximum array count found in a list of objects for that array
 export type ArrayValuesCount = Record<string, number>;

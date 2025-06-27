@@ -2,19 +2,14 @@ import {
     ConfirmationDialog,
     PluginHomePageActionsProps,
     useAuthController,
-    useSnackbarController
+    useSnackbarController,
 } from "@firecms/core";
-import { DeleteIcon, IconButton, Menu, MenuItem, MoreVertIcon, SettingsIcon, } from "@firecms/ui";
+import { DeleteIcon, IconButton, Menu, MenuItem, MoreVertIcon, SettingsIcon } from "@firecms/ui";
 import { useCollectionEditorController } from "../useCollectionEditorController";
 import { useState } from "react";
 import { useCollectionsConfigController } from "../useCollectionsConfigController";
 
-export function HomePageEditorCollectionAction({
-                                                   path,
-                                                   collection
-                                               }: PluginHomePageActionsProps) {
-
-
+export function HomePageEditorCollectionAction({ path, collection }: PluginHomePageActionsProps) {
     const snackbarController = useSnackbarController();
     const authController = useAuthController();
     const configController = useCollectionsConfigController();
@@ -22,13 +17,13 @@ export function HomePageEditorCollectionAction({
 
     const permissions = collectionEditorController.configPermissions({
         user: authController.user,
-        collection
+        collection,
     });
 
     const onEditCollectionClicked = () => {
         collectionEditorController?.editCollection({
             id: collection.id,
-            parentCollectionIds: []
+            parentCollectionIds: [],
         });
     };
 
@@ -39,53 +34,60 @@ export function HomePageEditorCollectionAction({
             setDeleteRequested(false);
             snackbarController.open({
                 message: "Collection deleted",
-                type: "success"
+                type: "success",
             });
         });
     };
 
-    return <>
+    return (
+        <>
+            <div>
+                {permissions.deleteCollections && (
+                    <Menu
+                        trigger={
+                            <IconButton size={"small"}>
+                                <MoreVertIcon size={"small"} />
+                            </IconButton>
+                        }
+                    >
+                        <MenuItem
+                            dense={true}
+                            onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                setDeleteRequested(true);
+                            }}
+                        >
+                            <DeleteIcon />
+                            Delete
+                        </MenuItem>
+                    </Menu>
+                )}
 
-        <div>
-            {permissions.deleteCollections &&
-                <Menu
-                    trigger={<IconButton size={"small"}>
-                        <MoreVertIcon size={"small"}/>
-                    </IconButton>}
-                >
-                    <MenuItem
-                        dense={true}
+                {permissions.editCollections && (
+                    <IconButton
+                        size={"small"}
                         onClick={(event) => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            setDeleteRequested(true);
-                        }}>
-                        <DeleteIcon/>
-                        Delete
-                    </MenuItem>
+                            onEditCollectionClicked();
+                        }}
+                    >
+                        <SettingsIcon size={"small"} />
+                    </IconButton>
+                )}
+            </div>
 
-                </Menu>
-
-            }
-
-            {permissions.editCollections &&
-                <IconButton
-                    size={"small"}
-                    onClick={(event) => {
-                        onEditCollectionClicked();
-                    }}>
-                    <SettingsIcon size={"small"}/>
-                </IconButton>}
-        </div>
-
-        <ConfirmationDialog
-            open={deleteRequested}
-            onAccept={deleteCollection}
-            onCancel={() => setDeleteRequested(false)}
-            title={<>Delete this collection?</>}
-            body={<> This will <b>not
-                delete any data</b>, only
-                the collection in the CMS</>}/>
-    </>;
-
+            <ConfirmationDialog
+                open={deleteRequested}
+                onAccept={deleteCollection}
+                onCancel={() => setDeleteRequested(false)}
+                title={<>Delete this collection?</>}
+                body={
+                    <>
+                        {" "}
+                        This will <b>not delete any data</b>, only the collection in the CMS
+                    </>
+                }
+            />
+        </>
+    );
 }

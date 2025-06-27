@@ -6,21 +6,14 @@ export default function CheckboxSizeDemo() {
 
     return (
         <div className="flex flex-col items-center gap-4">
-            <Checkbox
-                size="small"
-                checked={checked}
-                onCheckedChange={setChecked}
-                color="primary"/>
+            <Checkbox size="small" checked={checked} onCheckedChange={setChecked} color="primary" />
             <Checkbox
                 size="medium"
                 checked={checked}
                 onCheckedChange={setChecked}
-                color="primary"/>
-            <Checkbox
-                size="large"
-                checked={checked}
-                onCheckedChange={setChecked}
-                color="primary"/>
+                color="primary"
+            />
+            <Checkbox size="large" checked={checked} onCheckedChange={setChecked} color="primary" />
         </div>
     );
 }

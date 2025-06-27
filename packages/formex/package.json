@@ -1,78 +1,78 @@
 {
-  "name": "@firecms/formex",
-  "type": "module",
-  "version": "3.0.0-canary.254",
-  "publishConfig": {
-    "access": "public"
-  },
-  "keywords": [
-    "firebase",
-    "cms",
-    "admin",
-    "admin panel",
-    "firebase panel",
-    "firestore",
-    "headless",
-    "headless cms",
-    "content manager"
-  ],
-  "exports": {
-    ".": {
-      "import": "./dist/index.es.js",
-      "require": "./dist/index.umd.js",
-      "types": "./dist/index.d.ts"
+    "name": "@firecms/formex",
+    "type": "module",
+    "version": "3.0.0-canary.254",
+    "publishConfig": {
+        "access": "public"
     },
-    "./package.json": "./package.json"
-  },
-  "main": "./dist/index.umd.js",
-  "module": "./dist/index.es.js",
-  "types": "dist/index.d.ts",
-  "source": "src/index.ts",
-  "peerDependencies": {
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0"
-  },
-  "dependencies": {
-    "react-fast-compare": "^3.2.2"
-  },
-  "devDependencies": {
-    "@jest/globals": "^29.7.0",
-    "@types/jest": "^29.5.14",
-    "@types/node": "^20.17.14",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.0",
-    "babel-plugin-react-compiler": "beta",
-    "eslint-plugin-react-compiler": "beta",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.2.5",
-    "typescript": "^5.7.3",
-    "vite": "^5.4.14"
-  },
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build && tsc --emitDeclarationOnly -p tsconfig.prod.json",
-    "clean": "rm -rf dist && find ./src -name '*.js' -type f | xargs rm -f",
-    "test": "jest"
-  },
-  "files": [
-    "dist",
-    "src",
-    "tailwind.config.js",
-    "bin"
-  ],
-  "jest": {
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
+    "keywords": [
+        "firebase",
+        "cms",
+        "admin",
+        "admin panel",
+        "firebase panel",
+        "firestore",
+        "headless",
+        "headless cms",
+        "content manager"
+    ],
+    "exports": {
+        ".": {
+            "import": "./dist/index.es.js",
+            "require": "./dist/index.umd.js",
+            "types": "./dist/index.d.ts"
+        },
+        "./package.json": "./package.json"
     },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ]
-  },
-  "gitHead": "946e1f4f5695190e903af3a71dd7111accfc1efa"
+    "main": "./dist/index.umd.js",
+    "module": "./dist/index.es.js",
+    "types": "dist/index.d.ts",
+    "source": "src/index.ts",
+    "peerDependencies": {
+        "react": ">=18.0.0",
+        "react-dom": ">=18.0.0"
+    },
+    "dependencies": {
+        "react-fast-compare": "^3.2.2"
+    },
+    "devDependencies": {
+        "@jest/globals": "^29.7.0",
+        "@types/jest": "^29.5.14",
+        "@types/node": "^20.17.14",
+        "@types/react": "^18.3.18",
+        "@types/react-dom": "^18.3.0",
+        "babel-plugin-react-compiler": "beta",
+        "eslint-plugin-react-compiler": "beta",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.2.5",
+        "typescript": "^5.7.3",
+        "vite": "^5.4.14"
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build && tsc --emitDeclarationOnly -p tsconfig.prod.json",
+        "clean": "rm -rf dist && find ./src -name '*.js' -type f | xargs rm -f",
+        "test": "jest"
+    },
+    "files": [
+        "dist",
+        "src",
+        "tailwind.config.js",
+        "bin"
+    ],
+    "jest": {
+        "transform": {
+            "^.+\\.tsx?$": "ts-jest"
+        },
+        "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+        "moduleFileExtensions": [
+            "ts",
+            "tsx",
+            "js",
+            "jsx",
+            "json",
+            "node"
+        ]
+    },
+    "gitHead": "946e1f4f5695190e903af3a71dd7111accfc1efa"
 }

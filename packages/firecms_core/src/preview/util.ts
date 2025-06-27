@@ -6,12 +6,9 @@ export const MEDIUM_THUMBNAIL = 100;
 export const LARGE_THUMBNAIL = 200;
 
 export function getThumbnailMeasure(size: PreviewSize): number {
-    if (size === "small")
-        return SMALL_THUMBNAIL;
-    else if (size === "medium")
-        return MEDIUM_THUMBNAIL;
-    else if (size === "large")
-        return LARGE_THUMBNAIL;
+    if (size === "small") return SMALL_THUMBNAIL;
+    else if (size === "medium") return MEDIUM_THUMBNAIL;
+    else if (size === "large") return LARGE_THUMBNAIL;
     else throw Error("Thumbnail size not mapped");
 }
 

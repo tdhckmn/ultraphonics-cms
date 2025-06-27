@@ -27,26 +27,26 @@ import React from "react";
 import { FireCMS } from "@firecms/core";
 import { useExportPlugin } from "@firecms/data_export";
 
-
 export default function App() {
-
     // Basic setup with default options
     const exportPlugin = useExportPlugin();
-    
+
     const plugins = [exportPlugin];
-    
+
     const navigationController = useBuildNavigationController({
         // ... rest of your config
-        plugins
-    }); 
-    
-    return <FireCMS
-        name={"My Online Shop"}
-        navigationController={navigationController}
-        authentication={myAuthenticator}
-        collections={myCollections}
-        firebaseConfig={firebaseConfig}
-    />;
+        plugins,
+    });
+
+    return (
+        <FireCMS
+            name={"My Online Shop"}
+            navigationController={navigationController}
+            authentication={myAuthenticator}
+            collections={myCollections}
+            firebaseConfig={firebaseConfig}
+        />
+    );
 }
 ```
 
@@ -60,25 +60,25 @@ const exportPlugin = useExportPlugin({
     exportAllowed: ({ collectionEntitiesCount, path, collection }) => {
         // Prevent export of large collections
         if (collectionEntitiesCount > 5000) return false;
-        
+
         // Only allow export for specific collections
         return ["products", "orders"].includes(path);
     },
-    
+
     // Custom view when export is not allowed
     notAllowedView: <div>Export is not available for this collection</div>,
-    
+
     // Track export events
     onAnalyticsEvent: (event, params) => {
         console.log("Export event:", event, params);
-    }
+    },
 });
 ```
 
 ## Configuration Options
 
 | Option             | Type                                       | Description                                                 |
-|--------------------|--------------------------------------------|-------------------------------------------------------------|
+| ------------------ | ------------------------------------------ | ----------------------------------------------------------- |
 | `exportAllowed`    | `(params: ExportAllowedParams) => boolean` | Function to determine if export is allowed for a collection |
 | `notAllowedView`   | `React.ReactNode`                          | Custom component to display when export is not allowed      |
 | `onAnalyticsEvent` | `(event: string, params?: any) => void`    | Callback for tracking export events                         |

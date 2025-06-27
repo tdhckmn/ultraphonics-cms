@@ -9,7 +9,6 @@ export type EntityStatus = "new" | "existing" | "copy";
  * @group Models
  */
 export interface Entity<M extends object = any> {
-
     /**
      * ID of the entity
      */
@@ -65,7 +64,6 @@ export class EntityReference {
 }
 
 export class GeoPoint {
-
     /**
      * The latitude of this GeoPoint instance.
      */

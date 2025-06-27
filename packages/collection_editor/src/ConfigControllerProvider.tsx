@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useCallback } from "react";
-import equal from "react-fast-compare"
+import equal from "react-fast-compare";
 
 import { CollectionsConfigController } from "./types/config_controller";
 import {
@@ -8,7 +8,7 @@ import {
     useCustomizationController,
     useNavigationController,
     User,
-    useSnackbarController
+    useSnackbarController,
 } from "@firecms/core";
 import { CollectionEditorDialog } from "./ui/collection_editor/CollectionEditorDialog";
 import { useNavigate } from "react-router";
@@ -44,293 +44,315 @@ export interface ConfigControllerProviderProps {
 
     extraView?: {
         View: React.ComponentType<{
-            path: string
-        }>,
-        icon: React.ReactNode
+            path: string;
+        }>;
+        icon: React.ReactNode;
     };
 
-    getUser?: (uid: string) => User | null
+    getUser?: (uid: string) => User | null;
 
     getData?: (path: string, parentPaths: string[]) => Promise<object[]>;
 
     onAnalyticsEvent?: (event: string, params?: object) => void;
-
 }
 
-export const ConfigControllerProvider = React.memo(
-    function ConfigControllerProvider({
-                                          children,
-                                          collectionConfigController,
-                                          configPermissions,
-                                          reservedGroups,
-                                          collectionInference,
-                                          extraView,
-                                          getUser,
-                                          getData,
-                                          onAnalyticsEvent,
-                                      }: PropsWithChildren<ConfigControllerProviderProps>) {
+export const ConfigControllerProvider = React.memo(function ConfigControllerProvider({
+    children,
+    collectionConfigController,
+    configPermissions,
+    reservedGroups,
+    collectionInference,
+    extraView,
+    getUser,
+    getData,
+    onAnalyticsEvent,
+}: PropsWithChildren<ConfigControllerProviderProps>) {
+    const navigation = useNavigationController();
+    const navigate = useNavigate();
+    const snackbarController = useSnackbarController();
+    const { propertyConfigs } = useCustomizationController();
 
-        const navigation = useNavigationController();
-        const navigate = useNavigate();
-        const snackbarController = useSnackbarController();
-        const { propertyConfigs } = useCustomizationController();
+    const [currentDialog, setCurrentDialog] = React.useState<{
+        isNewCollection: boolean;
+        parentCollection?: PersistedCollection;
+        editedCollectionId?: string;
+        fullPath?: string;
+        parentCollectionIds: string[];
+        initialValues?: {
+            path?: string;
+            group?: string;
+            name?: string;
+        };
+        redirect: boolean;
+        existingEntities?: Entity<any>[];
+    }>();
 
-        const [currentDialog, setCurrentDialog] = React.useState<{
-            isNewCollection: boolean,
-            parentCollection?: PersistedCollection,
-            editedCollectionId?: string,
-            fullPath?: string,
-            parentCollectionIds: string[],
-            initialValues?: {
-                path?: string,
-                group?: string,
-                name?: string
-            },
-            redirect: boolean,
-            existingEntities?: Entity<any>[]
-        }>();
+    const [currentPropertyDialog, setCurrentPropertyDialog] = React.useState<{
+        propertyKey?: string;
+        property?: Property;
+        namespace?: string;
+        parentCollection?: PersistedCollection;
+        currentPropertiesOrder?: string[];
+        editedCollectionId: string;
+        fullPath?: string;
+        parentCollectionIds: string[];
+        collectionEditable: boolean;
+        existingEntities?: Entity<any>[];
+    }>();
 
-        const [currentPropertyDialog, setCurrentPropertyDialog] = React.useState<{
-            propertyKey?: string,
-            property?: Property,
-            namespace?: string,
-            parentCollection?: PersistedCollection,
-            currentPropertiesOrder?: string[],
-            editedCollectionId: string,
-            fullPath?: string,
-            parentCollectionIds: string[],
-            collectionEditable: boolean;
-            existingEntities?: Entity<any>[]
-        }>();
-
-        const defaultConfigPermissions: CollectionEditorPermissionsBuilder = useCallback(() => ({
+    const defaultConfigPermissions: CollectionEditorPermissionsBuilder = useCallback(
+        () => ({
             createCollections: true,
             editCollections: true,
-            deleteCollections: true
-        }), []);
+            deleteCollections: true,
+        }),
+        [],
+    );
 
-        const editCollection = ({
-                                    id,
-                                    fullPath,
-                                    parentCollectionIds,
-                                    parentCollection,
-                                    existingEntities
-                                }: {
-            id?: string,
-            fullPath?: string,
-            parentCollectionIds: string[],
-            parentCollection?: PersistedCollection,
-            existingEntities?: Entity<any>[]
-        }) => {
-            console.debug("Edit collection", id, fullPath, parentCollectionIds, parentCollection);
-            onAnalyticsEvent?.("edit_collection", {
-                id,
-                fullPath
-            });
-            setCurrentDialog({
-                editedCollectionId: id,
-                fullPath,
-                parentCollectionIds,
-                isNewCollection: false,
-                parentCollection,
-                redirect: false,
-                existingEntities
-            });
-        };
+    const editCollection = ({
+        id,
+        fullPath,
+        parentCollectionIds,
+        parentCollection,
+        existingEntities,
+    }: {
+        id?: string;
+        fullPath?: string;
+        parentCollectionIds: string[];
+        parentCollection?: PersistedCollection;
+        existingEntities?: Entity<any>[];
+    }) => {
+        console.debug("Edit collection", id, fullPath, parentCollectionIds, parentCollection);
+        onAnalyticsEvent?.("edit_collection", {
+            id,
+            fullPath,
+        });
+        setCurrentDialog({
+            editedCollectionId: id,
+            fullPath,
+            parentCollectionIds,
+            isNewCollection: false,
+            parentCollection,
+            redirect: false,
+            existingEntities,
+        });
+    };
 
-        const editProperty = ({
-                                  propertyKey,
-                                  property,
-                                  editedCollectionId,
-                                  currentPropertiesOrder,
-                                  parentCollectionIds,
-                                  collection,
-                                  existingEntities
-                              }: {
-            propertyKey?: string,
-            property?: Property,
-            currentPropertiesOrder?: string[],
-            editedCollectionId: string,
-            parentCollectionIds: string[],
-            collection: PersistedCollection,
-            existingEntities?: Entity<any>[]
-        }) => {
-            console.debug("Edit property", propertyKey, property, editedCollectionId, currentPropertiesOrder, parentCollectionIds, collection);
-            onAnalyticsEvent?.("edit_property", {
-                propertyKey,
-                editedCollectionId
-            });
-            // namespace is all the path until the last dot
-            const namespace = propertyKey && propertyKey.includes(".")
+    const editProperty = ({
+        propertyKey,
+        property,
+        editedCollectionId,
+        currentPropertiesOrder,
+        parentCollectionIds,
+        collection,
+        existingEntities,
+    }: {
+        propertyKey?: string;
+        property?: Property;
+        currentPropertiesOrder?: string[];
+        editedCollectionId: string;
+        parentCollectionIds: string[];
+        collection: PersistedCollection;
+        existingEntities?: Entity<any>[];
+    }) => {
+        console.debug(
+            "Edit property",
+            propertyKey,
+            property,
+            editedCollectionId,
+            currentPropertiesOrder,
+            parentCollectionIds,
+            collection,
+        );
+        onAnalyticsEvent?.("edit_property", {
+            propertyKey,
+            editedCollectionId,
+        });
+        // namespace is all the path until the last dot
+        const namespace =
+            propertyKey && propertyKey.includes(".")
                 ? propertyKey.substring(0, propertyKey.lastIndexOf("."))
                 : undefined;
-            const propertyKeyWithoutNamespace = propertyKey && propertyKey.includes(".")
+        const propertyKeyWithoutNamespace =
+            propertyKey && propertyKey.includes(".")
                 ? propertyKey.substring(propertyKey.lastIndexOf(".") + 1)
                 : propertyKey;
-            setCurrentPropertyDialog({
-                propertyKey: propertyKeyWithoutNamespace,
-                property,
-                namespace,
-                currentPropertiesOrder,
-                editedCollectionId,
-                parentCollectionIds,
-                collectionEditable: collection?.editable ?? false,
-                existingEntities
-            });
+        setCurrentPropertyDialog({
+            propertyKey: propertyKeyWithoutNamespace,
+            property,
+            namespace,
+            currentPropertiesOrder,
+            editedCollectionId,
+            parentCollectionIds,
+            collectionEditable: collection?.editable ?? false,
+            existingEntities,
+        });
+    };
+
+    const createCollection = ({
+        parentCollectionIds,
+        parentCollection,
+        initialValues,
+        redirect,
+        sourceClick,
+    }: {
+        parentCollectionIds: string[];
+        parentCollection?: PersistedCollection;
+        initialValues?: {
+            group?: string;
+            path?: string;
+            name?: string;
         };
+        redirect: boolean;
+        sourceClick?: string;
+    }) => {
+        console.debug("Create collection", {
+            parentCollectionIds,
+            parentCollection,
+            initialValues,
+            redirect,
+            sourceClick,
+        });
+        onAnalyticsEvent?.("create_collection", {
+            parentCollectionIds,
+            parentCollection,
+            initialValues,
+            redirect,
+            sourceClick,
+        });
+        setCurrentDialog({
+            isNewCollection: true,
+            parentCollectionIds,
+            parentCollection,
+            initialValues,
+            redirect,
+        });
+    };
 
-        const createCollection = ({
-                                      parentCollectionIds,
-                                      parentCollection,
-                                      initialValues,
-                                      redirect,
-                                      sourceClick
-                                  }: {
-            parentCollectionIds: string[],
-            parentCollection?: PersistedCollection
-            initialValues?: {
-                group?: string,
-                path?: string,
-                name?: string
-            },
-            redirect: boolean,
-            sourceClick?: string
-        }) => {
-            console.debug("Create collection", {
-                parentCollectionIds,
-                parentCollection,
-                initialValues,
-                redirect,
-                sourceClick
-            });
-            onAnalyticsEvent?.("create_collection", {
-                parentCollectionIds,
-                parentCollection,
-                initialValues,
-                redirect,
-                sourceClick
-            });
-            setCurrentDialog({
-                isNewCollection: true,
-                parentCollectionIds,
-                parentCollection,
-                initialValues,
-                redirect
-            });
-        };
+    return (
+        <ConfigControllerContext.Provider value={collectionConfigController}>
+            <CollectionEditorContext.Provider
+                value={{
+                    editCollection,
+                    createCollection,
+                    editProperty,
+                    configPermissions: configPermissions ?? defaultConfigPermissions,
+                }}
+            >
+                {children}
 
-        return (
-            <ConfigControllerContext.Provider value={collectionConfigController}>
-                <CollectionEditorContext.Provider
-                    value={{
-                        editCollection,
-                        createCollection,
-                        editProperty,
-                        configPermissions: configPermissions ?? defaultConfigPermissions,
-                    }}>
-
-                    {children}
-
-                    <CollectionEditorDialog
-                        open={Boolean(currentDialog)}
-                        configController={collectionConfigController}
-                        isNewCollection={false}
-                        collectionInference={collectionInference}
-                        {...currentDialog}
-                        getData={getData}
-                        reservedGroups={reservedGroups}
-                        extraView={extraView}
-                        getUser={getUser}
-                        handleClose={(collection) => {
-                            if (currentDialog?.redirect) {
-                                if (collection && currentDialog?.isNewCollection && !currentDialog.parentCollectionIds.length) {
-                                    const url = navigation.buildUrlCollectionPath(collection.id ?? collection.path);
-                                    navigate(url);
-                                }
+                <CollectionEditorDialog
+                    open={Boolean(currentDialog)}
+                    configController={collectionConfigController}
+                    isNewCollection={false}
+                    collectionInference={collectionInference}
+                    {...currentDialog}
+                    getData={getData}
+                    reservedGroups={reservedGroups}
+                    extraView={extraView}
+                    getUser={getUser}
+                    handleClose={(collection) => {
+                        if (currentDialog?.redirect) {
+                            if (
+                                collection &&
+                                currentDialog?.isNewCollection &&
+                                !currentDialog.parentCollectionIds.length
+                            ) {
+                                const url = navigation.buildUrlCollectionPath(collection.id ?? collection.path);
+                                navigate(url);
                             }
-                            setCurrentDialog(undefined);
-                        }}/>
+                        }
+                        setCurrentDialog(undefined);
+                    }}
+                />
 
-                    {/* Used for editing properties*/}
-                    <PropertyFormDialog
-                        open={Boolean(currentPropertyDialog)}
-                        includeIdAndName={true}
-                        existingProperty={Boolean(currentPropertyDialog?.propertyKey)}
-                        autoUpdateId={!currentPropertyDialog ? false : !currentPropertyDialog?.propertyKey}
-                        autoOpenTypeSelect={!currentPropertyDialog ? false : !currentPropertyDialog?.propertyKey}
-                        inArray={false}
-                        collectionEditable={currentPropertyDialog?.collectionEditable ?? false}
-                        getData={getData && currentPropertyDialog?.editedCollectionId
+                {/* Used for editing properties*/}
+                <PropertyFormDialog
+                    open={Boolean(currentPropertyDialog)}
+                    includeIdAndName={true}
+                    existingProperty={Boolean(currentPropertyDialog?.propertyKey)}
+                    autoUpdateId={!currentPropertyDialog ? false : !currentPropertyDialog?.propertyKey}
+                    autoOpenTypeSelect={!currentPropertyDialog ? false : !currentPropertyDialog?.propertyKey}
+                    inArray={false}
+                    collectionEditable={currentPropertyDialog?.collectionEditable ?? false}
+                    getData={
+                        getData && currentPropertyDialog?.editedCollectionId
                             ? () => {
-                                console.debug("get data for property", currentPropertyDialog?.editedCollectionId);
-                                const resolvedPath = navigation.resolveIdsFrom(currentPropertyDialog.editedCollectionId!)
-                                return getData(resolvedPath, []);
-                            }
-                            : undefined}
-                        onPropertyChanged={({
-                                                id,
-                                                property
-                                            }) => {
-                            if (!currentPropertyDialog) return;
-                            if (!id) return;
-                            const newProperty = !(currentPropertyDialog.propertyKey);
-                            return collectionConfigController.saveProperty({
+                                  console.debug("get data for property", currentPropertyDialog?.editedCollectionId);
+                                  const resolvedPath = navigation.resolveIdsFrom(
+                                      currentPropertyDialog.editedCollectionId!,
+                                  );
+                                  return getData(resolvedPath, []);
+                              }
+                            : undefined
+                    }
+                    onPropertyChanged={({ id, property }) => {
+                        if (!currentPropertyDialog) return;
+                        if (!id) return;
+                        const newProperty = !currentPropertyDialog.propertyKey;
+                        return collectionConfigController
+                            .saveProperty({
                                 path: currentPropertyDialog?.editedCollectionId,
                                 property,
                                 propertyKey: id,
-                                newPropertiesOrder: newProperty && currentPropertyDialog.currentPropertiesOrder ? [...currentPropertyDialog.currentPropertiesOrder, id] : undefined,
+                                newPropertiesOrder:
+                                    newProperty && currentPropertyDialog.currentPropertiesOrder
+                                        ? [...currentPropertyDialog.currentPropertiesOrder, id]
+                                        : undefined,
                                 namespace: currentPropertyDialog.namespace,
-                                parentCollectionIds: currentPropertyDialog.parentCollectionIds
+                                parentCollectionIds: currentPropertyDialog.parentCollectionIds,
                             })
-                                .catch((e) => {
-                                    console.error(e);
-                                    snackbarController.open({
-                                        type: "error",
-                                        message: "Error persisting property: " + (e.message ?? "Details in the console")
-                                    });
-                                    return false;
+                            .catch((e) => {
+                                console.error(e);
+                                snackbarController.open({
+                                    type: "error",
+                                    message: "Error persisting property: " + (e.message ?? "Details in the console"),
                                 });
-                        }}
-                        onPropertyChangedImmediate={false}
-                        onDelete={() => {
-                            if (!currentPropertyDialog?.propertyKey) return;
-                            const newPropertiesOrder = currentPropertyDialog?.currentPropertiesOrder?.filter(p => p !== currentPropertyDialog?.propertyKey);
-                            return collectionConfigController.deleteProperty({
+                                return false;
+                            });
+                    }}
+                    onPropertyChangedImmediate={false}
+                    onDelete={() => {
+                        if (!currentPropertyDialog?.propertyKey) return;
+                        const newPropertiesOrder = currentPropertyDialog?.currentPropertiesOrder?.filter(
+                            (p) => p !== currentPropertyDialog?.propertyKey,
+                        );
+                        return collectionConfigController
+                            .deleteProperty({
                                 path: currentPropertyDialog?.editedCollectionId,
                                 propertyKey: currentPropertyDialog?.propertyKey,
                                 namespace: currentPropertyDialog?.namespace,
                                 newPropertiesOrder,
-                                parentCollectionIds: currentPropertyDialog?.parentCollectionIds
+                                parentCollectionIds: currentPropertyDialog?.parentCollectionIds,
                             })
-                                .then(() => {
-                                    setCurrentPropertyDialog(undefined);
-                                }).catch((e) => {
-                                    console.error(e);
-                                    snackbarController.open({
-                                        type: "error",
-                                        message: "Error deleting property: " + (e.message ?? "Details in the console")
-                                    });
-                                    return false;
+                            .then(() => {
+                                setCurrentPropertyDialog(undefined);
+                            })
+                            .catch((e) => {
+                                console.error(e);
+                                snackbarController.open({
+                                    type: "error",
+                                    message: "Error deleting property: " + (e.message ?? "Details in the console"),
                                 });
-                        }}
-                        onError={() => {
-                        }}
-                        onOkClicked={() => {
-                            setCurrentPropertyDialog(undefined);
-                        }}
-                        onCancel={() => {
-                            setCurrentPropertyDialog(undefined);
-                        }}
-                        initialErrors={{}}
-                        forceShowErrors={false}
-                        existingPropertyKeys={[]}
-                        allowDataInference={true}
-                        propertyConfigs={propertyConfigs}
-                        property={currentPropertyDialog?.property}
-                        propertyKey={currentPropertyDialog?.propertyKey}/>
-
-                </CollectionEditorContext.Provider>
-
-            </ConfigControllerContext.Provider>
-        );
-    }, equal);
+                                return false;
+                            });
+                    }}
+                    onError={() => {}}
+                    onOkClicked={() => {
+                        setCurrentPropertyDialog(undefined);
+                    }}
+                    onCancel={() => {
+                        setCurrentPropertyDialog(undefined);
+                    }}
+                    initialErrors={{}}
+                    forceShowErrors={false}
+                    existingPropertyKeys={[]}
+                    allowDataInference={true}
+                    propertyConfigs={propertyConfigs}
+                    property={currentPropertyDialog?.property}
+                    propertyKey={currentPropertyDialog?.propertyKey}
+                />
+            </CollectionEditorContext.Provider>
+        </ConfigControllerContext.Provider>
+    );
+}, equal);

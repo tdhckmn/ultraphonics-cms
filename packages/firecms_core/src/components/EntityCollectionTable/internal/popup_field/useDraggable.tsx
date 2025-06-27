@@ -1,54 +1,52 @@
 import React, { useCallback, useEffect } from "react";
 
 interface DraggableProps {
-    containerRef: React.RefObject<HTMLDivElement>,
-    innerRef: React.RefObject<HTMLDivElement>,
+    containerRef: React.RefObject<HTMLDivElement>;
+    innerRef: React.RefObject<HTMLDivElement>;
     x?: number;
     y?: number;
-    onMove: (params: { x: number, y: number }) => void,
+    onMove: (params: { x: number; y: number }) => void;
 }
 
-export function useDraggable({
-                                 containerRef,
-                                 innerRef,
-                                 x,
-                                 y,
-                                 onMove
-                             }: DraggableProps) {
-
+export function useDraggable({ containerRef, innerRef, x, y, onMove }: DraggableProps) {
     let relX = 0;
     let relY = 0;
 
     const listeningRef = React.useRef(false);
 
-    const onMouseDown = useCallback((event: any) => {
-        if (event.button !== 0 || !containerRef.current || event.defaultPrevented || event.innerClicked) {
-            return;
-        }
+    const onMouseDown = useCallback(
+        (event: any) => {
+            if (
+                event.button !== 0 ||
+                !containerRef.current ||
+                event.defaultPrevented ||
+                event.innerClicked
+            ) {
+                return;
+            }
 
-        const {
-            x,
-            y
-        } = containerRef.current.getBoundingClientRect();
+            const { x, y } = containerRef.current.getBoundingClientRect();
 
-        relX = event.screenX - x;
-        relY = event.screenY - y;
-        document.addEventListener("mousemove", onMouseMove);
-        document.addEventListener("mouseup", onMouseUp);
-        document.addEventListener("selectstart", onSelect);
-        listeningRef.current = true;
-        // event.stopPropagation();
-    }, [containerRef, onMove]);
+            relX = event.screenX - x;
+            relY = event.screenY - y;
+            document.addEventListener("mousemove", onMouseMove);
+            document.addEventListener("mouseup", onMouseUp);
+            document.addEventListener("selectstart", onSelect);
+            listeningRef.current = true;
+            // event.stopPropagation();
+        },
+        [containerRef, onMove]
+    );
 
     const onMouseDownInner = useCallback((event: any) => {
         // @ts-ignore
         event.innerClicked = true;
-    }, [])
+    }, []);
 
     const onSelect = useCallback((event: any) => {
-        event.preventDefault()
+        event.preventDefault();
         event.stopPropagation();
-    }, [])
+    }, []);
 
     const onMouseUp = (event: any) => {
         document.removeEventListener("mousemove", onMouseMove);
@@ -59,13 +57,11 @@ export function useDraggable({
     };
 
     const onMouseMove = (event: any) => {
-        if (event.target.localName === "input" || !listeningRef.current)
-            return;
+        if (event.target.localName === "input" || !listeningRef.current) return;
         onMove({
-                x: event.screenX - relX,
-                y: event.screenY - relY
-            }
-        );
+            x: event.screenX - relX,
+            y: event.screenY - relY,
+        });
         event.stopPropagation();
     };
 
@@ -79,19 +75,13 @@ export function useDraggable({
     useEffect(() => {
         const current = containerRef.current;
         const innerCurrent = innerRef.current;
-        if (!current || !innerCurrent)
-            return;
-        if (innerCurrent)
-            innerCurrent.addEventListener("mousedown", onMouseDownInner);
-        if (current)
-            current.addEventListener("mousedown", onMouseDown);
+        if (!current || !innerCurrent) return;
+        if (innerCurrent) innerCurrent.addEventListener("mousedown", onMouseDownInner);
+        if (current) current.addEventListener("mousedown", onMouseDown);
         update();
         return () => {
-            if (current)
-                current.removeEventListener("mousedown", onMouseDown);
-            if (innerCurrent)
-                innerCurrent.removeEventListener("mousedown", onMouseDownInner);
+            if (current) current.removeEventListener("mousedown", onMouseDown);
+            if (innerCurrent) innerCurrent.removeEventListener("mousedown", onMouseDownInner);
         };
     }, [containerRef, innerRef, onMouseDownInner, onMouseDown]);
-
 }

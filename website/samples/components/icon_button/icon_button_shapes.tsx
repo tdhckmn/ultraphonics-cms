@@ -7,14 +7,16 @@ export default function IconButtonShapeDemo() {
             <IconButton
                 variant="filled"
                 shape="circular"
-                onClick={() => console.log("Circular Clicked!")}>
-                <AddIcon/>
+                onClick={() => console.log("Circular Clicked!")}
+            >
+                <AddIcon />
             </IconButton>
             <IconButton
                 variant="filled"
                 shape="square"
-                onClick={() => console.log("Square Clicked!")}>
-                <AddIcon/>
+                onClick={() => console.log("Square Clicked!")}
+            >
+                <AddIcon />
             </IconButton>
         </>
     );

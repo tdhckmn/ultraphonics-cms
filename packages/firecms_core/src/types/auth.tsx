@@ -10,7 +10,6 @@ import { StorageSource } from "./storage";
  * @group Hooks and utilities
  */
 export type AuthController<USER extends User = any, ExtraData = any> = {
-
     /**
      * The user currently logged in
      * The values can be: the user object, null if they skipped login
@@ -62,7 +61,6 @@ export type AuthController<USER extends User = any, ExtraData = any> = {
     setUser?: (user: USER | null) => void;
 
     setUserRoles?: (roles: Role[]) => void;
-
 };
 
 /**
@@ -70,7 +68,6 @@ export type AuthController<USER extends User = any, ExtraData = any> = {
  * @group Hooks and utilities
  */
 export type Authenticator<USER extends User = User> = (props: {
-
     /**
      * Logged-in user or null
      */
@@ -90,5 +87,4 @@ export type Authenticator<USER extends User = User> = (props: {
      * Used storage implementation
      */
     storageSource: StorageSource;
-
 }) => boolean | Promise<boolean>;

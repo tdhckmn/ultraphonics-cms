@@ -9,9 +9,5 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     if (!data) {
         return <div>Blog entry not found</div>;
     }
-    return (
-        <BlogEntryView blogEntry={data}/>
-    )
+    return <BlogEntryView blogEntry={data} />;
 }
-
-

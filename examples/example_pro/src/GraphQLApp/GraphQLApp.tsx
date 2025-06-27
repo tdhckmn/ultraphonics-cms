@@ -17,7 +17,7 @@ import {
     SnackbarProvider,
     useBuildLocalConfigurationPersistence,
     useBuildModeController,
-    useBuildNavigationController
+    useBuildNavigationController,
 } from "@firecms/core";
 import {
     FirebaseAuthController,
@@ -44,36 +44,30 @@ export const firebaseConfig = {
     storageBucket: "firecms-demo-27150.appspot.com",
     messagingSenderId: "837544933711",
     appId: "1:837544933711:web:75822ffc0840e3ae01ad3a",
-    measurementId: "G-8HRE8MVXZJ"
+    measurementId: "G-8HRE8MVXZJ",
 };
 
 function GraphQLApp() {
-
     // Use your own authentication logic here
-    const myAuthenticator: Authenticator<FirebaseUserWrapper> = useCallback(async ({
-                                                                                       user,
-                                                                                       authController
-                                                                                   }) => {
+    const myAuthenticator: Authenticator<FirebaseUserWrapper> = useCallback(
+        async ({ user, authController }) => {
+            if (user?.email?.includes("flanders")) {
+                throw Error("Stupid Flanders!");
+            }
 
-        if (user?.email?.includes("flanders")) {
-            throw Error("Stupid Flanders!");
-        }
+            // This is an example of retrieving async data related to the user
+            // and storing it in the controller's extra field
+            const idTokenResult = await user?.firebaseUser?.getIdTokenResult();
+            const userIsAdmin = idTokenResult?.claims.admin || user?.email?.endsWith("@firecms.co");
 
-        // This is an example of retrieving async data related to the user
-        // and storing it in the controller's extra field
-        const idTokenResult = await user?.firebaseUser?.getIdTokenResult();
-        const userIsAdmin = idTokenResult?.claims.admin || user?.email?.endsWith("@firecms.co");
+            console.log("Allowing access to", user);
+            return Boolean(userIsAdmin);
+        },
+        []
+    );
 
-        console.log("Allowing access to", user);
-        return Boolean(userIsAdmin);
-    }, []);
-
-    const {
-        firebaseApp,
-        firebaseConfigLoading,
-        configError
-    } = useInitialiseFirebase({
-        firebaseConfig
+    const { firebaseApp, firebaseConfigLoading, configError } = useInitialiseFirebase({
+        firebaseConfig,
     });
 
     // Controller used to manage the dark or light color mode
@@ -86,21 +80,24 @@ function GraphQLApp() {
 
     // Delegate used for fetching and saving data in Firestore
     // const datasourceDelegate = useMemo(() => new GraphQLDataSource(), []);
-    const datasourceDelegate: DataSourceDelegate = useMemo(() => new WebSocketDataSource("ws://localhost:4000"), []);
+    const datasourceDelegate: DataSourceDelegate = useMemo(
+        () => new WebSocketDataSource("ws://localhost:4000"),
+        []
+    );
 
     // Controller used for saving and fetching files in storage
     const storageSource = useFirebaseStorageSource({
-        firebaseApp
+        firebaseApp,
     });
 
     const collectionConfigController = useFirestoreCollectionsConfigController({
-        firebaseApp
+        firebaseApp,
     });
 
     // Controller for managing authentication
     const authController: FirebaseAuthController = useFirebaseAuthController({
         firebaseApp,
-        signInOptions
+        signInOptions,
     });
 
     const collectionsBuilder = useCallback(() => {
@@ -115,26 +112,25 @@ function GraphQLApp() {
         collections: collectionsBuilder,
         adminViews: userManagementAdminViews,
         authController,
-        dataSourceDelegate: datasourceDelegate
+        dataSourceDelegate: datasourceDelegate,
     });
 
     const dataEnhancementPlugin = useDataEnhancementPlugin({
         getConfigForPath: ({ path }) => {
-            if (path === "books")
-                return true;
+            if (path === "books") return true;
             return false;
-        }
+        },
     });
 
     const importPlugin = useImportPlugin();
     const exportPlugin = useExportPlugin();
 
     const collectionEditorPlugin = useCollectionEditorPlugin({
-        collectionConfigController
+        collectionConfigController,
     });
 
     if (firebaseConfigLoading || !firebaseApp) {
-        return <CircularProgressCenter/>;
+        return <CircularProgressCenter />;
     }
 
     if (configError) {
@@ -149,30 +145,31 @@ function GraphQLApp() {
                     userConfigPersistence={userConfigPersistence}
                     dataSourceDelegate={datasourceDelegate}
                     storageSource={storageSource}
-                    plugins={[dataEnhancementPlugin, importPlugin, exportPlugin, collectionEditorPlugin]}
+                    plugins={[
+                        dataEnhancementPlugin,
+                        importPlugin,
+                        exportPlugin,
+                        collectionEditorPlugin,
+                    ]}
                 >
-                    {({
-                          context,
-                          loading
-                      }) => {
-
+                    {({ context, loading }) => {
                         if (loading) {
-                            return <CircularProgressCenter size={"large"}/>;
+                            return <CircularProgressCenter size={"large"} />;
                         }
 
-                        return <Scaffold
-                            autoOpenDrawer={false}>
-                            <AppBar title={"My demo app"}/>
-                            <Drawer/>
-                            <NavigationRoutes/>
-                            <SideDialogs/>
-                        </Scaffold>;
+                        return (
+                            <Scaffold autoOpenDrawer={false}>
+                                <AppBar title={"My demo app"} />
+                                <Drawer />
+                                <NavigationRoutes />
+                                <SideDialogs />
+                            </Scaffold>
+                        );
                     }}
                 </FireCMS>
             </ModeControllerProvider>
         </SnackbarProvider>
     );
-
 }
 
 export default GraphQLApp;

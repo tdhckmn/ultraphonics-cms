@@ -12,8 +12,8 @@ export type FormexController<T extends object> = {
     setSubmitCount: (submitCount: number) => void;
     errors: Record<string, string>;
     setFieldError: (key: string, error?: string) => void;
-    handleChange: (event: React.SyntheticEvent) => void,
-    handleBlur: (event: React.FocusEvent) => void,
+    handleChange: (event: React.SyntheticEvent) => void;
+    handleBlur: (event: React.FocusEvent) => void;
     handleSubmit: (event?: FormEvent<HTMLFormElement>) => void;
     validate: () => void;
     resetForm: (props?: FormexResetProps<T>) => void;
@@ -34,7 +34,7 @@ export type FormexController<T extends object> = {
 
     canUndo: boolean;
     canRedo: boolean;
-}
+};
 
 export type FormexResetProps<T extends object> = {
     values?: T;

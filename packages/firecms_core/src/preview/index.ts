@@ -1,7 +1,5 @@
 export { PropertyPreview } from "./PropertyPreview";
-export type {
-    PropertyPreviewProps, PreviewSize
-} from "./PropertyPreviewProps";
+export type { PropertyPreviewProps, PreviewSize } from "./PropertyPreviewProps";
 
 export * from "./property_previews/ArrayOfStringsPreview";
 export * from "./property_previews/ArrayPropertyEnumPreview";

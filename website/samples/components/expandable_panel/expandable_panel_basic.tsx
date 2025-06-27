@@ -10,9 +10,7 @@ export default function ExpandablePanelBasicDemo() {
             expanded={expanded}
             onExpandedChange={setExpanded}
         >
-            <div className={"p-4"}>
-                Here is some content that was hidden but now is visible!
-            </div>
+            <div className={"p-4"}>Here is some content that was hidden but now is visible!</div>
         </ExpandablePanel>
     );
 }

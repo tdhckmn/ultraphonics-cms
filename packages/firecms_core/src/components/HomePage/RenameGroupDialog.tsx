@@ -9,7 +9,13 @@ interface RenameGroupDialogProps {
     onRename: (newName: string) => void;
 }
 
-export function RenameGroupDialog({ open, initialName, existingGroupNames, onClose, onRename }: RenameGroupDialogProps) {
+export function RenameGroupDialog({
+    open,
+    initialName,
+    existingGroupNames,
+    onClose,
+    onRename,
+}: RenameGroupDialogProps) {
     const [name, setName] = useState(initialName);
     const [error, setError] = useState<string | null>(null);
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null); // Create a ref for the input
@@ -19,7 +25,8 @@ export function RenameGroupDialog({ open, initialName, existingGroupNames, onClo
             setName(initialName);
             setError(null);
             // Focus and select text when dialog opens
-            setTimeout(() => { // setTimeout to ensure the input is rendered and focusable
+            setTimeout(() => {
+                // setTimeout to ensure the input is rendered and focusable
                 if (inputRef.current) {
                     inputRef.current.focus();
                     inputRef.current.select();
@@ -98,7 +105,11 @@ export function RenameGroupDialog({ open, initialName, existingGroupNames, onClo
                     error={!!error}
                     aria-describedby={error ? "group-name-error" : undefined}
                 />
-                {error && <p id="group-name-error" style={{ display: "none" }}>{error}</p>}
+                {error && (
+                    <p id="group-name-error" style={{ display: "none" }}>
+                        {error}
+                    </p>
+                )}
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} variant="text">

@@ -12,7 +12,8 @@ function getRandomInt(max: number) {
 const addLikes = async () => {
     const productsIds = await firestore
         .collection("products")
-        .get().then(snapshot => snapshot.docs.map(d => d.ref));
+        .get()
+        .then((snapshot) => snapshot.docs.map((d) => d.ref));
     firestore
         .collection("users")
         .get()
@@ -28,5 +29,3 @@ const addLikes = async () => {
         });
 };
 addLikes();
-
-

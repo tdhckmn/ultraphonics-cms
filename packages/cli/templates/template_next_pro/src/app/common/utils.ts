@@ -1,4 +1,3 @@
-
 export function getCurrencySymbol(currency: string) {
     switch (currency) {
         case "USD":

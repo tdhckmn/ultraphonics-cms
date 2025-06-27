@@ -24,28 +24,26 @@ import {
     useFirebaseStorageSource,
     useFirestoreDataSource,
     useInitialiseFirebase,
-    useValidateAuthenticator
+    useValidateAuthenticator,
 } from "firecms";
 
 import { firebaseConfig } from "../firebase_config";
 
-const DEFAULT_SIGN_IN_OPTIONS = [
-    GoogleAuthProvider.PROVIDER_ID
-];
+const DEFAULT_SIGN_IN_OPTIONS = [GoogleAuthProvider.PROVIDER_ID];
 
 const productsCollection = buildCollection({
     path: "products",
     permissions: ({ user }) => ({
         edit: true,
         create: true,
-        delete: true
+        delete: true,
     }),
     name: "Products",
     properties: {
         name: {
             name: "Name",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         price: {
             name: "Price",
@@ -53,23 +51,24 @@ const productsCollection = buildCollection({
                 required: true,
                 requiredMessage: "You must set a price between 0 and 1000",
                 min: 0,
-                max: 1000
+                max: 1000,
             },
             description: "Price with range validation",
-            dataType: "number"
+            dataType: "number",
         },
         status: {
             name: "Status",
             validation: { required: true },
             dataType: "string",
             description: "Should this product be visible in the website",
-            longDescription: "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros.",
+            longDescription:
+                "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros.",
             enumValues: {
                 private: "Private",
-                public: "Public"
-            }
-        }
-    }
+                public: "Public",
+            },
+        },
+    },
 });
 
 /**
@@ -78,43 +77,37 @@ const productsCollection = buildCollection({
  * @constructor
  */
 export function CustomCMSApp() {
-
     const signInOptions = DEFAULT_SIGN_IN_OPTIONS;
 
-    const {
-        firebaseApp,
-        firebaseConfigLoading,
-        configError,
-        firebaseConfigError
-    } = useInitialiseFirebase({ firebaseConfig });
+    const { firebaseApp, firebaseConfigLoading, configError, firebaseConfigError } =
+        useInitialiseFirebase({ firebaseConfig });
 
     const authController: FirebaseAuthController = useFirebaseAuthController({
         firebaseApp,
-        signInOptions
+        signInOptions,
     });
 
     const dataSource = useFirestoreDataSource({
-        firebaseApp
+        firebaseApp,
         // You can add your `FirestoreTextSearchController` here
     });
 
     const storageSource = useFirebaseStorageSource({ firebaseApp });
 
     const modeController = useBuildModeController();
-    const theme = useMemo(() => createCMSDefaultTheme({ mode: modeController.mode }), [modeController.mode]);
+    const theme = useMemo(
+        () => createCMSDefaultTheme({ mode: modeController.mode }),
+        [modeController.mode]
+    );
 
-    const {
-        authLoading,
-        canAccessMainView,
-        notAllowedError
-    } = useValidateAuthenticator({
+    const { authLoading, canAccessMainView, notAllowedError } = useValidateAuthenticator({
         authController,
         authentication: async ({ user }) => {
             console.log("Allowing access to", user?.email);
             return true;
         },
         dataSource,
-        storageSource
+        storageSource,
     });
 
     if (configError) {
@@ -122,54 +115,57 @@ export function CustomCMSApp() {
     }
 
     if (firebaseConfigError) {
-        return <div>
-            It seems like the provided Firebase config is not correct. If you
-            are using the credentials provided automatically by Firebase
-            Hosting, make sure you link your Firebase app to Firebase
-            Hosting.
-        </div>;
+        return (
+            <div>
+                It seems like the provided Firebase config is not correct. If you are using the
+                credentials provided automatically by Firebase Hosting, make sure you link your
+                Firebase app to Firebase Hosting.
+            </div>
+        );
     }
 
     if (firebaseConfigLoading || !firebaseApp) {
-        return <CircularProgressCenter/>;
+        return <CircularProgressCenter />;
     }
 
     return (
         <Router>
             <SnackbarProvider>
-                <ModeControllerProvider
-                    value={modeController}>
-                    <FireCMS authController={authController}
-                             collections={[productsCollection]}
-                             dataSource={dataSource}
-                             storageSource={storageSource}
-                             entityLinkBuilder={({ entity }) => `https://console.firebase.google.com/project/${firebaseApp.options.projectId}/firestore/data/${entity.path}/${entity.id}`}
+                <ModeControllerProvider value={modeController}>
+                    <FireCMS
+                        authController={authController}
+                        collections={[productsCollection]}
+                        dataSource={dataSource}
+                        storageSource={storageSource}
+                        entityLinkBuilder={({ entity }) =>
+                            `https://console.firebase.google.com/project/${firebaseApp.options.projectId}/firestore/data/${entity.path}/${entity.id}`
+                        }
                     >
                         {({ context, loading }) => {
-
                             let component;
                             if (loading) {
-                                component = <CircularProgressCenter/>;
+                                component = <CircularProgressCenter />;
                             } else if (!canAccessMainView) {
                                 component = (
                                     <FirebaseLoginView
                                         allowSkipLogin={false}
                                         signInOptions={signInOptions}
                                         firebaseApp={firebaseApp}
-                                        authController={authController}/>
+                                        authController={authController}
+                                    />
                                 );
                             } else {
                                 component = (
                                     <Scaffold name={"My Online Shop"}>
-                                        <NavigationRoutes/>
-                                        <SideDialogs/>
+                                        <NavigationRoutes />
+                                        <SideDialogs />
                                     </Scaffold>
                                 );
                             }
 
                             return (
                                 <ThemeProvider theme={theme}>
-                                    <CssBaseline/>
+                                    <CssBaseline />
                                     {component}
                                 </ThemeProvider>
                             );
@@ -179,5 +175,4 @@ export function CustomCMSApp() {
             </SnackbarProvider>
         </Router>
     );
-
 }

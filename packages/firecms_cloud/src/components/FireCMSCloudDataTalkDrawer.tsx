@@ -12,15 +12,11 @@ export function FireCMSCloudDataTalkDrawer() {
     const [adminMenuOpen, setAdminMenuOpen] = React.useState(false);
 
     return (
-
         <>
+            <DrawerLogo logo={logo} />
+            <DataTalkDrawer />
 
-            <DrawerLogo logo={logo}/>
-            <DataTalkDrawer/>
-
-            <AdminDrawerMenu
-                menuOpen={adminMenuOpen}
-                setMenuOpen={setAdminMenuOpen}/>
+            <AdminDrawerMenu menuOpen={adminMenuOpen} setMenuOpen={setAdminMenuOpen} />
         </>
     );
 }

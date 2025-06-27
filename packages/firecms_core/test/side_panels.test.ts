@@ -3,34 +3,39 @@ import { EntityCollection, EntitySidePanelProps } from "../src/types";
 import { buildSidePanelsFromUrl } from "../src/internal/useBuildSideEntityController";
 
 describe("buildSidePanelsFromUrl", () => {
-
     const mockCollections: EntityCollection[] = [
         {
             id: "products",
             name: "Products",
             path: "products",
             properties: {},
-            entityViews: [{
-                key: "custom_view",
-                name: "Custom view",
-            }],
-            subcollections: [{
-                id: "locales",
-                name: "Locales",
-                path: "locales",
-                properties: {}
-            }]
+            entityViews: [
+                {
+                    key: "custom_view",
+                    name: "Custom view",
+                },
+            ],
+            subcollections: [
+                {
+                    id: "locales",
+                    name: "Locales",
+                    path: "locales",
+                    properties: {},
+                },
+            ],
         },
         {
             id: "experiences",
             name: "Experiences",
             path: "users/J4WyZHd3DhgcWRdJaBodSkSAVuN2/experiences",
-            entityViews: [{
-                key: "editor",
-                name: "Editor",
-            }],
-            properties: {}
-        }
+            entityViews: [
+                {
+                    key: "editor",
+                    name: "Editor",
+                },
+            ],
+            properties: {},
+        },
     ];
 
     afterEach(() => {
@@ -42,8 +47,8 @@ describe("buildSidePanelsFromUrl", () => {
             {
                 path: "products",
                 entityId: "entityA",
-                copy: false
-            }
+                copy: false,
+            },
         ];
         const sidePanels = buildSidePanelsFromUrl("/products/entityA", mockCollections, false);
         expect(sidePanels).toEqual(expectedSidePanels);
@@ -55,10 +60,14 @@ describe("buildSidePanelsFromUrl", () => {
                 path: "products",
                 entityId: "entityA",
                 copy: false,
-                selectedTab: "locales"
-            }
+                selectedTab: "locales",
+            },
         ];
-        const sidePanels = buildSidePanelsFromUrl("/products/entityA/locales", mockCollections, false);
+        const sidePanels = buildSidePanelsFromUrl(
+            "/products/entityA/locales",
+            mockCollections,
+            false
+        );
         expect(sidePanels).toEqual(expectedSidePanels);
     });
 
@@ -67,7 +76,7 @@ describe("buildSidePanelsFromUrl", () => {
             {
                 path: "products",
                 copy: false,
-            }
+            },
         ];
         const sidePanels = buildSidePanelsFromUrl("products", mockCollections, true);
         expect(sidePanels).toEqual(expectedSidePanels);
@@ -79,10 +88,14 @@ describe("buildSidePanelsFromUrl", () => {
                 path: "products",
                 entityId: "entityA",
                 copy: false,
-                selectedTab: "custom_view"
-            }
+                selectedTab: "custom_view",
+            },
         ];
-        const sidePanels = buildSidePanelsFromUrl("/products/entityA/custom_view", mockCollections, false);
+        const sidePanels = buildSidePanelsFromUrl(
+            "/products/entityA/custom_view",
+            mockCollections,
+            false
+        );
         expect(sidePanels).toEqual(expectedSidePanels);
     });
 
@@ -93,11 +106,14 @@ describe("buildSidePanelsFromUrl", () => {
                 entityId: "pUAGjOQALls5wTwKq0sF",
                 copy: false,
                 selectedTab: "editor",
-                width: undefined
-            }
+                width: undefined,
+            },
         ];
-        const sidePanels = buildSidePanelsFromUrl("users/J4WyZHd3DhgcWRdJaBodSkSAVuN2/experiences/pUAGjOQALls5wTwKq0sF/editor", mockCollections, false);
+        const sidePanels = buildSidePanelsFromUrl(
+            "users/J4WyZHd3DhgcWRdJaBodSkSAVuN2/experiences/pUAGjOQALls5wTwKq0sF/editor",
+            mockCollections,
+            false
+        );
         expect(sidePanels).toEqual(expectedSidePanels);
     });
-
 });

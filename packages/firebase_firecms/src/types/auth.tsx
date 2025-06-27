@@ -23,19 +23,20 @@ export type FirebaseSignInOption = {
     provider: FirebaseSignInProvider;
     scopes?: string[];
     customParameters?: Record<string, string>;
-}
+};
 
-export type FirebaseUserWrapper = User & FirebaseUser & {
-    firebaseUser: FirebaseUser | null;
-}
+export type FirebaseUserWrapper = User &
+    FirebaseUser & {
+        firebaseUser: FirebaseUser | null;
+    };
 
 /**
  * @group Firebase
  */
-export type FirebaseAuthController<USER extends User = FirebaseUserWrapper, ExtraData = any> =
-    AuthController<USER, ExtraData>
-    & {
-
+export type FirebaseAuthController<
+    USER extends User = FirebaseUserWrapper,
+    ExtraData = any,
+> = AuthController<USER, ExtraData> & {
     confirmationResult?: ConfirmationResult;
 
     googleLogin: () => void;
@@ -70,5 +71,4 @@ export type FirebaseAuthController<USER extends User = FirebaseUserWrapper, Extr
     setUser: (user: FirebaseUser | null) => void;
 
     setUserRoles: (roles: Role[]) => void;
-
 };

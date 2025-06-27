@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function KeyboardVoiceIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"keyboard_voice"}/>
+    return <Icon {...props} iconKey={"keyboard_voice"} />;
 }

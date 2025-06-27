@@ -18,46 +18,44 @@ export type MenuProps = {
 
     sideOffset?: number;
     className?: string;
-}
+};
 
-const Menu = React.forwardRef<
-    React.ElementRef<typeof DropdownMenu.Trigger>,
-    MenuProps
->(({
-       children,
-       trigger,
-       open,
-       defaultOpen,
-       side,
-       align,
-       onOpenChange,
-       portalContainer,
-       sideOffset = 4,
-                                    className
-   }, ref) => (
-    <DropdownMenu.Root
-        open={open}
-        defaultOpen={defaultOpen}
-        onOpenChange={onOpenChange}>
-        <DropdownMenu.Trigger
-            ref={ref}
-            asChild>
-            {trigger}
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Portal container={portalContainer}>
-            <DropdownMenu.Content
-                side={side}
-                sideOffset={sideOffset}
-                align={align}
-                className={cls(paperMixin, focusedDisabled, "shadow py-2 z-30", className)}>
-                {children}
-            </DropdownMenu.Content>
-        </DropdownMenu.Portal>
-    </DropdownMenu.Root>
-))
-Menu.displayName = "Menu"
+const Menu = React.forwardRef<React.ElementRef<typeof DropdownMenu.Trigger>, MenuProps>(
+    (
+        {
+            children,
+            trigger,
+            open,
+            defaultOpen,
+            side,
+            align,
+            onOpenChange,
+            portalContainer,
+            sideOffset = 4,
+            className,
+        },
+        ref
+    ) => (
+        <DropdownMenu.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+            <DropdownMenu.Trigger ref={ref} asChild>
+                {trigger}
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Portal container={portalContainer}>
+                <DropdownMenu.Content
+                    side={side}
+                    sideOffset={sideOffset}
+                    align={align}
+                    className={cls(paperMixin, focusedDisabled, "shadow py-2 z-30", className)}
+                >
+                    {children}
+                </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+        </DropdownMenu.Root>
+    )
+);
+Menu.displayName = "Menu";
 
-export { Menu }
+export { Menu };
 
 export type MenuItemProps = {
     children: React.ReactNode;
@@ -67,11 +65,11 @@ export type MenuItemProps = {
 };
 
 export function MenuItem({
-                             children,
-                             dense = false, // Default value is false if not provided
-                             onClick,
-                             className
-                         }: MenuItemProps) {
+    children,
+    dense = false, // Default value is false if not provided
+    onClick,
+    className,
+}: MenuItemProps) {
     // Dynamically adjusting the class based on the "dense" prop
     const classNames = cls(
         onClick && "cursor-pointer",
@@ -81,9 +79,7 @@ export function MenuItem({
     );
 
     return (
-        <DropdownMenu.Item
-            className={classNames}
-            onClick={onClick}>
+        <DropdownMenu.Item className={classNames} onClick={onClick}>
             {children}
         </DropdownMenu.Item>
     );

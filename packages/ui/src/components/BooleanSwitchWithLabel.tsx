@@ -4,20 +4,20 @@ import {
     fieldBackgroundDisabledMixin,
     fieldBackgroundHoverMixin,
     fieldBackgroundMixin,
-    focusedClasses
+    focusedClasses,
 } from "../styles";
 import { BooleanSwitch, BooleanSwitchProps } from "./BooleanSwitch";
 import { cls } from "../util";
 
 export type BooleanSwitchWithLabelProps = BooleanSwitchProps & {
-    position?: "start" | "end",
-    invisible?: boolean,
-    label?: React.ReactNode,
-    error?: boolean,
-    autoFocus?: boolean,
-    fullWidth?: boolean,
-    className?: string,
-    inputClassName?: string,
+    position?: "start" | "end";
+    invisible?: boolean;
+    label?: React.ReactNode;
+    error?: boolean;
+    autoFocus?: boolean;
+    fullWidth?: boolean;
+    className?: string;
+    inputClassName?: string;
 };
 
 /**
@@ -25,24 +25,23 @@ export type BooleanSwitchWithLabelProps = BooleanSwitchProps & {
  *
  */
 export const BooleanSwitchWithLabel = function BooleanSwitchWithLabel({
-                                                                          value,
-                                                                          position = "end",
-                                                                          size = "medium",
-                                                                          invisible,
-                                                                          onValueChange,
-                                                                          error,
-                                                                          label,
-                                                                          autoFocus,
-                                                                          disabled,
-                                                                          className,
-                                                                          fullWidth = true,
-                                                                          inputClassName,
-                                                                          ...props
-                                                                      }: BooleanSwitchWithLabelProps) {
-
+    value,
+    position = "end",
+    size = "medium",
+    invisible,
+    onValueChange,
+    error,
+    label,
+    autoFocus,
+    disabled,
+    className,
+    fullWidth = true,
+    inputClassName,
+    ...props
+}: BooleanSwitchWithLabelProps) {
     const ref = React.useRef<HTMLDivElement | null>(null);
     const refInput = React.useRef<HTMLButtonElement | null>(null);
-    const [_, setFocused] = React.useState(autoFocus)
+    const [_, setFocused] = React.useState(autoFocus);
     const onFocus = () => setFocused(true);
     const onBlur = () => setFocused(false);
 
@@ -52,7 +51,8 @@ export const BooleanSwitchWithLabel = function BooleanSwitchWithLabel({
         }
     }, []);
 
-    const focus = document.activeElement === refInput?.current || document.activeElement === ref?.current
+    const focus =
+        document.activeElement === refInput?.current || document.activeElement === ref?.current;
 
     return (
         <div
@@ -66,7 +66,13 @@ export const BooleanSwitchWithLabel = function BooleanSwitchWithLabel({
                 disabled ? "cursor-default" : "cursor-pointer",
                 "rounded-md max-w-full justify-between box-border relative inline-flex items-center",
                 !invisible && focus && !disabled ? focusedClasses : "",
-                error ? "text-red-500 dark:text-red-600" : (focus && !disabled ? "text-primary" : (!disabled ? "text-text-primary dark:text-text-primary-dark" : "text-text-secondary dark:text-text-secondary-dark")),
+                error
+                    ? "text-red-500 dark:text-red-600"
+                    : focus && !disabled
+                      ? "text-primary"
+                      : !disabled
+                        ? "text-text-primary dark:text-text-primary-dark"
+                        : "text-text-secondary dark:text-text-secondary-dark",
                 {
                     "min-h-[28px]": size === "smallest",
                     "min-h-[32px]": size === "small",
@@ -79,18 +85,21 @@ export const BooleanSwitchWithLabel = function BooleanSwitchWithLabel({
                 fullWidth ? "w-full" : "",
                 className
             )}
-            onClick={disabled ? undefined : (e) => {
-                if (props.allowIndeterminate) {
-                    if (value === null || value === undefined) onValueChange?.(true)
-                    else if (value) onValueChange?.(false)
-                    else onValueChange?.(null as any);
-                } else {
-                    onValueChange?.(!value);
-                }
-                // refInput.current?.focus();
-            }}
+            onClick={
+                disabled
+                    ? undefined
+                    : (e) => {
+                          if (props.allowIndeterminate) {
+                              if (value === null || value === undefined) onValueChange?.(true);
+                              else if (value) onValueChange?.(false);
+                              else onValueChange?.(null as any);
+                          } else {
+                              onValueChange?.(!value);
+                          }
+                          // refInput.current?.focus();
+                      }
+            }
         >
-
             <BooleanSwitch
                 value={value}
                 ref={refInput}
@@ -100,15 +109,15 @@ export const BooleanSwitchWithLabel = function BooleanSwitchWithLabel({
                 {...props}
             />
 
-            <div className={cls(
-                "flex-grow",
-                position === "end" ? "mr-4" : "ml-4",
-                size === "small" ? "text-sm" : "text-base"
-            )}>
+            <div
+                className={cls(
+                    "flex-grow",
+                    position === "end" ? "mr-4" : "ml-4",
+                    size === "small" ? "text-sm" : "text-base"
+                )}
+            >
                 {label}
             </div>
-
         </div>
-
     );
 };

@@ -12,10 +12,7 @@ export default function LoadingButtonWithIconDemo() {
     };
 
     return (
-        <LoadingButton
-            startIcon={<AddIcon size={"small"}/>}
-            loading={loading}
-            onClick={onClick}>
+        <LoadingButton startIcon={<AddIcon size={"small"} />} loading={loading} onClick={onClick}>
             Click Me
         </LoadingButton>
     );

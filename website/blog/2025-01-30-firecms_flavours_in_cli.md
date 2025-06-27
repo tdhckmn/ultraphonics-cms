@@ -57,31 +57,32 @@ What can you expect? A schema editor and data inference, advanced data import an
 
 Who doesn't like a good comparison table? Here is a quick overview of the features you get with each flavor:
 
-| Feature                                | Community | [Cloud](https://app.firecms.co) | Pro |
-|----------------------------------------|-----------|---------------------------------|-----|
+| Feature                                | Community       | [Cloud](https://app.firecms.co) | Pro                  |
+| -------------------------------------- | --------------- | ------------------------------- | -------------------- |
 | **Pricing**                            | Free (€0/month) | €9.99/user/month                | €49.99/project/month |
-| **License**                            | MIT | Commercial                      | Commercial |
-| **Hosting Model**                      | Self-hosted | Fully managed                   | Self-hosted |
+| **License**                            | MIT             | Commercial                      | Commercial           |
+| **Hosting Model**                      | Self-hosted     | Fully managed                   | Self-hosted          |
 | **Base Features**                      |
-| Firebase/MongoDB Integration           | ✅ | ✅                               | ✅ |
-| Component Library (40+ components)     | ✅ | ✅                               | ✅ |
-| Custom Views and Form Fields           | ✅ | ✅                               | ✅ |
-| Notion-style Markdown Editor           | ✅ | ✅                               | ✅ |
-| Subcollection Support                  | ✅ | ✅                               | ✅ |
+| Firebase/MongoDB Integration           | ✅              | ✅                              | ✅                   |
+| Component Library (40+ components)     | ✅              | ✅                              | ✅                   |
+| Custom Views and Form Fields           | ✅              | ✅                              | ✅                   |
+| Notion-style Markdown Editor           | ✅              | ✅                              | ✅                   |
+| Subcollection Support                  | ✅              | ✅                              | ✅                   |
 | **Advanced Features**                  |
-| Custom Domain                          | ✅ | ❌                               | ✅ |
-| Custom Login Screen                    | ✅ | ❌                               | ✅ |
-| Custom Authentication & Access Control | ✅ | ❌                               | ✅ |
-| Data Import/Export                     | ❌ | ✅                               | ✅ |
-| User & Role Management                 | ❌ | ✅                               | ✅ |
-| AI Content Generation                  | ❌ | ✅                               | ✅ |
-| Schema Editor & Data Inference         | ❌ | ✅                               | ✅ |
-| Advanced Data Import/Export            | ❌ | ❌                               | ✅ |
-| Access to All FireCMS Plugins          | ❌ | ❌                               | ✅ |
+| Custom Domain                          | ✅              | ❌                              | ✅                   |
+| Custom Login Screen                    | ✅              | ❌                              | ✅                   |
+| Custom Authentication & Access Control | ✅              | ❌                              | ✅                   |
+| Data Import/Export                     | ❌              | ✅                              | ✅                   |
+| User & Role Management                 | ❌              | ✅                              | ✅                   |
+| AI Content Generation                  | ❌              | ✅                              | ✅                   |
+| Schema Editor & Data Inference         | ❌              | ✅                              | ✅                   |
+| Advanced Data Import/Export            | ❌              | ❌                              | ✅                   |
+| Access to All FireCMS Plugins          | ❌              | ❌                              | ✅                   |
 
 ### Installation
 
 If this is your first time using FireCMS, you need to install it first. You have two choices: either you install the FireCMS CLI globally with your desired package manager:
+
 ```bash
 npm install -g firecms
 # yarn fan?
@@ -133,6 +134,7 @@ npm run dev
 ```
 
 So we basically did the following for you:
+
 - Helped you choose the proper Firebase Project
 - Created the Firebase Hosting App Project
 - Created the Firebase Config file

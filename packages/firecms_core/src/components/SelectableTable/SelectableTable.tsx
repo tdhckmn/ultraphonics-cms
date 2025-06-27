@@ -5,7 +5,7 @@ import {
     EntityTableController,
     FilterValues,
     ResolvedProperty,
-    SelectedCellProps
+    SelectedCellProps,
 } from "../../types";
 import { CellRendererParams, VirtualTable, VirtualTableColumn } from "../VirtualTable";
 import { enumToObjectEntries } from "../../util";
@@ -20,7 +20,6 @@ import { SelectableTableContext } from "./SelectableTableContext";
 import { getRowHeight } from "../common/table_height";
 
 export type SelectableTableProps<M extends Record<string, any>> = {
-
     /**
      * Callback when a cell value changes.
      */
@@ -36,10 +35,10 @@ export type SelectableTableProps<M extends Record<string, any>> = {
      * @param size
      */
     tableRowActionsBuilder?: (params: {
-        entity: Entity<M>,
-        size: CollectionSize,
-        width: number,
-        frozen?: boolean
+        entity: Entity<M>;
+        size: CollectionSize;
+        width: number;
+        frozen?: boolean;
     }) => React.ReactNode;
 
     /**
@@ -83,9 +82,9 @@ export type SelectableTableProps<M extends Record<string, any>> = {
      * @param props
      */
     onScroll?: (props: {
-        scrollDirection: "forward" | "backward",
-        scrollOffset: number,
-        scrollUpdateWasRequested: boolean
+        scrollDirection: "forward" | "backward";
+        scrollOffset: number;
+        scrollUpdateWasRequested: boolean;
     }) => void;
 
     emptyComponent?: React.ReactNode;
@@ -93,7 +92,7 @@ export type SelectableTableProps<M extends Record<string, any>> = {
     endAdornment?: React.ReactNode;
 
     AddColumnComponent?: React.ComponentType;
-}
+};
 
 /**
  * This component is in charge of rendering a collection table with a high
@@ -119,73 +118,72 @@ export type SelectableTableProps<M extends Record<string, any>> = {
  * @see VirtualTable
  * @group Components
  */
-export const SelectableTable = function SelectableTable<M extends Record<string, any>>
-({
-     onValueChange,
-     cellRenderer,
-     onEntityClick,
-     onColumnResize,
-     hoverRow = true,
-     size = "m",
-     inlineEditing = false,
-     tableController:
-         {
-             data,
-             dataLoading,
-             noMoreToLoad,
-             dataLoadingError,
-             filterValues,
-             setFilterValues,
-             sortBy,
-             setSortBy,
-             itemCount,
-             setItemCount,
-             pageSize = 50,
-             paginationEnabled,
-             checkFilterCombination,
-             setPopupCell
-         },
-     filterable = true,
-     onScroll,
-     initialScroll,
-     emptyComponent,
-     columns,
-     forceFilter,
-     highlightedRow,
-     endAdornment,
-     AddColumnComponent
- }: SelectableTableProps<M>) {
-
+export const SelectableTable = function SelectableTable<M extends Record<string, any>>({
+    onValueChange,
+    cellRenderer,
+    onEntityClick,
+    onColumnResize,
+    hoverRow = true,
+    size = "m",
+    inlineEditing = false,
+    tableController: {
+        data,
+        dataLoading,
+        noMoreToLoad,
+        dataLoadingError,
+        filterValues,
+        setFilterValues,
+        sortBy,
+        setSortBy,
+        itemCount,
+        setItemCount,
+        pageSize = 50,
+        paginationEnabled,
+        checkFilterCombination,
+        setPopupCell,
+    },
+    filterable = true,
+    onScroll,
+    initialScroll,
+    emptyComponent,
+    columns,
+    forceFilter,
+    highlightedRow,
+    endAdornment,
+    AddColumnComponent,
+}: SelectableTableProps<M>) {
     const ref = useRef<HTMLDivElement>(null);
 
-    const [selectedCell, setSelectedCell] = React.useState<SelectedCellProps<M> | undefined>(undefined);
+    const [selectedCell, setSelectedCell] = React.useState<SelectedCellProps<M> | undefined>(
+        undefined
+    );
 
     const loadNextPage = () => {
-        if (!paginationEnabled || dataLoading || noMoreToLoad)
-            return;
-        if (itemCount !== undefined)
-            setItemCount?.(itemCount + pageSize);
+        if (!paginationEnabled || dataLoading || noMoreToLoad) return;
+        if (itemCount !== undefined) setItemCount?.(itemCount + pageSize);
     };
 
     const resetPagination = useCallback(() => {
         setItemCount?.(pageSize);
     }, [pageSize]);
 
-    const onRowClick = useCallback(({ rowData }: {
-        rowData: Entity<M>
-    }) => {
-        if (inlineEditing)
-            return;
-        return onEntityClick && onEntityClick(rowData);
-    }, [onEntityClick, inlineEditing]);
+    const onRowClick = useCallback(
+        ({ rowData }: { rowData: Entity<M> }) => {
+            if (inlineEditing) return;
+            return onEntityClick && onEntityClick(rowData);
+        },
+        [onEntityClick, inlineEditing]
+    );
 
-    useOutsideAlerter(ref,
+    useOutsideAlerter(
+        ref,
         () => {
             if (selectedCell) {
                 unselect();
             }
         },
-        Boolean(selectedCell));
+        Boolean(selectedCell)
+    );
 
     const select = useCallback((cell?: SelectedCellProps<M>) => {
         setSelectedCell(cell);
@@ -208,29 +206,32 @@ export const SelectableTable = function SelectableTable<M extends Record<string,
         };
     }, [unselect]);
 
-    const onFilterUpdate = useCallback((updatedFilterValues?: FilterValues<any>) => {
-        setFilterValues?.({ ...updatedFilterValues, ...forceFilter } as FilterValues<any>);
-    }, [forceFilter]);
+    const onFilterUpdate = useCallback(
+        (updatedFilterValues?: FilterValues<any>) => {
+            setFilterValues?.({ ...updatedFilterValues, ...forceFilter } as FilterValues<any>);
+        },
+        [forceFilter]
+    );
 
-    const contextValue = useMemo(() => ({
-        setPopupCell: setPopupCell as ((cell?: SelectedCellProps<M>) => void),
-        select,
-        onValueChange,
-        size: size ?? "m",
-        selectedCell
-    }), [setPopupCell, select, onValueChange, size, selectedCell]);
+    const contextValue = useMemo(
+        () => ({
+            setPopupCell: setPopupCell as (cell?: SelectedCellProps<M>) => void,
+            select,
+            onValueChange,
+            size: size ?? "m",
+            selectedCell,
+        }),
+        [setPopupCell, select, onValueChange, size, selectedCell]
+    );
 
     return (
-        <SelectableTableContext.Provider
-            value={contextValue}>
-            <div className="h-full w-full flex flex-col bg-white dark:bg-surface-950"
-                 ref={ref}>
-
+        <SelectableTableContext.Provider value={contextValue}>
+            <div className="h-full w-full flex flex-col bg-white dark:bg-surface-950" ref={ref}>
                 <VirtualTable
                     data={data}
                     columns={columns}
                     cellRenderer={cellRenderer}
-                    onRowClick={inlineEditing ? undefined : (onEntityClick ? onRowClick : undefined)}
+                    onRowClick={inlineEditing ? undefined : onEntityClick ? onRowClick : undefined}
                     onEndReached={loadNextPage}
                     onResetPagination={resetPagination}
                     error={dataLoadingError}
@@ -240,39 +241,41 @@ export const SelectableTable = function SelectableTable<M extends Record<string,
                     filter={filterValues}
                     onFilterUpdate={setFilterValues ? onFilterUpdate : undefined}
                     sortBy={sortBy}
-                    onSortByUpdate={setSortBy as ((sortBy?: [string, "asc" | "desc"]) => void)}
+                    onSortByUpdate={setSortBy as (sortBy?: [string, "asc" | "desc"]) => void}
                     hoverRow={hoverRow}
                     initialScroll={initialScroll}
                     onScroll={onScroll}
                     checkFilterCombination={checkFilterCombination}
                     createFilterField={filterable ? createFilterField : undefined}
-                    rowClassName={useCallback((entity: Entity<M>) => {
-                        return highlightedRow?.(entity) ? "bg-surface-100 bg-opacity-75 dark:bg-surface-800 dark:bg-opacity-75" : "";
-                    }, [highlightedRow])}
+                    rowClassName={useCallback(
+                        (entity: Entity<M>) => {
+                            return highlightedRow?.(entity)
+                                ? "bg-surface-100 bg-opacity-75 dark:bg-surface-800 dark:bg-opacity-75"
+                                : "";
+                        },
+                        [highlightedRow]
+                    )}
                     className="flex-grow"
                     emptyComponent={emptyComponent}
                     endAdornment={endAdornment}
                     AddColumnComponent={AddColumnComponent}
                 />
-
             </div>
         </SelectableTableContext.Provider>
     );
-
 };
 
 function createFilterField({
-                               id,
-                               filterValue,
-                               setFilterValue,
-                               column,
-                               hidden,
-                               setHidden
-                           }: FilterFormFieldProps<{
-    resolvedProperty: ResolvedProperty,
-    disabled: boolean,
+    id,
+    filterValue,
+    setFilterValue,
+    column,
+    hidden,
+    setHidden,
+}: FilterFormFieldProps<{
+    resolvedProperty: ResolvedProperty;
+    disabled: boolean;
 }>): React.ReactNode {
-
     if (!column.custom) {
         return null;
     }
@@ -285,46 +288,61 @@ function createFilterField({
         return null;
     }
     if (baseProperty.dataType === "reference") {
-        return <ReferenceFilterField value={filterValue}
-                                     setValue={setFilterValue}
-                                     name={id as string}
-                                     isArray={isArray}
-                                     path={baseProperty.path}
-                                     title={resolvedProperty?.name}
-                                     includeId={baseProperty.includeId}
-                                     previewProperties={baseProperty?.previewProperties}
-                                     hidden={hidden}
-                                     setHidden={setHidden}/>;
+        return (
+            <ReferenceFilterField
+                value={filterValue}
+                setValue={setFilterValue}
+                name={id as string}
+                isArray={isArray}
+                path={baseProperty.path}
+                title={resolvedProperty?.name}
+                includeId={baseProperty.includeId}
+                previewProperties={baseProperty?.previewProperties}
+                hidden={hidden}
+                setHidden={setHidden}
+            />
+        );
     } else if (baseProperty.dataType === "number" || baseProperty.dataType === "string") {
         const name = baseProperty.name;
-        const enumValues = baseProperty.enumValues ? enumToObjectEntries(baseProperty.enumValues) : undefined;
-        return <StringNumberFilterField value={filterValue}
-                                        setValue={setFilterValue}
-                                        name={id as string}
-                                        dataType={baseProperty.dataType}
-                                        isArray={isArray}
-                                        enumValues={enumValues}
-                                        title={name}/>;
+        const enumValues = baseProperty.enumValues
+            ? enumToObjectEntries(baseProperty.enumValues)
+            : undefined;
+        return (
+            <StringNumberFilterField
+                value={filterValue}
+                setValue={setFilterValue}
+                name={id as string}
+                dataType={baseProperty.dataType}
+                isArray={isArray}
+                enumValues={enumValues}
+                title={name}
+            />
+        );
     } else if (baseProperty.dataType === "boolean") {
         const name = baseProperty.name;
-        return <BooleanFilterField value={filterValue}
-                                   setValue={setFilterValue}
-                                   name={id as string}
-                                   title={name}/>;
-
+        return (
+            <BooleanFilterField
+                value={filterValue}
+                setValue={setFilterValue}
+                name={id as string}
+                title={name}
+            />
+        );
     } else if (baseProperty.dataType === "date") {
         const title = baseProperty.name;
-        return <DateTimeFilterField value={filterValue}
-                                    setValue={setFilterValue}
-                                    name={id as string}
-                                    mode={baseProperty.mode}
-                                    isArray={isArray}
-                                    title={title}/>;
+        return (
+            <DateTimeFilterField
+                value={filterValue}
+                setValue={setFilterValue}
+                name={id as string}
+                mode={baseProperty.mode}
+                isArray={isArray}
+                title={title}
+            />
+        );
     }
 
-    return (
-        <div>{`Currently the filter field ${resolvedProperty.dataType} is not supported`}</div>
-    );
+    return <div>{`Currently the filter field ${resolvedProperty.dataType} is not supported`}</div>;
 }
 
 function filterableProperty(property: ResolvedProperty, partOfArray = false): boolean {
@@ -332,10 +350,10 @@ function filterableProperty(property: ResolvedProperty, partOfArray = false): bo
         return ["string", "number", "date", "reference"].includes(property.dataType);
     }
     if (property.dataType === "array") {
-        if (property.of)
-            return filterableProperty(property.of, true);
-        else
-            return false;
+        if (property.of) return filterableProperty(property.of, true);
+        else return false;
     }
-    return ["string", "number", "boolean", "date", "reference", "array"].includes(property.dataType);
+    return ["string", "number", "boolean", "date", "reference", "array"].includes(
+        property.dataType
+    );
 }

@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function PanoramaIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"panorama"}/>
+    return <Icon {...props} iconKey={"panorama"} />;
 }

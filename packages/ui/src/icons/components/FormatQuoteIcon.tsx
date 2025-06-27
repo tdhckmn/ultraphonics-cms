@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function FormatQuoteIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"format_quote"}/>
+    return <Icon {...props} iconKey={"format_quote"} />;
 }

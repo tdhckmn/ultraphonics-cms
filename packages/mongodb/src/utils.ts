@@ -15,7 +15,7 @@ export function replaceValueAtIndex<T>(arr: T[], idx: number | null, newValue: T
     if (!isValidArrayIndex(arr, idx)) {
         throw new Error(`Cannot replace value. Array index out of bounds.`);
     }
-    if(idx === null) {
+    if (idx === null) {
         return [...arr];
     }
     return [...arr.slice(0, idx), newValue, ...arr.slice(idx + 1)];
@@ -40,7 +40,7 @@ export interface EntityType {
 }
 
 export const createObjectId = (): Realm.BSON.ObjectId => {
-    return new Realm.BSON.ObjectId()
+    return new Realm.BSON.ObjectId();
 };
 
 export const getEntityId = (entity: EntityType) => {
@@ -56,4 +56,4 @@ export const isSameEntity = (entity1: EntityType, entity2: EntityType): boolean 
 export const getEntityIndex = (entities: EntityType[], entity: EntityType): number | null => {
     const idx = entities.findIndex((t) => isSameEntity(t, entity));
     return idx >= 0 ? idx : null;
-}
+};

@@ -15,7 +15,7 @@ import {
     useDndMonitor,
     useDroppable,
     useSensor,
-    useSensors
+    useSensors,
 } from "@dnd-kit/core";
 import {
     AnimateLayoutChanges,
@@ -23,7 +23,7 @@ import {
     defaultAnimateLayoutChanges,
     rectSortingStrategy,
     SortableContext,
-    useSortable
+    useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -34,7 +34,7 @@ import { cls } from "@firecms/ui";
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
     defaultAnimateLayoutChanges({
         ...args,
-        wasDragging: true
+        wasDragging: true,
     });
 
 const dropAnimationConfig: DropAnimation = {};
@@ -49,7 +49,7 @@ const cloneSerializableNavigationEntry = (entry: NavigationEntry): NavigationEnt
         collection: entry.collection ? { ...entry.collection } : undefined,
         view: entry.view ? { ...entry.view } : undefined,
         ...(entry.group && { group: entry.group }),
-        ...(entry.description && { description: entry.description })
+        ...(entry.description && { description: entry.description }),
     };
     return clonedEntry as NavigationEntry;
 };
@@ -57,7 +57,7 @@ const cloneSerializableNavigationEntry = (entry: NavigationEntry): NavigationEnt
 const cloneItemsForDnd = (items: { name: string; entries: NavigationEntry[] }[]) =>
     items.map((g) => ({
         name: g.name,
-        entries: g.entries.map(cloneSerializableNavigationEntry)
+        entries: g.entries.map(cloneSerializableNavigationEntry),
     }));
 
 /* ─────────────────────────────────────────────────────────── */
@@ -65,47 +65,39 @@ const cloneItemsForDnd = (items: { name: string; entries: NavigationEntry[] }[])
 
 /* ─────────────────────────────────────────────────────────── */
 export function SortableNavigationCard({
-                                           entry,
-                                           onClick
-                                       }: {
+    entry,
+    onClick,
+}: {
     entry: NavigationEntry;
     onClick?: () => void;
 }) {
-    const {
-        setNodeRef,
-        listeners,
-        attributes,
-        transform,
-        transition,
-        isDragging
-    } =
-        useSortable({
-            id: entry.url,
-            animateLayoutChanges
-        });
+    const { setNodeRef, listeners, attributes, transform, transition, isDragging } = useSortable({
+        id: entry.url,
+        animateLayoutChanges,
+    });
 
     const style = useMemo(
         () => ({
             transform: transform ? CSS.Transform.toString(transform) : undefined,
             transition,
-            opacity: isDragging ? 0 : 1
+            opacity: isDragging ? 0 : 1,
         }),
         [transform, transition, isDragging]
     );
 
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-            <NavigationCardBinding {...entry} onClick={onClick}/>
+            <NavigationCardBinding {...entry} onClick={onClick} />
         </div>
     );
 }
 
 export function NavigationGroupDroppable({
-                                             id,
-                                             itemIds,
-                                             children,
-                                             isPotentialCardDropTarget = false
-                                         }: {
+    id,
+    itemIds,
+    children,
+    isPotentialCardDropTarget = false,
+}: {
     id: UniqueIdentifier;
     itemIds: UniqueIdentifier[];
     children: React.ReactNode;
@@ -131,33 +123,25 @@ export function NavigationGroupDroppable({
 }
 
 export function SortableNavigationGroup({
-                                            groupName,
-                                            children,
-                                            disabled
-                                        }: {
+    groupName,
+    children,
+    disabled,
+}: {
     groupName: string;
     children: React.ReactNode;
     disabled?: boolean;
 }) {
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging
-    } =
-        useSortable({
-            id: groupName,
-            animateLayoutChanges,
-            disabled
-        });
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+        id: groupName,
+        animateLayoutChanges,
+        disabled,
+    });
 
     const style = useMemo(
         () => ({
             transform: transform ? CSS.Transform.toString(transform) : undefined,
             transition,
-            opacity: isDragging ? 0 : 1
+            opacity: isDragging ? 0 : 1,
         }),
         [transform, transition, isDragging]
     );
@@ -174,21 +158,21 @@ export function SortableNavigationGroup({
 
 /* ─────────────────────────────────────────────────────────── */
 export function useHomePageDnd({
-                                   items: dndItems,
-                                   setItems: setDndItems,
-                                   disabled,
-                                   onCardMovedBetweenGroups,
-                                   onGroupMoved,
-                                   onNewGroupDrop,
-                                   onPersist
-                               }: {
+    items: dndItems,
+    setItems: setDndItems,
+    disabled,
+    onCardMovedBetweenGroups,
+    onGroupMoved,
+    onNewGroupDrop,
+    onPersist,
+}: {
     items: { name: string; entries: NavigationEntry[] }[];
     setItems: (
         newItemsOrUpdater:
             | { name: string; entries: NavigationEntry[] }[]
             | ((
-            currentItems: { name: string; entries: NavigationEntry[] }[]
-        ) => { name: string; entries: NavigationEntry[] }[])
+                  currentItems: { name: string; entries: NavigationEntry[] }[]
+              ) => { name: string; entries: NavigationEntry[] }[])
     ) => void;
     disabled: boolean;
     onCardMovedBetweenGroups?: (card: NavigationEntry) => void;
@@ -199,18 +183,16 @@ export function useHomePageDnd({
     /* ---------------- local state ---------------- */
     const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
     const [activeIsGroup, setActiveIsGroup] = useState(false);
-    const [currentDraggingGroupId, setCurrentDraggingGroupId] =
-        useState<UniqueIdentifier | null>(null);
+    const [currentDraggingGroupId, setCurrentDraggingGroupId] = useState<UniqueIdentifier | null>(
+        null
+    );
     const [dndKitActiveNode, setDndKitActiveNode] = useState<Active | null>(null);
     const [isDraggingCardOnly, setIsDraggingCardOnly] = useState(false);
     const [dialogOpenForGroup, setDialogOpenForGroup] = useState<string | null>(null);
-    const [isHoveringNewGroupDropZone, setIsHoveringNewGroupDropZone] =
-        useState(false);
+    const [isHoveringNewGroupDropZone, setIsHoveringNewGroupDropZone] = useState(false);
 
     /* store interim state for cross-group moves */
-    const interimItemsRef = useRef<
-        { name: string; entries: NavigationEntry[] }[] | null
-    >(null);
+    const interimItemsRef = useRef<{ name: string; entries: NavigationEntry[] }[] | null>(null);
     useEffect(() => {
         interimItemsRef.current = dndItems;
     }, [dndItems]);
@@ -220,19 +202,14 @@ export function useHomePageDnd({
     const touchSensor = useSensor(TouchSensor, {
         activationConstraint: {
             delay: 150,
-            tolerance: 5
-        }
+            tolerance: 5,
+        },
     });
     const keyboardSensor = useSensor(KeyboardSensor);
-    const sensors = useSensors(
-        ...(disabled ? [] : [mouseSensor, touchSensor, keyboardSensor])
-    );
+    const sensors = useSensors(...(disabled ? [] : [mouseSensor, touchSensor, keyboardSensor]));
 
     /* ---------------- helpers ---------------- */
-    const dndContainers = useMemo(
-        () => dndItems.map((g) => g.name),
-        [dndItems]
-    );
+    const dndContainers = useMemo(() => dndItems.map((g) => g.name), [dndItems]);
 
     const findDndContainer = useCallback(
         (id: UniqueIdentifier): string | undefined => {
@@ -261,7 +238,7 @@ export function useHomePageDnd({
                 if (!groups.length) return [];
                 return closestCenter({
                     ...args,
-                    droppableContainers: groups
+                    droppableContainers: groups,
                 });
             }
 
@@ -270,18 +247,15 @@ export function useHomePageDnd({
                 const zone = pointer.find((c) => c.id === "new-group-drop-zone");
                 if (zone) return [zone];
 
-                const container = pointer.find((c) =>
-                    dndItems.some((g) => g.name === c.id)
-                );
+                const container = pointer.find((c) => dndItems.some((g) => g.name === c.id));
                 if (container) {
-                    const itemsIn = dndItems.find((g) => g.name === container.id)
-                        ?.entries;
+                    const itemsIn = dndItems.find((g) => g.name === container.id)?.entries;
                     if (itemsIn?.length) {
                         const closest = closestCorners({
                             ...args,
-                            droppableContainers: args.droppableContainers.filter(
-                                (c) => itemsIn.some((e) => e.url === c.id)
-                            )
+                            droppableContainers: args.droppableContainers.filter((c) =>
+                                itemsIn.some((e) => e.url === c.id)
+                            ),
                         });
                         if (closest.length) return closest;
                     }
@@ -299,14 +273,13 @@ export function useHomePageDnd({
             if (overId != null) {
                 const overIsContainer = dndItems.some((g) => g.name === overId);
                 if (overIsContainer) {
-                    const itemsIn = dndItems.find((g) => g.name === overId)
-                        ?.entries;
+                    const itemsIn = dndItems.find((g) => g.name === overId)?.entries;
                     if (itemsIn?.length) {
                         const closestItem = closestCorners({
                             ...args,
-                            droppableContainers: args.droppableContainers.filter(
-                                (c) => itemsIn.some((e) => e.url === c.id)
-                            )
+                            droppableContainers: args.droppableContainers.filter((c) =>
+                                itemsIn.some((e) => e.url === c.id)
+                            ),
                         })[0]?.id;
                         if (closestItem) overId = closestItem;
                     }
@@ -315,11 +288,7 @@ export function useHomePageDnd({
                 return [{ id: overId }];
             }
 
-            if (
-                recentlyMovedToNewContainer.current &&
-                lastOverId.current &&
-                !activeIsGroup
-            )
+            if (recentlyMovedToNewContainer.current && lastOverId.current && !activeIsGroup)
                 return [{ id: lastOverId.current }];
 
             return [];
@@ -343,10 +312,7 @@ export function useHomePageDnd({
         recentlyMovedToNewContainer.current = false;
     };
 
-    const handleDragOver = ({
-                                active,
-                                over
-                            }: { active: Active; over: any }) => {
+    const handleDragOver = ({ active, over }: { active: Active; over: any }) => {
         if (disabled || !over) return;
 
         const activeIdNow = active.id;
@@ -377,10 +343,7 @@ export function useHomePageDnd({
         }
     };
 
-    const handleDragEnd = ({
-                               active,
-                               over
-                           }: { active: Active; over: any }) => {
+    const handleDragEnd = ({ active, over }: { active: Active; over: any }) => {
         if (disabled || !over) {
             resetDragState();
             return;
@@ -391,10 +354,7 @@ export function useHomePageDnd({
 
         /* ─── group reorder ─── */
         if (activeIsGroup) {
-            if (
-                activeIdNow !== overIdNow &&
-                dndItems.some((g) => g.name === overIdNow)
-            ) {
+            if (activeIdNow !== overIdNow && dndItems.some((g) => g.name === overIdNow)) {
                 const from = dndItems.findIndex((g) => g.name === activeIdNow);
                 const to = dndItems.findIndex((g) => g.name === overIdNow);
                 if (from !== -1 && to !== -1) {
@@ -404,9 +364,8 @@ export function useHomePageDnd({
                     onGroupMoved?.(activeIdNow as string, from, to);
                 }
             }
-        }
+        } else {
         /* ─── card move ─── */
-        else {
             const activeCont = findDndContainer(activeIdNow);
 
             /* drop on new-group zone */
@@ -416,9 +375,7 @@ export function useHomePageDnd({
                     const srcIdx = newState.findIndex((g) => g.name === activeCont);
                     if (srcIdx !== -1) {
                         const src = newState[srcIdx];
-                        const idxInSrc = src.entries.findIndex(
-                            (e) => e.url === activeIdNow
-                        );
+                        const idxInSrc = src.entries.findIndex((e) => e.url === activeIdNow);
                         if (idxInSrc !== -1) {
                             const [dragged] = src.entries.splice(idxInSrc, 1);
                             if (src.entries.length === 0) newState.splice(srcIdx, 1);
@@ -430,7 +387,7 @@ export function useHomePageDnd({
 
                             newState.push({
                                 name: tentative,
-                                entries: [dragged]
+                                entries: [dragged],
                             });
                             setDndItems(newState);
                             onPersist?.(newState);
@@ -439,48 +396,34 @@ export function useHomePageDnd({
                         }
                     }
                 }
-            }
+            } else {
             /* reorder inside same container */
-            else {
                 const overCont = findDndContainer(overIdNow);
                 if (activeCont === overCont) {
                     const grpIdx = dndItems.findIndex((g) => g.name === activeCont);
                     if (grpIdx !== -1) {
                         const group = dndItems[grpIdx];
-                        const oldIdx = group.entries.findIndex(
-                            (e) => e.url === activeIdNow
-                        );
-                        let newIdx = group.entries.findIndex(
-                            (e) => e.url === overIdNow
-                        );
+                        const oldIdx = group.entries.findIndex((e) => e.url === activeIdNow);
+                        let newIdx = group.entries.findIndex((e) => e.url === overIdNow);
                         if (newIdx === -1 && overIdNow === activeCont)
                             newIdx = group.entries.length - 1;
-                        if (
-                            oldIdx !== -1 &&
-                            newIdx !== -1 &&
-                            oldIdx !== newIdx
-                        ) {
+                        if (oldIdx !== -1 && newIdx !== -1 && oldIdx !== newIdx) {
                             const reordered = arrayMove(group.entries, oldIdx, newIdx);
                             const newState = [...dndItems];
                             newState[grpIdx] = {
                                 ...group,
-                                entries: reordered
+                                entries: reordered,
                             };
                             setDndItems(newState);
                             onPersist?.(newState);
                         }
                     }
-                } else if (
-                    recentlyMovedToNewContainer.current &&
-                    interimItemsRef.current
-                ) {
+                } else if (recentlyMovedToNewContainer.current && interimItemsRef.current) {
                     onPersist?.(interimItemsRef.current);
                 }
 
                 onCardMovedBetweenGroups?.(
-                    dndItems
-                        .flatMap((g) => g.entries)
-                        .find((e) => e.url === activeIdNow)!
+                    dndItems.flatMap((g) => g.entries).find((e) => e.url === activeIdNow)!
                 );
             }
         }
@@ -504,13 +447,12 @@ export function useHomePageDnd({
         setDndItems((current) => {
             const idx = current.findIndex((g) => g.name === oldName);
             if (idx === -1) return current;
-            if (current.some((g) => g.name === newName && g.name !== oldName))
-                return current;
+            if (current.some((g) => g.name === newName && g.name !== oldName)) return current;
 
             const updated = [...current];
             updated[idx] = {
                 ...updated[idx],
-                name: newName
+                name: newName,
             };
             onPersist?.(updated); // <- ensure rename is saved
             return updated;
@@ -520,10 +462,7 @@ export function useHomePageDnd({
     /* ---------------- public API ---------------- */
     const activeItemForOverlay = useMemo(() => {
         if (disabled || !activeId || activeIsGroup) return null;
-        return (
-            dndItems.flatMap((g) => g.entries).find((e) => e.url === activeId) ||
-            null
-        );
+        return dndItems.flatMap((g) => g.entries).find((e) => e.url === activeId) || null;
     }, [activeId, dndItems, disabled, activeIsGroup]);
 
     const activeGroupData = useMemo(() => {
@@ -549,7 +488,7 @@ export function useHomePageDnd({
         setDialogOpenForGroup,
         handleRenameGroup,
         isHoveringNewGroupDropZone,
-        setIsHoveringNewGroupDropZone
+        setIsHoveringNewGroupDropZone,
     };
 }
 
@@ -558,18 +497,15 @@ export function useHomePageDnd({
 
 /* ─────────────────────────────────────────────────────────── */
 export function NewGroupDropZone({
-                                     disabled,
-                                     setIsHovering
-                                 }: {
+    disabled,
+    setIsHovering,
+}: {
     disabled: boolean;
     setIsHovering: (v: boolean) => void;
 }) {
-    const {
-        setNodeRef,
-        isOver
-    } = useDroppable({
+    const { setNodeRef, isOver } = useDroppable({
         id: "new-group-drop-zone",
-        disabled
+        disabled,
     });
     const [isVisible, setIsVisible] = useState(false);
 
@@ -584,7 +520,7 @@ export function NewGroupDropZone({
         },
         onDragCancel() {
             setIsVisible(false);
-        }
+        },
     });
 
     useEffect(() => {
@@ -604,9 +540,7 @@ export function NewGroupDropZone({
             )}
         >
             <div className="text-center p-4">
-                <span className="block font-medium text-sm">
-                    Drop here to create a new group
-                </span>
+                <span className="block font-medium text-sm">Drop here to create a new group</span>
             </div>
         </div>
     );

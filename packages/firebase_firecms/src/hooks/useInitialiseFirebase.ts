@@ -6,13 +6,14 @@ import { deleteApp, FirebaseApp, getApps, initializeApp } from "@firebase/app";
  * @group Firebase
  */
 export interface InitialiseFirebaseResult {
-    firebaseConfigLoading: boolean,
+    firebaseConfigLoading: boolean;
     firebaseApp?: FirebaseApp;
-    configError?: string,
-    firebaseConfigError?: Error
+    configError?: string;
+    firebaseConfigError?: Error;
 }
 
-const hostingError = "It seems like the provided Firebase config is not correct. If you \n" +
+const hostingError =
+    "It seems like the provided Firebase config is not correct. If you \n" +
     "are using the credentials provided automatically by Firebase \n" +
     "Hosting, make sure you link your Firebase app to Firebase Hosting. \n";
 
@@ -34,48 +35,51 @@ const hostingError = "It seems like the provided Firebase config is not correct.
  * @group Firebase
  */
 export function useInitialiseFirebase({
-                                          firebaseConfig,
-                                          fromUrl,
-                                          onFirebaseInit,
-                                          name,
-                                          authDomain
-                                      }: {
-    firebaseConfig?: Record<string, unknown>,
-    fromUrl?: string | undefined,
-    onFirebaseInit?: ((config: object, firebaseApp: FirebaseApp) => void) | undefined,
+    firebaseConfig,
+    fromUrl,
+    onFirebaseInit,
+    name,
+    authDomain,
+}: {
+    firebaseConfig?: Record<string, unknown>;
+    fromUrl?: string | undefined;
+    onFirebaseInit?: ((config: object, firebaseApp: FirebaseApp) => void) | undefined;
     name?: string;
     authDomain?: string;
 }): InitialiseFirebaseResult {
-
     const [firebaseApp, setFirebaseApp] = useState<FirebaseApp | undefined>();
     const [firebaseConfigLoading, setFirebaseConfigLoading] = useState<boolean>(false);
     const [configError, setConfigError] = useState<string>();
 
-    const initFirebase = useCallback((config: Record<string, unknown>) => {
-
-        if (config.projectId === firebaseApp?.options.projectId) {
-            console.debug("Firebase app already initialised with the same project ID. This should happen only in development mode.");
-            setConfigError(undefined);
-            setFirebaseConfigLoading(false);
-            return;
-        }
-
-        try {
-            const targetName = name ?? "[DEFAULT]";
-            const currentApps = getApps();
-            const existingApp = currentApps.find(app => app.name === targetName);
-            if (existingApp) {
-                deleteApp(existingApp);
+    const initFirebase = useCallback(
+        (config: Record<string, unknown>) => {
+            if (config.projectId === firebaseApp?.options.projectId) {
+                console.debug(
+                    "Firebase app already initialised with the same project ID. This should happen only in development mode."
+                );
+                setConfigError(undefined);
+                setFirebaseConfigLoading(false);
+                return;
             }
-            const initialisedFirebaseApp = initializeApp(config, targetName);
-            setConfigError(undefined);
-            setFirebaseConfigLoading(false);
-            setFirebaseApp(initialisedFirebaseApp);
-        } catch (e: any) {
-            console.error("Error initialising Firebase", e);
-            setConfigError(hostingError + "\n" + (e.message ?? JSON.stringify(e)));
-        }
-    }, [name]);
+
+            try {
+                const targetName = name ?? "[DEFAULT]";
+                const currentApps = getApps();
+                const existingApp = currentApps.find((app) => app.name === targetName);
+                if (existingApp) {
+                    deleteApp(existingApp);
+                }
+                const initialisedFirebaseApp = initializeApp(config, targetName);
+                setConfigError(undefined);
+                setFirebaseConfigLoading(false);
+                setFirebaseApp(initialisedFirebaseApp);
+            } catch (e: any) {
+                console.error("Error initialising Firebase", e);
+                setConfigError(hostingError + "\n" + (e.message ?? JSON.stringify(e)));
+            }
+        },
+        [name]
+    );
 
     useEffect(() => {
         if (onFirebaseInit && firebaseConfig && firebaseApp) {
@@ -84,12 +88,11 @@ export function useInitialiseFirebase({
     }, [firebaseApp]);
 
     useEffect(() => {
-
         setFirebaseConfigLoading(true);
 
         function fetchFromUrl(url: string) {
             fetch(url)
-                .then(async response => {
+                .then(async (response) => {
                     console.debug("Firebase init response", response.status);
                     if (response && response.status < 300) {
                         const config = await response.json();
@@ -97,15 +100,14 @@ export function useInitialiseFirebase({
                         initFirebase(config);
                     }
                 })
-                .catch(e => {
-                        setFirebaseConfigLoading(false);
-                        setConfigError(
-                            "Could not load Firebase configuration from Firebase hosting. " +
+                .catch((e) => {
+                    setFirebaseConfigLoading(false);
+                    setConfigError(
+                        "Could not load Firebase configuration from Firebase hosting. " +
                             "If the app is not deployed in Firebase hosting, you need to specify the configuration manually" +
                             e.toString()
-                        );
-                    }
-                );
+                    );
+                });
         }
 
         if (firebaseConfig) {
@@ -127,6 +129,6 @@ export function useInitialiseFirebase({
     return {
         firebaseApp,
         firebaseConfigLoading,
-        configError
+        configError,
     };
 }

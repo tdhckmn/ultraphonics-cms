@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function StraightIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"straight"}/>
+    return <Icon {...props} iconKey={"straight"} />;
 }

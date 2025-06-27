@@ -1,74 +1,32 @@
 {
-  "name": "firecms-parent",
-  "private": true,
-  "description": "Awesome Firebase/Firestore-based headless open-source CMS",
-  "author": "FireCMS",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/firecmsco/firecms.git"
-  },
-  "homepage": "https://firecms.co",
-  "workspaces": [
-    "packages/firecms",
-    "packages/firecms_cloud",
-    "packages/firecms_core",
-    "packages/cli",
-    "packages/ui",
-    "packages/datatalk",
-    "packages/create_firecms_app",
-    "packages/mongodb",
-    "packages/firebase_firecms",
-    "packages/collection_editor",
-    "packages/collection_editor_firebase",
-    "packages/user_management",
-    "packages/data_import",
-    "packages/data_export",
-    "packages/data_import_export",
-    "packages/entity_history",
-    "packages/schema_inference",
-    "packages/data_enhancement",
-    "packages/user_management",
-    "packages/formex",
-    "packages/editor",
-    "examples/example_cloud",
-    "examples/example",
-    "examples/example_next",
-    "examples/example_pro"
-  ],
-  "scripts": {
-    "dev": "cd examples/example && run-s dev",
-    "pro": "cd examples/example_pro && run-s dev",
-    "next": "cd examples/example_next && run-s dev",
-    "cloud": "cd examples/example_cloud && run-s dev",
-    "saas": "cd saas && run-s dev",
-    "datatalk": "cd saas_datatalk && run-s dev",
-    "deploy:demo": "cd examples/example_pro && run-s deploy",
-    "preview": "cd examples/example_pro && run-s preview",
-    "deploy:staging": "lerna run build && cd saas && run-s deploy:staging",
-    "deploy:prod": "lerna run build && cd saas && run-s deploy:prod && cd .. && run-s create-prod-release-tag",
-    "create-prod-release-tag": "git tag -a \"release_$(date +'%Y%m%d-%H%M')\" -m \"Prod release on $(date +'%Y-%m-%d %H:%M')\"",
-    "deploy:canary": "lerna run build && cd saas && run-s build && run-s deploy:canary",
-    "web": "cd website && run-s dev",
-    "deploy:web": "cd website && run-s deploy",
-    "build": "lerna run build",
-    "build:stream": "lerna run build --stream --loglevel=info",
-    "clean": "lerna run clean",
-    "release": "git push origin main:release"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.16.0",
-    "@types/eslint__js": "^8.42.3",
-    "@typescript-eslint/eslint-plugin": "^8.17.0",
-    "eslint": "^9.16.0",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-n": "^17.14.0",
-    "eslint-plugin-promise": "^7.2.1",
-    "eslint-plugin-react": "^7.37.2",
-    "eslint-plugin-react-hooks": "^5.1.0",
-    "globals": "^15.13.0",
-    "lerna": "^8.1.9",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^5.7.2",
-    "typescript-eslint": "^8.17.0"
-  }
+    "name": "ultraphonics-cms",
+    "private": true,
+    "description": "CMS for managing Ultraphonics band content using FireCMS and Firebase",
+    "author": "Ultraphonics",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tdhckmn/ultraphonics-cms.git"
+    },
+    "homepage": "https://tdhckmn.github.io/ultraphonics-cms",
+    "workspaces": [
+        "examples/example_pro"
+    ],
+    "scripts": {
+        "dev": "cd examples/example_pro && yarn dev",
+        "build": "cd examples/example_pro && yarn build",
+        "deploy": "cd examples/example_pro && npx gh-pages -d dist",
+        "clean": "lerna run clean"
+    },
+    "devDependencies": {
+        "gh-pages": "^6.3.0",
+        "lerna": "^8.1.9",
+        "npm-run-all": "^4.1.5",
+        "prettier": "^3.6.1",
+        "typescript": "^5.7.2"
+    },
+    "dependencies": {
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.1",
+        "@mui/material": "^7.1.2"
+    }
 }

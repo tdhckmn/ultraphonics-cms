@@ -16,7 +16,7 @@ import {
     SelectFieldBinding,
     StorageUploadFieldBinding,
     SwitchFieldBinding,
-    TextFieldBinding
+    TextFieldBinding,
 } from "../form";
 import { isPropertyBuilder, mergeDeep } from "../util";
 
@@ -38,7 +38,7 @@ import {
     ShortTextIcon,
     SubjectIcon,
     UploadFileIcon,
-    ViewStreamIcon
+    ViewStreamIcon,
 } from "@firecms/ui";
 
 export function isDefaultFieldConfigId(id: string) {
@@ -54,8 +54,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         color: "#2d7ff9",
         property: {
             dataType: "string",
-            Field: TextFieldBinding
-        }
+            Field: TextFieldBinding,
+        },
     },
     multiline: {
         key: "multiline",
@@ -66,8 +66,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         property: {
             dataType: "string",
             multiline: true,
-            Field: TextFieldBinding
-        }
+            Field: TextFieldBinding,
+        },
     },
     markdown: {
         key: "markdown",
@@ -78,8 +78,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         property: {
             dataType: "string",
             markdown: true,
-            Field: MarkdownEditorFieldBinding
-        }
+            Field: MarkdownEditorFieldBinding,
+        },
     },
     url: {
         key: "url",
@@ -90,8 +90,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         property: {
             dataType: "string",
             url: true,
-            Field: TextFieldBinding
-        }
+            Field: TextFieldBinding,
+        },
     },
     email: {
         key: "email",
@@ -102,8 +102,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         property: {
             dataType: "string",
             email: true,
-            Field: TextFieldBinding
-        }
+            Field: TextFieldBinding,
+        },
     },
     switch: {
         key: "switch",
@@ -113,8 +113,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         color: "#20d9d2",
         property: {
             dataType: "boolean",
-            Field: SwitchFieldBinding
-        }
+            Field: SwitchFieldBinding,
+        },
     },
     select: {
         key: "select",
@@ -125,8 +125,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         property: {
             dataType: "string",
             enumValues: [],
-            Field: SelectFieldBinding
-        }
+            Field: SelectFieldBinding,
+        },
     },
     multi_select: {
         key: "multi_select",
@@ -140,8 +140,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
                 dataType: "string",
                 enumValues: [],
             },
-            Field: MultiSelectFieldBinding
-        }
+            Field: MultiSelectFieldBinding,
+        },
     },
     number_input: {
         key: "number_input",
@@ -151,8 +151,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         color: "#bec920",
         property: {
             dataType: "number",
-            Field: TextFieldBinding
-        }
+            Field: TextFieldBinding,
+        },
     },
     number_select: {
         key: "number_select",
@@ -163,8 +163,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         property: {
             dataType: "number",
             enumValues: [],
-            Field: SelectFieldBinding
-        }
+            Field: SelectFieldBinding,
+        },
     },
     multi_number_select: {
         key: "multi_number_select",
@@ -178,8 +178,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
                 dataType: "number",
                 enumValues: [],
             },
-            Field: MultiSelectFieldBinding
-        }
+            Field: MultiSelectFieldBinding,
+        },
     },
     file_upload: {
         key: "file_upload",
@@ -190,10 +190,10 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         property: {
             dataType: "string",
             storage: {
-                storagePath: "{path}"
+                storagePath: "{path}",
             },
-            Field: StorageUploadFieldBinding as React.ComponentType<FieldProps<string>>
-        }
+            Field: StorageUploadFieldBinding as React.ComponentType<FieldProps<string>>,
+        },
     },
     multi_file_upload: {
         key: "multi_file_upload",
@@ -206,11 +206,11 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
             of: {
                 dataType: "string",
                 storage: {
-                    storagePath: "{path}"
-                }
+                    storagePath: "{path}",
+                },
             },
-            Field: StorageUploadFieldBinding
-        }
+            Field: StorageUploadFieldBinding,
+        },
     },
     reference_as_string: {
         key: "reference_as_string",
@@ -220,8 +220,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         color: "#154fb3",
         property: {
             dataType: "string",
-            Field: ReferenceAsStringFieldBinding
-        }
+            Field: ReferenceAsStringFieldBinding,
+        },
     },
     reference: {
         key: "reference",
@@ -231,8 +231,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         color: "#ff0042",
         property: {
             dataType: "reference",
-            Field: ReferenceFieldBinding
-        }
+            Field: ReferenceFieldBinding,
+        },
     },
     multi_references: {
         key: "multi_references",
@@ -245,8 +245,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
             of: {
                 dataType: "reference",
             },
-            Field: ArrayOfReferencesFieldBinding
-        }
+            Field: ArrayOfReferencesFieldBinding,
+        },
     },
     date_time: {
         key: "date_time",
@@ -256,8 +256,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         color: "#8b46ff",
         property: {
             dataType: "date",
-            Field: DateTimeFieldBinding
-        }
+            Field: DateTimeFieldBinding,
+        },
     },
     group: {
         key: "group",
@@ -268,8 +268,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         property: {
             dataType: "map",
             properties: {},
-            Field: MapFieldBinding
-        }
+            Field: MapFieldBinding,
+        },
     },
     key_value: {
         key: "key_value",
@@ -280,8 +280,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         property: {
             dataType: "map",
             keyValue: true,
-            Field: KeyValueFieldBinding
-        }
+            Field: KeyValueFieldBinding,
+        },
     },
     repeat: {
         key: "repeat",
@@ -294,8 +294,8 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
             of: {
                 dataType: "string",
             },
-            Field: RepeatFieldBinding
-        }
+            Field: RepeatFieldBinding,
+        },
     },
     custom_array: {
         key: "custom_array",
@@ -306,13 +306,14 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
         property: {
             dataType: "array",
             of: [],
-            Field: ArrayCustomShapedFieldBinding
-        }
+            Field: ArrayCustomShapedFieldBinding,
+        },
     },
     block: {
         key: "block",
         name: "Block",
-        description: "A complex field that allows the user to compose different fields together, with a key/value format",
+        description:
+            "A complex field that allows the user to compose different fields together, with a key/value format",
         Icon: ViewStreamIcon,
         color: "#ff9408",
         property: {
@@ -320,12 +321,14 @@ export const DEFAULT_FIELD_CONFIGS: Record<string, PropertyConfig<any>> = {
             oneOf: {
                 properties: {},
             },
-            Field: BlockFieldBinding
-        }
-    }
+            Field: BlockFieldBinding,
+        },
+    },
 };
 
-export function getDefaultFieldConfig(property: Property | ResolvedProperty): PropertyConfig | undefined {
+export function getDefaultFieldConfig(
+    property: Property | ResolvedProperty
+): PropertyConfig | undefined {
     const fieldId = getDefaultFieldId(property);
     if (!fieldId) {
         console.error("No field id found for property", property);
@@ -334,7 +337,10 @@ export function getDefaultFieldConfig(property: Property | ResolvedProperty): Pr
     return DEFAULT_FIELD_CONFIGS[fieldId];
 }
 
-export function getFieldConfig(property: Property | ResolvedProperty, propertyConfigs: Record<string, PropertyConfig<any>>): PropertyConfig | undefined {
+export function getFieldConfig(
+    property: Property | ResolvedProperty,
+    propertyConfigs: Record<string, PropertyConfig<any>>
+): PropertyConfig | undefined {
     const fieldId = getFieldId(property);
     const defaultFieldId = getDefaultFieldId(property);
     if (!defaultFieldId) {
@@ -343,7 +349,7 @@ export function getFieldConfig(property: Property | ResolvedProperty, propertyCo
     }
     const defaultFieldConfig = DEFAULT_FIELD_CONFIGS[defaultFieldId];
     const customField = fieldId ? propertyConfigs[fieldId] : undefined;
-    return mergeDeep(defaultFieldConfig ?? {}, customField ?? {} as PropertyConfig);
+    return mergeDeep(defaultFieldConfig ?? {}, customField ?? ({} as PropertyConfig));
 }
 
 export function getDefaultFieldId(property: Property | ResolvedProperty) {
@@ -371,8 +377,7 @@ export function getDefaultFieldId(property: Property | ResolvedProperty) {
         }
         return "number_input";
     } else if (property.dataType === "map") {
-        if (property.keyValue)
-            return "key_value";
+        if (property.keyValue) return "key_value";
         return "group";
     } else if (property.dataType === "array") {
         const of = (property as ArrayProperty).of;
@@ -407,7 +412,6 @@ export function getDefaultFieldId(property: Property | ResolvedProperty) {
 }
 
 export function getFieldId(property: Property | ResolvedProperty): string | undefined {
-    if (property.propertyConfig)
-        return property.propertyConfig;
+    if (property.propertyConfig) return property.propertyConfig;
     return getDefaultFieldId(property);
 }

@@ -18,11 +18,12 @@ import ExecutionEnvironment from "@docusaurus/ExecutionEnvironment";
 import { defaultBorderMixin } from "../../partials/styles";
 
 export default function LayoutWrapper(props) {
-
     const { pathname } = useLocation();
 
-    const documentEnabled = ExecutionEnvironment.canUseDOM ? document : undefined
-    const [darkMode, setDarkMode] = React.useState(documentEnabled ? document.documentElement.getAttribute("data-theme") === "dark" : true);
+    const documentEnabled = ExecutionEnvironment.canUseDOM ? document : undefined;
+    const [darkMode, setDarkMode] = React.useState(
+        documentEnabled ? document.documentElement.getAttribute("data-theme") === "dark" : true
+    );
 
     // useEffect(() => {
     //     if (ExecutionEnvironment.canUseDOM) {
@@ -41,16 +42,17 @@ export default function LayoutWrapper(props) {
         if (!ExecutionEnvironment.canUseDOM) return;
         const observer = new MutationObserver((mutations) => {
             mutations.forEach(function (mutation) {
-                if (mutation.type === "attributes"
-                    && mutation.attributeName === "data-theme") {
-                    mutation.target.getAttribute("data-theme") === "dark" ? setDarkMode(true) : setDarkMode(false);
+                if (mutation.type === "attributes" && mutation.attributeName === "data-theme") {
+                    mutation.target.getAttribute("data-theme") === "dark"
+                        ? setDarkMode(true)
+                        : setDarkMode(false);
                 }
             });
         });
         observer.observe(document.documentElement, {
             attributes: true,
             childList: false,
-            subtree: false
+            subtree: false,
         });
         return () => {
             observer.disconnect();
@@ -61,7 +63,7 @@ export default function LayoutWrapper(props) {
         return pathname.startsWith("/docs/");
     }
 
-// should show algolia docsearch
+    // should show algolia docsearch
     useEffect(() => {
         if (isDocs()) {
             docsearch({
@@ -76,7 +78,11 @@ export default function LayoutWrapper(props) {
     return (
         <>
             <div
-                className={clsx("pointer-events-none fixed top-0 left-0 right-0 w-[84rem] h-full max-w-full mx-auto border-x border-y-0 border-solid", defaultBorderMixin)}/>
+                className={clsx(
+                    "pointer-events-none fixed top-0 left-0 right-0 w-[84rem] h-full max-w-full mx-auto border-x border-y-0 border-solid",
+                    defaultBorderMixin
+                )}
+            />
             {/*{isDocs() && <div className={"h-20"}/>}*/}
             <Layout {...props} />
         </>

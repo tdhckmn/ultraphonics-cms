@@ -18,4 +18,5 @@ import { useContext } from "react";
  *
  * @group Hooks and utilities
  */
-export const useSideDialogsController = (): SideDialogsController => useContext(SideDialogsControllerContext);
+export const useSideDialogsController = (): SideDialogsController =>
+    useContext(SideDialogsControllerContext);

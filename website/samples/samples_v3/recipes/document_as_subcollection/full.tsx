@@ -4,7 +4,7 @@ import { FireCMSAppConfig } from "@firecms/cloud";
 type Unit = {
     name: string;
     description: string;
-}
+};
 
 const unitsCollection = buildCollection<Unit>({
     name: "Units",
@@ -20,24 +20,22 @@ const unitsCollection = buildCollection<Unit>({
         },
         onDelete: ({ context }) => {
             context.navigation.refreshNavigation();
-        }
+        },
     },
     properties: {
         name: {
             name: "Name",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         description: {
             name: "Description",
             validation: { required: true },
             dataType: "string",
-            multiline: true
-        }
-    }
+            multiline: true,
+        },
+    },
 });
-
-
 
 const appConfig: FireCMSAppConfig = {
     version: "1",
@@ -45,25 +43,24 @@ const appConfig: FireCMSAppConfig = {
         const units = await dataSource.fetchCollection<Unit>({
             path: "units",
         });
-        const lessonCollections = units.map(unit => buildCollection({
-            name: unit.values.name,
-            id: `units/${unit.id}/lessons`,
-            path: `units/${unit.id}/lessons`,
-            description: unit.values.description,
-            group: "Units",
-            properties: {
-                name: {
-                    name: "Name",
-                    dataType: "string"
-                }
-            }
-        }));
+        const lessonCollections = units.map((unit) =>
+            buildCollection({
+                name: unit.values.name,
+                id: `units/${unit.id}/lessons`,
+                path: `units/${unit.id}/lessons`,
+                description: unit.values.description,
+                group: "Units",
+                properties: {
+                    name: {
+                        name: "Name",
+                        dataType: "string",
+                    },
+                },
+            })
+        );
 
-        return [
-            unitsCollection,
-            ...lessonCollections
-        ]
-    }
-}
+        return [unitsCollection, ...lessonCollections];
+    },
+};
 
 export default appConfig;

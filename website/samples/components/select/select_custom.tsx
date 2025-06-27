@@ -6,8 +6,8 @@ const beverages = {
     tea: "Tea",
     juice: "Juice",
     soda: "Soda",
-    water: "Water"
-}
+    water: "Water",
+};
 
 export default function SelectCustomDemo() {
     const [selected, setSelected] = React.useState("");

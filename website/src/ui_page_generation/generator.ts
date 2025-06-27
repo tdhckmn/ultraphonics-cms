@@ -4209,7 +4209,7 @@ const currentCode = fs.readFileSync("./src/pages/ui.tsx", "utf-8");
 //
 // export default UiPage;
 // `;
-const walk = function (dir:any) {
+const walk = function (dir: any) {
     let results: File[] = [];
     const list = fs.readdirSync(dir);
     list.forEach(function (file) {
@@ -4222,11 +4222,10 @@ const walk = function (dir:any) {
         }
     });
     return results;
-}
+};
 
 export async function generateUIPage() {
-
-    console.log("Generating UI page")
+    console.log("Generating UI page");
     // read system_instructions.txt
     // let systemInstructions = "These are all the files you need to create a new UI page in FireCMS. Your goal is " +
     //     "to generate a new marketing landing page that showcases the most important elements. Build it using React, tailwind and typecript. " +
@@ -4244,7 +4243,7 @@ export async function generateUIPage() {
 
     const model = "gpt-4o";
     const openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY
+        apiKey: process.env.OPENAI_API_KEY,
     });
 
     const stream = await openai.chat.completions.create({
@@ -4252,10 +4251,11 @@ export async function generateUIPage() {
         messages: [
             {
                 role: "system",
-                content: "You are a tool that needs to output a react typescript component that will serve as the marketing site for the components of FireCMS." +
+                content:
+                    "You are a tool that needs to output a react typescript component that will serve as the marketing site for the components of FireCMS." +
                     "You will receive a list of components that you need to include in the page. You can import any of the components included in the instructions." +
                     "These are the components of FireCMS:" +
-                    fileInstructions
+                    fileInstructions,
             },
             {
                 role: "user",
@@ -4272,14 +4272,14 @@ export async function generateUIPage() {
                 Also, avoid grouping elements like Chips & Textarea AutoSize. They should be separate.
                 In each card you should include multiple components,when possible, like different button combinations.
                 
-                `
-            }
+                `,
+            },
         ],
         temperature: 1,
         top_p: 1,
         n: 1,
         max_tokens: 4000,
-        stream: true
+        stream: true,
     });
 
     let fullOutput = "";
@@ -4298,12 +4298,9 @@ export async function generateUIPage() {
         console.error("Error parsing OpenAI response", fullOutput);
         return null;
     }
-
 }
 
 // save the generated code to a file, create if it doesn't exist
 generateUIPage().then((code) => {
     fs.writeFileSync("./generated_ui_new.tsx", code, "utf-8");
 });
-
-

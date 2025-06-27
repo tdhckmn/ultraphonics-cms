@@ -13,13 +13,12 @@ function TermsAndConditions() {
     return (
         <Layout
             title={"Terms and conditions - FireCMS"}
-            description="Headless CMS based on Firestore/Firebase, React and tailwindcss, and completely open-source">
+            description="Headless CMS based on Firestore/Firebase, React and tailwindcss, and completely open-source"
+        >
             <Head>
                 <title>Terms and conditions - FireCMS</title>
             </Head>
-                <main className="flex-grow container mx-auto px-4 py-8" ref={divRef}>
-                </main>
-
+            <main className="flex-grow container mx-auto px-4 py-8" ref={divRef}></main>
         </Layout>
     );
 }
@@ -182,5 +181,4 @@ Calibri;mso-themecolor:text1;mso-themetint:166;">In order to resolve a complaint
       </div>
       
 
-      `
-
+      `;

@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function StrollerIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"stroller"}/>
+    return <Icon {...props} iconKey={"stroller"} />;
 }

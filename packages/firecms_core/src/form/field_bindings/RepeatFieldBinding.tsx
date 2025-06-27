@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import { CMSType, FieldProps, PropertyFieldBindingProps, ResolvedProperty } from "../../types";
 import { FieldHelperText, LabelWithIconAndTooltip } from "../components";
 import { ArrayContainer, ArrayEntryParams, ErrorBoundary } from "../../components";
-import { getArrayResolvedProperties, getDefaultValueFor, getIconForProperty, mergeDeep } from "../../util";
+import {
+    getArrayResolvedProperties,
+    getDefaultValueFor,
+    getIconForProperty,
+    mergeDeep,
+} from "../../util";
 import { PropertyFieldBinding } from "../PropertyFieldBinding";
 import { ExpandablePanel, Typography } from "@firecms/ui";
 import { useClearRestoreValue } from "../useClearRestoreValue";
@@ -17,36 +22,35 @@ import { useAuthController } from "../../hooks";
  * @group Form fields
  */
 export function RepeatFieldBinding<T extends Array<any>>({
-                                                             propertyKey,
-                                                             value,
-                                                             error,
-                                                             showError,
-                                                             isSubmitting,
-                                                             setValue,
-                                                             setFieldValue,
-                                                             minimalistView: minimalistViewProp,
-                                                             property,
-                                                             includeDescription,
-                                                             underlyingValueHasChanged,
-                                                             context,
-                                                             disabled
-                                                         }: FieldProps<T>) {
-
+    propertyKey,
+    value,
+    error,
+    showError,
+    isSubmitting,
+    setValue,
+    setFieldValue,
+    minimalistView: minimalistViewProp,
+    property,
+    includeDescription,
+    underlyingValueHasChanged,
+    context,
+    disabled,
+}: FieldProps<T>) {
     const authController = useAuthController();
     const minimalistView = minimalistViewProp || property.minimalistView;
 
-    if (!property.of)
-        throw Error("RepeatFieldBinding misconfiguration. Property `of` not set");
+    if (!property.of) throw Error("RepeatFieldBinding misconfiguration. Property `of` not set");
 
-    let resolvedProperties = "resolvedProperties" in property ? property.resolvedProperties : undefined;
+    let resolvedProperties =
+        "resolvedProperties" in property ? property.resolvedProperties : undefined;
     if (!resolvedProperties) {
         resolvedProperties = getArrayResolvedProperties({
             propertyValue: value,
             propertyKey,
             property,
             ignoreMissingFields: false,
-            authController
-        })
+            authController,
+        });
     }
 
     const expanded = property.expanded === undefined ? true : property.expanded;
@@ -57,15 +61,10 @@ export function RepeatFieldBinding<T extends Array<any>>({
     useClearRestoreValue({
         property,
         value,
-        setValue
+        setValue,
     });
 
-    const buildEntry = ({
-                            index,
-                            internalId,
-                            storedProps,
-                            storeProps
-                        }: ArrayEntryParams) => {
+    const buildEntry = ({ index, internalId, storedProps, storeProps }: ArrayEntryParams) => {
         const childProperty = resolvedProperties[index] ?? ofProperty;
         const fieldProps: PropertyFieldBindingProps<any, any> = {
             propertyKey: `${propertyKey}.${index}`,
@@ -79,54 +78,79 @@ export function RepeatFieldBinding<T extends Array<any>>({
             minimalistView: false,
             autoFocus: internalId === lastAddedId,
         };
-        return <ErrorBoundary>
-            <PropertyFieldBinding {...fieldProps} index={index}/>
-        </ErrorBoundary>;
+        return (
+            <ErrorBoundary>
+                <PropertyFieldBinding {...fieldProps} index={index} />
+            </ErrorBoundary>
+        );
     };
 
-    const canAddElements = !property.disabled && !isSubmitting && !disabled && (property.canAddElements || property.canAddElements === undefined);
+    const canAddElements =
+        !property.disabled &&
+        !isSubmitting &&
+        !disabled &&
+        (property.canAddElements || property.canAddElements === undefined);
     const sortable = property.sortable === undefined ? true : property.sortable;
-    const arrayContainer = <ArrayContainer droppableId={propertyKey}
-                                           addLabel={property.name ? "Add entry to " + property.name : "Add entry"}
-                                           value={value}
-                                           buildEntry={buildEntry}
-                                           onInternalIdAdded={setLastAddedId}
-                                           disabled={isSubmitting || Boolean(property.disabled)}
-                                           canAddElements={canAddElements}
-                                           sortable={sortable}
-                                           newDefaultEntry={getDefaultValueFor(property.of)}
-                                           onValueChange={(value) => setFieldValue(propertyKey, value)}
-                                           className={property.widthPercentage !== undefined ? "mt-8" : undefined}
-    />;
+    const arrayContainer = (
+        <ArrayContainer
+            droppableId={propertyKey}
+            addLabel={property.name ? "Add entry to " + property.name : "Add entry"}
+            value={value}
+            buildEntry={buildEntry}
+            onInternalIdAdded={setLastAddedId}
+            disabled={isSubmitting || Boolean(property.disabled)}
+            canAddElements={canAddElements}
+            sortable={sortable}
+            newDefaultEntry={getDefaultValueFor(property.of)}
+            onValueChange={(value) => setFieldValue(propertyKey, value)}
+            className={property.widthPercentage !== undefined ? "mt-8" : undefined}
+        />
+    );
 
-    const title = (<>
-        <LabelWithIconAndTooltip
-            propertyKey={propertyKey}
-            icon={getIconForProperty(property, "small")}
-            required={property.validation?.required}
-            title={property.name}
-            className={"h-8 flex flex-grow text-text-secondary dark:text-text-secondary-dark"}/>
-        {Array.isArray(value) && <Typography variant={"caption"} className={"px-4"}>({value.length})</Typography>}
-    </>);
+    const title = (
+        <>
+            <LabelWithIconAndTooltip
+                propertyKey={propertyKey}
+                icon={getIconForProperty(property, "small")}
+                required={property.validation?.required}
+                title={property.name}
+                className={"h-8 flex flex-grow text-text-secondary dark:text-text-secondary-dark"}
+            />
+            {Array.isArray(value) && (
+                <Typography variant={"caption"} className={"px-4"}>
+                    ({value.length})
+                </Typography>
+            )}
+        </>
+    );
 
     return (
-
         <>
-
-            {!minimalistView && <ExpandablePanel initiallyExpanded={expanded}
-                                                 innerClassName={"px-2 md:px-4 pb-2 md:pb-4 pt-1 md:pt-2"}
-                                                 title={title}>
-                {arrayContainer}
-            </ExpandablePanel>}
+            {!minimalistView && (
+                <ExpandablePanel
+                    initiallyExpanded={expanded}
+                    innerClassName={"px-2 md:px-4 pb-2 md:pb-4 pt-1 md:pt-2"}
+                    title={title}
+                >
+                    {arrayContainer}
+                </ExpandablePanel>
+            )}
 
             {minimalistView && arrayContainer}
 
-            <FieldHelperText includeDescription={includeDescription}
-                             showError={showError}
-                             error={error ? (typeof error === "string" ? error : "A property of this array/repeat has an error") : undefined}
-                             disabled={disabled}
-                             property={property}/>
-
+            <FieldHelperText
+                includeDescription={includeDescription}
+                showError={showError}
+                error={
+                    error
+                        ? typeof error === "string"
+                            ? error
+                            : "A property of this array/repeat has an error"
+                        : undefined
+                }
+                disabled={disabled}
+                property={property}
+            />
         </>
     );
 }

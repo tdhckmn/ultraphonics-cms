@@ -8,7 +8,8 @@ export default function CustomStyleAlertDemo() {
             style={{
                 borderLeft: "4px solid #4ade80",
                 color: "#fff",
-                background: "repeating-linear-gradient(45deg,#606dbc,#606dbc 10px,#465298 10px,#465298 20px)"
+                background:
+                    "repeating-linear-gradient(45deg,#606dbc,#606dbc 10px,#465298 10px,#465298 20px)",
             }}
             color="success"
         >

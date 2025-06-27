@@ -7,17 +7,12 @@ import {
     ErrorBoundary,
     useAuthController,
     useDataSource,
-    useSnackbarController
+    useSnackbarController,
 } from "@firecms/core";
 import { cls, HistoryIcon, IconButton, Label, Tooltip, Typography } from "@firecms/ui";
 import { EntityHistoryEntry } from "./EntityHistoryEntry";
 
-export function EntityHistoryView({
-                                      entity,
-                                      collection,
-                                      formContext
-                                  }: EntityCustomViewParams) {
-
+export function EntityHistoryView({ entity, collection, formContext }: EntityCustomViewParams) {
     const authController = useAuthController();
     const snackbarController = useSnackbarController();
     const dirty = formContext?.formex.dirty;
@@ -57,7 +52,7 @@ export function EntityHistoryView({
                 console.error("Error fetching history:", error);
                 setIsLoading(false);
                 setHasMore(false); // Stop trying if there's an error
-            }
+            },
         });
         return () => {
             if (typeof listener === "function") {
@@ -85,7 +80,7 @@ export function EntityHistoryView({
         const options = {
             root: currentContainer,
             rootMargin: "0px 0px 200px 0px", // Trigger 200px before the sentinel is at the bottom edge
-            threshold: 0.01 // Trigger if even a small part is visible within the rootMargin
+            threshold: 0.01, // Trigger if even a small part is visible within the rootMargin
         };
 
         // The callback for when the sentinel's intersection state changes
@@ -93,7 +88,7 @@ export function EntityHistoryView({
             const target = entries[0];
             if (target.isIntersecting && hasMore && !isLoading) {
                 // No need to setIsLoading(true) here, it's done in the data fetching useEffect
-                setLimit(prev => prev + PAGE_SIZE);
+                setLimit((prev) => prev + PAGE_SIZE);
             }
         };
 
@@ -112,9 +107,11 @@ export function EntityHistoryView({
     }, [hasMore, isLoading, revisions.length]);
 
     if (!entity) {
-        return <div className="flex items-center justify-center h-full">
-            <Label>History is only available for existing entities</Label>
-        </div>
+        return (
+            <div className="flex items-center justify-center h-full">
+                <Label>History is only available for existing entities</Label>
+            </div>
+        );
     }
 
     function doRevert(revertVersion: Entity) {
@@ -128,117 +125,119 @@ export function EntityHistoryView({
                 reverted: true,
                 updated_on: new Date(),
                 updated_by: authController.user?.uid ?? null,
-            }
+            },
         };
         const saveReverted = dataSource.saveEntity({
             path: entity.path,
             entityId: entity.id,
             values: revertValues,
             collection,
-            status: "existing"
+            status: "existing",
         });
         const saveRevertedHistory = dataSource.saveEntity({
             path: revertVersion.path,
             entityId: revertVersion.id,
             values: revertValues,
             collection,
-            status: "existing"
+            status: "existing",
         });
         return Promise.all([saveReverted, saveRevertedHistory])
             .then(() => {
-                    formContext.formex.resetForm({
-                        values: revertVersion.values
-                    });
-                    setRevertVersionDialog(undefined);
-                    snackbarController.open({
-                        message: "Reverted version",
-                        type: "info"
-                    });
-                }
-            ).catch((error) => {
+                formContext.formex.resetForm({
+                    values: revertVersion.values,
+                });
+                setRevertVersionDialog(undefined);
+                snackbarController.open({
+                    message: "Reverted version",
+                    type: "info",
+                });
+            })
+            .catch((error) => {
                 console.error("Error reverting entity:", error);
                 snackbarController.open({
                     message: "Error reverting entity",
-                    type: "error"
+                    type: "error",
                 });
             });
-
     }
 
-    return <div
-        ref={containerRef}
-        className={cls("relative flex-1 h-full overflow-auto w-full flex flex-col gap-4 p-8")}>
-        <div className="flex flex-col gap-2 max-w-6xl mx-auto w-full">
-
-            <Typography variant={"h5"} className={"mt-24 ml-4"}>
-                History
-            </Typography>
-
-            {revisions.length === 0 && <>
-                <Label className={"ml-4 mt-8"}>
-                    No history available
-                </Label>
-                <Typography variant={"caption"} className={"ml-4"}>
-                    When you save an entity, a new version is created and stored in the history.
+    return (
+        <div ref={containerRef} className={cls("relative flex-1 h-full overflow-auto w-full flex flex-col gap-4 p-8")}>
+            <div className="flex flex-col gap-2 max-w-6xl mx-auto w-full">
+                <Typography variant={"h5"} className={"mt-24 ml-4"}>
+                    History
                 </Typography>
-            </>}
 
-            {revisions.map((revision, index) => {
-                const previewKeys = revision.values?.["__metadata"]?.["changed_fields"];
-                const previousValues: object | undefined = revision.values?.["__metadata"]?.["previous_values"];
-                return <div key={index} className="flex flex-cols gap-2 w-full">
-                    <EntityHistoryEntry size={"large"}
-                                        entity={revision}
-                                        collection={collection}
-                                        previewKeys={previewKeys}
-                                        previousValues={previousValues}
-                                        actions={
-                                            <Tooltip title={"Revert to this version"}
-                                                     className={"m-2 grow-0 self-start"}>
-                                                <IconButton
-                                                    onClick={() => {
-                                                        if (dirty) {
-                                                            snackbarController.open({
-                                                                message: "Please save or discard your changes before reverting",
-                                                                type: "warning"
-                                                            });
-                                                        } else {
-                                                            setRevertVersionDialog(revision);
-                                                        }
-                                                    }}>
-                                                    <HistoryIcon/>
-                                                </IconButton>
-                                            </Tooltip>}
-                    />
-                </div>
-            })}
+                {revisions.length === 0 && (
+                    <>
+                        <Label className={"ml-4 mt-8"}>No history available</Label>
+                        <Typography variant={"caption"} className={"ml-4"}>
+                            When you save an entity, a new version is created and stored in the history.
+                        </Typography>
+                    </>
+                )}
 
-            {/* Load more sentinel element */}
-            {revisions.length > 0 && (
-                <div
-                    ref={loadMoreRef}
-                    className="py-4 text-center"
-                >
-                    {isLoading && <Label>Loading more...</Label>}
-                    {!hasMore && revisions.length > PAGE_SIZE && <Label>No more history available</Label>}
-                </div>
-            )}
+                {revisions.map((revision, index) => {
+                    const previewKeys = revision.values?.["__metadata"]?.["changed_fields"];
+                    const previousValues: object | undefined = revision.values?.["__metadata"]?.["previous_values"];
+                    return (
+                        <div key={index} className="flex flex-cols gap-2 w-full">
+                            <EntityHistoryEntry
+                                size={"large"}
+                                entity={revision}
+                                collection={collection}
+                                previewKeys={previewKeys}
+                                previousValues={previousValues}
+                                actions={
+                                    <Tooltip title={"Revert to this version"} className={"m-2 grow-0 self-start"}>
+                                        <IconButton
+                                            onClick={() => {
+                                                if (dirty) {
+                                                    snackbarController.open({
+                                                        message: "Please save or discard your changes before reverting",
+                                                        type: "warning",
+                                                    });
+                                                } else {
+                                                    setRevertVersionDialog(revision);
+                                                }
+                                            }}
+                                        >
+                                            <HistoryIcon />
+                                        </IconButton>
+                                    </Tooltip>
+                                }
+                            />
+                        </div>
+                    );
+                })}
+
+                {/* Load more sentinel element */}
+                {revisions.length > 0 && (
+                    <div ref={loadMoreRef} className="py-4 text-center">
+                        {isLoading && <Label>Loading more...</Label>}
+                        {!hasMore && revisions.length > PAGE_SIZE && <Label>No more history available</Label>}
+                    </div>
+                )}
+            </div>
+
+            <ErrorBoundary>
+                <ConfirmationDialog
+                    open={Boolean(revertVersionDialog)}
+                    onAccept={function (): void {
+                        if (!revertVersionDialog) return;
+                        doRevert(revertVersionDialog);
+                    }}
+                    onCancel={function (): void {
+                        setRevertVersionDialog(undefined);
+                    }}
+                    title={<Typography variant={"subtitle2"}>Revert data to this version?</Typography>}
+                    body={
+                        revertVersionDialog ? (
+                            <EntityView entity={revertVersionDialog} collection={collection} path={entity?.path} />
+                        ) : null
+                    }
+                />
+            </ErrorBoundary>
         </div>
-
-        <ErrorBoundary>
-            <ConfirmationDialog open={Boolean(revertVersionDialog)}
-                                onAccept={function (): void {
-                                    if (!revertVersionDialog) return;
-                                    doRevert(revertVersionDialog);
-                                }}
-                                onCancel={function (): void {
-                                    setRevertVersionDialog(undefined);
-                                }}
-                                title={<Typography variant={"subtitle2"}>Revert data to this version?</Typography>}
-                                body={revertVersionDialog ?
-                                    <EntityView entity={revertVersionDialog}
-                                                collection={collection}
-                                                path={entity?.path}/> : null}/>
-        </ErrorBoundary>
-    </div>
+    );
 }

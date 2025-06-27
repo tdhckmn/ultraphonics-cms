@@ -22,22 +22,22 @@ bun dev
 ```
 
 You can access the apps in:
+
 - Website: http://localhost:3000
 - FireCMS: http://localhost:3000/cms
 
 You can find the code under the `src/app` folder.
 There are some common components under `src/common`
 
-
 ## Firestore rules
 
-This project reads and writes data to Firestore. 
+This project reads and writes data to Firestore.
 By default the paths `products` and `blog` are used as an example.
 If you don't set up the Firestore rules, you will get the error when you try to read or write data:
 `Missing or insufficient permissions.`
 
 The FireCMS PRO plugins store some configuration in `__FIRECMS`. FireCMS users and
-roles are stored under this path. You probably want to grant access initially 
+roles are stored under this path. You probably want to grant access initially
 to your user to this path:
 
 ```
@@ -66,11 +66,9 @@ The website is a Next.js app. You can find the code under the `src/app` folder.
 It includes CRUD views for the `products` and `blog` collections.
 The products view includes automatic pagination and filtering.
 
+## License
 
-## License 
-
-In order to use the FireCMS PRO features you need to have a valid license key. 
+In order to use the FireCMS PRO features you need to have a valid license key.
 The PRO features are implemented as plugins.
 You can get one at [firecms.co](https://app.firecms.co/subscriptions).
 When you get your API key, you can set it in the `.env` file.
-

@@ -21,21 +21,18 @@ const sampleView: EntityCustomView = {
     name: "Blog entry preview",
     Builder: ({ collection, entity, modifiedValues }) => (
         // This is a custom component that you can build as any React component
-        <MyBlogPreviewComponent entity={entity}
-                                modifiedValues={modifiedValues}/>
-    )
+        <MyBlogPreviewComponent entity={entity} modifiedValues={modifiedValues} />
+    ),
 };
 
 const blogCollection = buildCollection({
     name: "Blog entry",
-    views: [
-        sampleView
-    ],
+    views: [sampleView],
     properties: {
         name: {
             name: "Name",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         },
         header_image: {
             name: "Header image",
@@ -45,9 +42,9 @@ const blogCollection = buildCollection({
                 storagePath: "images",
                 acceptedFiles: ["image/*"],
                 metadata: {
-                    cacheControl: "max-age=1000000"
-                }
-            }
+                    cacheControl: "max-age=1000000",
+                },
+            },
         },
         content: {
             name: "Content",
@@ -65,26 +62,26 @@ const blogCollection = buildCollection({
                             storage: {
                                 mediaType: "image",
                                 storagePath: "images",
-                                acceptedFiles: ["image/*"]
-                            }
-                        }
+                                acceptedFiles: ["image/*"],
+                            },
+                        },
                     },
                     text: {
                         dataType: "string",
                         name: "Text",
-                        markdown: true
+                        markdown: true,
                     },
                     products: {
                         name: "Products",
                         dataType: "array",
                         of: {
                             dataType: "reference",
-                            path: "products"
-                        }
-                    }
-                }
-            }
-        }
-    }
-})
+                            path: "products",
+                        },
+                    },
+                },
+            },
+        },
+    },
+});
 ```

@@ -47,8 +47,7 @@ export type EntityAction<M extends object = any, USER extends User = User> = {
      * Show this action in the form, defaults to true
      */
     includeInForm?: boolean;
-
-}
+};
 
 export type EntityActionClickProps<M extends object, USER extends User = User> = {
     entity: Entity<M>;

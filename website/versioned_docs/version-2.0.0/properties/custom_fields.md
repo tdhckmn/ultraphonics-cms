@@ -4,8 +4,8 @@ title: Custom fields
 sidebar_label: Custom fields
 ---
 
-Custom fields allow you to customize the field that it is displayed in the 
-form, related to a specific property. These fields use your own logic to 
+Custom fields allow you to customize the field that it is displayed in the
+form, related to a specific property. These fields use your own logic to
 render the corresponding view, and are responsible for updating the underlying
 property value.
 
@@ -23,65 +23,62 @@ entity, you can use the `context` field in FieldProps.
 
 You can check all the props [`FieldProps`].
 
-
 ## Example
 
 This is an example of a custom TextField that takes the background color as a prop
 
 ```tsx
-
 import React from "react";
 import { TextField } from "@mui/material";
 import { FieldProps } from "@firecms/core";
 
 interface CustomColorTextFieldProps {
-    color: string
+    color: string;
 }
 
 export default function CustomColorTextField({
-                                                 property,
-                                                 value,
-                                                 setValue,
-                                                 setFieldValue, // use this function to update a different field
-                                                 customProps,
-                                                 touched,
-                                                 error,
-                                                 isSubmitting,
-                                                 context, // the rest of the entity values here
-                                                 ...props
-                                             }: FieldProps<string, CustomColorTextFieldProps>) {
-
+    property,
+    value,
+    setValue,
+    setFieldValue, // use this function to update a different field
+    customProps,
+    touched,
+    error,
+    isSubmitting,
+    context, // the rest of the entity values here
+    ...props
+}: FieldProps<string, CustomColorTextFieldProps>) {
     return (
         <>
-            <TextField required={property.validation?.required}
-                       sx={{
-                           backgroundColor: customProps.color
-                       }}
-                       error={!!error}
-                       disabled={isSubmitting}
-                       label={property.title}
-                       value={value ?? ""}
-                       onChange={(evt: any) => {
-                           setValue(
-                               evt.target.value
-                           );
-                       }}
-                       fullWidth
-                       variant={"filled"}/>
+            <TextField
+                required={property.validation?.required}
+                sx={{
+                    backgroundColor: customProps.color,
+                }}
+                error={!!error}
+                disabled={isSubmitting}
+                label={property.title}
+                value={value ?? ""}
+                onChange={(evt: any) => {
+                    setValue(evt.target.value);
+                }}
+                fullWidth
+                variant={"filled"}
+            />
 
-
-            <TFormHelperText includeDescription={includeDescription}
-                             showError={showError}
-                             error={error}
-                             property={property}/>
+            <TFormHelperText
+                includeDescription={includeDescription}
+                showError={showError}
+                error={error}
+                property={property}
+            />
         </>
-
     );
-
 }
 ```
 
 ...and how it is used:
+
 ```tsx
 export const blogCollection = buildCollection({
     name: "Blog entry",
@@ -93,9 +90,9 @@ export const blogCollection = buildCollection({
             dataType: "string",
             Field: CustomColorTextField,
             customProps: {
-                color: "gold"
-            }
-        }
-    }
+                color: "gold",
+            },
+        },
+    },
 });
 ```

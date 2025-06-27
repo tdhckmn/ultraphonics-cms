@@ -1,6 +1,6 @@
 import React from "react";
 import { ErrorCauseBoundary, useThemeConfig } from "@docusaurus/theme-common";
-import { splitNavbarItems, useNavbarMobileSidebar, } from "@docusaurus/theme-common/internal";
+import { splitNavbarItems, useNavbarMobileSidebar } from "@docusaurus/theme-common/internal";
 import NavbarItem from "@theme/NavbarItem";
 import NavbarColorModeToggle from "@theme/Navbar/ColorModeToggle";
 import SearchBar from "@theme/SearchBar";
@@ -24,10 +24,15 @@ function NavbarItems({ items }) {
                             `A theme navbar item failed to render.
 Please double-check the following navbar item (themeConfig.navbar.items) of your Docusaurus config:
 ${JSON.stringify(item, null, 2)}`,
-                            { cause: error },
+                            { cause: error }
                         )
-                    }>
-                    {item.className === "colorSwitch" && <div className={"px-4"}><NavbarColorModeToggle/></div>}
+                    }
+                >
+                    {item.className === "colorSwitch" && (
+                        <div className={"px-4"}>
+                            <NavbarColorModeToggle />
+                        </div>
+                    )}
                     {item.className !== "colorSwitch" && <NavbarItem {...item} />}
                 </ErrorCauseBoundary>
             ))}
@@ -35,10 +40,7 @@ ${JSON.stringify(item, null, 2)}`,
     );
 }
 
-function NavbarContentLayout({
-                                 left,
-                                 right
-                             }) {
+function NavbarContentLayout({ left, right }) {
     return (
         <div className="navbar__inner">
             <div className="navbar__items p-4 navbar__items--left">{left}</div>
@@ -59,7 +61,7 @@ export default function NavbarContent() {
             left={
                 // TODO stop hardcoding items?
                 <>
-                    {!mobileSidebar.disabled && <NavbarMobileSidebarToggle/>}
+                    {!mobileSidebar.disabled && <NavbarMobileSidebarToggle />}
 
                     {/*<NavbarLogo/>*/}
                     <a href="/" className="navbar__brand">
@@ -70,52 +72,56 @@ export default function NavbarContent() {
                         />
                     </a>
                     {dropdownItems.map((item, i) => {
-                        const innerLeftItems = item.items.filter((item) => item.customPosition !== "right")
+                        const innerLeftItems = item.items
+                            .filter((item) => item.customPosition !== "right")
                             .map((item) => {
-                                const {
-                                    customPosition,
-                                    ...rest
-                                } = item;
+                                const { customPosition, ...rest } = item;
                                 return rest;
                             });
-                        const innerRightItems = item.items.filter((item) => item.customPosition === "right")
+                        const innerRightItems = item.items
+                            .filter((item) => item.customPosition === "right")
                             .map((item) => {
-                                const {
-                                    customPosition,
-                                    ...rest
-                                } = item;
+                                const { customPosition, ...rest } = item;
                                 return rest;
                             });
                         return (
                             <NavigationDropdown
                                 key={item.to}
-                                trigger={<div className="navbar__item dropdown dropdown--hoverable">
-                                    <a className="navbar__link"
-                                       role="button"
-                                       href="/features">{item.label}</a>
-                                </div>}>
+                                trigger={
+                                    <div className="navbar__item dropdown dropdown--hoverable">
+                                        <a className="navbar__link" role="button" href="/features">
+                                            {item.label}
+                                        </a>
+                                    </div>
+                                }
+                            >
                                 <div className={"flex flex-row gap-16 py-8"}>
-                                    {innerLeftItems && <div className={"flex flex-col"}>
-                                        <NavbarItems items={innerLeftItems}/>
-                                    </div>}
-                                    {innerRightItems && <div className={"flex flex-col"}>
-                                        <NavbarItems items={innerRightItems}/>
-                                    </div>}
+                                    {innerLeftItems && (
+                                        <div className={"flex flex-col"}>
+                                            <NavbarItems items={innerLeftItems} />
+                                        </div>
+                                    )}
+                                    {innerRightItems && (
+                                        <div className={"flex flex-col"}>
+                                            <NavbarItems items={innerRightItems} />
+                                        </div>
+                                    )}
                                 </div>
-                            </NavigationDropdown>);
+                            </NavigationDropdown>
+                        );
                     })}
 
-                    <NavbarItems items={notDropdownItems}/>
+                    <NavbarItems items={notDropdownItems} />
                 </>
             }
             right={
                 // TODO stop hardcoding items?
                 // Ask the user to add the respective navbar items => more flexible
                 <>
-                    <NavbarItems items={rightItems}/>
+                    <NavbarItems items={rightItems} />
                     {!searchBarItem && (
                         <NavbarSearch>
-                            <SearchBar/>
+                            <SearchBar />
                         </NavbarSearch>
                     )}
                 </>

@@ -41,7 +41,8 @@ async function resolveCodeBlocks(mdxFilePath) {
     const importPattern = /^import\s+[\s\S]+?\s+from\s+['"](.*?)['"];?$/gm;
 
     // Regex to locate CodeBlock instances with language "tsx"
-    const codeBlockPattern = /<CodeBlock\s+language=["']tsx["']\s*>\s*\{([a-zA-Z0-9_]+)\}\s*<\/CodeBlock>/g;
+    const codeBlockPattern =
+        /<CodeBlock\s+language=["']tsx["']\s*>\s*\{([a-zA-Z0-9_]+)\}\s*<\/CodeBlock>/g;
 
     // Object to map imported variables to their file contents (for raw-loader imports)
     const importContents = {};
@@ -67,7 +68,9 @@ async function resolveCodeBlocks(mdxFilePath) {
                     const varName = varNameMatch[1];
                     importContents[varName] = fileContent;
                 } else {
-                    console.warn(`Could not extract variable name from import: "${importStatement}"`);
+                    console.warn(
+                        `Could not extract variable name from import: "${importStatement}"`
+                    );
                 }
             } catch (error) {
                 console.error(`Error processing import "${importStatement}":`, error.message);
@@ -158,7 +161,7 @@ async function buildIdMap(directoryPath, idMap) {
                         const resolvedPath = resolved.split("docs/")[1].replace(/\.mdx?$/, "");
                         idMap[resolvedPath] = {
                             path: fullPath,
-                            title: frontmatter.title || frontmatter.id
+                            title: frontmatter.title || frontmatter.id,
                         };
                     }
                 }
@@ -171,9 +174,9 @@ async function buildIdMap(directoryPath, idMap) {
 
 // Entry point of the script
 (async () => {
-    const rootDirectory = "./docs";       // Root directory to start processing
+    const rootDirectory = "./docs"; // Root directory to start processing
     const sidebarFilePath = "../sidebars.js"; // Path to sidebar.js
-    const outputFilePath = "./static/llms.txt";    // Single output file
+    const outputFilePath = "./static/llms.txt"; // Single output file
 
     try {
         // Extract sidebar IDs
@@ -193,10 +196,7 @@ async function buildIdMap(directoryPath, idMap) {
         for (const id of sidebarIds) {
             const entry = idMap[id];
             if (entry) {
-                const {
-                    path: mdxFilePath,
-                    title
-                } = entry;
+                const { path: mdxFilePath, title } = entry;
                 console.log(`Processing file: ${mdxFilePath}`);
                 try {
                     const resolvedMdx = await resolveCodeBlocks(mdxFilePath);
@@ -205,9 +205,14 @@ async function buildIdMap(directoryPath, idMap) {
                     // Append the resolved content to the output file
                     result += contentToAppend;
 
-                    console.log(`Appended resolved MDX content from ${mdxFilePath} to ${outputFilePath}`);
+                    console.log(
+                        `Appended resolved MDX content from ${mdxFilePath} to ${outputFilePath}`
+                    );
                 } catch (error) {
-                    console.error(`Error resolving MDX code blocks in ${mdxFilePath}:`, error.message);
+                    console.error(
+                        `Error resolving MDX code blocks in ${mdxFilePath}:`,
+                        error.message
+                    );
                 }
             } else {
                 console.warn(`No file found for document ID "${id}"`);

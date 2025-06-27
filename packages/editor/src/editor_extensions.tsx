@@ -1,6 +1,6 @@
 import StarterKit from "@tiptap/starter-kit";
 
-import { HorizontalRule, Placeholder, TaskItem, TaskList, TiptapLink, } from "./extensions";
+import { HorizontalRule, Placeholder, TaskItem, TaskList, TiptapLink } from "./extensions";
 
 import { cls, defaultBorderMixin } from "@firecms/ui";
 import OrderedList from "@tiptap/extension-ordered-list";
@@ -15,7 +15,7 @@ export const placeholder = Placeholder;
 export const tiptapLink = TiptapLink.configure({
     HTMLAttributes: {
         class: cls(
-            "text-surface-700 dark:text-surface-accent-200 underline underline-offset-[3px] hover:text-primary transition-colors cursor-pointer",
+            "text-surface-700 dark:text-surface-accent-200 underline underline-offset-[3px] hover:text-primary transition-colors cursor-pointer"
         ),
     },
 });
@@ -64,7 +64,10 @@ export const blockquote = Blockquote.configure({
 
 export const codeBlock = CodeBlock.configure({
     HTMLAttributes: {
-        class: cls("rounded bg-blue-50 dark:bg-surface-700 border p-5 font-mono font-medium", defaultBorderMixin),
+        class: cls(
+            "rounded bg-blue-50 dark:bg-surface-700 border p-5 font-mono font-medium",
+            defaultBorderMixin
+        ),
     },
 });
 
@@ -77,7 +80,9 @@ export const codeBlock = CodeBlock.configure({
 
 export const code = Code.configure({
     HTMLAttributes: {
-        class: cls("rounded-md bg-surface-accent-50 dark:bg-surface-700 px-1.5 py-1 font-mono font-medium"),
+        class: cls(
+            "rounded-md bg-surface-accent-50 dark:bg-surface-700 px-1.5 py-1 font-mono font-medium"
+        ),
         spellcheck: "false",
     },
 });

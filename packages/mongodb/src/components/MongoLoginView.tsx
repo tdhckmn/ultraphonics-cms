@@ -1,6 +1,14 @@
 import React, { ReactNode, useEffect, useRef, useState } from "react";
 
-import { ArrowBackIcon, Button, CircularProgress, IconButton, MailIcon, TextField, Typography, } from "@firecms/ui";
+import {
+    ArrowBackIcon,
+    Button,
+    CircularProgress,
+    IconButton,
+    MailIcon,
+    TextField,
+    Typography,
+} from "@firecms/ui";
 import { ErrorView, FireCMSLogo, useModeController } from "@firecms/core";
 
 import { MongoAuthController } from "../useMongoDBAuthController";
@@ -9,7 +17,6 @@ import { MongoAuthController } from "../useMongoDBAuthController";
  *
  */
 export interface MongoLoginViewProps {
-
     /**
      * Delegate holding the auth state
      */
@@ -52,7 +59,6 @@ export interface MongoLoginViewProps {
     notAllowedError?: any;
 
     registrationEnabled?: boolean;
-
 }
 
 /**
@@ -62,15 +68,14 @@ export interface MongoLoginViewProps {
  *
  */
 export function MongoLoginView({
-                                   logo,
-                                   authController,
-                                   noUserComponent,
-                                   disableSignupScreen = false,
-                                   disabled = false,
-                                   notAllowedError,
-                                   registrationEnabled
-                               }: MongoLoginViewProps) {
-
+    logo,
+    authController,
+    noUserComponent,
+    disableSignupScreen = false,
+    disabled = false,
+    notAllowedError,
+    registrationEnabled,
+}: MongoLoginViewProps) {
     const modeState = useModeController();
 
     const [registrationSelected, setRegistrationSelected] = useState(false);
@@ -79,21 +84,32 @@ export function MongoLoginView({
     function buildErrorView() {
         if (!authController.authProviderError) return null;
         if (authController.user != null) return null; // if the user is logged in via MFA
-        return <ErrorView
-            error={authController.authProviderError?.error ?? authController.authProviderError?.errorCode ?? authController.authProviderError}/>;
+        return (
+            <ErrorView
+                error={
+                    authController.authProviderError?.error ??
+                    authController.authProviderError?.errorCode ??
+                    authController.authProviderError
+                }
+            />
+        );
     }
 
     let logoComponent;
     if (logo) {
-        logoComponent = <img src={logo}
-                             style={{
-                                 height: "100%",
-                                 width: "100%",
-                                 objectFit: "cover"
-                             }}
-                             alt={"Logo"}/>;
+        logoComponent = (
+            <img
+                src={logo}
+                style={{
+                    height: "100%",
+                    width: "100%",
+                    objectFit: "cover",
+                }}
+                alt={"Logo"}
+            />
+        );
     } else {
-        logoComponent = <FireCMSLogo/>;
+        logoComponent = <FireCMSLogo />;
     }
 
     let notAllowedMessage: string | undefined;
@@ -103,7 +119,8 @@ export function MongoLoginView({
         } else if (notAllowedError instanceof Error) {
             notAllowedMessage = notAllowedError.message;
         } else {
-            notAllowedMessage = "It looks like you don't have access to the CMS, based on the specified Authenticator configuration";
+            notAllowedMessage =
+                "It looks like you don't have access to the CMS, based on the specified Authenticator configuration";
         }
     }
 
@@ -111,31 +128,29 @@ export function MongoLoginView({
         <div className="flex flex-col justify-center items-center min-h-screen min-w-full p-2">
             <div id="recaptcha"></div>
             <div className="flex flex-col items-center w-full max-w-md">
-                <div className={`m-4 p-4 w-64 h-64`}>
-                    {logoComponent}
-                </div>
-                {notAllowedMessage &&
+                <div className={`m-4 p-4 w-64 h-64`}>{logoComponent}</div>
+                {notAllowedMessage && (
                     <div className="p-4">
-                        <ErrorView error={notAllowedMessage}/>
+                        <ErrorView error={notAllowedMessage} />
                     </div>
-                }
+                )}
                 {buildErrorView()}
-                {(!passwordLoginSelected && !registrationSelected) && (
+                {!passwordLoginSelected && !registrationSelected && (
                     <LoginButton
                         disabled={disabled}
                         text={"Email/password"}
-                        icon={<MailIcon size={"large"}/>}
+                        icon={<MailIcon size={"large"} />}
                         onClick={() => {
                             setRegistrationSelected(false);
                             setPasswordLoginSelected(true);
                         }}
                     />
                 )}
-                {(!passwordLoginSelected && !registrationSelected) && registrationEnabled && (
+                {!passwordLoginSelected && !registrationSelected && registrationEnabled && (
                     <LoginButton
                         disabled={disabled}
                         text={"Register"}
-                        icon={<MailIcon size={"large"}/>}
+                        icon={<MailIcon size={"large"} />}
                         onClick={() => {
                             setRegistrationSelected(true);
                             setPasswordLoginSelected(false);
@@ -161,47 +176,43 @@ export function MongoLoginView({
 }
 
 export function LoginButton({
-                                icon,
-                                onClick,
-                                text,
-                                disabled
-                            }: { icon: React.ReactNode, onClick: () => void, text: string, disabled?: boolean }) {
+    icon,
+    onClick,
+    text,
+    disabled,
+}: {
+    icon: React.ReactNode;
+    onClick: () => void;
+    text: string;
+    disabled?: boolean;
+}) {
     return (
         <div className="m-2 w-full">
-            <Button
-                variant={"outlined"}
-                disabled={disabled}
-                className={`w-full`}
-                onClick={onClick}>
+            <Button variant={"outlined"} disabled={disabled} className={`w-full`} onClick={onClick}>
                 <div className="flex items-center justify-center p-2 w-full h-8">
-                    <div className="flex flex-col items-center justify-center w-8">
-                        {icon}
-                    </div>
-                    <div className="flex-grow pl-2 text-center">
-                        {text}
-                    </div>
+                    <div className="flex flex-col items-center justify-center w-8">{icon}</div>
+                    <div className="flex-grow pl-2 text-center">{text}</div>
                 </div>
             </Button>
         </div>
-    )
+    );
 }
 
 function LoginForm({
-                       onClose,
-                       authController,
-                       mode,
-                       registrationMode,
-                       noUserComponent,
-                       disableSignupScreen
-                   }: {
-    onClose: () => void,
-    authController: MongoAuthController,
-    mode: "light" | "dark",
-    registrationMode: boolean,
-    noUserComponent?: ReactNode,
-    disableSignupScreen: boolean
+    onClose,
+    authController,
+    mode,
+    registrationMode,
+    noUserComponent,
+    disableSignupScreen,
+}: {
+    onClose: () => void;
+    authController: MongoAuthController;
+    mode: "light" | "dark";
+    registrationMode: boolean;
+    noUserComponent?: ReactNode;
+    disableSignupScreen: boolean;
 }) {
-
     const passwordRef = useRef<HTMLInputElement | null>(null);
 
     const [email, setEmail] = useState<string>();
@@ -236,69 +247,74 @@ function LoginForm({
 
     const onBackPressed = () => {
         onClose();
-    }
+    };
 
     const handleSubmit = (event: any) => {
         event.preventDefault();
-        if (registrationMode)
-            handleRegistration();
-        else
-            handleEnterPassword();
-    }
+        if (registrationMode) handleRegistration();
+        else handleEnterPassword();
+    };
     const label = registrationMode
         ? "Pick an email and password to create a new account"
         : "Please enter your email and password";
 
-    const button = registrationMode ? "Create account" : (loginMode ? "Login" : "Ok");
+    const button = registrationMode ? "Create account" : loginMode ? "Login" : "Ok";
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col items-center w-full max-w-[500px] gap-2">
+        <form
+            onSubmit={handleSubmit}
+            className="flex flex-col items-center w-full max-w-[500px] gap-2"
+        >
             <div className="w-full">
                 <IconButton onClick={onBackPressed}>
-                    <ArrowBackIcon/>
+                    <ArrowBackIcon />
                 </IconButton>
             </div>
 
             <div
-                className={`${registrationMode && disableSignupScreen ? "hidden" : "flex justify-center"} w-full py-2`}>
-                <Typography align={"center"} variant={"subtitle2"}>{label}</Typography>
+                className={`${registrationMode && disableSignupScreen ? "hidden" : "flex justify-center"} w-full py-2`}
+            >
+                <Typography align={"center"} variant={"subtitle2"}>
+                    {label}
+                </Typography>
             </div>
 
             <div className="w-full inherit">
-                <TextField placeholder="Email"
-                           className={"w-full"}
-                           autoFocus
-                           value={email ?? ""}
-                           disabled={authController.initialLoading}
-                           type="email"
-                           onChange={(event) => setEmail(event.target.value)}/>
+                <TextField
+                    placeholder="Email"
+                    className={"w-full"}
+                    autoFocus
+                    value={email ?? ""}
+                    disabled={authController.initialLoading}
+                    type="email"
+                    onChange={(event) => setEmail(event.target.value)}
+                />
             </div>
 
-            <div className="w-full">
-                {registrationMode && noUserComponent}
+            <div className="w-full">{registrationMode && noUserComponent}</div>
+
+            <div
+                className={`${loginMode || (registrationMode && !disableSignupScreen) ? "inherit" : "hidden"} w-full`}
+            >
+                <TextField
+                    placeholder="Password"
+                    className={"w-full"}
+                    value={password ?? ""}
+                    disabled={authController.initialLoading}
+                    inputRef={passwordRef}
+                    type="password"
+                    onChange={(event) => setPassword(event.target.value)}
+                />
             </div>
 
             <div
-                className={`${loginMode || (registrationMode && !disableSignupScreen) ? "inherit" : "hidden"} w-full`}>
-                <TextField placeholder="Password"
-                           className={"w-full"}
-                           value={password ?? ""}
-                           disabled={authController.initialLoading}
-                           inputRef={passwordRef}
-                           type="password"
-                           onChange={(event) => setPassword(event.target.value)}/>
-            </div>
-
-            <div
-                className={`${registrationMode && disableSignupScreen ? "hidden" : "flex justify-end items-center"} w-full`}>
-                {authController.initialLoading && (
-                    <CircularProgress/>
-                )}
+                className={`${registrationMode && disableSignupScreen ? "hidden" : "flex justify-end items-center"} w-full`}
+            >
+                {authController.initialLoading && <CircularProgress />}
                 <Button type="submit" variant={"outlined"}>
                     {button}
                 </Button>
             </div>
         </form>
     );
-
 }

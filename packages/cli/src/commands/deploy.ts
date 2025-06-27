@@ -34,11 +34,15 @@ export async function createZipFromBuild(): Promise<string> {
                 resolve(destFile);
             }
         });
-    })
+    });
 }
 
-export async function uploadZip(projectId: string, zipFilePath: string, env: "prod" | "dev", debug: boolean) {
-
+export async function uploadZip(
+    projectId: string,
+    zipFilePath: string,
+    env: "prod" | "dev",
+    debug: boolean
+) {
     if (env === "dev") {
         console.log("!!! Uploading to dev server");
     }
@@ -61,16 +65,17 @@ export async function uploadZip(projectId: string, zipFilePath: string, env: "pr
         const response = await axios.post(`${server}/projects/${projectId}/upload_config`, form, {
             headers: {
                 ...form.getHeaders(),
-                ["x-admin-authorization"]: `Bearer ${tokens["access_token"]}`
+                ["x-admin-authorization"]: `Bearer ${tokens["access_token"]}`,
             },
             maxContentLength: Infinity,
-            maxBodyLength: Infinity
+            maxBodyLength: Infinity,
         });
 
         if (response.status === 200) {
             spinner.succeed();
             console.log("🔥 Successfully uploaded new build");
-            const baseUrl = env === "prod" ? "https://app.firecms.co/" : "https://staging.app.firecms.co/";
+            const baseUrl =
+                env === "prod" ? "https://app.firecms.co/" : "https://staging.app.firecms.co/";
             console.log("\nCheck it out at", baseUrl + `p/${projectId}`);
         } else {
             console.error("There was an error uploading the build");

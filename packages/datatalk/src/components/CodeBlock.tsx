@@ -9,7 +9,7 @@ import { DataTable } from "./DataTable";
 import { firestoreToCMSModel } from "@firecms/firebase";
 
 // @ts-ignore
-window.firestoreLibrary = firestoreLibrary
+window.firestoreLibrary = firestoreLibrary;
 
 function ExecutionErrorView(props: { executionError: Error }) {
     const message = props.executionError.message;
@@ -19,31 +19,35 @@ function ExecutionErrorView(props: { executionError: Error }) {
         return `<a href="${url}" target="_blank" class="underline">LINK</a><br/>`;
     });
 
-    return <div className={"w-full text-sm bg-red-100 dark:bg-red-800 p-4 rounded-lg"}>
-        <code className={"text-red-700 dark:text-red-300 break-all"} dangerouslySetInnerHTML={{ __html: htmlContent }}/>
-    </div>;
+    return (
+        <div className={"w-full text-sm bg-red-100 dark:bg-red-800 p-4 rounded-lg"}>
+            <code
+                className={"text-red-700 dark:text-red-300 break-all"}
+                dangerouslySetInnerHTML={{ __html: htmlContent }}
+            />
+        </div>
+    );
 }
 
 export function CodeBlock({
-                              initialCode,
-                              maxWidth,
-                              loading,
-                              sourceLoading,
-                              onCodeModified,
-                              autoRunCode,
-                              onCodeRun,
-                              collections
-                          }: {
-    initialCode?: string,
-    sourceLoading?: boolean,
-    loading?: boolean,
-    maxWidth?: number,
-    autoRunCode?: boolean,
-    onCodeModified?: (code: string) => void,
-    onCodeRun?: () => void,
-    collections?: EntityCollection[]
+    initialCode,
+    maxWidth,
+    loading,
+    sourceLoading,
+    onCodeModified,
+    autoRunCode,
+    onCodeRun,
+    collections,
+}: {
+    initialCode?: string;
+    sourceLoading?: boolean;
+    loading?: boolean;
+    maxWidth?: number;
+    autoRunCode?: boolean;
+    onCodeModified?: (code: string) => void;
+    onCodeRun?: () => void;
+    collections?: EntityCollection[];
 }) {
-
     const textAreaRef = React.useRef<HTMLDivElement>(null);
     const [code, setCode] = useState<string | undefined>(initialCode);
 
@@ -77,7 +81,10 @@ export function CodeBlock({
         setCode(value);
     };
 
-    async function displayQuerySnapshotData(querySnapshot: firestoreLibrary.QuerySnapshot, priorityKeys?: string[]) {
+    async function displayQuerySnapshotData(
+        querySnapshot: firestoreLibrary.QuerySnapshot,
+        priorityKeys?: string[]
+    ) {
         if (querySnapshot.empty) {
             setQuerySnapshot(null);
             setExecutionResult("No documents found");
@@ -88,7 +95,6 @@ export function CodeBlock({
     }
 
     const executeQuery = async () => {
-
         if (!code) {
             return;
         }
@@ -109,52 +115,60 @@ export function CodeBlock({
             });
 
             const dataUri = "data:text/javascript;charset=utf-8," + imports + encodedJs;
-            const promise = import(/* @vite-ignore */dataUri);
-            promise.then((module) => {
-                originalConsoleLog("Module loaded", module);
-                setConsoleOutput("");
-                if (!module.default) {
-                    setExecutionError(new Error("No default export found. Make sure your code is exporting a default function."));
-                    setLoadingQuery(false);
-                    return;
-                }
-                module.default()
-                    .then(async (codeOutput: any) => {
-                        originalConsoleLog("Code loaded", codeOutput, typeof codeOutput);
-                        let codeResult;
-                        if (codeOutput instanceof Promise) {
-                            codeResult = await codeOutput;
-                        } else if (typeof codeOutput === "function") {
-                            codeResult = await codeOutput();
-                        } else {
-                            codeResult = codeOutput;
-                        }
-
-                        if (codeResult instanceof firestoreLibrary.QuerySnapshot) {
-                            const priorityKeys = extractStringLiterals(code);
-                            return displayQuerySnapshotData(codeResult, priorityKeys);
-                        } else if (codeResult instanceof firestoreLibrary.DocumentReference) {
-                            return setExecutionResult("Document added successfully with reference: " + codeResult.path);
-                        } else if (codeResult instanceof firestoreLibrary.DocumentSnapshot) {
-                            const res = JSON.stringify(codeResult.data(), null, 2);
-                            originalConsoleLog("Document data", res);
-                            return setExecutionResult(res);
-                        } else if (typeof codeOutput === "undefined") {
-                            return setExecutionResult("Code executed successfully");
-                        } else {
-                            return setExecutionResult(codeResult);
-                        }
-                    })
-                    .catch((error: any) => {
-                        setExecutionError(error);
-                        originalConsoleError("Error executing query:", error);
-                    })
-                    .finally(() => {
+            const promise = import(/* @vite-ignore */ dataUri);
+            promise
+                .then((module) => {
+                    originalConsoleLog("Module loaded", module);
+                    setConsoleOutput("");
+                    if (!module.default) {
+                        setExecutionError(
+                            new Error(
+                                "No default export found. Make sure your code is exporting a default function."
+                            )
+                        );
                         setLoadingQuery(false);
-                        onCodeRun?.();
-                        resetConsolePipe();
-                    });
-            })
+                        return;
+                    }
+                    module
+                        .default()
+                        .then(async (codeOutput: any) => {
+                            originalConsoleLog("Code loaded", codeOutput, typeof codeOutput);
+                            let codeResult;
+                            if (codeOutput instanceof Promise) {
+                                codeResult = await codeOutput;
+                            } else if (typeof codeOutput === "function") {
+                                codeResult = await codeOutput();
+                            } else {
+                                codeResult = codeOutput;
+                            }
+
+                            if (codeResult instanceof firestoreLibrary.QuerySnapshot) {
+                                const priorityKeys = extractStringLiterals(code);
+                                return displayQuerySnapshotData(codeResult, priorityKeys);
+                            } else if (codeResult instanceof firestoreLibrary.DocumentReference) {
+                                return setExecutionResult(
+                                    "Document added successfully with reference: " + codeResult.path
+                                );
+                            } else if (codeResult instanceof firestoreLibrary.DocumentSnapshot) {
+                                const res = JSON.stringify(codeResult.data(), null, 2);
+                                originalConsoleLog("Document data", res);
+                                return setExecutionResult(res);
+                            } else if (typeof codeOutput === "undefined") {
+                                return setExecutionResult("Code executed successfully");
+                            } else {
+                                return setExecutionResult(codeResult);
+                            }
+                        })
+                        .catch((error: any) => {
+                            setExecutionError(error);
+                            originalConsoleError("Error executing query:", error);
+                        })
+                        .finally(() => {
+                            setLoadingQuery(false);
+                            onCodeRun?.();
+                            resetConsolePipe();
+                        });
+                })
                 .catch((error) => {
                     setExecutionError(error);
                     originalConsoleError("Error loading module:", error);
@@ -169,69 +183,94 @@ export function CodeBlock({
     };
 
     const arrayOfObjects = isArrayOfObjects(executionResult);
-    const convertedData = useMemo(() => arrayOfObjects ? firestoreToCMSModel(executionResult) : undefined, [arrayOfObjects]);
+    const convertedData = useMemo(
+        () => (arrayOfObjects ? firestoreToCMSModel(executionResult) : undefined),
+        [arrayOfObjects]
+    );
 
     return (
-        <div className={"flex flex-col my-4 gap-2"}
-             style={{
-                 maxWidth: maxWidth ? maxWidth + "px" : undefined
-             }}>
-
-            <div className={"flex flex-row w-full gap-4"}
-                 ref={textAreaRef}>
+        <div
+            className={"flex flex-col my-4 gap-2"}
+            style={{
+                maxWidth: maxWidth ? maxWidth + "px" : undefined,
+            }}
+        >
+            <div className={"flex flex-row w-full gap-4"} ref={textAreaRef}>
                 <AutoHeightEditor
                     value={code}
                     loading={loading}
                     maxWidth={maxWidth ? maxWidth - 96 : undefined}
                     onChange={handleCodeChange}
                 />
-                <Button size="small"
-                        variant={codeHasBeenRun ? "outlined" : "filled"}
-                        onClick={executeQuery}
-                        disabled={!code}>Run Code</Button>
+                <Button
+                    size="small"
+                    variant={codeHasBeenRun ? "outlined" : "filled"}
+                    onClick={executeQuery}
+                    disabled={!code}
+                >
+                    Run Code
+                </Button>
             </div>
 
-            {executionError && (
-                <ExecutionErrorView executionError={executionError}/>
-            )}
+            {executionError && <ExecutionErrorView executionError={executionError} />}
 
             {(querySnapshot || loadingQuery || consoleOutput || executionResult) && (
                 <div
                     style={{
                         marginLeft: querySnapshot ? "-64px" : undefined,
-                        width: querySnapshot ? "calc(100% + 64px)" : undefined
+                        width: querySnapshot ? "calc(100% + 64px)" : undefined,
                     }}
                     className={cls("w-full rounded-lg shadow-sm overflow-hidden transition-all", {
                         "h-[480px]": querySnapshot,
-                        "h-[92px]": !querySnapshot && loadingQuery
-                    })}>
+                        "h-[92px]": !querySnapshot && loadingQuery,
+                    })}
+                >
+                    {loadingQuery && <CircularProgressCenter />}
 
-                    {loadingQuery && <CircularProgressCenter/>}
-
-                    {querySnapshot && <QueryTableResults querySnapshot={querySnapshot}
-                                                         priorityKeys={codePriorityKeys}
-                                                         collections={collections}/>}
+                    {querySnapshot && (
+                        <QueryTableResults
+                            querySnapshot={querySnapshot}
+                            priorityKeys={codePriorityKeys}
+                            collections={collections}
+                        />
+                    )}
 
                     {(consoleOutput || executionResult) && (
                         <>
-                            {!arrayOfObjects &&
-                                <Paper className={"w-full p-4 min-h-[92px] font-mono text-xs overflow-auto rounded-lg"}>
-                                    {consoleOutput &&
-                                        <pre className={"text-sm font-mono text-surface-700 dark:text-surface-200"}>
-                                {consoleOutput}
-                            </pre>}
-                                    {executionResult &&
-                                        <pre className={"text-xs font-mono text-surface-700 dark:text-surface-200"}>
-                                    {typeof executionResult === "string" ? executionResult : JSON.stringify(executionResult, null, 2)}
-                            </pre>}
-                                </Paper>}
+                            {!arrayOfObjects && (
+                                <Paper
+                                    className={
+                                        "w-full p-4 min-h-[92px] font-mono text-xs overflow-auto rounded-lg"
+                                    }
+                                >
+                                    {consoleOutput && (
+                                        <pre
+                                            className={
+                                                "text-sm font-mono text-surface-700 dark:text-surface-200"
+                                            }
+                                        >
+                                            {consoleOutput}
+                                        </pre>
+                                    )}
+                                    {executionResult && (
+                                        <pre
+                                            className={
+                                                "text-xs font-mono text-surface-700 dark:text-surface-200"
+                                            }
+                                        >
+                                            {typeof executionResult === "string"
+                                                ? executionResult
+                                                : JSON.stringify(executionResult, null, 2)}
+                                        </pre>
+                                    )}
+                                </Paper>
+                            )}
 
-                            {arrayOfObjects && <DataTable data={convertedData}/>}
+                            {arrayOfObjects && <DataTable data={convertedData} />}
                         </>
                     )}
                 </div>
             )}
-
         </div>
     );
 }
@@ -274,7 +313,9 @@ function pipeConsoleLog(onConsoleLog: (...message: any) => void) {
 }
 
 function buildAuxScript() {
-    return `${Object.keys(firestoreLibrary).map(key => `const ${key} = window.firestoreLibrary.${key};`).join("\n")}\n`;
+    return `${Object.keys(firestoreLibrary)
+        .map((key) => `const ${key} = window.firestoreLibrary.${key};`)
+        .join("\n")}\n`;
 }
 
 function isArrayOfObjects(value: any): boolean {

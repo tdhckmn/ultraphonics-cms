@@ -20,11 +20,11 @@ By implementing it in code, you can have more control over the configuration and
 including custom providers.
 
 You can define some options:
+
 - `provider`: The provider you want to use.
 - `isTokenAutoRefreshEnabled`: Whether to automatically refresh the token.
 - `debugToken`: A debug token to use.
 - `forceRefresh`: Whether to force a token refresh.
-
 
 ## Providers
 
@@ -41,17 +41,16 @@ Make sure you have added the domain `app.firecms.co` to the list of allowed doma
 :::
 
 ```tsx
-import {FireCMSAppConfig} from "@firecms/cloud";
-import {ReCaptchaEnterpriseProvider} from "@firebase/app-check";
+import { FireCMSAppConfig } from "@firecms/cloud";
+import { ReCaptchaEnterpriseProvider } from "@firebase/app-check";
 
 const appConfig: FireCMSAppConfig = {
-
     version: "1",
 
     appCheck: {
-        provider: new ReCaptchaEnterpriseProvider("your-site-key")
+        provider: new ReCaptchaEnterpriseProvider("your-site-key"),
     },
-}
+};
 
 export default appConfig;
 ```
@@ -62,17 +61,16 @@ In order to set up the ReCaptchaV3Provider, you need to create a new reCAPTCHA v
 Follow the instructions in the [Firebase documentation](https://firebase.google.com/docs/app-check/web/recaptcha-provider).
 
 ```tsx
-import {FireCMSAppConfig} from "@firecms/cloud";
-import {ReCaptchaV3Provider} from "@firebase/app-check";
+import { FireCMSAppConfig } from "@firecms/cloud";
+import { ReCaptchaV3Provider } from "@firebase/app-check";
 
 const appConfig: FireCMSAppConfig = {
-
     version: "1",
 
     appCheck: {
-        provider: new ReCaptchaV3Provider("your-site-key")
+        provider: new ReCaptchaV3Provider("your-site-key"),
     },
-}
+};
 
 export default appConfig;
 ```
@@ -80,7 +78,6 @@ export default appConfig;
 ### Custom provider
 
 You can also create a custom provider by implementing the `AppCheckProvider` interface.
-
 
 ## Check your configuration
 
@@ -91,14 +88,14 @@ You need to have the dependency `@firebase/app-check` in your `vite.config.ts`. 
 This is a sample configuration:
 
 ```tsx
-import { defineConfig } from "vite"
-import react from "@vitejs/plugin-react"
-import federation from "@originjs/vite-plugin-federation"
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import federation from "@originjs/vite-plugin-federation";
 
 // https://vitejs.dev/config/
 export default defineConfig({
     esbuild: {
-        logOverride: { "this-is-undefined-in-esm": "silent" }
+        logOverride: { "this-is-undefined-in-esm": "silent" },
     },
     plugins: [
         react(),
@@ -106,7 +103,7 @@ export default defineConfig({
             name: "remote_app",
             filename: "remoteEntry.js",
             exposes: {
-                "./config": "./src/index"
+                "./config": "./src/index",
             },
             shared: [
                 "react",
@@ -122,15 +119,15 @@ export default defineConfig({
                 "@firebase/storage",
                 "@firebase/analytics",
                 "@firebase/remote-config",
-                "@firebase/app-check" // Add this line
-            ]
-        })
+                "@firebase/app-check", // Add this line
+            ],
+        }),
     ],
     build: {
         modulePreload: false,
         minify: false,
         target: "ESNEXT",
         cssCodeSplit: false,
-    }
+    },
 });
 ```

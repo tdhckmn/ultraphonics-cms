@@ -5,15 +5,20 @@ import {
     getFirestore,
     limit as limitClause,
     query,
-    QueryDocumentSnapshot
+    QueryDocumentSnapshot,
 } from "@firebase/firestore";
 
-export async function getFirestoreDataInPath(firebaseApp: FirebaseApp, path: string, parentPaths: string[], limit: number): Promise<object[]> {
+export async function getFirestoreDataInPath(
+    firebaseApp: FirebaseApp,
+    path: string,
+    parentPaths: string[],
+    limit: number
+): Promise<object[]> {
     const firestore = getFirestore(firebaseApp);
     if (!parentPaths || parentPaths.length === 0) {
         const q = query(collection(firestore, path), limitClause(limit));
         return getDocs(q).then((querySnapshot) => {
-            return querySnapshot.docs.map(doc => doc.data());
+            return querySnapshot.docs.map((doc) => doc.data());
         });
     } else {
         let currentDocs: QueryDocumentSnapshot[] | undefined = undefined;
@@ -23,10 +28,17 @@ export async function getFirestoreDataInPath(firebaseApp: FirebaseApp, path: str
         let parentPath: string | undefined = allPaths[0];
         while (parentPath) {
             if (currentDocs) {
-                currentDocs = (await Promise.all(currentDocs.map(async (doc) => {
-                    const q = query(collection(firestore, doc.ref.path, parentPath as string), limitClause(5));
-                    return (await getDocs(q)).docs;
-                }))).flat();
+                currentDocs = (
+                    await Promise.all(
+                        currentDocs.map(async (doc) => {
+                            const q = query(
+                                collection(firestore, doc.ref.path, parentPath as string),
+                                limitClause(5)
+                            );
+                            return (await getDocs(q)).docs;
+                        })
+                    )
+                ).flat();
             } else {
                 const q = query(collection(firestore, parentPath), limitClause(5));
                 currentDocs = (await getDocs(q)).docs;
@@ -34,6 +46,6 @@ export async function getFirestoreDataInPath(firebaseApp: FirebaseApp, path: str
             index++;
             parentPath = index < allPaths.length ? allPaths[index] : undefined;
         }
-        return currentDocs ? currentDocs.map(doc => doc.data()) : [];
+        return currentDocs ? currentDocs.map((doc) => doc.data()) : [];
     }
 }

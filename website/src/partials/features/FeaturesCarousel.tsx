@@ -35,38 +35,49 @@ export function FeaturesCarousel() {
                         key={`demo_video_${isDarkTheme}`}
                         style={{
                             maxWidth: 540,
-                            aspectRatio: 508 / 589
+                            aspectRatio: 508 / 589,
                         }}
-                        className={clsx("aspect-video pointer-events-none rounded-2xl border", defaultBorderMixin)}
-                        width="100%" loop autoPlay muted>
-                        <source
-                            src={isDarkTheme ? editingDemoDarkVideo : editingDemoVideo}/>
-
+                        className={clsx(
+                            "aspect-video pointer-events-none rounded-2xl border",
+                            defaultBorderMixin
+                        )}
+                        width="100%"
+                        loop
+                        autoPlay
+                        muted
+                    >
+                        <source src={isDarkTheme ? editingDemoDarkVideo : editingDemoVideo} />
                     </video>
                 </div>
-            )
+            ),
         },
         {
             id: 1,
             number: "02",
             title: "Notion-style text editor",
-            description: "Perfect for creating rich content like articles, blogs, documentation and more",
+            description:
+                "Perfect for creating rich content like articles, blogs, documentation and more",
             content: (
                 <div className="flex items-center justify-center">
                     <video
                         key={"notion_style_video"}
                         style={{
                             maxWidth: 540,
-                            aspectRatio: 508 / 589
+                            aspectRatio: 508 / 589,
                         }}
-                        className={clsx("aspect-video pointer-events-none rounded-2xl border", defaultBorderMixin)}
-                        width="100%" loop autoPlay muted>
-                        <source
-                            src={editorRectangleVideo}
-                            type="video/mp4"/>
+                        className={clsx(
+                            "aspect-video pointer-events-none rounded-2xl border",
+                            defaultBorderMixin
+                        )}
+                        width="100%"
+                        loop
+                        autoPlay
+                        muted
+                    >
+                        <source src={editorRectangleVideo} type="video/mp4" />
                     </video>
                 </div>
-            )
+            ),
         },
         {
             id: 2,
@@ -79,16 +90,21 @@ export function FeaturesCarousel() {
                         key={"custom_preview_video"}
                         style={{
                             maxWidth: 540,
-                            aspectRatio: 508 / 589
+                            aspectRatio: 508 / 589,
                         }}
-                        className={clsx("aspect-video pointer-events-none rounded-2xl border", defaultBorderMixin)}
-                        width="100%" loop autoPlay muted>
-                        <source
-                            src={customPreviewVideo}
-                            type="video/mp4"/>
+                        className={clsx(
+                            "aspect-video pointer-events-none rounded-2xl border",
+                            defaultBorderMixin
+                        )}
+                        width="100%"
+                        loop
+                        autoPlay
+                        muted
+                    >
+                        <source src={customPreviewVideo} type="video/mp4" />
                     </video>
                 </div>
-            )
+            ),
         },
         {
             id: 3,
@@ -101,24 +117,29 @@ export function FeaturesCarousel() {
                         key={"import_export_video"}
                         style={{
                             maxWidth: 540,
-                            aspectRatio: 508 / 589
+                            aspectRatio: 508 / 589,
                         }}
-                        className={clsx("aspect-video pointer-events-none rounded-2xl border", defaultBorderMixin)}
-                        width="100%" loop autoPlay muted>
-                        <source
-                            src={exportDataVideo}
-                            type="video/mp4"/>
+                        className={clsx(
+                            "aspect-video pointer-events-none rounded-2xl border",
+                            defaultBorderMixin
+                        )}
+                        width="100%"
+                        loop
+                        autoPlay
+                        muted
+                    >
+                        <source src={exportDataVideo} type="video/mp4" />
                     </video>
                 </div>
-            )
-        }
+            ),
+        },
     ];
 
     // Setup autoplay
     useEffect(() => {
         // Start automatic rotation
         intervalRef.current = setInterval(() => {
-            setSelectedItem(prevItem => (prevItem + 1) % features.length);
+            setSelectedItem((prevItem) => (prevItem + 1) % features.length);
         }, 6000); // Change slide every 5 seconds
 
         // Cleanup on unmount
@@ -145,7 +166,7 @@ export function FeaturesCarousel() {
         // Resume automatic rotation after 10 seconds of inactivity
         timeoutRef.current = setTimeout(() => {
             intervalRef.current = setInterval(() => {
-                setSelectedItem(prevItem => (prevItem + 1) % features.length);
+                setSelectedItem((prevItem) => (prevItem + 1) % features.length);
             }, 6000);
         }, 10000);
     };
@@ -156,26 +177,36 @@ export function FeaturesCarousel() {
                 <div className="grid md:grid-cols-2 gap-16 items-center">
                     <div>
                         <ul className="space-y-4">
-                            {features.map(feature => (
+                            {features.map((feature) => (
                                 <li
                                     key={feature.id}
                                     className={clsx(
                                         "flex items-start cursor-pointer transition-all duration-300 p-3 px-4 rounded-lg",
-                                        selectedItem === feature.id ? "bg-gray-100" : "hover:bg-gray-50"
+                                        selectedItem === feature.id
+                                            ? "bg-gray-100"
+                                            : "hover:bg-gray-50"
                                     )}
                                     onClick={() => handleItemClick(feature.id)}
                                 >
-                                                <span className={clsx(
-                                                    "font-bold mr-2 transition-colors duration-300",
-                                                    selectedItem === feature.id ? "text-primary" : "text-gray-400"
-                                                )}>
-                                                    {feature.number}
-                                                </span>
+                                    <span
+                                        className={clsx(
+                                            "font-bold mr-2 transition-colors duration-300",
+                                            selectedItem === feature.id
+                                                ? "text-primary"
+                                                : "text-gray-400"
+                                        )}
+                                    >
+                                        {feature.number}
+                                    </span>
                                     <div>
-                                        <h3 className={clsx(
-                                            "font-bold",
-                                            selectedItem === feature.id ? "text-gray-900" : "text-gray-700"
-                                        )}>
+                                        <h3
+                                            className={clsx(
+                                                "font-bold",
+                                                selectedItem === feature.id
+                                                    ? "text-gray-900"
+                                                    : "text-gray-700"
+                                            )}
+                                        >
                                             {feature.title}
                                         </h3>
                                         <p>{feature.description}</p>

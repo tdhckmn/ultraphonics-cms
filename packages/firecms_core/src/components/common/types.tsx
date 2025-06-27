@@ -1,7 +1,6 @@
 import { CollectionSize, ResolvedProperty, SelectedCellProps } from "../../types";
 
 export type EntityCollectionTableController<M extends Record<string, any>> = {
-
     /**
      * This cell is displayed as selected
      */
@@ -25,37 +24,39 @@ export type EntityCollectionTableController<M extends Record<string, any>> = {
      * Size of the elements in the collection
      */
     size: CollectionSize;
-}
+};
 
 /**
  * Props passed in a callback when the content of a cell in a table has been edited
  * @group Collection components
  */
 export interface OnCellValueChangeParams<T = any, D = any> {
-    value: T,
-    propertyKey: string,
-    data?: D,
-    onValueUpdated: () => void
-    setError: (e: Error | undefined) => void
+    value: T;
+    propertyKey: string;
+    data?: D;
+    onValueUpdated: () => void;
+    setError: (e: Error | undefined) => void;
 }
 
 /**
  * @group Collection components
  */
 export type UniqueFieldValidator = (props: {
-    name: string,
-    value: any,
-    property: ResolvedProperty,
-    entityId?: string
+    name: string;
+    value: any;
+    property: ResolvedProperty;
+    entityId?: string;
 }) => Promise<boolean>;
 
 /**
  * Callback when a cell has changed in a table
  * @group Collection components
  */
-export type OnCellValueChange<T, M extends Record<string, any>> = (params: OnCellValueChangeParams<T, M>) => Promise<void> | void;
+export type OnCellValueChange<T, M extends Record<string, any>> = (
+    params: OnCellValueChangeParams<T, M>
+) => Promise<void> | void;
 
 /**
  * @group Collection components
  */
-export type OnColumnResizeParams = { width: number, key: string };
+export type OnColumnResizeParams = { width: number; key: string };

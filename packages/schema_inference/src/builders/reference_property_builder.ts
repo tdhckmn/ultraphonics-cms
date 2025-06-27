@@ -3,14 +3,13 @@ import { findCommonInitialStringInPath } from "../strings";
 import { Property } from "../cms_types";
 
 export function buildReferenceProperty({
-                                        totalDocsCount,
-                                        valuesResult
-                                    }: InferencePropertyBuilderProps): Property {
-
+    totalDocsCount,
+    valuesResult,
+}: InferencePropertyBuilderProps): Property {
     const property: Property = {
         dataType: "reference",
         path: findCommonInitialStringInPath(valuesResult) ?? "!!!FIX_ME!!!",
-        editable: true
+        editable: true,
     };
 
     return property;

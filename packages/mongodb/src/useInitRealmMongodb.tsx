@@ -11,7 +11,7 @@ export type AppConfiguration = {
     dataSourceName: string;
 };
 
-function createApp(appId: string, baseUrl:string) {
+function createApp(appId: string, baseUrl: string) {
     return new Realm.App({ id: appId, baseUrl });
 }
 
@@ -22,5 +22,4 @@ export function useInitRealmMongodb({ appId, baseUrl }: AppConfiguration) {
     }, []);
 
     return { app };
-
 }

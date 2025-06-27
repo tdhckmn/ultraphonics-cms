@@ -2,14 +2,16 @@ import OpenAI from "openai";
 import * as fs from "fs";
 
 export async function generateDocsFor(src: string, slug: string) {
-
-    console.log("Generating docs")
+    console.log("Generating docs");
     // read system_instructions.txt
-    const systemInstructions = fs.readFileSync("./src/docs_generation/system_instructions.txt", "utf-8");
+    const systemInstructions = fs.readFileSync(
+        "./src/docs_generation/system_instructions.txt",
+        "utf-8"
+    );
 
     const model = "gpt-4o";
     const openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY
+        apiKey: process.env.OPENAI_API_KEY,
     });
 
     const stream = await openai.chat.completions.create({
@@ -17,18 +19,18 @@ export async function generateDocsFor(src: string, slug: string) {
         messages: [
             {
                 role: "system",
-                content: systemInstructions
+                content: systemInstructions,
             },
             {
                 role: "user",
-                content: `The component slug is: ${slug}\nAnd the source code is:\n\`\`\`\n${src}\`\`\``
-            }
+                content: `The component slug is: ${slug}\nAnd the source code is:\n\`\`\`\n${src}\`\`\``,
+            },
         ],
         temperature: 1,
         top_p: 1,
         n: 1,
         max_tokens: 4000,
-        stream: true
+        stream: true,
     });
 
     let fullOutput = "";
@@ -47,6 +49,4 @@ export async function generateDocsFor(src: string, slug: string) {
         console.error("Error parsing OpenAI response", fullOutput);
         return null;
     }
-
 }
-

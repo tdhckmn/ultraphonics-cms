@@ -5,7 +5,7 @@ const locales: EnumValues = {
     "de-DE": "German",
     "en-US": "English (United States)",
     "es-ES": "Spanish (Spain)",
-    "es-419": "Spanish (South America)"
+    "es-419": "Spanish (South America)",
 };
 
 export const productsCollection = buildCollection({
@@ -17,15 +17,15 @@ export const productsCollection = buildCollection({
         {
             key: "custom_view",
             name: "Test custom view",
-            Builder: ({}) => null
-        }
+            Builder: ({}) => null,
+        },
     ],
     properties: {
         name: buildProperty({
             dataType: "string",
             name: "Name",
             multiline: true,
-            validation: { required: true }
+            validation: { required: true },
         }),
         main_image: buildProperty({
             dataType: "string",
@@ -34,18 +34,18 @@ export const productsCollection = buildCollection({
                 storagePath: "images",
                 acceptedFiles: ["image/*"],
                 metadata: {
-                    cacheControl: "max-age=1000000"
-                }
+                    cacheControl: "max-age=1000000",
+                },
             },
             description: "Upload field for images",
             validation: {
-                required: true
-            }
+                required: true,
+            },
         }),
         available: buildProperty({
             dataType: "boolean",
             name: "Available",
-            columnWidth: 100
+            columnWidth: 100,
         }),
         price: ({ values }) => ({
             dataType: "number",
@@ -53,49 +53,50 @@ export const productsCollection = buildCollection({
             validation: {
                 requiredMessage: "You must set a price between 0 and 1000",
                 min: 0,
-                max: 1000
+                max: 1000,
             },
             disabled: !values.available && {
                 clearOnDisabled: true,
-                disabledMessage: "You can only set the price on available items"
+                disabledMessage: "You can only set the price on available items",
             },
-            description: "Price with range validation"
+            description: "Price with range validation",
         }),
         currency: buildProperty({
             dataType: "string",
             name: "Currency",
             enumValues: {
                 EUR: "Euros",
-                DOL: "Dollars"
+                DOL: "Dollars",
             },
             validation: {
-                required: true
+                required: true,
             },
-            defaultValue: "EUR"
+            defaultValue: "EUR",
         }),
         public: buildProperty({
             dataType: "boolean",
             name: "Public",
             description: "Should this product be visible in the website",
-            longDescription: "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros."
+            longDescription:
+                "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros.",
         }),
         brand: buildProperty({
             dataType: "string",
             name: "Brand",
             validation: {
-                required: true
-            }
+                required: true,
+            },
         }),
         description: buildProperty({
             dataType: "string",
             name: "Description",
             description: "Example of a markdown field",
-            markdown: true
+            markdown: true,
         }),
         amazon_link: buildProperty({
             dataType: "string",
             name: "Amazon link",
-            url: true
+            url: true,
         }),
         images: buildProperty({
             dataType: "array",
@@ -106,11 +107,11 @@ export const productsCollection = buildCollection({
                     storagePath: "images",
                     acceptedFiles: ["image/*"],
                     metadata: {
-                        cacheControl: "max-age=1000000"
-                    }
-                }
+                        cacheControl: "max-age=1000000",
+                    },
+                },
             },
-            description: "This fields allows uploading multiple images at once"
+            description: "This fields allows uploading multiple images at once",
         }),
         related_products: buildProperty({
             dataType: "array",
@@ -118,8 +119,8 @@ export const productsCollection = buildCollection({
             description: "Reference to self",
             of: {
                 dataType: "reference",
-                path: "products"
-            }
+                path: "products",
+            },
         }),
         publisher: buildProperty({
             name: "Publisher",
@@ -129,41 +130,40 @@ export const productsCollection = buildCollection({
                 name: {
                     title: "Name",
                     dataType: "string",
-                    defaultValue: "Default publisher"
+                    defaultValue: "Default publisher",
                 },
                 external_id: {
                     title: "External id",
-                    dataType: "string"
-                }
-            }
+                    dataType: "string",
+                },
+            },
         }),
         available_locales: buildProperty({
             name: "Available locales",
             description:
                 "This is an example of a disabled field that gets updated trough a Cloud Function, try changing a locale 'selectable' value",
-            longDescription: "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros.",
+            longDescription:
+                "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros.",
             dataType: "array",
             readOnly: true,
             of: {
                 dataType: "string",
-                enumValues: locales
-            }
+                enumValues: locales,
+            },
         }),
         uppercase_name: buildProperty({
             name: "Uppercase Name",
             dataType: "string",
             readOnly: true,
-            description: "This field gets updated with a preSave callback"
+            description: "This field gets updated with a preSave callback",
         }),
         added_on: buildProperty({
             dataType: "date",
             name: "Added on",
-            autoValue: "on_create"
-        })
-
+            autoValue: "on_create",
+        }),
     },
 });
-
 
 const localeCollection = buildCollection({
     id: "locales",
@@ -175,12 +175,12 @@ const localeCollection = buildCollection({
         title: buildProperty({
             title: "Title",
             validation: { required: true },
-            dataType: "string"
+            dataType: "string",
         }),
         selectable: buildProperty({
             title: "Selectable",
             description: "Is this locale selectable",
-            dataType: "boolean"
+            dataType: "boolean",
         }),
         video: buildProperty({
             title: "Video",
@@ -188,10 +188,10 @@ const localeCollection = buildCollection({
             validation: { required: false },
             storage: {
                 storagePath: "videos",
-                acceptedFiles: ["video/*"]
-            }
-        })
-    }
+                acceptedFiles: ["video/*"],
+            },
+        }),
+    },
 });
 
 const pricesCollection = buildCollection({
@@ -202,20 +202,13 @@ const pricesCollection = buildCollection({
         value: buildProperty({
             title: "Value",
             validation: { required: true },
-            dataType: "number"
-        })
-    }
+            dataType: "number",
+        }),
+    },
 });
 
 const productCallbacks: EntityCallbacks<any> = {
-    onPreSave: ({
-                    collection,
-                    path,
-                    entityId,
-                    values,
-                    previousValues,
-                    status
-                }) => {
+    onPreSave: ({ collection, path, entityId, values, previousValues, status }) => {
         console.log(previousValues);
         values.uppercase_name = (values.name as string).toUpperCase();
         return values;
@@ -230,7 +223,7 @@ const productCallbacks: EntityCallbacks<any> = {
     },
     onPreDelete: () => {
         throw Error("Product deletion not allowed in this demo");
-    }
+    },
 };
 
 export const usersCollection = buildCollection({
@@ -244,20 +237,20 @@ export const usersCollection = buildCollection({
     properties: {
         first_name: buildProperty({
             title: "First name",
-            dataType: "string"
+            dataType: "string",
         }),
         last_name: buildProperty({
             title: "Last name",
-            dataType: "string"
+            dataType: "string",
         }),
         email: buildProperty({
             title: "Email",
             dataType: "string",
-            email: true
+            email: true,
         }),
         phone: buildProperty({
             title: "Phone",
-            dataType: "string"
+            dataType: "string",
         }),
         liked_products: buildProperty({
             dataType: "array",
@@ -265,8 +258,8 @@ export const usersCollection = buildCollection({
             description: "Products this user has liked",
             of: {
                 dataType: "reference",
-                path: "products"
-            }
+                path: "products",
+            },
         }),
         picture: buildProperty({
             title: "Picture",
@@ -275,17 +268,17 @@ export const usersCollection = buildCollection({
                 thumbnail: {
                     title: "Thumbnail",
                     dataType: "string",
-                    url: true
+                    url: true,
                 },
                 large: {
                     title: "Large",
                     dataType: "string",
-                    url: true
-                }
+                    url: true,
+                },
             },
-            previewProperties: ["large"]
-        })
-    }
+            previewProperties: ["large"],
+        }),
+    },
 });
 
 export const siteConfig = {
@@ -296,31 +289,33 @@ export const siteConfig = {
             path: "products",
             callbacks: productCallbacks,
             singularName: "Products",
-            subcollections: [localeCollection]
+            subcollections: [localeCollection],
         }),
         buildCollection({
             ...productsCollection,
             path: "sites/es/products",
             callbacks: productCallbacks,
             singularName: "Products",
-            subcollections: [localeCollection, pricesCollection]
+            subcollections: [localeCollection, pricesCollection],
         }),
         buildCollection({
             ...productsCollection,
             path: "products/id/subcollection_inline",
             callbacks: productCallbacks,
             singularName: "Products",
-            subcollections: [localeCollection]
+            subcollections: [localeCollection],
         }),
         buildCollection({
             ...usersCollection,
             path: "users",
             id: "u",
             singularName: "Users",
-            subcollections: [buildCollection({
-                ...productsCollection,
-                id: "p"
-            })]
-        })
+            subcollections: [
+                buildCollection({
+                    ...productsCollection,
+                    id: "p",
+                }),
+            ],
+        }),
     ],
 };

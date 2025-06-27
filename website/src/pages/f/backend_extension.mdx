@@ -3,7 +3,7 @@ id: backend_extension
 title: The most powerful backend
 ---
 
-<div style={{ height: "350px" }}/>
+<div style={{ height: "350px" }} />
 
 # The most powerful backend of any CMS
 
@@ -72,24 +72,30 @@ field has been modified.
 If the file has been modified, we upload the file to Vimeo and we update the
 database with the new video URL.
 
-<img loading="lazy"
-src="/img/video_sync.png"
-alt="Diagram of the video synchronization process"
-style={{
-width: "100%"
-}}/>
+<img
+    loading="lazy"
+    src="/img/video_sync.png"
+    alt="Diagram of the video synchronization process"
+    style={{
+        width: "100%",
+    }}
+/>
 
 We leverage the **real time updates** of Firestore to update a `status` field
 in the database. This field is used to show the status of the video in the
 CMS. In can take values like `In progress`, `In sync`, `Error`, etc.
 
-<video style={{
-maxWidth: "100%",
-margin: "16px 0px 32px",
-alignSelf: "center"
-}}
-loop autoPlay muted>
-<source src="/img/video_sync.mp4" type="video/mp4"/>
+<video
+    style={{
+        maxWidth: "100%",
+        margin: "16px 0px 32px",
+        alignSelf: "center",
+    }}
+    loop
+    autoPlay
+    muted
+>
+    <source src="/img/video_sync.mp4" type="video/mp4" />
 </video>
 
 > The `seconds` field in this video are also updated automatically in
@@ -99,11 +105,3 @@ This is just an example of how you can use FireCMS to build a CMS that is
 adaptable to your business logic. Serverless functions are a great way to
 extend the functionalities offered by this project and make it even more
 powerful.
-
-
-
-
-
-
-
-

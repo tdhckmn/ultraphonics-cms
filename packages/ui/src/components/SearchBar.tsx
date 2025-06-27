@@ -22,19 +22,18 @@ interface SearchBarProps {
 }
 
 export function SearchBar({
-                              onClick,
-                              onTextSearch,
-                              placeholder = "Search",
-                              expandable = false,
-                              large = false,
-                              innerClassName,
-                              className,
-                              autoFocus,
-                              disabled,
-                              loading,
-                              inputRef
-                          }: SearchBarProps) {
-
+    onClick,
+    onTextSearch,
+    placeholder = "Search",
+    expandable = false,
+    large = false,
+    innerClassName,
+    className,
+    autoFocus,
+    disabled,
+    loading,
+    inputRef,
+}: SearchBarProps) {
     const [searchText, setSearchText] = useState<string>("");
     const [active, setActive] = useState<boolean>(false);
 
@@ -61,15 +60,21 @@ export function SearchBar({
     return (
         <div
             onClick={onClick}
-            className={cls("relative",
+            className={cls(
+                "relative",
                 large ? "h-14" : "h-[42px]",
                 "bg-surface-accent-50 dark:bg-surface-800 border",
                 defaultBorderMixin,
                 "rounded-lg",
-                className)}>
-            <div
-                className="absolute p-0 px-4 h-full pointer-events-none flex items-center justify-center top-0">
-                {loading ? <CircularProgress size={"smallest"}/> : <SearchIcon className={"text-text-disabled dark:text-text-disabled-dark"}/>}
+                className
+            )}
+        >
+            <div className="absolute p-0 px-4 h-full pointer-events-none flex items-center justify-center top-0">
+                {loading ? (
+                    <CircularProgress size={"smallest"} />
+                ) : (
+                    <SearchIcon className={"text-text-disabled dark:text-text-disabled-dark"} />
+                )}
             </div>
             <input
                 value={searchText ?? ""}
@@ -77,11 +82,13 @@ export function SearchBar({
                 onClick={onClick}
                 placeholder={placeholder}
                 readOnly={!onTextSearch}
-                onChange={onTextSearch
-                    ? (event) => {
-                        setSearchText(event.target.value);
-                    }
-                    : undefined}
+                onChange={
+                    onTextSearch
+                        ? (event) => {
+                              setSearchText(event.target.value);
+                          }
+                        : undefined
+                }
                 autoFocus={autoFocus}
                 onFocus={() => setActive(true)}
                 onBlur={() => setActive(false)}
@@ -94,14 +101,16 @@ export function SearchBar({
                     innerClassName
                 )}
             />
-            {searchText
-                ? <IconButton
+            {searchText ? (
+                <IconButton
                     className={`${large ? "mr-2 top-1" : "mr-1 top-0"} absolute right-0 z-10`}
-                    onClick={clearText}>
-                    <CloseIcon size={"small"}/>
+                    onClick={clearText}
+                >
+                    <CloseIcon size={"small"} />
                 </IconButton>
-                : <div style={{ width: 26 }}/>
-            }
+            ) : (
+                <div style={{ width: 26 }} />
+            )}
         </div>
     );
 }

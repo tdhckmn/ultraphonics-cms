@@ -7,13 +7,13 @@ export const userManagementAdminViews: CMSView[] = [
         name: "CMS Users",
         group: "Admin",
         icon: "face",
-        view: <UsersView/>
+        view: <UsersView />,
     },
     {
         path: "roles",
         name: "Roles",
         group: "Admin",
         icon: "gpp_good",
-        view: <RolesView/>
-    }
-]
+        view: <RolesView />,
+    },
+];

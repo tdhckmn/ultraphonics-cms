@@ -57,6 +57,6 @@ export function createFormexStub<T extends object>(values: T): FormexController<
         },
         redo: () => {
             throw new Error(errorMessage);
-        }
+        },
     };
 }

@@ -29,53 +29,48 @@ export interface PopoverProps {
 }
 
 export function Popover({
-                            trigger,
-                            children,
-                            open,
-                            onOpenChange,
-                            side,
-                            sideOffset = 5,
-                            align,
-                            alignOffset,
-                            arrowPadding,
-                            sticky,
-                            hideWhenDetached,
-                            avoidCollisions,
-                            enabled = true,
-                            modal = false,
-                            portalContainer,
-                            className
-                        }: PopoverProps) {
-
+    trigger,
+    children,
+    open,
+    onOpenChange,
+    side,
+    sideOffset = 5,
+    align,
+    alignOffset,
+    arrowPadding,
+    sticky,
+    hideWhenDetached,
+    avoidCollisions,
+    enabled = true,
+    modal = false,
+    portalContainer,
+    className,
+}: PopoverProps) {
     useInjectStyles("Popover", popoverStyles);
 
-    if (!enabled)
-        return <>{trigger}</>;
+    if (!enabled) return <>{trigger}</>;
 
-    return <PopoverPrimitive.Root open={open}
-                                  onOpenChange={onOpenChange}
-                                  modal={modal}>
-        <PopoverPrimitive.Trigger asChild>
-            {trigger}
-        </PopoverPrimitive.Trigger>
-        <PopoverPrimitive.Portal container={portalContainer}>
-            <PopoverPrimitive.Content
-                className={cls(paperMixin,
-                    "PopoverContent z-40", className)}
-                side={side}
-                sideOffset={sideOffset}
-                align={align}
-                alignOffset={alignOffset}
-                arrowPadding={arrowPadding}
-                sticky={sticky}
-                hideWhenDetached={hideWhenDetached}
-                avoidCollisions={avoidCollisions}>
-
-                {children}
-                <PopoverPrimitive.Arrow className="fill-white dark:fill-surface-accent-950"/>
-            </PopoverPrimitive.Content>
-        </PopoverPrimitive.Portal>
-    </PopoverPrimitive.Root>;
+    return (
+        <PopoverPrimitive.Root open={open} onOpenChange={onOpenChange} modal={modal}>
+            <PopoverPrimitive.Trigger asChild>{trigger}</PopoverPrimitive.Trigger>
+            <PopoverPrimitive.Portal container={portalContainer}>
+                <PopoverPrimitive.Content
+                    className={cls(paperMixin, "PopoverContent z-40", className)}
+                    side={side}
+                    sideOffset={sideOffset}
+                    align={align}
+                    alignOffset={alignOffset}
+                    arrowPadding={arrowPadding}
+                    sticky={sticky}
+                    hideWhenDetached={hideWhenDetached}
+                    avoidCollisions={avoidCollisions}
+                >
+                    {children}
+                    <PopoverPrimitive.Arrow className="fill-white dark:fill-surface-accent-950" />
+                </PopoverPrimitive.Content>
+            </PopoverPrimitive.Portal>
+        </PopoverPrimitive.Root>
+    );
 }
 
 const popoverStyles = `

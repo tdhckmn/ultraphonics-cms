@@ -4,5 +4,5 @@ import { Icon, IconProps } from "../Icon";
  * @group Icons
  */
 export function ExplicitIcon(props: IconProps) {
-    return <Icon {...props} iconKey={"explicit"}/>
+    return <Icon {...props} iconKey={"explicit"} />;
 }

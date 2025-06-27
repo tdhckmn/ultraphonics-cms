@@ -1,82 +1,82 @@
 {
-  "name": "@firecms/data_enhancement",
-  "type": "module",
-  "version": "3.0.0-canary.254",
-  "main": "./dist/index.umd.js",
-  "module": "./dist/index.es.js",
-  "types": "./dist/index.d.ts",
-  "source": "src/index.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.es.js",
-      "require": "./dist/index.umd.js",
-      "types": "./dist/index.d.ts"
+    "name": "@firecms/data_enhancement",
+    "type": "module",
+    "version": "3.0.0-canary.254",
+    "main": "./dist/index.umd.js",
+    "module": "./dist/index.es.js",
+    "types": "./dist/index.d.ts",
+    "source": "src/index.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.es.js",
+            "require": "./dist/index.umd.js",
+            "types": "./dist/index.d.ts"
+        },
+        "./package.json": "./package.json"
     },
-    "./package.json": "./package.json"
-  },
-  "dependencies": {
-    "@firecms/core": "^3.0.0-canary.254",
-    "@firecms/editor": "^3.0.0-canary.254"
-  },
-  "peerDependencies": {
-    "firebase": "^10.12.2 || ^11.0.0",
-    "react": ">=18.0.0",
-    "react-dom": ">=18.0.0",
-    "react-router": "^6.28.0",
-    "react-router-dom": "^6.28.0"
-  },
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build && tsc --emitDeclarationOnly -p tsconfig.prod.json",
-    "prepublishOnly": "run-s build",
-    "test": "jest"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
+    "dependencies": {
+        "@firecms/core": "^3.0.0-canary.254",
+        "@firecms/editor": "^3.0.0-canary.254"
+    },
+    "peerDependencies": {
+        "firebase": "^10.12.2 || ^11.0.0",
+        "react": ">=18.0.0",
+        "react-dom": ">=18.0.0",
+        "react-router": "^6.28.0",
+        "react-router-dom": "^6.28.0"
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build && tsc --emitDeclarationOnly -p tsconfig.prod.json",
+        "prepublishOnly": "run-s build",
+        "test": "jest"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@testing-library/jest-dom": "^6.6.3",
+        "@types/jest": "^29.5.14",
+        "@types/react": "^18.3.18",
+        "@types/react-dom": "^18.3.0",
+        "@vitejs/plugin-react": "^4.3.4",
+        "babel-jest": "^29.7.0",
+        "babel-plugin-react-compiler": "beta",
+        "eslint-plugin-react-compiler": "beta",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.2.5",
+        "typescript": "^5.7.3",
+        "vite": "^5.4.14"
+    },
+    "jest": {
+        "transform": {
+            "^.+\\.tsx?$": "ts-jest"
+        },
+        "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+        "moduleFileExtensions": [
+            "ts",
+            "tsx",
+            "js",
+            "jsx",
+            "json",
+            "node"
+        ]
+    },
+    "files": [
+        "dist",
+        "src"
     ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "@testing-library/jest-dom": "^6.6.3",
-    "@types/jest": "^29.5.14",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.4",
-    "babel-jest": "^29.7.0",
-    "babel-plugin-react-compiler": "beta",
-    "eslint-plugin-react-compiler": "beta",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.2.5",
-    "typescript": "^5.7.3",
-    "vite": "^5.4.14"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
+    "publishConfig": {
+        "access": "public"
     },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ]
-  },
-  "files": [
-    "dist",
-    "src"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "gitHead": "946e1f4f5695190e903af3a71dd7111accfc1efa"
+    "gitHead": "946e1f4f5695190e903af3a71dd7111accfc1efa"
 }

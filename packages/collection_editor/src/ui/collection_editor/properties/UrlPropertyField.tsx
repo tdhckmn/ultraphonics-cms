@@ -5,14 +5,7 @@ import { getIn, useFormex } from "@firecms/formex";
 
 import { Select, SelectItem, TextField } from "@firecms/ui";
 
-export function UrlPropertyField({
-                                     disabled,
-                                     showErrors
-                                 }: {
-    disabled: boolean;
-    showErrors: boolean;
-}) {
-
+export function UrlPropertyField({ disabled, showErrors }: { disabled: boolean; showErrors: boolean }) {
     const { values, setFieldValue } = useFormex();
 
     const urlValue = getIn(values, "url");
@@ -20,16 +13,13 @@ export function UrlPropertyField({
     return (
         <>
             <div className={"col-span-12"}>
-
                 <Select
                     disabled={disabled}
                     position={"item-aligned"}
                     fullWidth={true}
                     onValueChange={(value: string) => {
-                        if (value === "[NONE]")
-                            setFieldValue("url", true);
-                        else
-                            setFieldValue("url", value);
+                        if (value === "[NONE]") setFieldValue("url", true);
+                        else setFieldValue("url", value);
                     }}
                     label={"Preview type"}
                     renderValue={(value: string) => {
@@ -44,46 +34,37 @@ export function UrlPropertyField({
                                 return "Display URL";
                         }
                     }}
-                    value={urlValue ?? "[NONE]"}>
-                    <SelectItem value={"[NONE]"}>
-                        Display URL
-                    </SelectItem>
-                    <SelectItem value={"image"}>
-                        Image
-                    </SelectItem>
-                    <SelectItem value={"video"}>
-                        Video
-                    </SelectItem>
-                    <SelectItem value={"audio"}>
-                        Audio
-                    </SelectItem>
+                    value={urlValue ?? "[NONE]"}
+                >
+                    <SelectItem value={"[NONE]"}>Display URL</SelectItem>
+                    <SelectItem value={"image"}>Image</SelectItem>
+                    <SelectItem value={"video"}>Video</SelectItem>
+                    <SelectItem value={"audio"}>Audio</SelectItem>
                 </Select>
             </div>
 
             <div className={"col-span-12"}>
-
                 <ValidationPanel>
-
-                    <StringPropertyValidation disabled={disabled}
-                                              max={true}
-                                              min={true}
-                                              trim={true}
-                                              showErrors={showErrors}/>
-
+                    <StringPropertyValidation
+                        disabled={disabled}
+                        max={true}
+                        min={true}
+                        trim={true}
+                        showErrors={showErrors}
+                    />
                 </ValidationPanel>
-
             </div>
 
             <div className={"col-span-12"}>
-
-                <TextField name={"defaultValue"}
-                           disabled={disabled}
-                           onChange={(e: any) => {
-                               setFieldValue("defaultValue", e.target.value === "" ? undefined : e.target.value);
-                           }}
-                           label={"Default value"}
-                           value={getIn(values, "defaultValue") ?? ""}/>
-
+                <TextField
+                    name={"defaultValue"}
+                    disabled={disabled}
+                    onChange={(e: any) => {
+                        setFieldValue("defaultValue", e.target.value === "" ? undefined : e.target.value);
+                    }}
+                    label={"Default value"}
+                    value={getIn(values, "defaultValue") ?? ""}
+                />
             </div>
         </>
     );

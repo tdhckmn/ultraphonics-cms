@@ -5,7 +5,7 @@ import {
     PropertyOrBuilder,
     ResolvedArrayProperty,
     ResolvedStringProperty,
-    StorageConfig
+    StorageConfig,
 } from "../../types";
 import { useDropzone } from "react-dropzone";
 import { PreviewSize } from "../../preview";
@@ -21,16 +21,19 @@ import {
     KeyboardSensor,
     PointerSensor,
     useSensor,
-    useSensors
+    useSensors,
 } from "@dnd-kit/core";
 import {
     horizontalListSortingStrategy,
     SortableContext,
     sortableKeyboardCoordinates,
-    useSortable
+    useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { StorageFieldItem, useStorageUploadController } from "../../util/useStorageUploadController";
+import {
+    StorageFieldItem,
+    useStorageUploadController,
+} from "../../util/useStorageUploadController";
 import { StorageUploadProgress } from "../components/StorageUploadProgress";
 import { StorageItemPreview } from "../components/StorageItemPreview";
 import {
@@ -38,40 +41,42 @@ import {
     fieldBackgroundDisabledMixin,
     fieldBackgroundHoverMixin,
     fieldBackgroundMixin,
-    Typography
+    Typography,
 } from "@firecms/ui";
 import { useClearRestoreValue } from "../useClearRestoreValue";
 
-const dropZoneClasses = "box-border relative pt-[2px] items-center border border-transparent min-h-[254px] outline-none rounded-md duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus:border-primary-solid";
+const dropZoneClasses =
+    "box-border relative pt-[2px] items-center border border-transparent min-h-[254px] outline-none rounded-md duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] focus:border-primary-solid";
 const disabledClasses = fieldBackgroundDisabledMixin;
-const nonActiveDropClasses = fieldBackgroundHoverMixin
-const activeDropClasses = "pt-0 border-2 border-solid"
-const acceptDropClasses = "transition-colors duration-200 ease-[cubic-bezier(0,0,0.2,1)] border-2 border-solid border-green-500"
-const rejectDropClasses = "transition-colors duration-200 ease-[cubic-bezier(0,0,0.2,1)] border-2 border-solid border-red-500"
+const nonActiveDropClasses = fieldBackgroundHoverMixin;
+const activeDropClasses = "pt-0 border-2 border-solid";
+const acceptDropClasses =
+    "transition-colors duration-200 ease-[cubic-bezier(0,0,0.2,1)] border-2 border-solid border-green-500";
+const rejectDropClasses =
+    "transition-colors duration-200 ease-[cubic-bezier(0,0,0.2,1)] border-2 border-solid border-red-500";
 
 type StorageUploadFieldProps = FieldProps<string | string[]>;
 
 export function StorageUploadFieldBinding({
-                                              propertyKey,
-                                              value,
-                                              setValue,
-                                              error,
-                                              showError,
-                                              autoFocus,
-                                              minimalistView,
-                                              property,
-                                              includeDescription,
-                                              context,
-                                              isSubmitting,
-                                          }: StorageUploadFieldProps) {
-
+    propertyKey,
+    value,
+    setValue,
+    error,
+    showError,
+    autoFocus,
+    minimalistView,
+    property,
+    includeDescription,
+    context,
+    isSubmitting,
+}: StorageUploadFieldProps) {
     const authController = useAuthController();
 
-    if (!context.entityId)
-        throw new Error("StorageUploadFieldBinding: Entity id is null");
+    if (!context.entityId) throw new Error("StorageUploadFieldBinding: Entity id is null");
 
     const storageSource = useStorageSource(context.collection);
-    const disabled = isReadOnly(property) || !!property.disabled || isSubmitting || context.disabled;
+    const disabled =
+        isReadOnly(property) || !!property.disabled || isSubmitting || context.disabled;
 
     const {
         internalValue,
@@ -80,7 +85,7 @@ export function StorageUploadFieldBinding({
         storage,
         onFileUploadComplete,
         storagePathBuilder,
-        multipleFilesSupported
+        multipleFilesSupported,
     } = useStorageUploadController({
         entityValues: context.values,
         entityId: context.entityId,
@@ -90,31 +95,31 @@ export function StorageUploadFieldBinding({
         value,
         storageSource,
         disabled: disabled ?? false,
-        onChange: setValue
+        onChange: setValue,
     });
 
     useClearRestoreValue<string | string[]>({
         property,
         value,
-        setValue
+        setValue,
     });
 
     const resolvedProperty = resolveProperty({
         propertyOrBuilder: property as PropertyOrBuilder,
-        authController
+        authController,
     }) as ResolvedStringProperty | ResolvedArrayProperty<string[]>;
 
     return (
-
         <>
-
-            {!minimalistView &&
+            {!minimalistView && (
                 <LabelWithIconAndTooltip
                     propertyKey={propertyKey}
                     icon={getIconForProperty(property, "small")}
                     required={property.validation?.required}
                     title={property.name}
-                    className={"h-8text-text-secondary dark:text-text-secondary-dark ml-3.5"}/>}
+                    className={"h-8text-text-secondary dark:text-text-secondary-dark ml-3.5"}
+                />
+            )}
 
             <StorageUpload
                 value={internalValue}
@@ -128,14 +133,16 @@ export function StorageUploadFieldBinding({
                 onFileUploadComplete={onFileUploadComplete}
                 storagePathBuilder={storagePathBuilder}
                 storage={storage}
-                multipleFilesSupported={multipleFilesSupported}/>
+                multipleFilesSupported={multipleFilesSupported}
+            />
 
-            <FieldHelperText includeDescription={includeDescription}
-                             showError={showError}
-                             error={error}
-                             disabled={disabled}
-                             property={property}/>
-
+            <FieldHelperText
+                includeDescription={includeDescription}
+                showError={showError}
+                error={error}
+                disabled={disabled}
+                property={property}
+            />
         </>
     );
 }
@@ -147,36 +154,34 @@ interface SortableStorageItemProps {
     name: string;
     metadata?: Record<string, unknown>;
     storagePathBuilder: (file: File) => string;
-    onFileUploadComplete: (uploadedPath: string, entry: StorageFieldItem, fileMetadata?: any) => Promise<void>;
+    onFileUploadComplete: (
+        uploadedPath: string,
+        entry: StorageFieldItem,
+        fileMetadata?: any
+    ) => Promise<void>;
     onClear: (clearedStoragePathOrDownloadUrl: string) => void;
     disabled: boolean;
     isSortable: boolean; // Kept for consistency, though dnd-kit handles sortability via context
 }
 
 function SortableStorageItem({
-                                 id,
-                                 entry,
-                                 property,
-                                 metadata,
-                                 storagePathBuilder,
-                                 onFileUploadComplete,
-                                 onClear,
-                                 disabled,
-                             }: SortableStorageItemProps) {
-
-    const {
-        attributes,
-        listeners,
-        setNodeRef,
-        transform,
-        transition,
-        isDragging
-    } = useSortable({ id });
+    id,
+    entry,
+    property,
+    metadata,
+    storagePathBuilder,
+    onFileUploadComplete,
+    onClear,
+    disabled,
+}: SortableStorageItemProps) {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+        id,
+    });
 
     const style: React.CSSProperties = {
         transform: CSS.Transform.toString(transform),
         transition,
-        zIndex: isDragging ? 100 : undefined
+        zIndex: isDragging ? 100 : undefined,
     };
 
     const getImageSizeNumber = (previewSize: PreviewSize): number => {
@@ -201,7 +206,8 @@ function SortableStorageItem({
                 disabled={disabled}
                 value={entry.storagePathOrDownloadUrl}
                 onRemove={() => onClear(entry.storagePathOrDownloadUrl!)}
-                size={entry.size}/>
+                size={entry.size}
+            />
         );
     } else if (entry.file) {
         child = (
@@ -231,37 +237,40 @@ function SortableStorageItem({
 }
 
 function FileDropComponent({
-                               storage,
-                               disabled,
-                               onFilesAdded,
-                               multipleFilesSupported,
-                               autoFocus,
-                               internalValue,
-                               property,
-                               onClear,
-                               metadata,
-                               storagePathBuilder,
-                               onFileUploadComplete,
-                               name,
-                               helpText,
-                               isDndItemDragging
-                           }: {
-    storage: StorageConfig,
-    disabled: boolean,
-    onFilesAdded: (acceptedFiles: File[]) => Promise<void>,
-    multipleFilesSupported: boolean,
-    autoFocus: boolean,
-    internalValue: StorageFieldItem[],
-    property: ResolvedStringProperty,
-    onClear: (clearedStoragePathOrDownloadUrl: string) => void,
-    metadata?: any,
-    storagePathBuilder: (file: File) => string,
-    onFileUploadComplete: (uploadedPath: string, entry: StorageFieldItem, fileMetadata?: any) => Promise<void>,
-    name: string,
-    helpText: string,
-    isDndItemDragging?: boolean
+    storage,
+    disabled,
+    onFilesAdded,
+    multipleFilesSupported,
+    autoFocus,
+    internalValue,
+    property,
+    onClear,
+    metadata,
+    storagePathBuilder,
+    onFileUploadComplete,
+    name,
+    helpText,
+    isDndItemDragging,
+}: {
+    storage: StorageConfig;
+    disabled: boolean;
+    onFilesAdded: (acceptedFiles: File[]) => Promise<void>;
+    multipleFilesSupported: boolean;
+    autoFocus: boolean;
+    internalValue: StorageFieldItem[];
+    property: ResolvedStringProperty;
+    onClear: (clearedStoragePathOrDownloadUrl: string) => void;
+    metadata?: any;
+    storagePathBuilder: (file: File) => string;
+    onFileUploadComplete: (
+        uploadedPath: string,
+        entry: StorageFieldItem,
+        fileMetadata?: any
+    ) => Promise<void>;
+    name: string;
+    helpText: string;
+    isDndItemDragging?: boolean;
 }) {
-
     const snackbarContext = useSnackbarController();
 
     const {
@@ -269,36 +278,40 @@ function FileDropComponent({
         getInputProps,
         isDragActive, // This is for files dragged from OS
         isDragAccept,
-        isDragReject
+        isDragReject,
     } = useDropzone({
-            accept: storage.acceptedFiles ? storage.acceptedFiles.reduce((acc, ext) => ({
-                ...acc,
-                [ext]: []
-            }), {}) : undefined,
-            disabled: disabled || isDndItemDragging,
-            noDragEventsBubbling: true,
-            maxSize: storage.maxSize,
-            onDrop: onFilesAdded,
-            onDropRejected: (fileRejections) => {
-                for (const fileRejection of fileRejections) {
-                    for (const error of fileRejection.errors) {
-                        console.error("Error uploading file: ", error);
-                        if (error.code === "file-too-large") {
-                            snackbarContext.open({
-                                type: "error",
-                                message: `Error uploading file: File is larger than ${storage.maxSize} bytes`
-                            });
-                        } else if (error.code === "file-invalid-type") {
-                            snackbarContext.open({
-                                type: "error",
-                                message: "Error uploading file: File type is not supported"
-                            });
-                        }
+        accept: storage.acceptedFiles
+            ? storage.acceptedFiles.reduce(
+                  (acc, ext) => ({
+                      ...acc,
+                      [ext]: [],
+                  }),
+                  {}
+              )
+            : undefined,
+        disabled: disabled || isDndItemDragging,
+        noDragEventsBubbling: true,
+        maxSize: storage.maxSize,
+        onDrop: onFilesAdded,
+        onDropRejected: (fileRejections) => {
+            for (const fileRejection of fileRejections) {
+                for (const error of fileRejection.errors) {
+                    console.error("Error uploading file: ", error);
+                    if (error.code === "file-too-large") {
+                        snackbarContext.open({
+                            type: "error",
+                            message: `Error uploading file: File is larger than ${storage.maxSize} bytes`,
+                        });
+                    } else if (error.code === "file-invalid-type") {
+                        snackbarContext.open({
+                            type: "error",
+                            message: "Error uploading file: File type is not supported",
+                        });
                     }
                 }
             }
-        }
-    );
+        },
+    });
 
     return (
         <div
@@ -314,18 +327,20 @@ function FileDropComponent({
                     [activeDropClasses]: isDragActive, // OS file drag active
                     [rejectDropClasses]: isDragReject, // OS file drag reject
                     [acceptDropClasses]: isDragAccept, // OS file drag accept
-                    [disabledClasses]: disabled || isDndItemDragging // Visually disable if internal drag
-                })}
+                    [disabledClasses]: disabled || isDndItemDragging, // Visually disable if internal drag
+                }
+            )}
         >
             <div
-                className={cls("flex items-center p-1 px-4 no-scrollbar",
+                className={cls(
+                    "flex items-center p-1 px-4 no-scrollbar",
                     multipleFilesSupported && internalValue.length ? "overflow-auto" : "",
-                    multipleFilesSupported && internalValue.length ? "min-h-[180px]" : "min-h-[250px]"
+                    multipleFilesSupported && internalValue.length
+                        ? "min-h-[180px]"
+                        : "min-h-[250px]"
                 )}
             >
-                <input
-                    autoFocus={autoFocus}
-                    {...getInputProps()} />
+                <input autoFocus={autoFocus} {...getInputProps()} />
 
                 {internalValue.map((entry) => (
                     <SortableStorageItem
@@ -346,11 +361,14 @@ function FileDropComponent({
                 {/* Placeholder for empty dropzone text is handled by the outer Typography */}
             </div>
 
-            <div
-                className="flex-grow min-h-[38px] box-border m-2 text-center">
-                <Typography align={"center"}
-                            variant={"label"}
-                            className={disabled ? "text-surface-accent-600 dark:text-surface-accent-500" : ""}>
+            <div className="flex-grow min-h-[38px] box-border m-2 text-center">
+                <Typography
+                    align={"center"}
+                    variant={"label"}
+                    className={
+                        disabled ? "text-surface-accent-600 dark:text-surface-accent-500" : ""
+                    }
+                >
                     {helpText}
                 </Typography>
             </div>
@@ -370,24 +388,27 @@ export interface StorageUploadProps {
     storage: StorageConfig;
     onFilesAdded: (acceptedFiles: File[]) => Promise<void>; // Updated from useStorageUploadController
     storagePathBuilder: (file: File) => string;
-    onFileUploadComplete: (uploadedPath: string, entry: StorageFieldItem, fileMetadata?: any) => Promise<void>;
+    onFileUploadComplete: (
+        uploadedPath: string,
+        entry: StorageFieldItem,
+        fileMetadata?: any
+    ) => Promise<void>;
 }
 
 export function StorageUpload({
-                                  property,
-                                  name,
-                                  value, // This is internalValue from useStorageUploadController
-                                  setInternalValue,
-                                  onChange,
-                                  multipleFilesSupported,
-                                  onFileUploadComplete,
-                                  disabled,
-                                  onFilesAdded,
-                                  autoFocus,
-                                  storage,
-                                  storagePathBuilder,
-                              }: StorageUploadProps) {
-
+    property,
+    name,
+    value, // This is internalValue from useStorageUploadController
+    setInternalValue,
+    onChange,
+    multipleFilesSupported,
+    onFileUploadComplete,
+    disabled,
+    onFilesAdded,
+    autoFocus,
+    storage,
+    storagePathBuilder,
+}: StorageUploadProps) {
     if (multipleFilesSupported) {
         const arrayProperty = property as ResolvedArrayProperty<string[]>;
         if (arrayProperty.of) {
@@ -405,18 +426,21 @@ export function StorageUpload({
     const metadata: Record<string, unknown> | undefined = storage?.metadata;
     const [isDndItemDragging, setIsDndItemDragging] = useState(false);
 
-    const moveItem = useCallback((fromIndex: number, toIndex: number) => {
-        if (!multipleFilesSupported || fromIndex === toIndex) return;
-        const newValue = [...value];
-        const item = newValue[fromIndex];
-        newValue.splice(fromIndex, 1);
-        newValue.splice(toIndex, 0, item);
-        setInternalValue(newValue);
-        const fieldValue = newValue
-            .filter(e => !!e.storagePathOrDownloadUrl)
-            .map(e => e.storagePathOrDownloadUrl as string);
-        onChange(fieldValue);
-    }, [multipleFilesSupported, onChange, setInternalValue, value]);
+    const moveItem = useCallback(
+        (fromIndex: number, toIndex: number) => {
+            if (!multipleFilesSupported || fromIndex === toIndex) return;
+            const newValue = [...value];
+            const item = newValue[fromIndex];
+            newValue.splice(fromIndex, 1);
+            newValue.splice(toIndex, 0, item);
+            setInternalValue(newValue);
+            const fieldValue = newValue
+                .filter((e) => !!e.storagePathOrDownloadUrl)
+                .map((e) => e.storagePathOrDownloadUrl as string);
+            onChange(fieldValue);
+        },
+        [multipleFilesSupported, onChange, setInternalValue, value]
+    );
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -433,40 +457,49 @@ export function StorageUpload({
         setIsDndItemDragging(true);
     }, []);
 
-    const handleDragEnd = useCallback((event: DragEndEvent) => {
-        setIsDndItemDragging(false);
-        const {
-            active,
-            over
-        } = event;
-        if (over && active.id !== over.id) {
-            const oldIndex = value.findIndex(item => item.id === active.id);
-            const newIndex = value.findIndex(item => item.id === over.id);
-            if (oldIndex !== -1 && newIndex !== -1) {
-                moveItem(oldIndex, newIndex);
+    const handleDragEnd = useCallback(
+        (event: DragEndEvent) => {
+            setIsDndItemDragging(false);
+            const { active, over } = event;
+            if (over && active.id !== over.id) {
+                const oldIndex = value.findIndex((item) => item.id === active.id);
+                const newIndex = value.findIndex((item) => item.id === over.id);
+                if (oldIndex !== -1 && newIndex !== -1) {
+                    moveItem(oldIndex, newIndex);
+                }
             }
-        }
-    }, [value, moveItem]);
+        },
+        [value, moveItem]
+    );
 
-    const onClear = useCallback((clearedStoragePathOrDownloadUrl: string) => {
-        let newValue: StorageFieldItem[];
-        if (multipleFilesSupported) {
-            newValue = value.filter(v => v.storagePathOrDownloadUrl !== clearedStoragePathOrDownloadUrl);
-            onChange(newValue.filter(v => !!v.storagePathOrDownloadUrl).map(v => v.storagePathOrDownloadUrl as string));
-        } else {
-            newValue = [];
-            onChange(null);
-        }
-        setInternalValue(newValue);
-    }, [value, multipleFilesSupported, onChange, setInternalValue]);
+    const onClear = useCallback(
+        (clearedStoragePathOrDownloadUrl: string) => {
+            let newValue: StorageFieldItem[];
+            if (multipleFilesSupported) {
+                newValue = value.filter(
+                    (v) => v.storagePathOrDownloadUrl !== clearedStoragePathOrDownloadUrl
+                );
+                onChange(
+                    newValue
+                        .filter((v) => !!v.storagePathOrDownloadUrl)
+                        .map((v) => v.storagePathOrDownloadUrl as string)
+                );
+            } else {
+                newValue = [];
+                onChange(null);
+            }
+            setInternalValue(newValue);
+        },
+        [value, multipleFilesSupported, onChange, setInternalValue]
+    );
 
     const helpText = multipleFilesSupported
         ? "Drag 'n' drop some files here, or click to select files. Drag to reorder."
         : "Drag 'n' drop a file here, or click to select one";
 
     const renderProperty: ResolvedStringProperty = multipleFilesSupported
-        ? (property as ResolvedArrayProperty<string[]>).of as ResolvedStringProperty
-        : property as ResolvedStringProperty;
+        ? ((property as ResolvedArrayProperty<string[]>).of as ResolvedStringProperty)
+        : (property as ResolvedStringProperty);
 
     const fileDropProps = {
         storage,
@@ -482,7 +515,7 @@ export function StorageUpload({
         onFileUploadComplete,
         name,
         helpText,
-        isDndItemDragging // Pass this down
+        isDndItemDragging, // Pass this down
     };
 
     if (multipleFilesSupported) {
@@ -493,13 +526,16 @@ export function StorageUpload({
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
             >
-                <SortableContext items={value.map(v => v.id)} strategy={horizontalListSortingStrategy}>
+                <SortableContext
+                    items={value.map((v) => v.id)}
+                    strategy={horizontalListSortingStrategy}
+                >
                     <FileDropComponent {...fileDropProps} />
                 </SortableContext>
             </DndContext>
         );
     } else {
         // For single file, no D&D context is needed
-        return <FileDropComponent {...fileDropProps} isDndItemDragging={false}/>;
+        return <FileDropComponent {...fileDropProps} isDndItemDragging={false} />;
     }
 }

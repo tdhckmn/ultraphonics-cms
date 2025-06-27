@@ -9,7 +9,7 @@ import {
     EntityCollectionsBuilder,
     FireCMSPlugin,
     Locale,
-    PropertyConfig
+    PropertyConfig,
 } from "@firecms/core";
 import { FirebaseApp } from "@firebase/app";
 import { FirebaseLoginViewProps } from "./FirebaseLoginView";
@@ -18,7 +18,7 @@ import {
     FirebaseSignInOption,
     FirebaseSignInProvider,
     FirebaseUserWrapper,
-    FirestoreTextSearchControllerBuilder
+    FirestoreTextSearchControllerBuilder,
 } from "../types";
 import { FirestoreIndexesBuilder } from "../hooks";
 
@@ -27,7 +27,6 @@ import { FirestoreIndexesBuilder } from "../hooks";
  * @category Firebase
  */
 export type FireCMSFirebaseAppProps = {
-
     /**
      * Name of the app, displayed as the main title and in the tab title
      */
@@ -168,7 +167,6 @@ export type FireCMSFirebaseAppProps = {
     localTextSearchEnabled?: boolean;
 
     components?: ComponentsRegistry;
-
 };
 
 export type ComponentsRegistry = {

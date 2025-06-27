@@ -11,4 +11,5 @@ import { CustomizationControllerContext } from "../contexts/CustomizationControl
  *
  * @group Hooks and utilities
  */
-export const useCustomizationController = (): CustomizationController => useContext(CustomizationControllerContext);
+export const useCustomizationController = (): CustomizationController =>
+    useContext(CustomizationControllerContext);

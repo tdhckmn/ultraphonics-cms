@@ -10,7 +10,6 @@ import { FireCMSPlugin } from "./plugins";
  * @group Models
  */
 export type NavigationController<EC extends EntityCollection = EntityCollection<any>> = {
-
     /**
      * List of the mapped collections in the CMS.
      * Each entry relates to a collection in the root database.
@@ -157,8 +156,7 @@ export type NavigationController<EC extends EntityCollection = EntityCollection<
      * Plugin system allowing to extend the CMS functionality.
      */
     plugins?: FireCMSPlugin<any, any, any>[];
-
-}
+};
 
 export interface NavigateOptions {
     replace?: boolean;
@@ -183,7 +181,6 @@ export type NavigationBlocker = {
  * @group Models
  */
 export interface CMSView {
-
     /**
      * CMS Path you can reach this view from.
      */
@@ -226,7 +223,6 @@ export interface CMSView {
      * This prop is ignored for admin views.
      */
     group?: string;
-
 }
 
 /**
@@ -256,13 +252,11 @@ export interface NavigationEntry {
 }
 
 export type NavigationResult = {
-
     allowDragAndDrop: boolean;
 
-    navigationEntries: NavigationEntry[],
+    navigationEntries: NavigationEntry[];
 
-    groups: string[],
+    groups: string[];
 
     onNavigationEntriesUpdate: (entries: NavigationGroupMapping[]) => void;
 };
-

@@ -27,8 +27,8 @@ buildProperty({
         backpacks: "Backpacks and bags",
         bath: "Bath",
         bicycle: "Bicycle",
-        books: "Books"
-    }
+        books: "Books",
+    },
 });
 ```
 
@@ -42,8 +42,8 @@ buildProperty({
     name: "Currency",
     enumValues: [
         { id: "EUR", label: "Euros", color: "blueDark" },
-        { id: "DOL", label: "Dollars", color: "greenLight" }
-    ]
+        { id: "DOL", label: "Dollars", color: "greenLight" },
+    ],
 });
 ```
 
@@ -51,7 +51,6 @@ The data type is [`string`](../config/string) or [`number`](../config/number).
 
 Internally the component used
 is [`SelectFieldBinding`].
-
 
 ### Multiple select field
 
@@ -75,16 +74,16 @@ buildProperty({
     of: {
         dataType: "string",
         enumValues: {
-            "es": "Spanish",
-            "en": "English",
-            "fr": {
+            es: "Spanish",
+            en: "English",
+            fr: {
                 id: "fr",
                 label: "French",
-                disabled: true
-            }
-        }
+                disabled: true,
+            },
+        },
     },
-    defaultValue: ["es"]
+    defaultValue: ["es"],
 });
 ```
 
@@ -97,7 +96,6 @@ is [`SelectFieldBinding`].
 ### Customising the colors
 
 You can pick the colors among a list of predefined values:
-
 
 import CodeBlock from "@theme/CodeBlock";
 import MyComponentSource from "!!raw-loader!../../../../../packages/ui/src/util/chip_colors";
@@ -120,8 +118,8 @@ buildProperty({
             color: {
                 color: "#FFFFFF",
                 text: "#333333",
-            }
-        }
-    ]
+            },
+        },
+    ],
 });
 ```

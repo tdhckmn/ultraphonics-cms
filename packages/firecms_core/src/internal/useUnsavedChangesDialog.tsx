@@ -6,13 +6,13 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography }
  */
 type PendingNavigation =
     | {
-    type: "popstate";
-    delta: number;
-}
+          type: "popstate";
+          delta: number;
+      }
     | {
-    type: "link";
-    href: string;
-}
+          type: "link";
+          href: string;
+      }
     | null;
 
 /**
@@ -80,7 +80,7 @@ export function useNavigationUnsavedChangesDialog(
                 // Assuming backward navigation; adjust delta as needed
                 setPendingNavigation({
                     type: "popstate",
-                    delta: -1
+                    delta: -1,
                 });
                 setIsDialogOpen(true);
             }
@@ -103,7 +103,7 @@ export function useNavigationUnsavedChangesDialog(
                 if (href) {
                     setPendingNavigation({
                         type: "link",
-                        href
+                        href,
                     });
                     setIsDialogOpen(true);
                 }

@@ -19,36 +19,37 @@ type SelectProps<T extends EnumType> = FieldProps<T>;
  * @group Form fields
  */
 export function SelectFieldBinding<T extends EnumType>({
-                                                           propertyKey,
-                                                           value,
-                                                           setValue,
-                                                           error,
-                                                           showError,
-                                                           disabled,
-                                                           autoFocus,
-                                                           touched,
-                                                           property,
-                                                           includeDescription,
-                                                           size = "large"
-                                                       }: SelectProps<T>) {
-
+    propertyKey,
+    value,
+    setValue,
+    error,
+    showError,
+    disabled,
+    autoFocus,
+    touched,
+    property,
+    includeDescription,
+    size = "large",
+}: SelectProps<T>) {
     const enumValues = resolveEnumValues(property.enumValues ?? []);
 
     useClearRestoreValue({
         property,
         value,
-        setValue
+        setValue,
     });
 
-    const handleClearClick = useCallback((e: React.MouseEvent) => {
-        e.stopPropagation();
-        e.preventDefault();
-        setValue(null);
-    }, [setValue]);
+    const handleClearClick = useCallback(
+        (e: React.MouseEvent) => {
+            e.stopPropagation();
+            e.preventDefault();
+            setValue(null);
+        },
+        [setValue]
+    );
 
     return (
         <>
-
             <Select
                 value={value !== undefined && value != null ? value.toString() : ""}
                 disabled={disabled}
@@ -62,47 +63,53 @@ export function SelectFieldBinding<T extends EnumType>({
                             icon={getIconForProperty(property, "small")}
                             required={property.validation?.required}
                             title={property.name}
-                            className={"h-8 text-text-secondary dark:text-text-secondary-dark ml-3.5 my-0"}
+                            className={
+                                "h-8 text-text-secondary dark:text-text-secondary-dark ml-3.5 my-0"
+                            }
                         />
-                    </PropertyIdCopyTooltip>}
+                    </PropertyIdCopyTooltip>
+                }
                 endAdornment={
-                    property.clearable && !disabled && <IconButton
-                        size="small"
-                        onClick={handleClearClick}>
-                        <CloseIcon size={"small"}/>
-                    </IconButton>
+                    property.clearable &&
+                    !disabled && (
+                        <IconButton size="small" onClick={handleClearClick}>
+                            <CloseIcon size={"small"} />
+                        </IconButton>
+                    )
                 }
                 onValueChange={(updatedValue: string) => {
                     const newValue = updatedValue
-                        ? (property.dataType === "number" ? parseFloat(updatedValue) : updatedValue)
+                        ? property.dataType === "number"
+                            ? parseFloat(updatedValue)
+                            : updatedValue
                         : null;
                     return setValue(newValue as T);
                 }}
                 renderValue={(enumKey: any) => {
-                    return <EnumValuesChip
-                        enumKey={enumKey}
-                        enumValues={enumValues}
-                        size={size}/>;
+                    return <EnumValuesChip enumKey={enumKey} enumValues={enumValues} size={size} />;
                 }}
             >
-                {enumValues && enumValues.map((option) => {
-                    return <SelectItem
-                        key={option.id}
-                        value={String(option.id)}>
-                        <EnumValuesChip
-                            enumKey={String(option.id)}
-                            enumValues={enumValues}
-                            size={size}/>
-                    </SelectItem>
-                })}
+                {enumValues &&
+                    enumValues.map((option) => {
+                        return (
+                            <SelectItem key={option.id} value={String(option.id)}>
+                                <EnumValuesChip
+                                    enumKey={String(option.id)}
+                                    enumValues={enumValues}
+                                    size={size}
+                                />
+                            </SelectItem>
+                        );
+                    })}
             </Select>
 
-            <FieldHelperText includeDescription={includeDescription}
-                             showError={showError}
-                             error={error}
-                             disabled={disabled}
-                             property={property}/>
-
+            <FieldHelperText
+                includeDescription={includeDescription}
+                showError={showError}
+                error={error}
+                disabled={disabled}
+                property={property}
+            />
         </>
     );
 }

@@ -1,6 +1,6 @@
 export function addRecentId(collectionId: string, id: string) {
     const recentIds = getRecentIds(collectionId);
-    const newRecentIds = [id, ...recentIds.filter(i => i !== id)];
+    const newRecentIds = [id, ...recentIds.filter((i) => i !== id)];
     if (newRecentIds.length > 5) {
         newRecentIds.pop();
     }

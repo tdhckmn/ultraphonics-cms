@@ -10,9 +10,7 @@ export default function PopoverControlledDemo() {
             open={open}
             onOpenChange={setOpen}
         >
-            <div className="p-4">
-                This Popover's visibility is controlled externally.
-            </div>
+            <div className="p-4">This Popover's visibility is controlled externally.</div>
         </Popover>
     );
 }

@@ -28,14 +28,14 @@ To get started with Formex, you first need to create your form context and form 
 ### Step 1: Create your form controller
 
 ```jsx
-import React from 'react';
-import { useCreateFormex } from 'formex-library';
+import React from "react";
+import { useCreateFormex } from "formex-library";
 
 const MyForm = () => {
     const formController = useCreateFormex({
         initialValues: {
-            name: '',
-            email: '',
+            name: "",
+            email: "",
         },
         // Optionally add a validation function
         // validation: values => {
@@ -44,15 +44,11 @@ const MyForm = () => {
         //   return errors;
         // },
         onSubmit: (values) => {
-            console.log('Form Submitted:', values);
+            console.log("Form Submitted:", values);
         },
     });
 
-    return (
-        <form onSubmit={formController.handleSubmit}>
-            {/* Field components go here */}
-        </form>
-    );
+    return <form onSubmit={formController.handleSubmit}>{/* Field components go here */}</form>;
 };
 ```
 
@@ -89,9 +85,7 @@ import { Field } from 'formex-library';
 Wrap your form inputs and submit button within a form element and pass the `submitForm` method from your form controller to the form's `onSubmit` event:
 
 ```jsx
-<form onSubmit={formController.handleSubmit}>
-    {/* Fields and submit button */}
-</form>
+<form onSubmit={formController.handleSubmit}>{/* Fields and submit button */}</form>
 ```
 
 ## API Reference
@@ -108,7 +102,6 @@ Hook to create a form controller.
 - `validateOnChange` (optional): If `true`, validates fields whenever they change.
 - `onSubmit`: A function that fires when the form is submitted.
 
-
 ### `<Field />`
 
 A component used to render individual form fields.
@@ -122,9 +115,7 @@ A component used to render individual form fields.
 **Example**
 
 ```jsx
-<Field name="username">
-  {({ field }) => <input {...field} />}
-</Field>
+<Field name="username">{({ field }) => <input {...field} />}</Field>
 ```
 
 ## Customization
@@ -134,14 +125,10 @@ Formex is designed to be flexible. You can create custom field components, use a
 ### Using with UI Libraries
 
 ```jsx
-import { Field } from 'formex-library';
-import { TextField } from 'some-ui-library';
+import { Field } from "formex-library";
+import { TextField } from "some-ui-library";
 
-<Field name="username">
-  {({ field }) => (
-    <TextField {...field} label="Username" />
-  )}
-</Field>
+<Field name="username">{({ field }) => <TextField {...field} label="Username" />}</Field>;
 ```
 
 ### Custom Validation
@@ -149,12 +136,12 @@ import { TextField } from 'some-ui-library';
 Leverage the `validation` function in `useCreateFormex` to integrate any validation logic or library.
 
 ```jsx
-const validate = values => {
-  const errors = {};
-  if (!values.email.includes('@')) {
-    errors.email = 'Invalid email';
-  }
-  return errors;
+const validate = (values) => {
+    const errors = {};
+    if (!values.email.includes("@")) {
+        errors.email = "Invalid email";
+    }
+    return errors;
 };
 ```
 

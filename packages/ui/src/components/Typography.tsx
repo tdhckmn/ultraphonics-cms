@@ -31,7 +31,7 @@ const typographyVariants = {
     body2: "p",
     inherit: "p",
     caption: "p",
-    button: "span"
+    button: "span",
 };
 
 const colorToClasses = {
@@ -40,7 +40,7 @@ const colorToClasses = {
     primary: "text-text-primary dark:text-text-primary-dark",
     secondary: "text-text-secondary dark:text-text-secondary-dark",
     disabled: "text-text-disabled dark:text-text-disabled-dark",
-    error: "text-red-600 dark:text-red-500"
+    error: "text-red-600 dark:text-red-500",
 };
 
 const gutterBottomClasses = {
@@ -57,7 +57,7 @@ const gutterBottomClasses = {
     inherit: "mb-3",
     caption: "mb-2",
     button: "mb-2",
-    label: "mb-2"
+    label: "mb-2",
 };
 
 const variantToClasses = {
@@ -74,26 +74,24 @@ const variantToClasses = {
     label: "typography-label",
     inherit: "typography-inherit",
     caption: "typography-caption",
-    button: "typography-button"
+    button: "typography-button",
 };
 
-export function Typography<C extends React.ElementType = "span">(
-    {
-        align = "inherit",
-        color = "primary",
-        children,
-        className,
-        component,
-        gutterBottom = false,
-        noWrap = false,
-        paragraph = false,
-        variant = "body1",
-        variantMapping = typographyVariants,
-        style,
-        onClick,
-        ...other
-    }: TypographyProps<C>
-) {
+export function Typography<C extends React.ElementType = "span">({
+    align = "inherit",
+    color = "primary",
+    children,
+    className,
+    component,
+    gutterBottom = false,
+    noWrap = false,
+    paragraph = false,
+    variant = "body1",
+    variantMapping = typographyVariants,
+    style,
+    onClick,
+    ...other
+}: TypographyProps<C>) {
     const Component =
         component ||
         (paragraph ? "p" : variantMapping[variant] || typographyVariants[variant]) ||
@@ -110,10 +108,7 @@ export function Typography<C extends React.ElementType = "span">(
     );
 
     return (
-        <Component className={classes}
-                   onClick={onClick}
-                   style={style}
-                   {...other}>
+        <Component className={classes} onClick={onClick} style={style} {...other}>
             {children}
         </Component>
     );

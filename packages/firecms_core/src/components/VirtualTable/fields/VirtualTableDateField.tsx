@@ -7,20 +7,13 @@ export function VirtualTableDateField(props: {
     error: Error | undefined;
     mode?: "date" | "date_time";
     internalValue: Date | undefined | null;
-    updateValue: (newValue: (Date | null)) => void;
+    updateValue: (newValue: Date | null) => void;
     focused: boolean;
     disabled: boolean;
     onBlur?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
 }) {
-
     const { locale } = useCustomizationController();
-    const {
-        disabled,
-        error,
-        mode,
-        internalValue,
-        updateValue
-    } = props;
+    const { disabled, error, mode, internalValue, updateValue } = props;
 
     return (
         <DateTimeField

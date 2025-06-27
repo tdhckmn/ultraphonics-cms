@@ -5,13 +5,13 @@ import {
     OnVirtualTableColumnResizeParams,
     VirtualTableColumn,
     VirtualTableFilterValues,
-    VirtualTableWhereFilterOp
+    VirtualTableWhereFilterOp,
 } from "./VirtualTableProps";
 import { FilterFormFieldProps } from "./VirtualTableHeader";
 
 export type VirtualTableRowProps<T> = {
-    style: any,
-    rowHeight: number,
+    style: any;
+    rowHeight: number;
     rowData: T;
     rowIndex: number;
     onRowClick?: (props: OnRowClickParams<any>) => void;
@@ -23,7 +23,7 @@ export type VirtualTableRowProps<T> = {
 
 export type VirtualTableContextProps<T extends any> = {
     data?: T[];
-    rowHeight?: number,
+    rowHeight?: number;
     columns: VirtualTableColumn[];
     cellRenderer: React.ComponentType<CellRendererParams<T>>;
     currentSort: "asc" | "desc" | undefined;
@@ -32,9 +32,12 @@ export type VirtualTableContextProps<T extends any> = {
     onColumnSort: (key: string) => any;
     onColumnResize: (params: OnVirtualTableColumnResizeParams) => void;
     onColumnResizeEnd: (params: OnVirtualTableColumnResizeParams) => void;
-    onFilterUpdate: (column: VirtualTableColumn, filterForProperty?: [VirtualTableWhereFilterOp, any]) => void;
+    onFilterUpdate: (
+        column: VirtualTableColumn,
+        filterForProperty?: [VirtualTableWhereFilterOp, any]
+    ) => void;
     sortByProperty?: string;
-    customView?: React.ReactNode,
+    customView?: React.ReactNode;
     hoverRow: boolean;
     createFilterField?: (props: FilterFormFieldProps<any>) => React.ReactNode;
     rowClassName?: (rowData: T) => string | undefined;

@@ -12,20 +12,19 @@ import { ErrorBoundary } from "../../components";
  * @group Preview components
  */
 export function ArrayOfStorageComponentsPreview({
-                                                    propertyKey,
-                                                    // entity,
-                                                    value,
-                                                    property: inputProperty,
-                                                    size
-                                                }: PropertyPreviewProps<any[]>) {
-
+    propertyKey,
+    // entity,
+    value,
+    property: inputProperty,
+    size,
+}: PropertyPreviewProps<any[]>) {
     const authController = useAuthController();
     const customizationController = useCustomizationController();
     const property = resolveArrayProperty({
         propertyKey,
         property: inputProperty,
         propertyConfigs: customizationController.propertyConfigs,
-        authController
+        authController,
     });
 
     if (Array.isArray(property.of)) {
@@ -40,16 +39,17 @@ export function ArrayOfStorageComponentsPreview({
     return (
         <div className={"flex flex-wrap gap-2"}>
             {value &&
-                value.map((v, index) =>
+                value.map((v, index) => (
                     <ErrorBoundary key={`preview_array_storage_${propertyKey}_${index}`}>
                         <PropertyPreview
                             propertyKey={propertyKey}
                             value={v}
                             // entity={entity}
                             property={property.of as ResolvedProperty<string>}
-                            size={childSize}/>
+                            size={childSize}
+                        />
                     </ErrorBoundary>
-                )}
+                ))}
         </div>
     );
 }

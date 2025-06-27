@@ -3,11 +3,7 @@
         "outDir": "dist",
         "module": "es2022",
         "target": "ESNEXT",
-        "lib": [
-            "dom",
-            "dom.iterable",
-            "esnext"
-        ],
+        "lib": ["dom", "dom.iterable", "esnext"],
         "emitDeclarationOnly": true,
         "allowImportingTsExtensions": true,
         "moduleResolution": "node",
@@ -27,19 +23,8 @@
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "types": [
-            "vite/client",
-            "node",
-            "jest"
-        ]
+        "types": ["vite/client", "node", "jest"]
     },
-    "include": [
-        "src",
-        "./src/**/*.ts"
-    ],
-    "exclude": [
-        "node_modules",
-        "dist",
-        "src/test"
-    ]
+    "include": ["src", "./src/**/*.ts"],
+    "exclude": ["node_modules", "dist", "src/test"]
 }

@@ -6,30 +6,24 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 import { AnimatedGradientBackground } from "../AnimatedGradientBackground";
 
 function ProTeaser() {
-
     return (
         <div className={"w-full relative bg-gray-900"}>
-            <AnimatedGradientBackground/>
+            <AnimatedGradientBackground />
             <Panel className={"relative"}>
-
-
                 <h3 className={"mb-3 uppercase font-mono"}>
                     Go Pro for a completely customizable experience
                 </h3>
                 <p className="text-xl md:text-2xl">
-                    If you want a self-hosted solution, with a completely customizable experience, FireCMS PRO is the
-                    way to go.
+                    If you want a self-hosted solution, with a completely customizable experience,
+                    FireCMS PRO is the way to go.
                 </p>
                 <p className="text-xl md:text-2xl">
-                    Customizable, extensible and with a strong focus on developer experience, FireCMS PRO is the perfect
-                    solution for your next project.
+                    Customizable, extensible and with a strong focus on developer experience,
+                    FireCMS PRO is the perfect solution for your next project.
                 </p>
-                <a
-                    className={CTAOutlinedButtonWhiteMixin}
-                    href={useBaseUrl("pro/")}
-                >
+                <a className={CTAOutlinedButtonWhiteMixin} href={useBaseUrl("pro/")}>
                     More details
-                    <CTACaret/>
+                    <CTACaret />
                 </a>
             </Panel>
         </div>

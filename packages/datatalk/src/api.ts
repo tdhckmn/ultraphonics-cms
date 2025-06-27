@@ -1,13 +1,13 @@
 import { ChatMessage } from "./types";
 
-export async function streamDataTalkCommand(firebaseAccessToken: string,
-                                            command: string,
-                                            apiEndpoint: string,
-                                            sessionId: string,
-                                            messages: ChatMessage[],
-                                            onDelta: (delta: string) => void
+export async function streamDataTalkCommand(
+    firebaseAccessToken: string,
+    command: string,
+    apiEndpoint: string,
+    sessionId: string,
+    messages: ChatMessage[],
+    onDelta: (delta: string) => void
 ): Promise<string> {
-
     // eslint-disable-next-line no-async-promise-executor
     return new Promise<string>(async (resolve, reject) => {
         try {
@@ -15,13 +15,13 @@ export async function streamDataTalkCommand(firebaseAccessToken: string,
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${firebaseAccessToken}`
+                    Authorization: `Bearer ${firebaseAccessToken}`,
                 },
                 body: JSON.stringify({
                     sessionId,
                     command,
-                    history: messages
-                })
+                    history: messages,
+                }),
             });
 
             if (!response.ok) {
@@ -36,7 +36,9 @@ export async function streamDataTalkCommand(firebaseAccessToken: string,
                 const decoder = new TextDecoder();
                 let buffer = "";
                 let result = "";
-                const processChunk = (chunk: ReadableStreamReadResult<Uint8Array>): void | Promise<void> => {
+                const processChunk = (
+                    chunk: ReadableStreamReadResult<Uint8Array>
+                ): void | Promise<void> => {
                     if (chunk.done) {
                         console.debug("Stream completed", { result });
                         resolve(result);
@@ -48,7 +50,7 @@ export async function streamDataTalkCommand(firebaseAccessToken: string,
                     buffer += text;
 
                     // Split based on our special prefix and filter out empty strings
-                    const parts = buffer.split("&$# ").filter(part => part.length > 0);
+                    const parts = buffer.split("&$# ").filter((part) => part.length > 0);
 
                     // Check if the last part is incomplete (no trailing prefix for next message)
                     if (!text.endsWith("&$# ")) {
@@ -58,7 +60,7 @@ export async function streamDataTalkCommand(firebaseAccessToken: string,
                     }
 
                     // Process complete messages
-                    parts.forEach(part => {
+                    parts.forEach((part) => {
                         try {
                             const message = JSON.parse(part);
                             if (message.type === "delta") {
@@ -87,33 +89,33 @@ export async function streamDataTalkCommand(firebaseAccessToken: string,
     });
 }
 
-export function getDataTalkSamplePrompts(firebaseAccessToken: string,
-                                         apiEndpoint: string,
-                                         messages?: ChatMessage[]
+export function getDataTalkSamplePrompts(
+    firebaseAccessToken: string,
+    apiEndpoint: string,
+    messages?: ChatMessage[]
 ): Promise<string[]> {
     return fetch(apiEndpoint + "/datatalk/sample_prompts", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${firebaseAccessToken}`
+            Authorization: `Bearer ${firebaseAccessToken}`,
         },
         body: JSON.stringify({
-            history: messages ?? []
-        })
+            history: messages ?? [],
+        }),
     })
-        .then(response => {
+        .then((response) => {
             if (!response.ok) {
-                return response.json().then(data => {
+                return response.json().then((data) => {
                     throw new ApiError(data.message, data.code);
                 });
             }
             return response.json();
         })
-        .then(data => data.data);
+        .then((data) => data.data);
 }
 
 export class ApiError extends Error {
-
     public code?: string;
 
     constructor(message: string, code?: string) {

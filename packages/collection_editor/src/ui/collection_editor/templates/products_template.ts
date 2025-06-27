@@ -13,21 +13,21 @@ export const productsCollectionTemplate: EntityCollection = {
             name: "Name",
             description: "Name of this product",
             validation: {
-                required: true
-            }
+                required: true,
+            },
         },
         brand: {
             dataType: "string",
             name: "Brand",
             validation: {
-                required: true
-            }
+                required: true,
+            },
         },
         description: {
             dataType: "string",
             name: "Description",
             description: "Description of this product, supports markdown",
-            markdown: true
+            markdown: true,
         },
         main_image: {
             dataType: "string",
@@ -36,21 +36,21 @@ export const productsCollectionTemplate: EntityCollection = {
                 storagePath: "images",
                 acceptedFiles: ["image/*"],
             },
-            description: "Upload field for images"
+            description: "Upload field for images",
         },
         available: {
             dataType: "boolean",
             name: "Available",
             columnWidth: 100,
-            description: "Is this product available in the website"
+            description: "Is this product available in the website",
         },
         price: {
             dataType: "number",
             name: "Price",
             validation: {
                 requiredMessage: "You must set a positive price",
-                min: 0
-            }
+                min: 0,
+            },
         },
         images: {
             dataType: "array",
@@ -60,9 +60,9 @@ export const productsCollectionTemplate: EntityCollection = {
                 dataType: "string",
                 storage: {
                     storagePath: "images",
-                    acceptedFiles: ["image/*"]
-                }
-            }
+                    acceptedFiles: ["image/*"],
+                },
+            },
         },
         related_products: {
             dataType: "array",
@@ -70,19 +70,19 @@ export const productsCollectionTemplate: EntityCollection = {
             description: "Products related to this one",
             of: {
                 dataType: "reference",
-                path: "products"
-            }
+                path: "products",
+            },
         },
         metadata: {
             name: "Metadata",
             description: "This is an example of a map property",
             dataType: "map",
-            keyValue: true
+            keyValue: true,
         },
         added_on: {
             dataType: "date",
             name: "Added on",
-            autoValue: "on_create"
-        }
-    })
+            autoValue: "on_create",
+        },
+    }),
 };
